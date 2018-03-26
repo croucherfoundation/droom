@@ -17,7 +17,7 @@
 - cssclasses << 'invited' if event.attended_by?(current_user)
 
 - div_data = {:action => "collapser", refreshable: event_path(event, format: :js)}
-- if show_folder && !full_attachments
+- if show_folder
   - div_data[:droppable] = droom.folder_documents_path(event.folder)
   - div_data[:queue] = "#queue_to_#{event.folder.id}"
   - div_data[:refreshes] = "#event_#{event.id}"
