@@ -311,7 +311,7 @@ module Droom
     def image_url=(address)
       if address.present?
         begin
-          self.image = URI(address)
+          self.image = open(address)
         rescue OpenURI::HTTPError => e
           Rails.logger.warn "Cannot read image url #{address} because: #{e}. Skipping."
         end
