@@ -505,7 +505,7 @@ module Droom
     end
 
     def title_if_it_matters
-      title unless title_ordinary?
+      title if title_ordinary?
     end
 
     def informal_name
