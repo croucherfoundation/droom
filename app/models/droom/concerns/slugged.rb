@@ -14,12 +14,13 @@ module Droom::Concerns::Slugged
       value = base
       addendum = 1
       existing_record = skope.order(created_at: 'desc').where("#{column} like ?", "#{value}%").pluck(column.to_sym).first
-      if existing_record
+      while existing_record
         record_number = existing_record.split('_').last
         if record_number = Integer(record_number) rescue false
           addendum+=record_number.to_i
         end
         value = "#{base}_#{addendum}"
+        existing_record = skope.order(created_at: 'desc').where("#{column} like ?", "#{value}%").pluck(column.to_sym).first
       end
       self.send :"#{column}=", value
     end
