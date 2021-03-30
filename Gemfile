@@ -11,7 +11,8 @@ gemspec
 #
 #   gem 'mysql2'
 #   gem 'haml'
-#   gem 'paperclip'
+#   gem 'paperclip', '~> 6.1'
+#   gem 'mimemagic', '~> 0.4.3'
 #   gem "launchy"
 #   gem "capybara"
 #   gem "rspec-rails", ">= 2.6.0"
