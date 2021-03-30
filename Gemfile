@@ -2,6 +2,8 @@ source "https://rubygems.org"
 
 gemspec
 
+s.add_dependency "paperclip", git: 'https://github.com/croucherfoundation/paperclip.git'
+
 # group :test, :development do
 #   gem 'sass-rails'
 #   gem 'coffee-rails'
