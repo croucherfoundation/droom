@@ -11,7 +11,6 @@ gemspec
 #
 #   gem 'mysql2'
 #   gem 'haml'
-#   gem 'mimemagic', '0.3.7'
 #   gem 'paperclip'
 #   gem "launchy"
 #   gem "capybara"
