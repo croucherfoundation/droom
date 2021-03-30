@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "paperclips", git: 'git://github.com/croucherfoundation/paperclips.git'
+gem "paperclips", '6.1.0', git: 'https://github.com/croucherfoundation/paperclips.git', branch: 'master'
 
 
 
