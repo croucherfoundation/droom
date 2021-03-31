@@ -1,10 +1,7 @@
+gem "paperclips", git: 'https://github.com/croucherfoundation/paperclips.git'
+
 source "https://rubygems.org"
-
 gemspec
-
-gem "paperclips", '6.1.0', git: 'https://github.com/croucherfoundation/paperclips.git', branch: 'master'
-
-
 
 # group :test, :development do
 #   gem 'sass-rails'
@@ -15,7 +12,7 @@ gem "paperclips", '6.1.0', git: 'https://github.com/croucherfoundation/paperclip
 #
 #   gem 'mysql2'
 #   gem 'haml'
-#   gem 'paperclip'
+#   gem 'paperclips'
 #   gem "launchy"
 #   gem "capybara"
 #   gem "rspec-rails", ">= 2.6.0"
