@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   s.add_dependency "haml"
   s.add_dependency "haml_coffee_assets"
 
-  s.add_dependency "paperclips"
+  s.add_dependency "kt-paperclip"
   s.add_dependency "paperclip-av-transcoder"
   s.add_dependency "video_info"
   s.add_dependency "friendly_mime"

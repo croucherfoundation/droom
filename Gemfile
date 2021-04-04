@@ -1,4 +1,4 @@
-gem "paperclips", git: 'https://github.com/croucherfoundation/paperclips.git'
+#gem "paperclips", git: 'https://github.com/croucherfoundation/paperclips.git'
 
 source "https://rubygems.org"
 gemspec
