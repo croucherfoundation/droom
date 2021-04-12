@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 gemspec
 
-gem "paperclips", git: 'git://github.com/croucherfoundation/paperclips.git'
+gem "paperclip", "~> 6.1", git: "https://github.com/kirankarki/paperclip", branch: "master"
 
 # group :test, :development do
 #   gem 'sass-rails'
