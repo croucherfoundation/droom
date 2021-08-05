@@ -21,6 +21,12 @@ module Droom
       !!main_image
     end
 
+    def render_fragment(file)
+      proc {
+        ApplicationController.renderer.render(partial: "droom/pages/fragments/#{file}").html_safe
+      }
+    end
+
     def publish!
       unless publishing?
         update_attributes({
