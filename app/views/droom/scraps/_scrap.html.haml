@@ -6,7 +6,7 @@
       .playable
 
   - elsif scrap.image.attached?
-    = image_tag scrap.cropped_image('extra-large')
+    = image_tag scrap.image_url(:hero)
 
   - else
     - if scrap.wordiness == 'text' || scrap.wordiness == 'paragraph'

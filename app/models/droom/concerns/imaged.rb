@@ -1,5 +1,6 @@
 module Droom::Concerns::Imaged
   extend ActiveSupport::Concern
+  include Rails.application.routes.url_helpers
 
   included do
     has_one_attached :image
@@ -9,7 +10,18 @@ module Droom::Concerns::Imaged
   #
   def image_url(style=:standard, decache=true)
     if image.attached?
-      url = image.url(style, decache)
+      case style
+      when :icon
+        size = '32x32'
+      when :thumbnail
+        size = '128x96'
+      when :hero
+        size = '1920x1080'
+      else
+        size = '640x480' # standard
+      end
+
+      url = rails_representation_url(image.variant(resize: size))
       url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
     else
       ""

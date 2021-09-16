@@ -12,7 +12,7 @@
 
   .specifics.image
     - if @scrap.image.attached?
-      - img = main_app.url_for(@scrap.image)
+      - img = @scrap.image_url(:thumb)
     - else
       - img = ""
 

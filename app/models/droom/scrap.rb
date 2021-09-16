@@ -106,16 +106,20 @@ module Droom
       scraptype == 'video'
     end
 
-    def cropped_image(size='small')
-      if self.image.attached?
-        case size
-        when 'small'
-          rails_representation_url(self.image.variant(resize: '250x250'))
-        when 'extra-large'
-          rails_representation_url(self.image.variant(resize: '1200x1200'))
+    def image_url(style=:notice)
+      if image.attached?
+        case style
+        when :icon
+          size = '32x32'
+        when :thumb
+          size = '130x73'
+        when :hero
+          size = '960x540'
         else
-          rails_representation_url(self.image)
+          size = '256x192'
         end
+        url = rails_representation_url(image.variant(resize: size))
+        url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
       else
         ""
       end

@@ -41,7 +41,7 @@ class Droom::UserSerializer < ActiveModel::Serializer
   end
 
   def images
-    if object.image?
+    if object.image.attached?
       {
         icon: object.image_url(:icon),
         thumbnail: object.image_url(:thumbnail),
