@@ -1,5 +1,7 @@
 module Droom
   class Scrap < Droom::DroomRecord
+    include Rails.application.routes.url_helpers
+
     belongs_to :created_by, :class_name => "Droom::User"
 
     belongs_to :event, :class_name => "Droom::Event", :dependent => :destroy
@@ -7,13 +9,7 @@ module Droom
     belongs_to :document, :class_name => "Droom::Document", :dependent => :destroy
     accepts_nested_attributes_for :document
 
-    has_attached_file :image,
-                      :styles => {
-                        :notice => "960x",
-                        :icon => "32x32#",
-                        :thumb => "130x73#"
-                      }
-    do_not_validate_attachment_file_type :image
+    has_one_attached :image
 
     before_save :get_youtube_thumbnail
     before_validation :name_associates
@@ -34,9 +30,9 @@ module Droom
       fragment = "%#{fragment}%"
       where('droom_scraps.name LIKE :f OR droom_scraps.body LIKE :f OR droom_scraps.note LIKE :f', :f => fragment)
     }
-    
+
     scope :visible_to, -> user { where("1=1") }
-    
+
     scope :with_event, -> {
       joins(:event)
         .where(["droom_scraps.scraptype = 'event'"])
@@ -74,7 +70,7 @@ module Droom
         1
       end
     end
-    
+
     def url_with_protocol
       if url?
         url =~ /^https?:\/\// ? url : "http://#{body}"
@@ -97,11 +93,11 @@ module Droom
         :id => id
       }
     end
-    
+
     def next_younger
       Droom::Scrap.later_than(self).first
     end
-    
+
     def next_older
       Droom::Scrap.earlier_than(self).first
     end
@@ -110,18 +106,33 @@ module Droom
       scraptype == 'video'
     end
 
+    def cropped_image(size='small')
+      if self.image.attached?
+        case size
+        when 'small'
+          rails_representation_url(self.image.variant(resize: '250x250'))
+        when 'extra-large'
+          rails_representation_url(self.image.variant(resize: '1200x1200'))
+        else
+          rails_representation_url(self.image)
+        end
+      else
+        ""
+      end
+    end
+
   protected
-  
+
     def get_youtube_thumbnail
       if scraptype == "video" && youtube_id?
         self.image = URI("http://img.youtube.com/vi/#{youtube_id}/0.jpg")
       end
     end
-    
+
     def name_associates
       event.name = name if event
       document.name = name if document
     end
-    
+
   end
 end

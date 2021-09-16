@@ -2,26 +2,13 @@ module Droom::Concerns::Imaged
   extend ActiveSupport::Concern
 
   included do
-    has_attached_file :image,
-                      styles: {
-                        icon: "32x32#",
-                        thumb: ["128x96#", :png],
-                        standard: ["640x480>", :jpg],
-                        hero: ["1920x1080>", :jpg]
-                      },
-                      convert_options: {
-                        icon: "-strip",
-                        thumb: "-strip",
-                        standard: "-quality 50 -strip",
-                        hero: "-quality 25 -strip"
-                      }
-    validates_attachment :image, content_type: { content_type: ["image/jpg", "image/jpeg", "image/png", "image/gif"] }
+    has_one_attached :image
   end
 
   ## Images
   #
   def image_url(style=:standard, decache=true)
-    if image?
+    if image.attached?
       url = image.url(style, decache)
       url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
     else

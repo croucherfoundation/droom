@@ -18,7 +18,7 @@ module Droom
 
     def show
       if @document.file
-        redirect_to @document.file.expiring_url(600)
+        redirect_to main_app.url_for(@document.file)
       else
         raise ActiveRecord::RecordNotFound
       end
@@ -36,11 +36,11 @@ module Droom
         render :partial => 'listing'
       end
     end
-    
+
     def edit
       render
     end
-    
+
     def update
       @document.update(document_params)
       render :partial => 'listing', :object => @document
@@ -92,7 +92,7 @@ module Droom
       # ui can check for @searching if the default list is not a useful browser.
       @documents = Document.search terms, fields: fields, where: criteria, order: order, per_page: @show, page: @page, highlight: highlight, aggs: aggregations
     end
-  
+
     def document_params
       if params[:document]
         params.require(:document).permit(:name, :file, :description, :folder_id, :position)
@@ -112,6 +112,6 @@ module Droom
     def get_folder
       @folder = Droom::Folder.find(params[:folder_id])
     end
-    
+
   end
 end

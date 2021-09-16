@@ -11,8 +11,8 @@
         = f.label :"scraptype_#{type}", type, :class => cssclass
 
   .specifics.image
-    - if @scrap.image?
-      - img = @scrap.image.url(:thumb)
+    - if @scrap.image.attached?
+      - img = main_app.url_for(@scrap.image)
     - else
       - img = ""
 
@@ -47,7 +47,7 @@
         = f.text_field :name, :class => 'name', placeholder: t("placeholders.scrap.name")
       %p.url
         = f.url_field :url, :class => 'url', placeholder: t("placeholders.scrap.url")
-    
+
     .text
       = f.label :body
       %br
@@ -60,4 +60,3 @@
       = f.submit t(:save)
       = t :or
       = link_to t(:cancel), "/", :class => 'cancel'
-      

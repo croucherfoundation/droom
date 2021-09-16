@@ -4,8 +4,7 @@ module Droom
     belongs_to :folder
     belongs_to :scrap, :dependent => :destroy
 
-    has_attached_file :file,
-                      fog_directory: -> a { a.instance.file_bucket }
+    has_one_attached :file
 
     acts_as_list scope: :folder_id
 
@@ -58,7 +57,7 @@ module Droom
     def file_ok?
       file.exists?
     end
-    
+
     def original_file
       open(self.file.url)
     end
@@ -66,7 +65,7 @@ module Droom
     def full_path
       "#{folder.path if folder}/#{file_file_name}"
     end
-    
+
     def changed_since_creation?
       file_updated_at > created_at
     end

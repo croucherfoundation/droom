@@ -9,15 +9,7 @@ module Droom
     belongs_to :approved_by, :class_name => 'Droom::User'
     belongs_to :disapproved_by, :class_name => 'Droom::User'
 
-    has_attached_file :logo,
-                      default_url: :nil,
-                      styles: {
-                        standard: "520x520#",
-                        icon: "32x32#",
-                        thumb: "130x130#"
-                      }
-
-    validates_attachment :logo, content_type: { content_type: ["image/jpg", "image/jpeg", "image/png", "image/gif"] }
+    has_one_attached :logo
 
     scope :added_since, -> date { where("created_at > ?", date) }
     scope :disapproved, -> { where.not(disapproved_at: nil) }
@@ -142,7 +134,7 @@ module Droom
     end
 
     def logo_url(style=:standard, decache=true)
-      if logo?
+      if logo.attached?
         url = logo.url(style, decache)
         url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
       end
@@ -222,7 +214,7 @@ module Droom
         self.tags << org.tags
         self.chinese_name = org.chinese_name unless chinese_name?
         self.description = org.description unless description?
-        self.logo = org.logo unless logo?
+        self.logo = org.logo unless logo
         self.owner = org.owner unless owner
         subsume_other_resources(org)
         self.save
