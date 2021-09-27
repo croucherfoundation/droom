@@ -2,6 +2,8 @@ require "open-uri"
 
 module Droom
   class Image < Droom::DroomRecord
+    include Rails.application.routes.url_helpers
+
     belongs_to :user
     belongs_to :organisation
     attr_accessor :remote_url
@@ -12,8 +14,16 @@ module Droom
     before_validation :read_remote_url
 
     def url(style=:original, decache=true)
-      if file?
-        url = file.url(style, decache)
+      if file.attached?
+        case style
+        when :icon
+          size = '32x32'
+        when :thumb
+          size = '128x96'
+        else
+          size = '1920x1080'
+        end
+        url = rails_representation_url(file.variant(resize: size))
         url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
       else
         ""

@@ -1,7 +1,7 @@
 - user ||= @user
 - minimal ||= false
 
-- if user.image?
+- if user.image.attached?
   - img = user.image.url(:thumb)
 
 = render "droom/users/edit/name_fields", f: f, user: user

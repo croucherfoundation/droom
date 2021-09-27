@@ -4,12 +4,12 @@ module Droom
     belongs_to :organisation
 
     has_one_attached :file
-    
+
     before_validation :get_organisation
     before_validation :get_metadata
 
     def url(style=:original, decache=true)
-      if file?
+      if file.attached?
         url = file.url(style, decache)
         url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
       else

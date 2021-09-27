@@ -185,7 +185,7 @@ module Droom
     # pulled down from S3 if no other version is available.
     #
     def with_local_file
-      if file?
+      if file.attached?
         if File.file?(file.path)
           yield file.path
         elsif file.queued_for_write[:original]
@@ -199,7 +199,7 @@ module Droom
     end
 
     def copy_to_local_tempfile
-      if file?
+      if file.attached?
         begin
           folder = self.class.to_s.downcase.pluralize
           tempfile_path = Rails.root.join("tmp/#{folder}/#{id}/#{file_file_name}")
