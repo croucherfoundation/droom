@@ -186,25 +186,23 @@ module Droom
     #
     def with_local_file
       if file.attached?
-        if File.file?(file.path)
-          yield file.path
-        elsif file.queued_for_write[:original]
-          yield file.queued_for_write[:original].path
-        else
-          tempfile_path = copy_to_local_tempfile
-          yield tempfile_path
-          File.delete(tempfile_path) if File.file?(tempfile_path)
-        end
+        tempfile_path = copy_to_local_tempfile
+        yield tempfile_path
+        File.delete(tempfile_path) if File.file?(tempfile_path)
       end
     end
 
     def copy_to_local_tempfile
       if file.attached?
         begin
+          file_file_name ||= name
           folder = self.class.to_s.downcase.pluralize
           tempfile_path = Rails.root.join("tmp/#{folder}/#{id}/#{file_file_name}")
           FileUtils.mkdir_p(Rails.root.join("tmp/#{folder}/#{id}"))
-          file.copy_to_local_file(:original, tempfile_path)
+
+          File.open(tempfile_path, 'wb') do |f|
+            file.download { |chunk| f.write(chunk) }
+          end
         rescue => e
           # raise Cdr::FileReadError, "Original file could not be read: #{e.message}"
           Rails.logger.warn "File read failure: #{e.message}"

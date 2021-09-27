@@ -3,12 +3,13 @@ require "open-uri"
 module Droom
   class Image < Droom::DroomRecord
     include Rails.application.routes.url_helpers
+    include ActiveStorageSupport::SupportForBase64
 
     belongs_to :user
     belongs_to :organisation
     attr_accessor :remote_url
 
-    has_one_attached :file
+    has_one_base64_attached :file
 
     before_validation :get_organisation
     before_validation :read_remote_url
@@ -17,9 +18,13 @@ module Droom
       if file.attached?
         case style
         when :icon
-          size = '32x32'
-        when :thumb
-          size = '128x96'
+          size = '96x64'
+        when :half
+          size = '480x320'
+        when :full
+          size = '960x640'
+        when :hero
+          size = '1600x1600'
         else
           size = '1920x1080'
         end
@@ -45,7 +50,7 @@ module Droom
     end
 
     def file_data=(data)
-      self.file = data
+      self.file.attach(data: data)
     end
 
     protected

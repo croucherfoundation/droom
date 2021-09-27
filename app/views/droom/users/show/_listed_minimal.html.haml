@@ -4,7 +4,7 @@
 - liclass << " org_admin" if user.organisation_admin?
 
 - if user.image.attached?
-  - mugstyle = "background-image: url(#{user.image.url(:thumb)})"
+  - mugstyle = "background-image: url(#{user.image_url(:thumbnail)})"
 - else
   - mugstyle = ""
 

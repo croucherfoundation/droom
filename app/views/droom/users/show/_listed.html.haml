@@ -8,7 +8,7 @@
 - ineditable ||= false
 
 - if user.image.attached?
-  - mugstyle = "background-image: url(#{user.image.url(:thumb)})"
+  - mugstyle = "background-image: url(#{user.image_url(:thumbnail)})"
 - else
   - mugstyle = ""
 
