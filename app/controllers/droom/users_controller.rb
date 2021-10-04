@@ -91,7 +91,7 @@ module Droom
           flash[:notice] = t(:password_set)
           redirect_to params[:destination].presence || droom.dashboard_url
         else
-          render
+          raise Droom::AccessDenied
         end
       else
         render template: "/droom/users/request_password"

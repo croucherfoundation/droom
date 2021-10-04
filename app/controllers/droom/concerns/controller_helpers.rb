@@ -20,7 +20,7 @@ module Droom::Concerns::ControllerHelpers
     before_action :check_user_is_confirmed, except: [:cors_check, :setup], unless: :devise_controller?
     before_action :check_user_setup, except: [:cors_check, :setup], unless: :devise_controller?
     before_action :check_user_has_organisation, except: [:cors_check, :setup_organisation], unless: :devise_controller?
-    before_action :check_data_room_permission, except: [:cors_check, :set_password], unless: :devise_controller?
+    before_action :check_data_room_permission, except: [:cors_check, :set_password, :setup], unless: :devise_controller?
 
     before_action :note_current_user, except: [:cors_check]
     before_action :set_section, except: [:cors_check]
@@ -48,7 +48,7 @@ module Droom::Concerns::ControllerHelpers
   def cors_check
     head :ok
   end
-  
+
   def set_access_control_headers
     if request.env["HTTP_ORIGIN"].present? && Droom.cors_domains.empty? || Droom.cors_domains.include?(request.env["HTTP_ORIGIN"])
       headers['Access-Control-Allow-Origin'] = request.env["HTTP_ORIGIN"]

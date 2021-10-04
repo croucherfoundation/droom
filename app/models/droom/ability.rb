@@ -27,18 +27,12 @@ module Droom
 
             if user.data_room_user?
               can :read, :dashboard
-              can :read, Droom::Event
-              can :read, Droom::Scrap
-              can :read, Droom::Venue
-              can :read, Droom::User
-              can :read, Droom::Group
-              can :read, Droom::Organisation
               can :index, :suggestions
 
               # If someone has been allowed to create something, they are generally allowed to edit or remove it.
               # This rule must sit after the user rules because users have no created_by_id column.
               #
-              can :manage, [Droom::Event, Droom::Document, Droom::Scrap], :created_by_id => user.id
+              # can :manage, [Droom::Event, Droom::Document, Droom::Scrap], :created_by_id => user.id
 
               # Then other abilities are determined by permissions. Our permissions are relatively abstract and
               # not closely coupled to Cancan abilities. Here we map them onto more concrete operations.
@@ -51,21 +45,39 @@ module Droom
                 can :manage, Droom::Invitation
                 can :manage, Droom::GroupInvitation
                 can :manage, Droom::AgendaCategory
+              elsif user.permitted?('droom.calendar.read')
+                can :read, Droom::Event
+                can :read, Droom::EventType
+                can :read, Droom::EventSet
+                can :read, Droom::Venue
+                can :read, Droom::Invitation
+                can :read, Droom::GroupInvitation
+                can :read, Droom::AgendaCategory
               end
 
               if user.permitted?('droom.directory')
                 can :manage, Droom::Group
                 can :manage, Droom::Organisation
                 can :manage, Droom::User
+              elsif user.permitted?('droom.directory.read')
+                can :read, Droom::Group
+                can :read, Droom::Organisation
+                can :read, Droom::User
               end
 
               if user.permitted?('droom.library')
                 can :manage, Droom::Folder
                 can :manage, Droom::Document
+              elsif user.permitted?('droom.library.read')
+                can :read, Droom::Folder
+                can :read, Droom::Document
               end
 
               if user.permitted?('droom.stream')
                 can :create, Droom::Scrap
+                can :read, Droom::Scrap
+              elsif user.permitted?('droom.stream.read')
+                can :read, Droom::Scrap
               end
 
               if user.permitted?('droom.enquiry')
@@ -83,8 +95,6 @@ module Droom
                 cannot :read, Droom::Document, private: true
               end
             end
-
-            can :read, Droom::Scrap
 
           else
             # What can an external user do? Nothing, by default, but the main app can add permissions.

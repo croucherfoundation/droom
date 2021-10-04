@@ -1,0 +1,16 @@
+- group_permission ||= @group_permission
+- if group_permission.present?
+  - permission ||= group_permission.permission
+  - group ||= group_permission.group
+  - linkid ||= "#{group.slug}_#{permission.slug.gsub('.', '_')}"
+
+- params = { :group_permission => {:permission_id => permission.id, group_id: group.id}, :linkid => linkid }
+
+.menu{:data => {:for => "#{linkid}"}}
+  %ul.actions
+    %li
+      = link_to t(:all_permissions), upsert_group_group_permissions_url(group, params.merge(:classname => 'yes')), :id => linkid,  :class => 'all', :method => :post, :data => {:action => "update_content", :replaced => "##{linkid}"}
+    %li
+      = link_to t(:read_permission), upsert_group_group_permissions_url(group, params.merge(:read_only => true, :classname => 'read')), :id => linkid, :class => 'read_only', :method => :post, :data => {:action => "update_content", :replaced => "##{linkid}"}
+    %li
+      = link_to t(:no_permission), delete_group_group_permissions_url(group, params.merge(:classname => 'no')), :id => linkid, :class => 'delete', :method => :delete, :data => {:action => "update_content", :replaced => "##{linkid}"}

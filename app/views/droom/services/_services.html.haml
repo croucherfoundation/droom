@@ -6,20 +6,23 @@
           = link_to t(:add_service), new_service_url, :class => 'add', :data => {:action => 'popup', :affected => '#services'}
         - if can?(:create, Droom::Group)
           = link_to t(:add_group), new_group_url, :class => 'add', :data => {:action => 'popup', :affected => '#services'}
-        
+
       - @services.each do |service|
-        - width = service.permissions.count
+        - read_permissions = service.permissions.select{ |p| p.name.include?('.read')}
+        - width = service.permissions.count - read_permissions.length
         %th.d{:colspan => width > 1 ? width : 1, :class => "s_#{service.id}"}
           %h4
             = service.name
             = action_menulink(service, :class => "small")
           = action_menu(service)
-          
+
     %tr.rotated
       %th.spacer
       - @services.each do |service|
-        - width = service.permissions.count
+        - read_permissions = service.permissions.select{ |p| p.name.include?('.read')}
+        - width = service.permissions.count - read_permissions.length
         - service.permissions.each_with_index do |perm, i|
+          - next if perm.name.include?('.read')
           %td{:class => "s_#{service.id} p_#{perm.id} #{'d' if i == width-1}".strip}
             = action_menulink(perm, :class => "small")
             %span.rotated
@@ -32,10 +35,15 @@
           %td.name
             = truncate(group.name, :length => 16)
           - @services.each do |service|
-            - width = service.permissions.count
+            - read_permissions = service.permissions.select{ |p| p.name.include?('.read') }
+            - width = service.permissions.count - read_permissions.length
             - service.permissions.each_with_index do |perm, i|
+
+              - next if perm.name.include?('.read')
+              - read_permission = perm.get_read_permission
+
               %td.toggle{:class => "s_#{service.id}  p_#{perm.id} #{'d' if i == width-1}".strip}
-                = render :partial => 'droom/group_permissions/toggle', :locals => {:group => group, :permission => perm}
+                = render :partial => 'droom/group_permissions/toggle', :locals => {:group => group, :permission => perm, :read_permission => read_permission}
 
 - if @services.empty?
   .everyone

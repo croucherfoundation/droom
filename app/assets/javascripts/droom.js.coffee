@@ -68,6 +68,7 @@ jQuery ($) ->
     @find_including_self('[data-action="toggle"]').toggle()
     @find_including_self('[data-action="alternate"]').alternator()
     @find_including_self('[data-action="replace"]').replace_with_remote_content()
+    @find_including_self('[data-action="update_content"]').update_main_content()
     @find_including_self('[data-action="autofetch"]').replace_with_remote_content ".holder", {force: true}
     @find_including_self('[data-action="slide"]').sliding_link()
     @find_including_self('[data-action="proxy"]').click_proxy()

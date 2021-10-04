@@ -1,6 +1,7 @@
 - group_permission ||= @group_permission
 - group ||= @group
 - permission ||= @permission
+- read_permission ||= @read_permission
 
 - unless group_permission
   - if @group_permissions
@@ -12,7 +13,13 @@
 - permission ||= group_permission.permission
 - linkid = "#{group.slug}_#{permission.slug.gsub('.', '_')}"
 
-- if group_permission && !group_permission.destroyed?
-  = link_to t(:disallow), group_group_permission_url(group, group_permission), :id => linkid, :class => "yes", :method => :delete, :data => {:action => "replace", :replaced => "##{linkid}"}
-- else
-  = link_to t(:allow), group_group_permissions_url(group, :group_permission => {:permission_id => permission.id}), :id => linkid, :class => "no", :method => :post, :data => {:action => "replace", :replaced => "##{linkid}"}
+-if read_permission.present?
+  - classname = permission.define_permission_color(group_permission, group, read_permission)
+  = link_to t(:disallow), "#", :class => "#{classname}", :data => { :menu => "#{linkid}" }
+  = render :partial => "droom/group_permissions/action_menu", :locals => { :group_permission => group_permission, :group => group, :permission => permission, :read_permission => read_permission, :linkid => linkid }
+
+-else
+  - if group_permission && !group_permission.destroyed?
+    = link_to t(:disallow), group_group_permission_url(group, group_permission), :id => linkid, :class => "yes", :method => :delete, :data => {:action => "replace", :replaced => "##{linkid}"}
+  - else
+    = link_to t(:allow), group_group_permissions_url(group, :group_permission => {:permission_id => permission.id}), :id => linkid, :class => "no", :method => :post, :data => {:action => "replace", :replaced => "##{linkid}"}

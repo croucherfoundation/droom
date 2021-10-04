@@ -43,11 +43,12 @@ en:
   advanced_search: "Search terms"
   advanced_search_link: "...advanced search"
   allow: "Allow"
+  all_permissions: 'All Permissions'
   and_invited: "and invited to log in."
   apps:
     data_room: "Data<br />Room"
   at: "at"
-  attachment_count: 
+  attachment_count:
     zero: "No documents attached."
     one: "One document attached."
     other: "%{count} documents attached."
@@ -119,7 +120,7 @@ en:
   devices: "Devices"
   directory: "Directory"
   directory_introduction: "The directory organises people by group. To find someone quickly, start typing their name on the right."
-  document_count: 
+  document_count:
     zero: "no documents"
     one: "one document"
     other: "%{count} documents"
@@ -384,6 +385,7 @@ en:
   no_past_events: "There are no past events to display."
   no_past_events: No past events to show
   no_people: "Sorry: there are no directory entries accessible by your account."
+  no_permission: 'No Permission'
   no_person_description: "No biography available."
   no_results: "Sorry: nothing to show here."
   no_stream: "Nothing yet to show here."
@@ -439,7 +441,7 @@ en:
   password_requirements: "Ideally your password should include numbers and punctuation and should not resemble a dictionary word."
   password_reset_complete: "Thank you for persevering with the account administration. Your password has been reset and you have been signed in automatically."
   password_reset_instructions: "Please enter your email address below. A message will be sent containing reset instructions."
-  password_reset_message_sent: "A message has been sent to your email address containing a link that will let you reset your password. Please allow a few minutes for it to arrive, and keep an eye on your spam folder. The address it will seem to come from is <code>%{sender}</code>."
+  password_reset_message_sent_html: "A message has been sent to your email address containing a link that will let you reset your password. Please allow a few minutes for it to arrive, and keep an eye on your spam folder. The address it will seem to come from is <code>%{sender}</code>."
   password_reset_welcome: "Please use the form below to set a new password for your account. A confirmation box will appear when your password meets the requirements, and the submit button will go green and become clickable when the passwords match."
   password_set: "Thank you. Your password has been set and your account is fully active."
   pending_organisations_introduction:
@@ -521,6 +523,7 @@ en:
   quick_search: "Quick search"
   quick_search: "Quick search"
   quick_search_prompt: "Type anything here"
+  read_permission: "Read Permission"
   recent_events: "Past events"
   register_organisation: "Apply to register your organisation"
   reject: "reject"

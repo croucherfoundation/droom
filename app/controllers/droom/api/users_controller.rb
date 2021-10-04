@@ -60,6 +60,9 @@ module Droom::Api
         end
         if params[:user][:email].present?
           @user ||= Droom::User.where(email: params[:user][:email]).first
+          unless @user
+            @user ||= Droom::Email.where(email: params[:user][:email]).first.try(:user)
+          end
         end
       end
       params = user_params

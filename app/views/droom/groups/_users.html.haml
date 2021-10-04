@@ -3,6 +3,6 @@
 
 .paginated
   %ul.people
-    = render partial: "droom/users/show/listed", collection: users
+    = render partial: "droom/users/show/listed", collection: users, locals: {group: group}
   .pagination.sliding<
     = paginate(users, params: {controller: 'groups', action: "show", id: group.id, format: :js})

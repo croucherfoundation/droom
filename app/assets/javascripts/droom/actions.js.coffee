@@ -4,18 +4,18 @@
 # The basic approach here is PJAX: our remote calls always return chunks of html. There are no client-side templates
 # or model classes. Instead we have defined a set of actions, by which page elements can interact with the server in
 # structured ways. A tag will declare that it triggers an action, and may also declare that the action will replace or
-# affect other elements. 
+# affect other elements.
 #
 # Many elements are refreshable, and an action that affects them will trigger their refreshment. Editing an event is
 # a simple remote form operation with several consequences for the page:
 #
 #   link_to t(:edit_event), edit_event_url(event), :class => 'edit minimal', :data => {
-#      :action => "popup", 
-#      :replaced => "#event_#{event.id}", 
+#      :action => "popup",
+#      :replaced => "#event_#{event.id}",
 #      :affected => ".minimonth"
 #   }
 #
-# When the `popup` action is complete - that is, the server returns a response with no form in it - the final response 
+# When the `popup` action is complete - that is, the server returns a response with no form in it - the final response
 # will replace the original event container and the small calendar display will be refreshed to show the possibly revised
 # date of the event.
 #
@@ -50,7 +50,7 @@ jQuery ($) ->
 
       if @_url
         @_container.addClass('working')
-        params = 
+        params =
           dataType: "html"
           beforeSend: @prep
           success: @replace
@@ -87,7 +87,7 @@ jQuery ($) ->
   # attribute. The delete link next to an event, for example:
   #
   #   link_to t(:remove), event_url(event), :method => 'delete', :data => {
-  #     :confirm => t(:confirm_delete_event, :name => event.name), 
+  #     :confirm => t(:confirm_delete_event, :name => event.name),
   #     :removes => ".holder",
   #     :affected => ".minimonth"}
   #
@@ -118,7 +118,7 @@ jQuery ($) ->
     @each ->
       removed = $(@).attr('data-removed')
       affected = $(@).attr('data-affected')
-      
+
       $(@).remote
         on_success: (response) =>
           $(removed).fadeOut 'fast', () ->
@@ -160,6 +160,9 @@ jQuery ($) ->
           response ?= e
           replaced = if container is "self" then $el else $el.self_or_ancestor(container).last()
           replacement = $(response).insertAfter(replaced)
+          console.log 'response', response
+          console.log 'replaced', replaced
+          console.log 'replacement', replacement
           replaced?.remove()
           replacement.activate()
           replacement.hide().slideDown() if options.slide
@@ -169,6 +172,24 @@ jQuery ($) ->
       if options.force
         $.rails.handleRemote($el)
 
+
+  # *update_main_content* is used in services page, action from popup and effected on main content
+  $.fn.update_main_content = (selector, opts) ->
+    selector ?= '.holder'
+    options = $.extend { force: false, confirm: false, slide: false, pjax: true, credentials: false }, opts
+    @each ->
+      $el = $(@)
+      container = selector
+      $el.remote
+        credentials: options.credentials
+        pjax: options.pjax
+        on_success: (e, response) =>
+          response ?= e
+          className = $(response).attr "class"
+          id = $(response).attr "id"
+          @_selector = $("[data-menu=\"#{id}\"]")
+          $(@_selector).removeClass().addClass(className)
+          $(".menu").hide()
 
 
   # The reinviter is an ordinary remote link.
@@ -262,7 +283,7 @@ jQuery ($) ->
   $.fn.setter = () ->
     @each ->
       new Setter(@)
-  
+
   class Setter
     constructor: (element, @_root, @_property) ->
       @_link = $(element)
@@ -277,7 +298,7 @@ jQuery ($) ->
       data = {}
       value = if @_link.hasClass('yes') then @_negative else @_positive
       data[@_root] = {}
-      data[@_root][@_property] = value 
+      data[@_root][@_property] = value
       data['_method'] = "PUT"
       data
 
@@ -332,7 +353,7 @@ jQuery ($) ->
       else
         @_showing = $(@_selector).is(":visible")
         @store()
-      
+
     apply: (e) =>
       e.preventDefault() if e
       if @_showing then @show() else @hide()
@@ -353,19 +374,19 @@ jQuery ($) ->
       @_container.text(@_showing_text)
       @_showing = true
       @store()
-    
+
     slideUp: =>
       $(@_selector).slideUp () =>
         @hide()
         @_container.trigger('toggled')
-      
+
     hide: =>
       $(@_selector).hide()
       @_container.removeClass('showing')
       @_container.text(@_hiding_text)
       @_showing = false
       @store()
-      
+
     store: () =>
       if @_remembered
         value = if @_showing then "showing" else "hidden"
@@ -394,10 +415,10 @@ jQuery ($) ->
       @preview = @container.find(@options.preview)
       @switch.click @toggle
       @set()
-      
+
     set: () =>
       if @container.hasClass("open") then @show() else @hide()
-      
+
     toggle: (e) =>
       e.preventDefault() if e
       if @container.hasClass("open") then @hide() else @show()
@@ -405,7 +426,7 @@ jQuery ($) ->
     hide: () =>
       @container.removeClass('open')
       @preview.show().css('position', 'relative')
-      @body.stop().slideUp 
+      @body.stop().slideUp
         duration: 'slow'
         easing: 'glide'
         complete: =>
@@ -452,7 +473,7 @@ jQuery ($) ->
 
 
 
-  # The *alternator* action is a more extreme toggle. It allows an element to declare its alternate: 
+  # The *alternator* action is a more extreme toggle. It allows an element to declare its alternate:
   # when a link within the element is clicked, it will be removed from the DOM and its alternate
   # inserted. Usually the relation is reciprocal, so that another link in the alternate will bring
   # the original element back.
@@ -472,13 +493,13 @@ jQuery ($) ->
       @_container.after(@_alternate)
       @_container.remove()
       @_alternate.find('a').click @revert
-      
+
     revert: (e) =>
       e.preventDefault() if e
       @_alternate.before(@_container)
       @_alternate.remove()
       @_container.find('a').click @flip
-      
+
   $.fn.alternator = ->
     @each ->
       new Alternator(@)
@@ -488,7 +509,7 @@ jQuery ($) ->
   $.fn.hover_table = ->
     @each ->
       $(@).find('td').hover_cell()
-    
+
   $.fn.hover_cell = ->
     @each ->
       classes = @className.split(' ').join('.')
@@ -558,14 +579,14 @@ jQuery ($) ->
         @_defilter.show()
       else
         @_defilter.hide()
-      
+
     setQuery: (e) =>
       kc = e.which
       #   delete,     backspace,    alphanumerics,    number pad,        punctuation
       if (kc is 8) or (kc is 46) or (47 < kc < 91) or (96 < kc < 112) or (kc > 145)
         @setDefilter()
         @filter()
-        
+
     clearQuery: (e) =>
       e.preventDefault() if e
       @_container.val("")
@@ -580,7 +601,7 @@ jQuery ($) ->
 
 
   # A text input that sizes to fit will adjust its font size to suit the length of its content.
-  # At the moment this is done just by fitting a curve, but it ought really to be based on a 
+  # At the moment this is done just by fitting a curve, but it ought really to be based on a
   # calculation of area occupied.
 
   $.size_to_fit = (e) ->
@@ -591,10 +612,10 @@ jQuery ($) ->
       'font-size': "#{size}em"
       width: 532
       height: 290
-    , 
+    ,
       queue: false
       duration: 100
-        
+
   $.fn.self_sizes = () ->
     @each ->
       $(@).bind "keyup", $.size_to_fit
