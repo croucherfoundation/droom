@@ -1,7 +1,5 @@
 module Droom
   class Scrap < Droom::DroomRecord
-    include Rails.application.routes.url_helpers
-
     belongs_to :created_by, :class_name => "Droom::User"
 
     belongs_to :event, :class_name => "Droom::Event", :dependent => :destroy
@@ -106,20 +104,18 @@ module Droom
       scraptype == 'video'
     end
 
-    def image_url(style=:notice)
+    def sizes
+      {
+        icon:   { resize: "32x32" },
+        thumb:  { resize: "130x73" },
+        notice: { resize: "256x192" },
+        hero:   { resize: "960x540" }
+      }
+    end
+
+    def image_url(size=:notice)
       if image.attached?
-        case style
-        when :icon
-          size = '32x32'
-        when :thumb
-          size = '130x73'
-        when :hero
-          size = '960x540'
-        else
-          size = '256x192'
-        end
-        url = rails_representation_url(image.variant(resize: size))
-        url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
+        image.variant(self.sizes[size]).processed.url
       else
         ""
       end

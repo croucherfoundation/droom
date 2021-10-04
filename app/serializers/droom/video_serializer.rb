@@ -29,13 +29,13 @@ class Droom::VideoSerializer < ActiveModel::Serializer
 
   def url
     if object.file.attached?
-      main_app.url_for(object.file)
+      object.file.url
     end
   end
 
   def icon_url
     if object.file.attached?
-      main_app.url_for(object.file)
+      object.file.url
     else
       object.thumbnail_small
     end
@@ -43,7 +43,7 @@ class Droom::VideoSerializer < ActiveModel::Serializer
 
   def half_url
     if object.file.attached?
-      main_app.url_for(object.file)
+      object.file.url
     else
       object.thumbnail_medium
     end
@@ -51,7 +51,7 @@ class Droom::VideoSerializer < ActiveModel::Serializer
 
   def full_url
     if object.file.attached?
-      main_app.url_for(object.file)
+      object.file.url
     else
       object.thumbnail_large
     end

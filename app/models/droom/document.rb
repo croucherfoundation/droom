@@ -71,8 +71,8 @@ module Droom
     end
 
     def file_extension
-      if file_file_name
-        File.extname(file_file_name).sub(/^\./, '')
+      if file.attached?
+        File.extname(file.filename.to_s).sub(/^\./, '')
       else
         ""
       end

@@ -8,6 +8,11 @@
   - elsif scrap.image.attached?
     = image_tag scrap.image_url(:hero)
 
+  - elsif document = scrap.document
+    - if document.file.attached?
+      %p
+        = link_to document.name, droom.folder_document_url(document.folder, document), :class => "dl #{document.file_extension}"
+
   - else
     - if scrap.wordiness == 'text' || scrap.wordiness == 'paragraph'
       %p.sweet-justice{:style => "font-size: #{"%.2f" % scrap.text_size}em"}

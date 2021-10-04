@@ -8,9 +8,9 @@ module Droom
     before_validation :get_organisation
     before_validation :get_metadata
 
-    def url(style=:original, decache=true)
+    def url(style=:original)
       if file.attached?
-        url = file.url(style, decache)
+        url = file.url
         url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
       else
         ""

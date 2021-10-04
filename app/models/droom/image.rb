@@ -2,7 +2,6 @@ require "open-uri"
 
 module Droom
   class Image < Droom::DroomRecord
-    include Rails.application.routes.url_helpers
     include ActiveStorageSupport::SupportForBase64
 
     belongs_to :user
@@ -14,22 +13,19 @@ module Droom
     before_validation :get_organisation
     before_validation :read_remote_url
 
-    def url(style=:original, decache=true)
+    def sizes
+      {
+        icon:     { resize: "96x64" },
+        half:     { resize: "480x320" },
+        full:     { resize: "960x640" },
+        hero:     { resize: "1600x1600" },
+        original: { resize: "1920x1080" }
+      }
+    end
+
+    def url(size=:original)
       if file.attached?
-        case style
-        when :icon
-          size = '96x64'
-        when :half
-          size = '480x320'
-        when :full
-          size = '960x640'
-        when :hero
-          size = '1600x1600'
-        else
-          size = '1920x1080'
-        end
-        url = rails_representation_url(file.variant(resize: size))
-        url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
+        file.variant(self.sizes[size]).processed.url
       else
         ""
       end

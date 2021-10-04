@@ -133,9 +133,9 @@ module Droom
       users.where(id: ids).update_all(organisation_admin: true)
     end
 
-    def logo_url(style=:standard, decache=true)
+    def logo_url(style=:standard)
       if logo.attached?
-        url = logo.url(style, decache)
+        url = logo.url
         url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
       end
     end

@@ -18,7 +18,7 @@ module Droom
 
     def show
       if @document.file.attached?
-        redirect_to main_app.url_for(@document.file)
+        redirect_to @document.file.url
       else
         raise ActiveRecord::RecordNotFound
       end
