@@ -16,7 +16,8 @@ module Droom::Api
       if resource
         sign_in(resource_name, resource)
         yield resource if block_given?
-        render json: resource, serializer: Droom::UserAuthSerializer
+        @user = Droom::UserAuthSerializer.new(resource)
+        render json: @user
       else
         head :unauthorized
       end
@@ -40,12 +41,12 @@ module Droom::Api
           else
             bypass_sign_in @user
             @user.set_last_request_at!
-            render json: @user, serializer: Droom::UserAuthSerializer
           end
         else
           bypass_sign_in @user
-          render json: @user, serializer: Droom::UserAuthSerializer
         end
+        @user = Droom::UserAuthSerializer.new(@user)
+        render json: @user
       else
         render json: { errors: "Token not recognised" }, status: :unauthorized
       end
@@ -58,6 +59,7 @@ module Droom::Api
       token = params[:tok]
       if @user = Droom::User.find_by(unique_session_id: token)
         @user.reset_session_ids!
+        @user = Droom::UserAuthSerializer.new(@user)
         render json: @user
       else
         head :unauthorized

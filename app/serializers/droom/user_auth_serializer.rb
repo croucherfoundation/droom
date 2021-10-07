@@ -1,4 +1,6 @@
-class Droom::UserAuthSerializer < ActiveModel::Serializer
+class Droom::UserAuthSerializer
+  include JSONAPI::Serializer
+
   attributes :uid,
              :unique_session_id,
              :status,
@@ -17,19 +19,19 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
              :password_set,
              :images
 
-  def name
+  attribute :name do |object|
     object.colloquial_name
   end
 
-  def confirmed
+  attribute :confirmed do |object|
     object.confirmed?
   end
 
-  def password_set
+  attribute :password_set do |object|
     object.password_set?
   end
 
-  def images
+  attribute :images do |object|
     if object.image.attached?
       {
         icon: object.image_url(:icon),

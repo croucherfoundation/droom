@@ -5,7 +5,9 @@
 # We don't yet support remote management of all that detail, but users can update their listing,
 # which has the effect of adding a new preferred address but not deleting the old.
 #
-class Droom::UserSerializer < ActiveModel::Serializer
+class Droom::UserSerializer
+  include JSONAPI::Serializer
+
   attributes :uid,
              :status,
              :title,
@@ -28,19 +30,20 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :organisation_data,
              :password_set
 
-  def name
+
+  attribute :name do |object|
     object.colloquial_name
   end
 
-  def confirmed
+  attribute :confirmed do |object|
     object.confirmed?
   end
 
-  def password_set
+  attribute :password_set do |object|
     object.password_set?
   end
 
-  def images
+  attribute :images do |object|
     if object.image.attached?
       {
         icon: object.image_url(:icon),
@@ -56,7 +59,7 @@ class Droom::UserSerializer < ActiveModel::Serializer
     end
   end
 
-  def organisation_data
+  attribute :organisation_data do |object|
     Droom::OrganisationSerializer.new(object.organisation).as_json if object.organisation
   end
 
