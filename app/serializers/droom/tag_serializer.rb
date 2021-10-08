@@ -1,11 +1,13 @@
-class Droom::TagSerializer < ActiveModel::Serializer
-  attributes :name, :synonyms
+class Droom::TagSerializer
+  include JSONAPI::Serializer
 
-  def name
+  attributes :id, :name, :synonyms
+
+  attribute :name do |object|
     object[:name]
   end
 
-  def synonyms
+  attribute :synonyms do |object|
     object[:synonyms]
   end
 end

@@ -1,4 +1,6 @@
-class Droom::PageSerializer < ActiveModel::Serializer
+class Droom::PageSerializer
+  include JSONAPI::Serializer
+
   attributes :id,
              :slug,
              :title,
@@ -7,24 +9,23 @@ class Droom::PageSerializer < ActiveModel::Serializer
              :image_url,
              :thumbnail_url
 
-
-  def title
+  attribute :title do |object|
     object.render(:published_title)
   end
 
-  def subtitle
+  attribute :subtitle do |object|
     object.render(:published_subtitle)
   end
 
-  def content
+  attribute :content do |object|
     object.render(:published_content)
   end
 
-  def image_url
+  attribute :image_url do |object|
     object.published_image.url(:hero) if object.published_image
   end
 
-  def thumbnail_url
+  attribute :thumbnail_url do |object|
     object.published_image.url(:icon) if object.published_image
   end
 

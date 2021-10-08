@@ -5,7 +5,7 @@ module Droom::Api
 
     def index
       @pages = Droom::Page.published
-      render json: @pages, each_serializer: Droom::PageSerializer
+      render json: Droom::PageSerializer.new(@pages)
     end
 
     def show
@@ -18,7 +18,7 @@ module Droom::Api
     end
 
     def return_page
-      render json: @page, serializer: Droom::PageSerializer
+      render json: Droom::PageSerializer.new(@page)
     end
 
     def return_errors

@@ -6,20 +6,17 @@ module Droom::Api
     load_resource find_by: :uid, class: "Droom::User"
 
     def index
-      @users = Droom::UserSerializer.new(@users)
-      render json: @users
+      render json: Droom::UserSerializer.new(@users)
     end
 
     def show
-      @user = Droom::UserSerializer.new(@user)
-      render json: @user
+      render json: Droom::UserSerializer.new(@user)
     end
 
     # This would usually be a session-init call from a front end SPA
     #
     def whoami
-      @user = Droom::UserSerializer.new(current_user)
-      render json: @user
+      render json: Droom::UserSerializer.new(current_user)
     end
 
     # This is a background call to request the user information necessary for session creation.
@@ -28,20 +25,17 @@ module Droom::Api
     #
     def authenticable
       @user.ensure_unique_session_id!
-      @user = Droom::UserAuthSerializer.new(@user)
-      render json: @user
+      render json: Droom::UserAuthSerializer.new(@user)
     end
 
     def update
       @user.update(user_params)
-      @user = Droom::UserSerializer.new(@user)
-      render json: @user
+      render json: Droom::UserSerializer.new(@user)
     end
 
     def create
       if @user && @user.persisted?
-        @user = Droom::UserSerializer.new(@user)
-        render json: @user
+        render json: Droom::UserSerializer.new(@user)
       else
         render json: { errors: @user.errors.to_a }
       end

@@ -4,27 +4,31 @@ module Droom::Api
     before_action :find_or_create_venue, only: [:create]
     load_resource find_by: :slug, class: "Droom::Venue"
     # after_filter :set_pagination_headers, only: [:index]
-    
+
     def index
-      render json: @venues
+      render json: Droom::VenueSerializer.new(@venues)
     end
 
     def show
-      render json: @venue
+      return_venue
     end
 
     def update
       @venue.update(venue_params)
-      render json: @venue
+      return_venue
     end
 
     def create
-      render json: @venue
+      return_venue
     end
 
     def destroy
       @venue.destroy
       head :ok
+    end
+
+    def return_venue
+      render json: Droom::VenueSerializer.new(@venue)
     end
 
   protected
@@ -40,14 +44,14 @@ module Droom::Api
       end
       @venue ||= Droom::Venue.create(venue_params)
     end
-    
+
     def build_venue
       @venue = Droom::Venue.new
     end
 
     def get_venues
       venues = Droom::Venue.in_name_order
-      
+
       if params[:q].present?
         @fragments = params[:q].split(/\s+/)
         @fragments.each { |frag| venues = venues.matching(frag) }
@@ -59,7 +63,7 @@ module Droom::Api
       # if @show == 'all'
       #   @venues = venues
       # else
-      #   @venues = venues.page(@page).per(@show) 
+      #   @venues = venues.page(@page).per(@show)
       # end
     end
 

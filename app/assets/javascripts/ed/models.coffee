@@ -28,7 +28,7 @@ class Ed.Model extends Backbone.Model
   #
   # The main Editable model is delivered and saved as html on the page, but it will include
   # assets that need to be saved before they can be used. At the moment, only images and videos.
-  # Each saveable asset defines a set of significant attributes to which any change means a save 
+  # Each saveable asset defines a set of significant attributes to which any change means a save
   # is required.
   #
   apiRoot: () =>
@@ -139,7 +139,7 @@ class Ed.Collection extends Backbone.Collection
 # body property and collection of masthead images.
 #
 class Ed.Models.Editable extends Ed.Model
-  defaults: 
+  defaults:
     title: ""
     intro: ""
     slug: ""
@@ -174,8 +174,8 @@ class Ed.Models.Editable extends Ed.Model
       @setImageId(null)
 
   setImageId: (image) =>
-    console.log "setImage", image?.id
-    @set 'main_image_id', image?.id
+    console.log "setImageId", image?._previousAttributes?.data?.id
+    @set 'main_image_id', image?._previousAttributes?.data?.id
 
   setSlug: () =>
     title = @get('title')
@@ -344,7 +344,7 @@ class Ed.Models.Button extends Ed.Model
 #
 class Ed.Models.Notice extends Backbone.Model
   savedAttributes: []
-  defaults: 
+  defaults:
     message: "Hi there."
     notice_type: "info"
 
@@ -366,7 +366,7 @@ class Ed.Collections.Notices extends Ed.Collection
 #
 class Ed.Models.Job extends Backbone.Model
   savedAttributes: []
-  defaults: 
+  defaults:
     status: "active"
     progress: 0
     completed: false

@@ -6,7 +6,7 @@ module Droom::Api
     load_and_authorize_resource class: "Droom::Image", except: [:index, :new, :create]
 
     def index
-      render json: ActiveModel::Serializer::CollectionSerializer.new(@images, serializer: Droom::ImageSerializer)
+      render json: Droom::ImageSerializer.new(@images)
     end
 
     def show
@@ -36,7 +36,7 @@ module Droom::Api
     end
 
     def return_image
-      render json: @image, serializer: Droom::ImageSerializer
+      render json: Droom::ImageSerializer.new(@image)
     end
 
     def return_errors

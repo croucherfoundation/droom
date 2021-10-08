@@ -6,7 +6,7 @@ module Droom::Api
     load_resource class: "Droom::Tag"
 
     def index
-      render json: @tags
+      render json: Droom::TagSerializer.new(@tags)
     end
 
     protected

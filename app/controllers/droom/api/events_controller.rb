@@ -3,24 +3,24 @@ module Droom::Api
 
     before_action :get_events, only: [:index]
     before_action :find_or_create_event, only: [:create]
-    load_and_authorize_resource find_by: :uuid, class: "Droom::Event"
-    
+    load_resource find_by: :uuid, class: "Droom::Event"
+
     def index
-      render json: @events
+      render json: Droom::EventSerializer.new(@events)
     end
 
     def show
-      render json: @event
+      return_event
     end
 
     def update
       @event.update(event_params)
-      render json: @event
+      return_event
     end
 
     def create
       if @event && @event.persisted?
-        render json: @event
+        return_event
       else
         render json: {
           errors: @event.errors.to_a
@@ -31,6 +31,10 @@ module Droom::Api
     def destroy
       @event.destroy
       head :ok
+    end
+
+    def return_event
+      render json: Droom::EventSerializer.new(@event)
     end
 
   protected

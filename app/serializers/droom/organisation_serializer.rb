@@ -1,4 +1,6 @@
-class Droom::OrganisationSerializer < ActiveModel::Serializer
+class Droom::OrganisationSerializer
+  include JSONAPI::Serializer
+  
   attributes :id,
              :name,
              :chinese_name,

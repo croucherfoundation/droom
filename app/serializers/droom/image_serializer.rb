@@ -1,4 +1,6 @@
-class Droom::ImageSerializer < ActiveModel::Serializer
+class Droom::ImageSerializer
+  include JSONAPI::Serializer
+
   attributes :id,
              :file,
              :file_name,
@@ -13,36 +15,36 @@ class Droom::ImageSerializer < ActiveModel::Serializer
              :half_url,
              :full_url,
              :hero_url
- 
-  def file_name
+
+  attribute :file_name do |object|
     object.file_file_name
   end
 
-  def file_type
+  attribute :file_type do |object|
     object.file_content_type
   end
 
-  def file_size
+  attribute :file_size do |object|
     object.file_file_size
   end
- 
-  def url
+
+  attribute :url do |object|
     object.url(:original).presence || ""
   end
 
-  def icon_url
+  attribute :icon_url do |object|
     object.url(:icon).presence || ""
   end
 
-  def half_url
+  attribute :half_url do |object|
     object.url(:half).presence || ""
   end
 
-  def full_url
+  attribute :full_url do |object|
     object.url(:full).presence || ""
   end
 
-  def hero_url
+  attribute :hero_url do |object|
     object.url(:hero).presence || ""
   end
 

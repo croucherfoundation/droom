@@ -33,11 +33,11 @@ module Droom::Api
     end
 
     def return_organisations
-      render json: @organisations, each_serializer: Droom::OrganisationSerializer
+      render json: Droom::OrganisationSerializer.new(@organisations)
     end
 
     def return_organisation
-      render json: @organisation, serializer: Droom::OrganisationSerializer
+      render json: Droom::OrganisationSerializer.new(@organisation)
     end
 
     def return_errors

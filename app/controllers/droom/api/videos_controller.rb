@@ -6,7 +6,7 @@ module Droom::Api
     load_and_authorize_resource class: "Droom::Video", except: [:index, :new, :create]
 
     def index
-      render json: ActiveModel::Serializer::CollectionSerializer.new(@videos, serializer: Droom::VideoSerializer)
+      render json: Droom::VideoSerializer.new(@videos)
     end
 
     def show
@@ -35,7 +35,7 @@ module Droom::Api
     end
 
     def return_video
-      render json: @video
+      render json: Droom::VideoSerializer.new(@video)
     end
 
     def return_errors
