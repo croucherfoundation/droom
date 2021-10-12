@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency "acts_as_tree"
   s.add_dependency "acts_as_list"
 
-  s.add_dependency "active_model_serializers"
+  # s.add_dependency "active_model_serializers"
   s.add_dependency "api-pagination"
 
   s.add_dependency "settingslogic"
