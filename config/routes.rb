@@ -50,8 +50,8 @@ Droom::Engine.routes.draw do
     # droom_client authentication calls
     post '/api/users/sign_in' => 'api/sessions#create', as: :api_sign_in
     delete '/api/users/sign_out' => 'api/sessions#destroy', as: :api_sign_out
-    get '/api/authenticate/:tok' => 'api/sessions#authenticate', as: 'authenticate'
-    get '/api/deauthenticate/:tok' => 'api/sessions#deauthenticate', as: 'deauthenticate'
+    get '/api/users/authenticate/:tok' => 'api/sessions#authenticate', as: 'authenticate'
+    get '/api/users/deauthenticate/:tok' => 'api/sessions#deauthenticate', as: 'deauthenticate'
     get '/api/users/authenticable/:id' => 'api/users#authenticable', as: 'authenticable'
   end
 
