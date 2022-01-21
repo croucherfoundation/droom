@@ -185,6 +185,7 @@ en:
   events_in: "Events in %{period}"
   events_on: "Events on %{day}"
   expel: "remove from %{name} group"
+  expired_token: "Your password reset token has expired"
   file_under: "File under"
   filter_account_confirmed: "Status..."
   filter_content_type: "File type..."
@@ -623,6 +624,7 @@ en:
     pagination:
       previous: "&laquo;"
       next: "&raquo;"
+  want_to_reset_again: "Do you want to generate new reset password token ?"
   welcome_preamble: "Welcome to the Croucher Foundation. We notice that this is the first time you have used your Croucher Foundation account so before we go any further, please choose a password."
   would_you_like_to_return: "You probably want to return to"
   year: "YEAR"

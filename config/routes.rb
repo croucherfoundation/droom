@@ -39,6 +39,7 @@ Droom::Engine.routes.draw do
 
 
   devise_scope :user do
+    get "/users/expired_reset_password_token" => "users/passwords#expired_reset_password_token", as: :expired_reset_password_token
     get "/signup" => "users/registrations#new", as: :signup
     post '/register' => 'users/registrations#create', as: :register
     get "/users/registrations/confirm" => "users/registrations#confirm", as: :confirm_registration
