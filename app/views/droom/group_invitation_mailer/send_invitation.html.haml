@@ -9,7 +9,10 @@
     = @event.name
   %br/
   DateTime:
-  = "#{datetime_by_timezone(@event.start, 'date', @user).strftime('%b %d, %Y')}, #{l(datetime_by_timezone(@event.start, 'time', @user), :format => :natural)} (#{timezone} Time)"
+  - if FeatureFlags.enabled?('time-zone-feature', current_user)
+    = "#{datetime_by_timezone(@event.start, 'date', @user).strftime('%b %d, %Y')}, #{l(datetime_by_timezone(@event.start, 'time', @user), :format => :natural)} (#{timezone} Time)"
+  - else
+    = "#{@event.start.strftime('%b %d, %Y')}, #{l(@event.start_time, :format => :natural)}"
   %br/
   Place:
   = @event.venue.definite_name

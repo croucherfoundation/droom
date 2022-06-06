@@ -600,6 +600,7 @@ en:
       dom: "%d"
       time_on_date: "%l:%M%P on %-d %B %Y"
       filename: "%Y-%B-%d"
+  timezone_note: "Timezone is used to convert and display event's times according to your selected timezone here."
   to: "to"
   tooltips:
     click_to_make_tag: "Click to make this a new keyword"

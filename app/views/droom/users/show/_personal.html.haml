@@ -49,8 +49,8 @@
           = 'Gender: '
           %b
             = @user.gender.present? ? ( @user.gender == 'm' ? 'Male' : 'Female') : t(:not_known)
-        .right_pane_contents
-          = 'Timezone: '
-          %b
-            = @user.timezone.present? ? @user.timezone : t(:not_known)
-      
+        - if FeatureFlags.enabled?('time-zone-feature', current_user)
+          .right_pane_contents
+            = 'Timezone: '
+            %b
+              = @user.timezone.present? ? @user.timezone : t(:not_known)

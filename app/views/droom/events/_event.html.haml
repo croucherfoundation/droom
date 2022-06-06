@@ -4,6 +4,7 @@
 - here ||= event == @event
 - full_attachments ||= false
 - show_folder = event.folder && can?(:read, event.folder)
+- timezone_feature = FeatureFlags.enabled?('time-zone-feature', current_user)
 
 - event_master_id = event.master_id || event.id
 - if @seen_events[event_master_id]
@@ -25,10 +26,16 @@
 %div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
   = link_to event_url(event) do
     .datemark
-      %span.mon= datetime_by_timezone(event.start, 'date').strftime('%b')
-      %span.dom= datetime_by_timezone(event.start, 'date').strftime('%d')
-      - if @year || event.start.year != Date.today.year
-        %span.year= datetime_by_timezone(event.start, 'date').strftime('%Y')
+      - if timezone_feature
+        %span.mon= datetime_by_timezone(event.start, 'date').strftime('%b')
+        %span.dom= datetime_by_timezone(event.start, 'date').strftime('%d')
+        - if @year || event.start.year != Date.today.year
+          %span.year= datetime_by_timezone(event.start, 'date').strftime('%Y')
+      - else
+        %span.mon= event.start.strftime('%b')
+        %span.dom= event.start.strftime('%d')
+        - if @year || event.start.year != Date.today.year
+          %span.year= event.start.strftime('%Y')
 
   .summary
     .heading
@@ -48,21 +55,37 @@
               = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
             - else
               = event.venue.definite_name
-        %span.time
+
+        - if timezone_feature
+          %span.time
+            %svg.icon.pint-sized2
+              %use{"xlink:href" => "#clock_symbol"}
+            %time
+              = l(datetime_by_timezone(event.start, 'time'), :format => :natural)
+
+            - if event.finish?
+              = t :to
+              %time
+                = l(datetime_by_timezone(event.finish, 'time'), :format => :natural)
+            - if current_user && !current_user.timezone.present? &&  event.timezone == "London" && cookies[:timezone] == "Europe/London"
+              = "(#{t(:uk_time)})"
+          - unless cookies[:timezone] == "Asia/Hong_Kong" || ( event.timezone == "London" && cookies[:timezone] == "Europe/London" )
+            %i.note{style: "display: block;"}
+              = "#{event.start.strftime('%b %d')}, #{l(event.start_time, :format => :natural)} (#{event.timezone == 'London' ? t(:uk_time) : t(:hong_koong_time)})"
+        - else
+          %span.time
           %svg.icon.pint-sized2
             %use{"xlink:href" => "#clock_symbol"}
           %time
-            = l(datetime_by_timezone(event.start, 'time'), :format => :natural)
+            = l(event.start_time, :format => :natural)
 
           - if event.finish?
             = t :to
             %time
-              = l(datetime_by_timezone(event.finish, 'time'), :format => :natural)
-          - if current_user && !current_user.timezone.present? &&  event.timezone == "London" && cookies[:timezone] == "Europe/London"
+              = l(event.finish_time, :format => :natural)
+          - if event.timezone == "London"
             = "(#{t(:uk_time)})"
-        - unless cookies[:timezone] == "Asia/Hong_Kong" || ( event.timezone == "London" && cookies[:timezone] == "Europe/London" )
-          %i.note{style: "display: block;"}
-            = "#{event.start.strftime('%b %d')}, #{l(event.start_time, :format => :natural)} (#{event.timezone == 'London' ? t(:uk_time) : t(:hong_koong_time)})"
+
       .detail
         - if event.description?
           .content{style: "width:100%"}

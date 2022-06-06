@@ -20,8 +20,9 @@
   .description
     = f.text_area :description, class: "rte", data: {placeholder: t("placeholders.user.description")}
 
-  - if user.id
-    .note Timezone is used to convert and display event's times according to your selected timezone here.
+  - if user.id && FeatureFlags.enabled?('time-zone-feature', current_user)
+    .note
+      = t(:timezone_note)
     = f.time_zone_select :timezone,nil, selected: user.try(:timezone), default: 'Hong Kong'
 
     :javascript

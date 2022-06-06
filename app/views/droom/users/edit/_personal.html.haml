@@ -58,14 +58,16 @@
                   = f.label :gender, t(:"helpers.label.user.gender_m"), value: "m"
                 %td{valign: 'top'}
                   = f.date_select :dob, {order: [:day, :month, :year], prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }, start_year: 1940, end_year: Date.today.year}
-              %tr
-                %td
-                  Timezone
-              %tr
-                %td
-                  = f.time_zone_select :timezone,nil, selected: user.try(:timezone), default: 'Hong Kong'
-                  :javascript
-                    $('#user_timezone').selectize();
+
+              - if FeatureFlags.enabled?('time-zone-feature', current_user)
+                %tr
+                  %td
+                    Timezone
+                %tr
+                  %td
+                    = f.time_zone_select :timezone,nil, selected: user.try(:timezone), default: 'Hong Kong'
+                    :javascript
+                      $('#user_timezone').selectize();
 
 
     = render partial: 'droom/users/edit/buttons', locals: {f: f}
