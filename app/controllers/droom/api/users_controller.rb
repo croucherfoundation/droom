@@ -3,6 +3,7 @@ module Droom::Api
 
     before_action :get_users, only: [:index]
     before_action :find_or_create_user, only: [:create]
+    skip_before_action :assert_local_request!, only: [:update_timezone]
     load_resource find_by: :uid, class: "Droom::User"
 
     def index

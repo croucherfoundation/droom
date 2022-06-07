@@ -3,7 +3,7 @@
 # This is a wrapper around the standard jquer ujs ajax machinery. it gives us a more fine-grained set of callbacks
 # and a central place to do some universal work like setting pjax headers and telling elements to wait.
 #
-# The value of the remote: calls becomes more clear when we need to add more callbacks, eg from a widget like the 
+# The value of the remote: calls becomes more clear when we need to add more callbacks, eg from a widget like the
 # filepicker, but perhaps they can disappear now that we've hacked up the ujs a bit.
 #
 
@@ -13,7 +13,7 @@ jQuery ($) ->
   $.fn.remote = (opts) ->
     @each ->
       new Remote @, opts
-  
+
   class Remote
     constructor: (element, opts) ->
       @_control = $(element)
@@ -21,7 +21,7 @@ jQuery ($) ->
       @_control.attr('data-remote', true)
       @_control.attr('data-type', 'html')
       @_fily = false
-      
+
       # catch the standard jquery_ujs events and route them to our status handlers,
       @_control.on 'ajax:beforeSend', @pend
       @_control.on 'ajax:error', @fail
@@ -38,7 +38,7 @@ jQuery ($) ->
       @_control.on 'remote:cancel', @_options.on_cancel
       @activate()
 
-    activate: () => 
+    activate: () =>
       @_control.find('a.cancel').click @cancel
       @_control.trigger 'remote:prepare'
 
@@ -58,6 +58,9 @@ jQuery ($) ->
       @_control.trigger "remote:progress", prog
 
     fail: (event, xhr, status) =>
+      if xhr.status == 409
+        $(event.currentTarget).children('p.error')?.text(xhr.responseText)
+        $('input[type="submit"]').css("background-color", "#9b9b8e")
       if xhr.status == 401
         window.location.reload()
       event.stopPropagation()
@@ -82,12 +85,3 @@ jQuery ($) ->
       e.preventDefault() if e
       @_control.trigger 'remote:cancel'
       @_form?.remove()
-
-
-
-
-
-
-
-
-
