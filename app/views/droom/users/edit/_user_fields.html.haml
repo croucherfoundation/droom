@@ -23,7 +23,7 @@
   - if user.id && FeatureFlags.enabled?('time-zone-feature', current_user)
     .note
       = t(:timezone_note)
-    = f.time_zone_select :timezone,nil, selected: user.try(:timezone), default: 'Hong Kong'
+    = f.select :timezone, Timezone.names.map{ |value| [value, value] }, selected: user.try(:timezone), default: 'Hong Kong'
 
     :javascript
       $('#user_timezone').selectize();

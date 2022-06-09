@@ -65,9 +65,8 @@
                     Timezone
                 %tr
                   %td
-                    = f.time_zone_select :timezone,nil, selected: user.try(:timezone), default: 'Hong Kong'
+                    = f.select :timezone, Timezone.names.map{ |value| [value, value] }, selected: user.try(:timezone), default: 'Hong Kong'
                     :javascript
                       $('#user_timezone').selectize();
-
 
     = render partial: 'droom/users/edit/buttons', locals: {f: f}

@@ -67,11 +67,17 @@
               = t :to
               %time
                 = l(datetime_by_timezone(event.finish, 'time'), :format => :natural)
-            - if current_user && !current_user.timezone.present? &&  event.timezone == "London" && cookies[:timezone] == "Europe/London"
+
+            - if !current_user.timezone.present? &&  event.timezone == "London"
               = "(#{t(:uk_time)})"
-          - unless cookies[:timezone] == "Asia/Hong_Kong" || ( event.timezone == "London" && cookies[:timezone] == "Europe/London" )
-            %i.note{style: "display: block;"}
-              = "#{event.start.strftime('%b %d')}, #{l(event.start_time, :format => :natural)} (#{event.timezone == 'London' ? t(:uk_time) : t(:hong_koong_time)})"
+
+          - if current_user.timezone
+            - city = current_user.timezone.split('/').last
+            - ev_timezone = event.timezone === 'Hong Kong' ? 'Hongkong' : event.timezone
+            - if city && city != ev_timezone
+              %i.note{style: "display: block;"}
+                = "#{event.start.strftime('%b %d')}, #{l(event.start_time, :format => :natural)} (#{ev_timezone == 'London' ? t(:uk_time) : t(:hong_koong_time)})"
+
         - else
           %span.time
           %svg.icon.pint-sized2

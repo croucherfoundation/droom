@@ -53,9 +53,8 @@ module Droom::Api
     end
 
     def update_timezone
-      if current_user 
-        current_user.timezone = ActiveSupport::TimeZone::MAPPING.key(params[:timezone])
-        current_user.save
+      if params[:timezone]
+        current_user.update(timezone: params[:timezone])
         return current_user.timezone
       end
       return nil
