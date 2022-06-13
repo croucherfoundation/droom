@@ -53,6 +53,7 @@ module Droom
 
     def destroy
       @document.destroy
+      # @document.enqueue_for_croucher_deindexing # calling search_client method
       head :ok
     end
 

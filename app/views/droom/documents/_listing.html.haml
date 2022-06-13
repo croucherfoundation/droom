@@ -5,7 +5,13 @@
 - character_count = narrow ? 28 : 64
 
 %li.document{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id}}
-  = link_to shorten(document.name, character_count, ''), droom.folder_document_url(document.folder, document), class: "document #{document.file_extension.downcase}", target: "_blank"
+  - extension = document.file_extension.downcase
+  = link_to droom.folder_document_url(document.folder, document), class: "document #{extension == 'pdf' ? 'no-bg-image' : ''} #{extension}", target: "_blank" do
+    - if extension == 'pdf'
+      %svg.icon.medium
+        %use{"xlink:href" => "#pdf_symbol"}
+    %span
+      = shorten(document.name, character_count, '')
   - unless omit_menu
     = action_menulink(document)
   = action_menu(document)

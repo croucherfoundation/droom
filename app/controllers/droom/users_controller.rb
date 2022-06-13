@@ -172,7 +172,8 @@ module Droom
         :country_code,
         :mobile,
         :female,
-        :image
+        :image,
+        group_ids: []
       ]
 
       if current_user.organisation_admin?
@@ -187,8 +188,7 @@ module Droom
           :organisation_id,
           :organisation_admin,
           :send_confirmation,
-          :defer_confirmation,
-          group_ids: []
+          :defer_confirmation
         ]
       end
 

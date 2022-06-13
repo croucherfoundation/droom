@@ -15,6 +15,17 @@
   = form_for user, :html => {:class => 'edit user', :autocomplete => false} do |f|
 
     = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, minimal: true}
+    -# = render partial: 'droom/users/edit/groups', locals: {f: f, user: user, minimal: true}
+    = hidden_field_tag "user[group_ids][]", nil
+
+    - groups = Droom::Group.all
+    - if groups.any?
+      %div{style: 'width: 100%;'}
+        = f.label(:group_ids, class: "important") + ":"
+        - groups.each do |group|
+          %label.inline{for: "user_group_ids_#{group.id}"}
+            = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}"
+            = group.name
 
     - unless @user.confirmed?
       = f.hidden_field :send_confirmation, value: true

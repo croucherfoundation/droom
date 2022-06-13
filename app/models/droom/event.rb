@@ -29,6 +29,8 @@ module Droom
     after_destroy :destroy_related_folder
     around_update :update_folder_name
 
+    after_save :set_parent_folder_id
+
     validates :start, :presence => true, :date => true
     validates :finish, :date => {:after => :start, :allow_nil => true}
     validates :uuid, :presence => true, :uniqueness => true
@@ -58,7 +60,7 @@ module Droom
     scope :future_and_current, -> { where(['(finish > :now) OR (finish IS NULL AND start > :now)', :now => Time.zone.now]) }
 
     scope :finished, -> { where(['(finish < :now) OR (finish IS NULL AND start < :now)', :now => Time.zone.now]) }
-    
+
     scope :unbegun, -> { where(['start > :now', :now => Time.zone.now])}
 
     scope :by_finish, -> { order("finish ASC") }
@@ -97,7 +99,7 @@ module Droom
         .group("droom_events.id")
     }
 
-    scope :matching, -> fragment { 
+    scope :matching, -> fragment {
       fragment = "%#{fragment}%"
       where('droom_events.name like :f OR droom_events.description like :f', :f => fragment)
     }
@@ -123,19 +125,19 @@ module Droom
       finish = start + 1.month
       between(start, finish)
     end
-  
+
     def self.in_week(year, week)            # numbers, with a commercial week: eg calendar.occurrences.in_week(2010, 35)
       start = DateTime.commercial(year, week)
       finish = start + 1.week
       between(start, finish)
     end
-  
+
     def self.on_day (year, month, day)      # numbers: eg calendar.occurrences.on_day(2010, 12, 12)
       start = DateTime.civil(year, month, day)
       finish = start + 1.day
       between(start, finish)
     end
-    
+
     def self.in_span(span)                  # Chronic::Span
       between(span.begin, span.end)
     end
@@ -161,7 +163,7 @@ module Droom
     def attach(doc)
       self.documents << doc
     end
-    
+
     # We store the start and end points of the event as a single DateTime value to make comparison simple.
     # The setters for date and time are overridden to pass strings through chronic's natural language parser
     # and to treat numbers as epoch seconds. These should all work as you'd expect:
@@ -179,19 +181,19 @@ module Droom
       write_attribute :finish, parse_date(value)
     end
 
-    # For interface purposes we often want to separate date and time parts. These getters will return the 
+    # For interface purposes we often want to separate date and time parts. These getters will return the
     # corresponding Date or Time object.
     #
     # The `tod` gem makes time handling a bit more intuitive by concealing the date part of a Time object.
     #
-    
+
     def start
       tz = timezone || Time.zone
       if start = read_attribute(:start)
         start.in_time_zone(tz)
       end
     end
-    
+
     def start_time
       Tod::TimeOfDay(start) if start
     end
@@ -199,7 +201,7 @@ module Droom
     def start_date
       start.to_date if start
     end
-    
+
     def finish
       tz = timezone || Time.zone
       if finish = read_attribute(:finish)
@@ -234,7 +236,7 @@ module Droom
         0
       end
     end
-    
+
     def venue_name
       venue.name if venue
     end
@@ -246,7 +248,7 @@ module Droom
     def find_or_create_agenda_category(category)
       agenda_categories.where(category_id: category.id).first_or_create
     end
-        
+
     def categories_for_selection
       cats = categories.map{|c| [c.name, c.id] }
       cats.unshift(['', ''])
@@ -267,7 +269,7 @@ module Droom
       return false if self.confidential?# || Droom.events_private_by_default?
       return true
     end
-    
+
     def detail_visible_to?(user)
       return true if self.public?
       return false unless user
@@ -276,7 +278,7 @@ module Droom
       return false if self.private?
       return true
     end
-    
+
     def has_anyone?
       invitations.any?
     end
@@ -300,7 +302,7 @@ module Droom
     def finished?
       start < Time.zone.now && (!finish || finish < Time.zone.now)
     end
-    
+
     def url_with_protocol
       if url? && url !~ /^https?:\/\//
         "http://#{url}"
@@ -363,12 +365,20 @@ module Droom
         :id => id
       }
     end
-    
+
     def folder_name
       "#{name} (#{month_name} #{year})"
     end
 
   protected
+
+    # Set event_type.folder.id to event.folder.parent_id if event.event_type changed
+    #
+    def set_parent_folder_id
+      if event_type && event_type.folder
+        folder.update(parent_id: event_type.folder.id)
+      end
+    end
 
     # This is mostly for ical/webcal distributions but we also use it in the API.
     #

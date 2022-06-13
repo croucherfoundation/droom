@@ -1,11 +1,18 @@
+- if @year
+  - title = t(:events_in, period: @year)
+- elsif @direction == "past"
+  - title = t(:past_events)
+- else
+  - title = t(:calendar)
+
 - content_for :title do
-  - if @year
-    = t(:events_in, period: @year)
-  - elsif @direction == "past"
-    = t(:past_events)
-  - else
-    = t(:calendar)
-    
+  = "#{title}"
+  .button-group
+    %span.action
+      - if can?(:create, Droom::Event)
+        = link_to t(:add_event), droom.new_event_url, :class => "add", :data => {:action => "popup", :affected => "#events"}
+      = link_to t(:subscribe_to_calendar), subscribe_events_url(current_user.authentication_token, protocol: "webcal", format: "ics"), class: "subscribe"
+
 - content_for :margin do
   = render :partial => "droom/shared/calendar_holder"
   = render :partial => "droom/invitations/invitations"

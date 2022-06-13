@@ -445,6 +445,7 @@ en:
   password_reset_message_sent_html: "A message has been sent to your email address containing a link that will let you reset your password. Please allow a few minutes for it to arrive, and keep an eye on your spam folder. The address it will seem to come from is <code>%{sender}</code>."
   password_reset_welcome: "Please use the form below to set a new password for your account. A confirmation box will appear when your password meets the requirements, and the submit button will go green and become clickable when the passwords match."
   password_set: "Thank you. Your password has been set and your account is fully active."
+  past_events: "Past Events"
   pending_organisations_introduction:
     zero: "No applications"
     one: "Review one application"

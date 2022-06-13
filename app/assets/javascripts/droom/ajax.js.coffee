@@ -58,6 +58,8 @@ jQuery ($) ->
       @_control.trigger "remote:progress", prog
 
     fail: (event, xhr, status) =>
+      if xhr.status == 401
+        window.location.reload()
       event.stopPropagation()
       @_control.removeClass('waiting').addClass('erratic')
       @_control.find('input[type=submit]').removeClass('waiting')
