@@ -4,7 +4,6 @@
 - here ||= event == @event
 - full_attachments ||= false
 - show_folder = event.folder && can?(:read, event.folder)
-- timezone_feature = FeatureFlags.enabled?('time-zone-feature', current_user)
 
 - event_master_id = event.master_id || event.id
 - if @seen_events[event_master_id]
@@ -26,7 +25,7 @@
 %div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
   = link_to event_url(event) do
     .datemark
-      - if timezone_feature
+      - if @timezone_feature
         %span.mon= datetime_by_timezone(event.start, 'date').strftime('%b')
         %span.dom= datetime_by_timezone(event.start, 'date').strftime('%d')
         - if @year || event.start.year != Date.today.year
@@ -56,7 +55,7 @@
             - else
               = event.venue.definite_name
 
-        - if timezone_feature
+        - if @timezone_feature
           %span.time
             %svg.icon.pint-sized2
               %use{"xlink:href" => "#clock_symbol"}

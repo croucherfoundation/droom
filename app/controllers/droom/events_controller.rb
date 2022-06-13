@@ -10,6 +10,7 @@ module Droom
     before_action :get_events, :only => [:index, :calendar]
     before_action :composite_dates, :only => [:update, :create]
     before_action :build_event, :only => [:new, :create]
+    before_action :set_timezone_feature, :only => [:index, :show]
     load_and_authorize_resource
 
     def index
@@ -85,6 +86,10 @@ module Droom
     end
 
   protected
+  
+    def set_timezone_feature
+      @timezone_feature = FeatureFlag.enabled?('time-zone-feature', current_user)
+    end
 
     def get_my_events
       @events = Droom::Event.accessible_by(current_ability)
