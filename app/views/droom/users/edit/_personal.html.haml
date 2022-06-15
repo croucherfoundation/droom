@@ -64,8 +64,8 @@
                   %td
                     Timezone
                 %tr
-                  %td
-                    = f.select :timezone, Timezone.names.map{ |value| [value, value] }, selected: user.try(:timezone), default: 'Hong Kong'
+                  %td{colspan: "2"}
+                    = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
                     :javascript
                       $('#user_timezone').selectize();
 

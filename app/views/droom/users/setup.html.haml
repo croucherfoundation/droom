@@ -31,7 +31,7 @@
       = t "user_setup.time_zone"
     .note
       = t(:timezone_note)
-    = f.select :timezone, Timezone.names.map{ |value| [value, value] }, selected: user.try(:timezone), default: 'Hong Kong'
+    = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
 
   %p.buttons{:data => {:role => "confirmation"}}>
     = f.submit t :continue

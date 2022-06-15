@@ -54,10 +54,10 @@ module Droom::Api
 
     def update_timezone
       if params[:timezone]
-        current_user.update(timezone: params[:timezone])
+        timezone = Timezones.find_by_key(params[:timezone])
+        current_user.update(timezone: timezone)
         return current_user.timezone
       end
-      return nil
     end
 
   protected

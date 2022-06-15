@@ -1,5 +1,6 @@
 - user ||= @user
 - minimal ||= false
+- timezone_id ||= "user_timezone"
 
 - if user.image?
   - img = user.image.url(:thumb)
@@ -23,7 +24,7 @@
   - if user.id && FeatureFlag.enabled?('time-zone-feature', current_user)
     .note
       = t(:timezone_note)
-    = f.select :timezone, Timezone.names.map{ |value| [value, value] }, selected: user.try(:timezone), default: 'Hong Kong'
+    = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}, id: timezone_id
 
     :javascript
-      $('#user_timezone').selectize();
+      $("##{timezone_id}").selectize();

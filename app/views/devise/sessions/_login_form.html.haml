@@ -6,8 +6,6 @@
   - if params[:backto].present?
     = hidden_field_tag :backto, CGI.escape(params[:backto])
 
-  = hidden_field_tag :current_user, user_signed_in?, class: 'current_user_status'
-
   %p
     = f.email_field :email, class: 'login', autofocus: true, placeholder: t('placeholders.session.email')
 
