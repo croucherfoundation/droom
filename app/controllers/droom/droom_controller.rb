@@ -10,6 +10,7 @@ module Droom
 
     def set_timezone
       if user_signed_in? && current_user.timezone.present?
+        FeatureFlag.upsert_flags
         cookies[:timezone] = current_user.timezone
       else
         cookies.delete :timezone
