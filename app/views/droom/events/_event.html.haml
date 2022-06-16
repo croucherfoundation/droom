@@ -71,9 +71,9 @@
               = "(#{t(:uk_time)})"
 
           - if current_user.timezone
-            - city = current_user.timezone.split('/').last
+            - city = current_user.timezone.split(",").map{|x| x.split("/").last}
             - ev_timezone = event.timezone === 'Hong Kong' ? 'Hongkong' : event.timezone
-            - if city && city != ev_timezone
+            - if city && !city.include?(ev_timezone)
               %i.note{style: "display: block;"}
                 = "#{event.start.strftime('%b %d')}, #{l(event.start_time, :format => :natural)} (#{ev_timezone == 'London' ? t(:uk_time) : t(:hong_koong_time)})"
 
