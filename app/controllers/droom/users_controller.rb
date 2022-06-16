@@ -66,6 +66,9 @@ module Droom
     #
     def update
       @user.delete_user_permissions(user_params[:group_ids]) unless user_params[:group_ids].blank?
+      if user_params[:timezone] == "null"
+        params[:user][:timezone] = nil
+      end
       if @user.update(user_params)
         respond_with @user, location: user_url(view: @view) do |format|
           format.js { head :no_content }
