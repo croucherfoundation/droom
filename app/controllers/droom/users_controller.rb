@@ -87,6 +87,9 @@ module Droom
     # then redirects to the dashboard.
     #
     def setup
+      if setup_params[:timezone] == "null"
+        params[:user][:timezone] = nil
+      end
       current_user.assign_attributes(setup_params.merge(confirmed: true))
       if current_user.save
         sign_in current_user, :bypass => true
