@@ -1,4 +1,3 @@
-- timezone = @user.timezone.present? ? @user.timezone : 'Hong Kong'
 %p
   Dear
   = @user.formal_name + ','
@@ -7,15 +6,26 @@
 %p
   %strong
     = @event.name
+
   %br/
+
   DateTime:
+
   - if FeatureFlag.enabled?('time-zone-feature', @user)
-    = "#{datetime_by_timezone(@event.start, 'date', @user).strftime('%b %d, %Y')}, #{l(datetime_by_timezone(@event.start, 'time', @user), :format => :natural)} (#{timezone} Time)"
+    - zone = @user.timezone.present? ? @user.timezone.split(',').first : 'Hong Kong'
+    - date = datetime_by_timezone(@event.start, 'date', @user).strftime('%b %d, %Y')
+    - start = l(datetime_by_timezone(@event.start, 'time', @user), :format => :natural)
+    - finish = @event.finish ? " - #{l(datetime_by_timezone(@event.finish, 'time', @user), :format => :natural)}" : ""
+    = "#{date}, #{start}#{finish} (#{zone})"
+
   - else
-    = "#{@event.start.strftime('%b %d, %Y')}, #{l(@event.start_time, :format => :natural)}"
+    = "#{@event.start.strftime('%b %d, %Y')}, #{l(@event.start_time, :format => :natural)} #{@event.finish_time ? '- ' + l(@event.finish_time, :format => :natural) : ''}"
+
   %br/
+
   Place:
   = @event.venue.definite_name
+
 %p
   Please click below link to view the event detail:
 %p
