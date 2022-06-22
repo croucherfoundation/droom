@@ -1,5 +1,5 @@
 .user#my_profile{:data => {:refreshing => true, :url => droom.user_path(current_user, view: 'my_profile')}}
-  .mugshot.full{:style => "background-image: url(#{current_user.image.url('thumb')})"}
+  .mugshot.full{:style => "background-image: url(#{current_user.image_url(:thumb)})"}
   .detail
     %h3
       = link_to current_user.colloquial_name, droom.edit_user_url(current_user, view: 'profile'), data: {action: "popup", affected: "#my_profile"}

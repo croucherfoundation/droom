@@ -12,8 +12,8 @@
             %tr
               %td
                 %div
-                  - if user.image?
-                    - img = user.image.url(:thumb)
+                  - if user.image.attached?
+                    - img = user.image_url(:thumb)
 
                   .image-upload{:data => {:role => "imagepicker"}}
                     %a.box{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}

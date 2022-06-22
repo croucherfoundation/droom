@@ -4,8 +4,7 @@ module Droom
     belongs_to :folder
     belongs_to :scrap, :dependent => :destroy
 
-    has_attached_file :file,
-                      fog_directory: -> a { a.instance.file_bucket }
+    has_one_attached :file
 
     acts_as_list scope: :folder_id
 
@@ -58,7 +57,7 @@ module Droom
     def file_ok?
       file.exists?
     end
-    
+
     def original_file
       open(self.file.url)
     end
@@ -66,14 +65,14 @@ module Droom
     def full_path
       "#{folder.path if folder}/#{file_file_name}"
     end
-    
+
     def changed_since_creation?
       file_updated_at > created_at
     end
 
     def file_extension
-      if file_file_name
-        File.extname(file_file_name).sub(/^\./, '')
+      if file.attached?
+        File.extname(file.filename.to_s).sub(/^\./, '')
       else
         ""
       end
@@ -186,26 +185,24 @@ module Droom
     # pulled down from S3 if no other version is available.
     #
     def with_local_file
-      if file?
-        if File.file?(file.path)
-          yield file.path
-        elsif file.queued_for_write[:original]
-          yield file.queued_for_write[:original].path
-        else
-          tempfile_path = copy_to_local_tempfile
-          yield tempfile_path
-          File.delete(tempfile_path) if File.file?(tempfile_path)
-        end
+      if file.attached?
+        tempfile_path = copy_to_local_tempfile
+        yield tempfile_path
+        File.delete(tempfile_path) if File.file?(tempfile_path)
       end
     end
 
     def copy_to_local_tempfile
-      if file?
+      if file.attached?
         begin
+          file_file_name ||= name
           folder = self.class.to_s.downcase.pluralize
           tempfile_path = Rails.root.join("tmp/#{folder}/#{id}/#{file_file_name}")
           FileUtils.mkdir_p(Rails.root.join("tmp/#{folder}/#{id}"))
-          file.copy_to_local_file(:original, tempfile_path)
+
+          File.open(tempfile_path, 'wb') do |f|
+            file.download { |chunk| f.write(chunk) }
+          end
         rescue => e
           # raise Cdr::FileReadError, "Original file could not be read: #{e.message}"
           Rails.logger.warn "File read failure: #{e.message}"
