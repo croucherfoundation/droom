@@ -53,4 +53,4 @@
           .right_pane_contents
             = 'Timezone: '
             %b
-              = @user.timezone.present? ? shorten(@user.timezone, 64, ",") : t(:not_known)
+              = @user.timezone.present? ? shorten(@user.timezone.gsub(',', ', '), 64, ",") : t(:not_known)
