@@ -53,7 +53,12 @@ module Droom
       @data = Document.where(name: attributes[:name], folder_id: params[:folder_id])
 
       @document.assign_attributes(attributes)
-      @document.file.instance_write(:file_name, @document.name)
+
+      # for paperclip
+      # @document.file.instance_write(:file_name, @document.name)
+
+      # for active-storage
+      @document.file.filename = @document.name
 
       if @document.description_changed? || @data.blank?
         @document.save

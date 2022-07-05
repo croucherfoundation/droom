@@ -10,7 +10,7 @@ function DocumentEditorForm(e) {
     type: 'PUT',
     success: function(data) {
       var element = $(`#document_${replacedId}`);
-      var filename = data.file_file_name;
+      var filename = data.name;
       var extension = filename.split('.')[1];
       var shortname = filename;
 
