@@ -26,7 +26,9 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :permission_codes,
              :organisation_id,
              :organisation_data,
-             :password_set
+             :password_set,
+             :preferred_pronoun,
+             :preferred_professional_name
 
   def name
     object.colloquial_name
