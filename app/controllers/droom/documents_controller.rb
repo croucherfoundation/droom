@@ -5,7 +5,8 @@ module Droom
     before_action :get_folder, except: [:index, :suggest, :reposition]
     before_action :select_documents, only: [:index, :suggest]
     load_and_authorize_resource :document, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest]
-    before_action :find_by_name, only: [:create, :update]
+    before_action :find_by_name, only: [:create]
+
 
     def index
       respond_with @documents do |format|
@@ -47,7 +48,13 @@ module Droom
     end
 
     def update
-      @document.assign_attributes(document_params)
+      attributes = document_params
+      attributes[:name] = params[:filename] + '.' + params[:extension]
+      @data = Document.where(name: attributes[:name], folder_id: params[:folder_id])
+
+      @document.assign_attributes(attributes)
+      @document.file.instance_write(:file_name, @document.name)
+
       if @document.description_changed? || @data.blank?
         @document.save
         render json: @document.to_json

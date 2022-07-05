@@ -12,8 +12,11 @@
 
   .non-file-data
     %p.error{style: 'color: red'}
-    %p.name
-      = f.text_field :name, :class => 'name', :placeholder => t(:"helpers.label.document.name"), :autofocus => true, :readonly => "#{@document.id ? true : false}", :style => "#{@document.id ? 'background-color: #eee' : ""}"
+    %p#document-info.name
+      - name, extension = @document.name.split('.') if @document.name
+      = f.hidden_field :name, :class => 'name'
+      = text_field_tag :filename, name, class: 'filename', :placeholder => t(:"helpers.label.document.name"), :autofocus => true, style: "width: 75%"
+      = text_field_tag :extension, extension, class: 'extension', readonly: true, style: "width: 20%; background: #eee"
     %p.description
       = f.text_area :description, :class => 'description', :placeholder => t(:"helpers.label.document.description")
 
