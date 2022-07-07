@@ -5,6 +5,8 @@ module Droom
     before_action :get_folder, except: [:index, :suggest, :reposition]
     before_action :select_documents, only: [:index, :suggest]
     load_and_authorize_resource :document, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest]
+    before_action :find_by_name, only: [:create]
+
 
     def index
       respond_with @documents do |format|
@@ -29,11 +31,15 @@ module Droom
     end
 
     def create
-      @document.save!
-      if %w{listing simple}.include?(params[:view])
-        render :partial => params[:view]
+      if @data.exists?
+        render json: 'File with this name already exists!', status: 409
       else
-        render :partial => 'listing'
+        @document.save!
+        if %w{listing simple}.include?(params[:view])
+          render :partial => params[:view]
+        else
+          render :partial => 'listing'
+        end
       end
     end
 
@@ -42,8 +48,19 @@ module Droom
     end
 
     def update
-      @document.update(document_params)
-      render :partial => 'listing', :object => @document
+      attributes = document_params
+      attributes[:name] = params[:filename] + '.' + params[:extension]
+      @data = Document.where(name: attributes[:name], folder_id: params[:folder_id])
+
+      @document.assign_attributes(attributes)
+      @document.file.instance_write(:file_name, @document.name)
+
+      if @document.description_changed? || @data.blank?
+        @document.save
+        render json: @document.to_json
+      else
+        render json: 'File with this name already exists!', status: 409
+      end
     end
 
     def reposition
@@ -53,10 +70,15 @@ module Droom
 
     def destroy
       @document.destroy
+      # @document.enqueue_for_croucher_deindexing # calling search_client method
       head :ok
     end
 
   protected
+
+    def find_by_name
+      @data = Document.where(name: document_params[:name], folder_id: params[:folder_id])
+    end
 
     def select_documents
       if params[:q].present?

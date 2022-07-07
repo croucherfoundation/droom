@@ -13,7 +13,7 @@
   = render 'droom/shared/popup_header', title: title
 
   = form_for user, :html => {:class => 'edit user', :autocomplete => false} do |f|
-    = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user}
+    = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, timezone_id: "profile_timezone"}
 
     .buttons
       - if user == current_user

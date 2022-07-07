@@ -54,6 +54,7 @@ Gem::Specification.new do |s|
   s.add_dependency "rdiscount"
 
   s.add_dependency "searchkick"
+  s.add_dependency "elasticsearch"
   s.add_dependency "yomu"
   s.add_dependency "typhoeus"
 

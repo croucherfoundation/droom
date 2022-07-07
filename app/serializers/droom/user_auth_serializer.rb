@@ -17,7 +17,10 @@ class Droom::UserAuthSerializer
              :confirmed,
              :permission_codes,
              :password_set,
-             :images
+             :images,
+             :preferred_professional_name,
+             :preferred_pronoun,
+             :user_groups
 
   attribute :name do |object|
     object.colloquial_name
@@ -45,6 +48,10 @@ class Droom::UserAuthSerializer
         standard: ""
       }
     end
+  end
+
+  def user_groups
+    object.groups.pluck(:name) if object.groups.any?
   end
 
 end

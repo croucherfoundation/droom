@@ -1,5 +1,6 @@
 - user ||= @user
 - minimal ||= false
+- timezone_id ||= "user_timezone"
 
 - if user.image.attached?
   - img = user.image.url(:thumb)
@@ -19,3 +20,11 @@
 
   .description
     = f.text_area :description, class: "rte", data: {placeholder: t("placeholders.user.description")}
+
+  - if user.id && FeatureFlag.enabled?('time-zone-feature', current_user)
+    .note
+      = t(:timezone_note)
+    = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}, id: timezone_id
+
+    :javascript
+      $("##{timezone_id}").selectize();

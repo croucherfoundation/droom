@@ -1,0 +1,44 @@
+%p
+  Dear
+  = @user.formal_name + ','
+%p
+  You are invited to join following event from Croucher Foundation.
+%p
+  %strong
+    = @event.name
+
+  %br/
+
+  DateTime:
+
+  - if FeatureFlag.enabled?('time-zone-feature', @user)
+    - zone = @user.timezone.present? ? @user.timezone.split(',').first : 'Hong Kong'
+    - date = datetime_by_timezone(@event.start, 'date', @user).strftime('%b %d, %Y')
+    - start = l(datetime_by_timezone(@event.start, 'time', @user), :format => :natural)
+    - finish = @event.finish ? " - #{l(datetime_by_timezone(@event.finish, 'time', @user), :format => :natural)}" : ""
+    = "#{date}, #{start}#{finish} (#{zone})"
+
+  - else
+    = "#{@event.start.strftime('%b %d, %Y')}, #{l(@event.start_time, :format => :natural)} #{@event.finish_time ? '- ' + l(@event.finish_time, :format => :natural) : ''}"
+
+  %br/
+
+  Place:
+  = @event.venue.definite_name
+
+%p
+  Please click below link to view the event detail:
+%p
+  = link_to "Click here to view the event detail", event_url(@event)
+%p
+  Please don’t hesitate to contact me if you have any difficulties accessing the site or finding the information
+  you need. If anything goes wrong or could be improved, feel free also to contact our web builder
+  directly: his name is Aung Kyaw Phyo and he can be reached at
+  = mail_to("akp@binarylab.io") + "."
+
+%p
+  Regards,
+  %br
+  David Foster
+  %br
+  = link_to "Croucher Foundation", "http://www.croucher.org.hk/", style: "color: black;"

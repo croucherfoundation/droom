@@ -3,6 +3,7 @@ module Droom::Api
 
     before_action :get_users, only: [:index]
     before_action :find_or_create_user, only: [:create]
+    skip_before_action :assert_local_request!, only: [:update_timezone]
     load_resource find_by: :uid, class: "Droom::User"
 
     def index
@@ -51,6 +52,14 @@ module Droom::Api
       head :ok
     end
 
+    def update_timezone
+      if params[:timezone]
+        timezone = Timezones.find_by_key(params[:timezone])
+        current_user.update(timezone: timezone)
+        return current_user.timezone
+      end
+    end
+
   protected
 
     def find_or_create_user
@@ -83,7 +92,7 @@ module Droom::Api
     end
 
     def user_params
-      params.require(:user).permit(:uid, :person_uid, :title, :family_name, :given_name, :chinese_name, :honours, :affiliation, :email, :phone, :mobile, :description, :address, :post_code, :correspondence_address, :country_code, :organisation_id, :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data, :image_name, :last_request_at)
+      params.require(:user).permit(:uid, :person_uid, :title, :family_name, :given_name, :chinese_name, :honours, :affiliation, :email, :phone, :mobile, :description, :address, :post_code, :correspondence_address, :country_code, :organisation_id, :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data, :image_name, :last_request_at, :preferred_pronoun, :preferred_professional_name)
     end
 
   end

@@ -2,8 +2,9 @@ module Droom::Users
   class PasswordsController < Devise::PasswordsController
     respond_to :html, :json
     before_action :set_access_control_headers
-    skip_before_action :require_no_authentication, only: [:completed]
+    skip_before_action :require_no_authentication, only: [:completed, :edit]
     before_action :remember_original_destination, only: [:new]
+    before_action :clear_session, only: [:edit]
 
     def show
       render
@@ -11,6 +12,19 @@ module Droom::Users
 
     def completed
       render
+    end
+
+    def clear_session
+      original_token       = params[:reset_password_token]
+      reset_password_token = Devise.token_generator.digest(self, :reset_password_token, original_token)
+      sign_out(resource_name)
+      unless Droom::User.find_by_reset_password_token(reset_password_token)
+        redirect_to droom.expired_reset_password_token_url
+      end
+    end
+
+    def expired_reset_password_token
+
     end
 
     def after_resetting_password_path_for(resource)
