@@ -1,5 +1,6 @@
 - @seen_events ||= []
 - event ||= @event
+- event_invitation ||= @event_invitation
 - here ||= event == @event
 - full_attachments ||= false
 - show_folder = event.folder && can?(:read, event.folder)
@@ -24,10 +25,16 @@
 %div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
   = link_to event_url(event) do
     .datemark
-      %span.mon= event.start.strftime('%b')
-      %span.dom= event.start.strftime('%d')
-      - if @year || event.start.year != Date.today.year
-        %span.year= event.start.strftime('%Y')
+      - if @timezone_feature
+        %span.mon= datetime_by_timezone(event.start, 'date').strftime('%b')
+        %span.dom= datetime_by_timezone(event.start, 'date').strftime('%d')
+        - if @year || event.start.year != Date.today.year
+          %span.year= datetime_by_timezone(event.start, 'date').strftime('%Y')
+      - else
+        %span.mon= event.start.strftime('%b')
+        %span.dom= event.start.strftime('%d')
+        - if @year || event.start.year != Date.today.year
+          %span.year= event.start.strftime('%Y')
 
   .summary
     .heading
@@ -47,7 +54,31 @@
               = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
             - else
               = event.venue.definite_name
-        %span.time
+
+        - if @timezone_feature
+          %span.time
+            %svg.icon.pint-sized2
+              %use{"xlink:href" => "#clock_symbol"}
+            %time
+              = l(datetime_by_timezone(event.start, 'time'), :format => :natural)
+
+            - if event.finish?
+              = t :to
+              %time
+                = l(datetime_by_timezone(event.finish, 'time'), :format => :natural)
+
+            - if !current_user.timezone.present? &&  event.timezone == "London"
+              = "(#{t(:uk_time)})"
+
+          - if current_user.timezone
+            - city = current_user.timezone.split(",").map{|x| x.split("/").last}
+            - ev_timezone = event.timezone === 'Hong Kong' ? 'Hongkong' : event.timezone
+            - if city && !city.include?(ev_timezone)
+              %i.note{style: "display: block;"}
+                = "#{event.start.strftime('%b %d')}, #{l(event.start_time, :format => :natural)} (#{ev_timezone == 'London' ? t(:uk_time) : t(:hong_koong_time)})"
+
+        - else
+          %span.time
           %svg.icon.pint-sized2
             %use{"xlink:href" => "#clock_symbol"}
           %time
@@ -62,7 +93,7 @@
 
       .detail
         - if event.description?
-          .content
+          .content{style: "width:100%"}
             = sanitize(event.description)
         - if show_folder && !full_attachments
           - if event.folder.populated? || can?(:read, event.folder)
@@ -75,4 +106,8 @@
   - if show_folder && full_attachments
     .addenda
       = render :partial => 'droom/events/attachments', :locals => {:event => event}
+      - if event_invitation
+        %h3{style: "padding-top: 1.5rem"}
+          = t :invite_event
+        = render :partial => 'droom/events/event_invitation', :locals => {:event => event}
       = render :partial => 'droom/events/invitations', :locals => {:event => event}

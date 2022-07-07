@@ -14,7 +14,7 @@
 
   = form_for user, :html => {:class => 'edit user', :autocomplete => false} do |f|
 
-    = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, minimal: true}
+    = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, minimal: true, timezone_id: "simple_timezone"}
     -# = render partial: 'droom/users/edit/groups', locals: {f: f, user: user, minimal: true}
     = hidden_field_tag "user[group_ids][]", nil
 

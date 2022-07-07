@@ -15,7 +15,9 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
              :confirmed,
              :permission_codes,
              :password_set,
-             :images
+             :images,
+             :preferred_professional_name,
+             :preferred_pronoun
 
   def name
     object.colloquial_name

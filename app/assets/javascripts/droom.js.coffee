@@ -26,6 +26,7 @@
 #= require droom/widgets
 #= require droom/editors
 #= require droom/grid
+#= require droom/document_editor
 #= require_self
 
 
