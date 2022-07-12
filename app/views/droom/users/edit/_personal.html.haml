@@ -48,6 +48,17 @@
                       = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")
 
               %tr
+                %td Professional Name
+                %td Pronoun
+              %tr
+                %td
+                  %span.pro_name>
+                    = f.text_field :preferred_professional_name, placeholder: 'Professional name'
+                %td
+                  %span.pronoun>
+                    = f.select :preferred_pronoun, [['He', 'He'], ['She', 'She'], ['They', 'They']]
+
+              %tr
                 %td Gender
                 %td Date of birth
               %tr
