@@ -39,7 +39,16 @@
           = 'Chinese name: '
           %b
             = @user.chinese_name.present? ? @user.chinese_name : t(:not_known)
-
+      .right_pane_container
+        .right_pane_contents
+          = 'Professional name: '
+          %b
+            = @user.preferred_professional_name.present? ? @user.preferred_professional_name : t(:not_known)
+      .right_pane_container
+        .right_pane_contents
+          = 'Pronoun: '
+          %b
+            = @user.preferred_pronoun.present? ? @user.preferred_pronoun : t(:not_known)
       .right_pane_container
         .right_pane_contents
           = 'Date of birth: '
