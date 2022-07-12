@@ -180,6 +180,8 @@ module Droom
         :female,
         :image,
         :timezone,
+        :preferred_professional_name,
+        :preferred_pronoun,
         group_ids: []
       ]
 
