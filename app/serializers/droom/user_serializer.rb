@@ -30,7 +30,8 @@ class Droom::UserSerializer
              :organisation_data,
              :password_set,
              :preferred_pronoun,
-             :preferred_professional_name
+             :preferred_professional_name,
+             :user_groups
 
 
   attribute :name do |object|
@@ -63,6 +64,10 @@ class Droom::UserSerializer
 
   attribute :organisation_data do |object|
     Droom::OrganisationSerializer.new(object.organisation).as_json if object.organisation
+  end
+
+  attribute :user_groups do |object|
+    object.groups.pluck(:name) if object.groups.any?
   end
 
 end

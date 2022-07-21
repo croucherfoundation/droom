@@ -50,7 +50,7 @@ class Droom::UserAuthSerializer
     end
   end
 
-  def user_groups
+  attribute :user_groups do |object|
     object.groups.pluck(:name) if object.groups.any?
   end
 
