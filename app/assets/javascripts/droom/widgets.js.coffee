@@ -1,4 +1,4 @@
-# This is a collection of interface elements. They're all self-contained. Most are attached to a 
+# This is a collection of interface elements. They're all self-contained. Most are attached to a
 # form element and cause its value to change, but there are also some standalone widgets that live
 # on the page and follow their own rules.
 
@@ -116,14 +116,14 @@ jQuery ($) ->
       @_link = @_container.find('a[data-action="pick"]')
       @_filefield = @_container.find('input[type="file"]')
       @_file = null
-      @_filename = ""
+      @_filename = $('input.name').val() ? ""
       @_ext = ""
       @_fields = @_container.siblings('.non-file-data')
       @_form.bind 'remote:upload', @initProgress
       @_form.bind 'remote:progress', @progress
       @_link.bind 'click', @picker
       @_filefield.bind 'change', @picked
-    
+
     picker: (e) =>
       e.preventDefault() if e
       @_filefield.click()
@@ -142,7 +142,13 @@ jQuery ($) ->
 
     display: () =>
       @_link.addClass(@_ext) if @_ext in @extensions()
-      @_form.find('input.name').val(@_filename) if $('input.name').val() is @_previous_filename
+
+      if $('input.name').val() is @_previous_filename
+        @_form.find('input.name').val(@_filename).change()
+        if @_form.find('#document-info')
+          @_form.find('input.filename').val(@_filename.split('.')[0])
+          @_form.find('input.extension').val(@_filename.split('.')[1])
+
 
     initProgress: (e, xhr, settings) =>
       if @_file?
@@ -209,7 +215,7 @@ jQuery ($) ->
       @_field = $(element)
       @_container = $('<div class="starpicker" />')
       @_value = @_field.val()
-      @_value = 
+      @_value =
       for i in [1..5]
         do (i) =>
           star = $('<span class="star" />')
@@ -229,7 +235,7 @@ jQuery ($) ->
       @unhover()
       i = parseInt(star.attr('data-score'))
       @_stars.slice(0, i).addClass('hovered')
-    
+
     unhover: (e, star) =>
       @_stars.removeClass('hovered')
 
@@ -416,7 +422,7 @@ jQuery ($) ->
 
   $.fn.quick_search_form = (options) ->
     @each ->
-      defaults = 
+      defaults =
         fast: true
         into: "#found"
         auto: false
@@ -436,7 +442,7 @@ jQuery ($) ->
     @
 
   $.fn.faceting_search = (options) ->
-    defaults = 
+    defaults =
       fast: ".facet"
       history: true
       threshold: 4
@@ -452,7 +458,7 @@ jQuery ($) ->
       threshold: 3
       history: false
     }
-    
+
     constructor: (element, opts) ->
       @_form = $(element)
       @_options = $.extend @constructor.default_options, opts
@@ -504,7 +510,7 @@ jQuery ($) ->
         @submit(e)
       if (k >= 46 and k <= 90) or (k >= 96 and k <= 111) or k is 8
         @changed(e)
-    
+
     changed: (e) =>
       @submit_soon() unless @_inactive
 
@@ -558,7 +564,7 @@ jQuery ($) ->
       qs ?= @serialize()
       url = window.location.pathname + "?" + qs
       title = document.title + ' search'
-      state = 
+      state =
         html: results
         qs: qs
       history.pushState state, title, url
@@ -688,7 +694,7 @@ jQuery ($) ->
       localStorage?.setItem("show_folder_#{@_label}", "open")
       @_container.addClass('open')
       @_list.stop().slideDown("fast")
-      
+
     hide: (e) =>
       e.preventDefault() if e
       localStorage?.setItem("show_folder_#{@_label}", "closed")
@@ -701,7 +707,7 @@ jQuery ($) ->
   $.fn.slug_field = ->
     @each ->
       new SlugField(@)
-      
+
   class SlugField
     constructor: (element) ->
       @_field = $(element)
@@ -711,10 +717,10 @@ jQuery ($) ->
       @_base.bind "keyup", @update
       @_previous_base = @_base.val()
       @set()
-    
+
     update: (e) =>
       @set() if $.significantKeypress(e.which)
-      
+
     set: () =>
       old_base = @_previous_base
       old_slug = @_field.val()
@@ -740,8 +746,8 @@ jQuery ($) ->
     @each ->
       new Calendar(@)
     @
-    
-  # The calendar changer action usually belongs only to the next and previous buttons that sit in the 
+
+  # The calendar changer action usually belongs only to the next and previous buttons that sit in the
   # calendar table, but you can also put links on the page to specific months.
   #
   $.fn.calendar_changer = ->
@@ -755,7 +761,7 @@ jQuery ($) ->
     @
 
   # calendar_search links push their text into the suggestion box by way of the calendar.search function.
-  # 
+  #
   $.fn.calendar_search = ->
     @click (e) ->
       e.preventDefault() if e
@@ -780,20 +786,20 @@ jQuery ($) ->
 
 
   # The page turner is a pagination link that retrieves a page of results remotely
-  # then slides it into view from either the right or left depending on its relation 
+  # then slides it into view from either the right or left depending on its relation
   # to the current page.
 
   $.fn.sliding_link = () ->
     @each ->
       new Slider(@)
-  
+
   class Slider
     constructor: (element) ->
       @_link = $(element)
       @_selector = @_link.attr('data-affected') || @defaultSelector()
       @_direction = @getDirection()
       @_page = @getPage()
-      
+
       # build viewport and sliding frame around the the content-holding @_page
       @_frame = @_page.parents('.scroller').first()
       unless @_frame.length
@@ -808,21 +814,21 @@ jQuery ($) ->
       @_width = @_page.width()
       @_link.remote
         on_success: @receive
-      
+
     getPage: =>
       @_link.parents(@_selector).first()
-      
+
     getDirection: =>
       @_link.attr "data-direction"
 
     defaultSelector: () =>
       '.scrap'
-      
+
     receive: (e, r) =>
       response = $(r)
       @sweep response
       response.activate()
-      
+
     sweep: (r) =>
       @_old_page = @_page
       @_viewport.css("overflow", "hidden")
@@ -832,7 +838,7 @@ jQuery ($) ->
       else
         @_frame.prepend(r)
         @_viewport.scrollLeft(@_width).animate {scrollLeft: 0}, 'slow', 'glide', @cleanup
-          
+
     cleanup: () =>
       @_viewport.scrollLeft(0)
       @_old_page.remove()
@@ -847,10 +853,10 @@ jQuery ($) ->
     constructor: (element) ->
       super
       @_page_number = parseInt(@_link.parent().siblings('.current').text())
-    
+
     defaultSelector: () =>
       '.paginated'
-      
+
     getDirection: =>
       if @_link.attr "rel"
         @_direction = if @_link.attr("rel") == "next" then "right" else "left"
@@ -959,16 +965,16 @@ jQuery ($) ->
       @_table.find('a.next, a.previous').calendar_changer()
       @_table.find('a.day').click @searchForDay
       @_table.find('a.month').click @searchForMonth
-      
+
     cache: (year, month, table) =>
       @_cache[year] ?= {}
       @_cache[year][month] ?= table
-    
+
     cached:  (year, month) =>
       @_cache[year] ?= {}
       @_cache[year][month]
-    
-    # The calendar is intrinsically refreshable: it responds to a 'refresh' event by calling this method 
+
+    # The calendar is intrinsically refreshable: it responds to a 'refresh' event by calling this method
     # to reload the currently displayed month/year.
     #
     refresh_in_place: () =>
@@ -977,13 +983,13 @@ jQuery ($) ->
         dataType: "html"
         url: "/events/calendar.js?month=#{encodeURIComponent(@_month)}&year=#{encodeURIComponent(@_year)}"
         success: @update_quietly
-      
+
     update_quietly: (response) =>
       @_container.find('a').removeClass('waiting')
       @_scroller.find('table').remove()
       @_scroller.append(response)
       @init()
-      
+
     show: (year, month) =>
       if cached = @cached(year, month)
         @update(cached, year, month)
@@ -994,12 +1000,12 @@ jQuery ($) ->
           url: "/events/calendar.js?month=#{encodeURIComponent(month)}&year=#{encodeURIComponent(year)}"
           success: (response) =>
             @update(response, year, month)
-    
+
     update: (response, year, month) =>
       @_container.find('a').removeClass('waiting')
       direction = "left" if ((year * 12) + month) > ((@_year * 12) + @_month)
       @sweep response, direction
-    
+
     sweep: (table, direction) =>
       old = @_scroller.find('table')
       if direction == 'left'
@@ -1013,11 +1019,11 @@ jQuery ($) ->
         @_container.scrollLeft(@_width).animate {scrollLeft: 0}, 'fast', () =>
           old.remove()
           @init()
-    
+
     monthName: () =>
       months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
       months[@_month-1]
-      
+
     searchForm: =>
       @_form ?= $('#suggestions')
 
@@ -1042,7 +1048,7 @@ jQuery ($) ->
   # and new objects.
   #
   # The suggestion box itself is just `suggestible`. Other inputs are generally more restricted.
-  #  
+  #
   $.fn.suggestible = (options) ->
     options = $.extend(
       submit_form: true
@@ -1165,7 +1171,7 @@ jQuery ($) ->
 
     reset: () =>
       @dropdown.reset().hide()
-      
+
     get: (e, force) =>
       @wait()
       query = @prompt.val()
@@ -1189,7 +1195,7 @@ jQuery ($) ->
         blank_re = new RegExp("(" + @blanks.join("|") + ")")
         return blank_re.test(query)
       false
-    
+
     suggest: (suggestions) =>
       @unwait()
       @dropdown.show(suggestions)
@@ -1216,7 +1222,7 @@ jQuery ($) ->
     unwait: () =>
       @button.removeClass "waiting"
       @prompt.removeClass "waiting"
-      
+
 
 
 
@@ -1262,10 +1268,10 @@ jQuery ($) ->
       @get_preview(id)
       @get_thumbnail(id)
       @options.afterSelect?.call(@, value)
-    
+
     get_preview: (id) =>
       $.get "/videos/#{id}.js", @show_preview, 'html'
-    
+
     show_preview: (response) =>
       @preview_holder.empty().show().html(response)
 
@@ -1297,7 +1303,7 @@ jQuery ($) ->
         top: @hook.position().top + @hook.outerHeight() - 2
         left: @hook.position().left
         width: width
-      
+
     populate: (items) =>
       @reset()
       if items.length > 0
@@ -1314,7 +1320,7 @@ jQuery ($) ->
               @select(value, id)
           $("<li></li>").addClass(item.type).append(link).appendTo(@drop)
       @items = @drop.find("a")
-        
+
     reset: () =>
       @drop.empty()
 
@@ -1331,24 +1337,24 @@ jQuery ($) ->
     cancel: (e) =>
       @hide()
       @options.on_cancel?()
-    
+
     show: (values) =>
       @place()
       @populate(values) if values
       unless @visible
         @drop.stop().fadeIn "fast"
         @visible = true
-      
+
     hide: () =>
       if @visible
         @drop.stop().fadeOut "fast"
         @visible = false
 
-    # the keyup and keydown handlers will first check for local significacne (ie it's a movement or action key 
+    # the keyup and keydown handlers will first check for local significacne (ie it's a movement or action key
     # that we recognise). If there is none, they call the supplied callback, if any. Event cancellation is up to
     # the called function: we don't stop propagation here.
     #
-    # On keydown we look for keys that have to be intercepted: enter, mostly. Perhaps also tab, but that's not 
+    # On keydown we look for keys that have to be intercepted: enter, mostly. Perhaps also tab, but that's not
     # very reliable.
     #
     keydown: (e) =>
@@ -1359,7 +1365,7 @@ jQuery ($) ->
       else
         @options.on_keydown?(e)
         return true
-        
+
     actionKey: (kc) =>
       switch kc
         # we may also want to catch tab here
@@ -1429,4 +1435,3 @@ jQuery ($) ->
     unHighlight: (i) =>
       if item = @items?.get(i)
         $(item).removeClass("hover")
-      

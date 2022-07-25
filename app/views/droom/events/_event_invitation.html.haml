@@ -1,0 +1,20 @@
+- invitation ||= @event_invitation
+- event ||= @event
+
+- if invitation
+  .invitations
+    .invitation{:class => invitation.status, :id => "invitation_#{invitation.id}"}
+      - if invitation.accepted?
+        %span
+        = t(:invite_event_accepted)
+      - elsif invitation.refused?
+        %span
+        = t(:invite_event_refused)
+      - else
+        %span
+        = t(:invite_event_text)
+      %span.action
+        - unless invitation.accepted? 
+          = link_to t(:accept), accept_event_invitation_url(invitation.event, invitation, event_invitation: true), :class => 'accept', :data => {:action => "replace", :method => "put", :replaced => "#invitation_#{invitation.id}"}
+        - unless invitation.refused? 
+          = link_to t(:refuse), refuse_event_invitation_url(invitation.event, invitation, event_invitation: true), :class => 'refuse', :data => {:action => "replace", :method => "put", :replaced => "#invitation_#{invitation.id}"}

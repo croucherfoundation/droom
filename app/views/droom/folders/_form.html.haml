@@ -1,6 +1,7 @@
 = form_for @folder, :html => {:class => 'edit folder'} do |f|
   = f.hidden_field :parent_id
-  
+
+  %p.error{style: 'color: red'}
   %p.name
     = f.label :name
     %br
@@ -13,7 +14,7 @@
     - else
       \/
     %br
-    = f.text_field :slug, :class => "slug", :placeholder => t("helpers.label.folder.slug"), data: {role: 'slug'}
+    = f.text_field :slug, :class => "slug", :placeholder => t("helpers.label.folder.slug"), data: {role: 'slug'}, readonly: true, style: "background: #eee"
 
   .buttons
     = f.submit t(:save_folder)
