@@ -14,8 +14,8 @@ function DocumentEditorForm(e) {
       var extension = filename.split('.')[1];
       var shortname = filename;
 
-      if (filename.length > 10) {
-        shortname = filename.substring(0, 25) + "...";
+      if (filename.length > 30) {
+        shortname = filename.substring(0, 30) + '...';
       }
 
       var styles = '';

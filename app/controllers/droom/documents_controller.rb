@@ -49,13 +49,13 @@ module Droom
 
     def update
       attributes = document_params
-      attributes[:name] = params[:filename] + '.' + params[:extension]
+      attributes[:name] = params[:filename] + params[:extension]
       @data = Document.where(name: attributes[:name], folder_id: params[:folder_id])
 
       @document.assign_attributes(attributes)
-      @document.file.instance_write(:file_name, @document.name)
 
       if @document.description_changed? || @data.blank?
+        @document.synchronize_with_s3 if @document.name_changed?
         @document.save
         render json: @document.to_json
       else
