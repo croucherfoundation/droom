@@ -10,7 +10,7 @@
   - user = Droom::User.new
   = form_for [@group, @membership], :html => {:class => 'edit user'} do |f|
     = f.fields_for :user, user do |uf|
-      = render partial: "droom/users/edit/user_fields", locals: {f: uf, user: user}
+      = render partial: "droom/users/edit/user_fields", locals: {f: uf, user: user, timezone_id: "membership_timezone"}
       %p.admin
         = uf.check_box :defer_confirmation
         = uf.label :defer_confirmation
@@ -22,5 +22,5 @@
 #choose_user
   %p{style: "margin: 20px"}
     The person-picker will be here shortly.
-    You can also add people to groups on the 
+    You can also add people to groups on the
     = link_to('user admin page', admin_users_url) + '.'

@@ -29,6 +29,8 @@ module Droom
     after_destroy :destroy_related_folder
     around_update :update_folder_name
 
+    after_save :set_parent_folder_id
+
     validates :start, :presence => true, :date => true
     validates :finish, :date => {:after => :start, :allow_nil => true}
     validates :uuid, :presence => true, :uniqueness => true
@@ -373,6 +375,14 @@ module Droom
     end
 
   protected
+
+    # Set event_type.folder.id to event.folder.parent_id if event.event_type changed
+    #
+    def set_parent_folder_id
+      if event_type && event_type.folder
+        folder.update(parent_id: event_type.folder.id)
+      end
+    end
 
     # This is mostly for ical/webcal distributions but we also use it in the API.
     #

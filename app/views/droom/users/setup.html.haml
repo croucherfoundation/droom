@@ -26,5 +26,12 @@
     = t "user_setup.set_password"
   = render "droom/users/edit/password_fields", f: f, user: user, with_label: false, with_submit: false
 
+  - if FeatureFlag.enabled?('time-zone-feature', current_user)
+    %h3
+      = t "user_setup.time_zone"
+    .note
+      = t(:timezone_note)
+    = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
+
   %p.buttons{:data => {:role => "confirmation"}}>
     = f.submit t :continue

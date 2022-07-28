@@ -28,7 +28,9 @@ class Droom::UserSerializer
              :permission_codes,
              :organisation_id,
              :organisation_data,
-             :password_set
+             :password_set,
+             :preferred_pronoun,
+             :preferred_professional_name
 
 
   attribute :name do |object|

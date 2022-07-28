@@ -18,7 +18,11 @@ module Droom::Concerns::Imaged
 
   def image_url(size=:standard)
     if image.attached?
-      image.variant(self.sizes[size]).processed.url
+      begin
+        image.variant(self.sizes[size]).processed.url
+      rescue => e
+        ""
+      end
     else
       ""
     end

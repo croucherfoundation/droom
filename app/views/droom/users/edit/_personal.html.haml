@@ -48,6 +48,17 @@
                       = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")
 
               %tr
+                %td Professional Name
+                %td Pronoun
+              %tr
+                %td
+                  %span.pro_name>
+                    = f.text_field :preferred_professional_name, placeholder: 'Professional name'
+                %td
+                  %span.pronoun>
+                    = f.select :preferred_pronoun, [['He', 'He'], ['She', 'She'], ['They', 'They']]
+
+              %tr
                 %td Gender
                 %td Date of birth
               %tr
@@ -58,5 +69,15 @@
                   = f.label :gender, t(:"helpers.label.user.gender_m"), value: "m"
                 %td{valign: 'top'}
                   = f.date_select :dob, {order: [:day, :month, :year], prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }, start_year: 1940, end_year: Date.today.year}
+
+              - if FeatureFlag.enabled?('time-zone-feature', current_user)
+                %tr
+                  %td
+                    Timezone
+                %tr
+                  %td{colspan: "2"}
+                    = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
+                    :javascript
+                      $('#user_timezone').selectize();
 
     = render partial: 'droom/users/edit/buttons', locals: {f: f}

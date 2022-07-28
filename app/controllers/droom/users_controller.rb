@@ -66,6 +66,9 @@ module Droom
     #
     def update
       @user.delete_user_permissions(user_params[:group_ids]) unless user_params[:group_ids].blank?
+      if user_params[:timezone] == "null"
+        params[:user][:timezone] = nil
+      end
       if @user.update(user_params)
         respond_with @user, location: user_url(view: @view) do |format|
           format.js { head :no_content }
@@ -84,6 +87,9 @@ module Droom
     # then redirects to the dashboard.
     #
     def setup
+      if setup_params[:timezone] == "null"
+        params[:user][:timezone] = nil
+      end
       current_user.assign_attributes(setup_params.merge(confirmed: true))
       if current_user.save
         sign_in current_user, :bypass => true
@@ -172,7 +178,11 @@ module Droom
         :country_code,
         :mobile,
         :female,
-        :image
+        :image,
+        :timezone,
+        :preferred_professional_name,
+        :preferred_pronoun,
+        group_ids: []
       ]
 
       if current_user.organisation_admin?
@@ -187,8 +197,7 @@ module Droom
           :organisation_id,
           :organisation_admin,
           :send_confirmation,
-          :defer_confirmation,
-          group_ids: []
+          :defer_confirmation
         ]
       end
 
@@ -207,7 +216,7 @@ module Droom
     end
 
     def setup_params
-      params.require(:user).permit(:title, :given_name, :family_name, :chinese_name, :honours, :password, :password_confirmation)
+      params.require(:user).permit(:title, :given_name, :family_name, :chinese_name, :honours, :password, :password_confirmation, :timezone)
     end
 
     def set_organisation_params

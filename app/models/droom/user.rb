@@ -614,6 +614,14 @@ module Droom
       end
     end
 
+    def email_name
+      unless title.present?
+        given_name
+      else
+        [title, family_name].join(' ')
+      end
+    end
+
     def colloquial_name
       [title_if_it_matters, informal_name].compact.join(' ')
     end
