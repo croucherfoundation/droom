@@ -42,9 +42,14 @@ module Droom
         options[:primary_key] ||= :id
         terms = facet.map{|f| f[:key]}
         models = klass.constantize.where({options[:primary_key] => terms}).to_a
-        facet.each do |f|
-          if model = models.find {|m| m.send(options[:primary_key]) == f[:key]}
-            f[:name] = model.name
+        if options[:group_option] == true
+          group_options = prepare_group_options(models, facet)
+          return ungrouped_and_grouped_options_for_select(group_options, options[:selected])
+        else
+          facet.each do |f|
+            if model = models.find {|m| m.send(options[:primary_key]) == f[:key]}
+              f[:name] = model.name
+            end
           end
         end
       end
@@ -53,6 +58,41 @@ module Droom
       options_for_select(data, options[:selected])
     end
     alias :facet_option_tags :facet_options
+
+    def prepare_group_options(collection, facet)
+      object = {}
+      collection.each do |c|
+        pf = facet.select{|f| f[:key] == c.code}.first
+        next unless pf.present?
+
+        object[c.code] ||= []
+        children = collection.select{|coll| coll.parent_code == c.code}
+
+        if children.any?
+          total_count = pf[:doc_count].to_i
+          object[c.code] << "#{c.name || c.code}"
+
+          child_options = []
+          children.each do |child|
+            cf = facet.select{|f| f[:key] == child.code}.first
+            next unless cf.present?
+
+            total_count += cf[:doc_count].to_i
+
+            child_options << ["#{child.name || child.code} (#{cf[:doc_count]})", child.code]
+
+            collection.delete_if{|c| c.code == child.code}
+          end
+
+          child_options << ["All (#{total_count})", c.code]
+          object[c.code] << child_options.sort_by{|op| op.first }
+        else
+          object[c.code] = ["#{c.name || c.code} (#{pf[:doc_count]})", c.code].flatten
+        end
+
+      end
+      object.values.sort_by{|op| op.first}
+    end
 
     def aggs_options(agg, options={})
       if klass = options[:klass]
@@ -86,7 +126,7 @@ module Droom
         link_to t(:edit), "#", html_options if can?(:edit, thing)
       end
     end
-    
+
     def action_menu(thing, locals={})
       if can?(:edit, thing)
         type = thing.class.to_s.underscore
@@ -95,7 +135,7 @@ module Droom
         render :partial => "#{type.pluralize}/action_menu", :locals => locals
       end
     end
-    
+
     def help_link(slug, category=nil, title="")
       render 'droom/helps/show/link', slug: slug, category: category, title: title
     end
@@ -106,7 +146,7 @@ module Droom
 
     def organisation_admin?(organisation=nil)
       user_signed_in? &&
-        current_user.admin? || 
+        current_user.admin? ||
         (current_user.organisation_admin? && !organisation || current_user.organisation == organisation)
     end
 
@@ -151,7 +191,7 @@ module Droom
     def month_header_for(date)
       content_tag('h3', l(date, :format => :month_header))
     end
-    
+
     def pagination_summary(collection, options = {})
       entry_name = options[:entry_name] || (collection.empty?? 'entry' : collection.first.class.name.underscore.sub('_', ' '))
       summary = if collection.num_pages < 2
@@ -221,7 +261,7 @@ module Droom
 
     def recaptcha_execute(action)
       id = "recaptcha_token_#{SecureRandom.hex(10)}"
-  
+
       raw %Q{
         <input name="recaptcha_token" type="hidden" id="#{id}"/>
         <script>

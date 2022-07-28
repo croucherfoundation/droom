@@ -42,7 +42,7 @@ module Droom
     end
 
     def file_name=(name)
-      self.file_file_name = name
+      self.file.filename = name
     end
 
     def file_data=(data)

@@ -53,10 +53,10 @@ module Droom
       @data = Document.where(name: attributes[:name], folder_id: params[:folder_id])
 
       @document.assign_attributes(attributes)
-      @document.file.instance_write(:file_name, @document.name)
-
+      
       if @document.description_changed? || @data.blank?
         @document.save
+        @document.file.update(filename: @document.name)
         render json: @document.to_json
       else
         render json: 'File with this name already exists!', status: 409
