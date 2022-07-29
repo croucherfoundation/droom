@@ -42,65 +42,65 @@
         = link_to event.name, event_url(event), :class => "name"
         = action_menulink(event)
       = action_menu(event)
+      .detail-practicalities
+        %p.practicalities
+          - if event.venue
+            %span.location
+              %svg.icon.pint-sized
+                %use{"xlink:href" => "#location_symbol"}
+              - if event.venue.url
+                = link_to event.venue.definite_name, event.venue.url
+              - elsif Droom.show_venue_map?
+                = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
+              - else
+                = event.venue.definite_name
 
-      %p.practicalities
-        - if event.venue
-          %span.location
-            %svg.icon.pint-sized
-              %use{"xlink:href" => "#location_symbol"}
-            - if event.venue.url
-              = link_to event.venue.definite_name, event.venue.url
-            - elsif Droom.show_venue_map?
-              = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
-            - else
-              = event.venue.definite_name
+          - if @timezone_feature
+            %span.time
+              %svg.icon.pint-sized2
+                %use{"xlink:href" => "#clock_symbol"}
+              %time
+                = l(datetime_by_timezone(event.start, 'time'), :format => :natural)
 
-        - if @timezone_feature
-          %span.time
+              - if event.finish?
+                = t :to
+                %time
+                  = l(datetime_by_timezone(event.finish, 'time'), :format => :natural)
+
+              - if !current_user.timezone.present? &&  event.timezone == "London"
+                = "(#{t(:uk_time)})"
+
+            - if current_user.timezone
+              - city = current_user.timezone.split(",").map{|x| x.split("/").last}
+              - ev_timezone = event.timezone === 'Hong Kong' ? 'Hongkong' : event.timezone
+              - if city && !city.include?(ev_timezone)
+                %i.note{style: "display: block;"}
+                  = "#{event.start.strftime('%b %d')}, #{l(event.start_time, :format => :natural)} (#{ev_timezone == 'London' ? t(:uk_time) : t(:hong_koong_time)})"
+
+          - else
+            %span.time
             %svg.icon.pint-sized2
               %use{"xlink:href" => "#clock_symbol"}
             %time
-              = l(datetime_by_timezone(event.start, 'time'), :format => :natural)
+              = l(event.start_time, :format => :natural)
 
             - if event.finish?
               = t :to
               %time
-                = l(datetime_by_timezone(event.finish, 'time'), :format => :natural)
-
-            - if !current_user.timezone.present? &&  event.timezone == "London"
+                = l(event.finish_time, :format => :natural)
+            - if event.timezone == "London"
               = "(#{t(:uk_time)})"
 
-          - if current_user.timezone
-            - city = current_user.timezone.split(",").map{|x| x.split("/").last}
-            - ev_timezone = event.timezone === 'Hong Kong' ? 'Hongkong' : event.timezone
-            - if city && !city.include?(ev_timezone)
-              %i.note{style: "display: block;"}
-                = "#{event.start.strftime('%b %d')}, #{l(event.start_time, :format => :natural)} (#{ev_timezone == 'London' ? t(:uk_time) : t(:hong_koong_time)})"
-
-        - else
-          %span.time
-          %svg.icon.pint-sized2
-            %use{"xlink:href" => "#clock_symbol"}
-          %time
-            = l(event.start_time, :format => :natural)
-
-          - if event.finish?
-            = t :to
-            %time
-              = l(event.finish_time, :format => :natural)
-          - if event.timezone == "London"
-            = "(#{t(:uk_time)})"
-
-      .detail
-        - if event.description?
-          .content{style: "width:100%"}
-            = sanitize(event.description)
-        - if show_folder && !full_attachments
-          - if event.folder.populated? || can?(:read, event.folder)
-            .attachments
-              - if can?(:edit, event.folder)
-                %ul.uploads{id: "queue_to_#{event.folder.id}"}
-              = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => event_url(event)}
+        .detail
+          - if event.description?
+            .content{style: "width:100%"}
+              = sanitize(event.description)
+      - if show_folder && !full_attachments
+        - if event.folder.populated? || can?(:read, event.folder)
+          .attachments
+            - if can?(:edit, event.folder)
+              %ul.uploads{id: "queue_to_#{event.folder.id}"}
+            = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => event_url(event)}
 
 
   - if show_folder && full_attachments
