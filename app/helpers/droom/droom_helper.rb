@@ -42,16 +42,16 @@ module Droom
         options[:primary_key] ||= :id
         terms = facet.map{|f| f[:key]}
         models = klass.constantize.where({options[:primary_key] => terms}).to_a
-        if options[:group_option] == true
-          group_options = prepare_group_options(models, facet)
-          return ungrouped_and_grouped_options_for_select(group_options, options[:selected])
-        else
-          facet.each do |f|
-            if model = models.find {|m| m.send(options[:primary_key]) == f[:key]}
-              f[:name] = model.name
-            end
+        # if options[:group_option] == true
+        #   group_options = prepare_group_options(models, facet)
+        #   return ungrouped_and_grouped_options_for_select(group_options, options[:selected])
+        # else
+        facet.each do |f|
+          if model = models.find {|m| m.send(options[:primary_key]) == f[:key]}
+            f[:name] = model.name
           end
         end
+        # end
       end
       data = facet.select{|f| f[:key].present?}.map { |f| ["#{f[:name] || f[:key]} (#{f[:doc_count]})", f[:key]] }.sort_by {|o| o[0].to_s }
       data.reverse! if options[:desc]
