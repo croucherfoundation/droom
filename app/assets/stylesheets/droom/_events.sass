@@ -39,21 +39,27 @@ form.event, form.document
 div.event, form.event, div.project
   .summary
     .heading
-      p.name
-        margin: 0
-      p.practicalities
-        margin: 0
-        margin-top: 0
-        color: $pearl_black
-        span.admin
-          margin-left: 20px
-        span.location
-          display: block
-          padding-bottom: 5px
-      div.detail
-        display: flex
-        flex-wrap: nowrap
-        padding-top: 5px
+      .detail-practicalities
+        width: 70%
+        display: inline-block !important
+        p.name
+          margin: 0
+        p.practicalities
+          margin: 0
+          margin-top: 0
+          color: $pearl_black
+          span.admin
+            margin-left: 20px
+          span.location
+            display: block
+            padding-bottom: 5px
+        div.detail
+          display: flex
+          flex-wrap: nowrap
+          padding-top: 5px
+      .attachments
+        display: inline-block
+        width: 30%
     p.visibility
       float: right
       margin: 10px 16px 0 10px
