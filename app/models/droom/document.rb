@@ -245,7 +245,7 @@ module Droom
         # upload file with new name
         attach = Paperclip::Attachment.new('file', self, self.class.attachment_definitions[:file])
         attach.assign attachment
-        attach.instance_write :file_name, name.gsub(' ', '_')
+        attach.instance_write :file_name, name
         attach.save
 
         attachment.close

@@ -14,7 +14,7 @@ module Droom::Concerns::Key
 
         klass = self.class.table_name.gsub('_', '/')
 
-        filename = attachment.filename.to_s.gsub(' ', '_')
+        filename = attachment.filename.to_s
 
         key = "#{Settings.activestorage.folder}/#{klass}/#{attachment_name.pluralize}/#{id}/original/#{filename}"
 
@@ -23,7 +23,7 @@ module Droom::Concerns::Key
           key = key.gsub('.', "(#{addendum}).")
           addendum += 1
         end
-        
+
         attachment.key = key
       end
     end
