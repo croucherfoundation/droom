@@ -211,5 +211,30 @@ module Droom
       end
     end
 
+    def synchronize_with_s3
+      url = file.url
+
+      begin
+        attachment = URI.open(url)
+      rescue
+        attachment = ""
+      end
+
+      if attachment.present?
+        # delete file with old name
+        file.clear(:original, file.styles.keys)
+        file.save
+
+        # upload file with new name
+        attach = Paperclip::Attachment.new('file', self, self.class.attachment_definitions[:file])
+        attach.assign attachment
+        attach.instance_write :file_name, name.gsub(' ', '_')
+        attach.save
+
+        attachment.close
+      else
+        file.instance_write :file_name, name
+      end
+    end
   end
 end

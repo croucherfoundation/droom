@@ -43,8 +43,8 @@ module Droom
         terms = facet.map{|f| f[:key]}
         models = klass.constantize.where({options[:primary_key] => terms}).to_a
         if options[:group_option] == true
-          group_options = prepare_group_options(models, facet)
-          return ungrouped_and_grouped_options_for_select(group_options, options[:selected])
+          group_options = prepare_group_options(models, facet) || []
+          return ungrouped_and_grouped_options_for_select(group_options, options[:selected]).to_s
         else
           facet.each do |f|
             if model = models.find {|m| m.send(options[:primary_key]) == f[:key]}
@@ -62,15 +62,16 @@ module Droom
     def prepare_group_options(collection, facet)
       object = {}
       collection.each do |c|
+        facet = facet.map{|f| f.transform_keys(&:to_sym)}
         pf = facet.select{|f| f[:key] == c.code}.first
         next unless pf.present?
 
         object[c.code] ||= []
+        codes = [c.code]
         children = collection.select{|coll| coll.parent_code == c.code}
 
         if children.any?
           total_count = pf[:doc_count].to_i
-          object[c.code] << "#{c.name || c.code}"
 
           child_options = []
           children.each do |child|
@@ -80,11 +81,14 @@ module Droom
             total_count += cf[:doc_count].to_i
 
             child_options << ["#{child.name || child.code} (#{cf[:doc_count]})", child.code]
+            codes << child.code
 
             collection.delete_if{|c| c.code == child.code}
           end
 
-          child_options << ["All (#{total_count})", c.code]
+          child_options << ["All", codes.join(',')]
+
+          object[c.code] << "#{c.name || c.code} (#{total_count})"
           object[c.code] << child_options.sort_by{|op| op.first }
         else
           object[c.code] = ["#{c.name || c.code} (#{pf[:doc_count]})", c.code].flatten
@@ -99,9 +103,14 @@ module Droom
         options[:primary_key] ||= :id
         terms = agg.map{|f| f['key']}
         models = klass.constantize.where({options[:primary_key] => terms}).to_a
-        agg.each do |f|
-          if model = models.find {|m| m.send(options[:primary_key]) == f['key']}
-            f[:name] = model.name
+        if options[:group_option] == true
+          group_options = prepare_group_options(models, agg)
+          return ungrouped_and_grouped_options_for_select(group_options, options[:selected]).to_s
+        else
+          agg.each do |f|
+            if model = models.find {|m| m.send(options[:primary_key]) == f['key']}
+              f[:name] = model.name
+            end
           end
         end
       end

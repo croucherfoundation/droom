@@ -147,7 +147,7 @@ jQuery ($) ->
         @_form.find('input.name').val(@_filename).change()
         if @_form.find('#document-info')
           @_form.find('input.filename').val(@_filename.split('.')[0])
-          @_form.find('input.extension').val(@_filename.split('.')[1])
+          @_form.find('input.extension').val("." + @_filename.split('.')[1])
 
 
     initProgress: (e, xhr, settings) =>
