@@ -59,7 +59,7 @@ jQuery ($) ->
 
     fail: (event, xhr, status) =>
       if xhr.status == 409
-        $(event.currentTarget).children('p.error')?.text(xhr.responseText)
+        $(event.currentTarget).find('p.error')?.text(xhr.responseText)
         $('input[type="submit"]').css("background-color", "#9b9b8e")
       if xhr.status == 401
         window.location.reload()

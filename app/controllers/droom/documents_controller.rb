@@ -55,9 +55,10 @@ module Droom
       @document.assign_attributes(attributes)
 
       if @document.description_changed? || @data.blank?
+        @document.as_synchronize_with_s3 if @document.name_changed?
         @document.save
         @document.file.update(filename: @document.name)
-        render json: @document.to_json
+        render :partial => 'listing', :object => @document
       else
         render json: 'File with this name already exists!', status: 409
       end

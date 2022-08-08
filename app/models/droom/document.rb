@@ -1,5 +1,8 @@
+require 'uri'
+
 module Droom
   class Document < Droom::DroomRecord
+    include Droom::Concerns::Key
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :folder
     belongs_to :scrap, :dependent => :destroy
@@ -11,7 +14,7 @@ module Droom
     before_create :inherit_confidentiality
 
     validates :file, :presence => true
-    do_not_validate_attachment_file_type :file
+    # do_not_validate_attachment_file_type :file
 
     scope :all_private, -> { where("private = 1") }
     scope :not_private, -> { where("private <> 1 OR private IS NULL") }
@@ -211,6 +214,20 @@ module Droom
       end
     end
 
+    # this method is for ActiveStorage
+    def as_synchronize_with_s3
+      if file.attached? && !file.new_record?
+        file_url = file.url
+        temp_file =  begin
+          URI.open(file_url)
+        rescue
+          ""
+        end
+        file.attach(io: temp_file, filename: name) if temp_file.present?
+      end
+    end
+
+    # this method is for Paperclip
     def synchronize_with_s3
       url = file.url
 
