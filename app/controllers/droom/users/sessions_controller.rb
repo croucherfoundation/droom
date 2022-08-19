@@ -4,7 +4,7 @@ module Droom::Users
     skip_before_action :verify_authenticity_token, raise: false
 
     def new
-      if user_signed_in? && session['user_return_to'] == '/users/sign_in'
+      if user_signed_in?
         redirect_to root_path
       end
       if @page = Droom::Page.published.find_by(slug: "_welcome")
