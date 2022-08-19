@@ -11,6 +11,11 @@ module Droom::Users
       end
     end
 
+    def create
+      session['user_return_to'] = '/' if session['user_return_to'] == '/users/sign_in'
+      super
+    end
+
     def stored_location_for(resource_or_scope)
       if params[:backto]
         CGI.unescape(params[:backto])
