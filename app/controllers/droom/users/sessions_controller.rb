@@ -10,6 +10,7 @@ module Droom::Users
       if cookie.valid? && cookie.fresh?
         @user = Droom::User.find_by(unique_session_id: cookie.token)
         sign_in(@user)
+        session['flash']['flashes']['alert'] = 'You are already signed in!' if session['flash']
         redirect_to '/'
       else
         if @page = Droom::Page.published.find_by(slug: "_welcome")
@@ -18,6 +19,12 @@ module Droom::Users
           super
         end
       end
+    end
+
+    def destroy
+      current_user.clear_session_ids! if current_user
+      Droom::AuthCookie.new(warden.cookies).unset
+      super
     end
 
     def stored_location_for(resource_or_scope)
