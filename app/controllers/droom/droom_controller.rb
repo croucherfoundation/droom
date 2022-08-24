@@ -15,7 +15,7 @@ module Droom
         if current_user.timezone.present?
           cookies[:timezone] = current_user.timezone
         else
-          cookies.delete :timezone
+          cookies[:timezone] = "NoTimezone"
         end
 
       end
