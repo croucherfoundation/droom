@@ -187,7 +187,7 @@ module Droom
       text = strip_tags(text)
       length = length[:length] if length.is_a?(Hash)
       content_tag :span, class: 'shortened', title: text.try(:html_safe) do
-        truncate(text, {:length => length, :separator => separator})
+        truncate(text, {:length => length, :separator => separator, :escape => false})
       end
     end
 
