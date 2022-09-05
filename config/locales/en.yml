@@ -21,7 +21,7 @@ en:
   add_email: "Add email address"
   add_event: "Add event"
   add_event_type: "Add event type"
-  add_folder: "Add Folder"
+  add_folder: "Add folder"
   add_group: "Add group"
   add_member: "Add group member"
   add_member_to: "Add a member to the %{name} group"
@@ -37,13 +37,13 @@ en:
   add_subfolder: Add sub-folder
   move_folder: "Move folder"
   add_to_stream: "add to stream"
-  add_user: "Add User"
+  add_user: "Add user"
   added_to: "has been added to '%{group}'."
   admin: "Admin"
   advanced_search: "Search terms"
   advanced_search_link: "...advanced search"
   allow: "Allow"
-  all_permissions: 'All Permissions'
+  all_permissions: 'All permissions'
   and_invited: "and invited to log in."
   apps:
     data_room: "Data<br />Room"
@@ -108,15 +108,15 @@ en:
       minicalendar_month: "%B"
       year: "%Y"
       month: "%B %Y"
-  delete_event: "Delete Event"
-  delete_folder: "Delete Folder"
-  delete_group: "Delete Group"
-  delete_permission: "Delete Permission"
+  delete_event: "Delete event"
+  delete_folder: "Delete folder"
+  delete_group: "Delete group"
+  delete_permission: "Delete permission"
   delete_scrap: "Remove"
-  delete_service: "Delete Service"
+  delete_service: "Delete service"
   delete_symbol: "✕"
   delete_user: "Remove person"
-  detach_upload: "Detach Upload"
+  detach_upload: "Detach upload"
   devices: "Devices"
   directory: "Directory"
   directory_introduction: "The directory organises people by group. To find someone quickly, start typing their name on the right."
@@ -319,7 +319,7 @@ en:
   invitation_successful: "Success: %{name} has been invited."
   invitations_highlighted: "Events to which you are invited will be highlighted."
   invite: "Invite"
-  invite_event: "Invitation Status"
+  invite_event: "Invitation status"
   invite_event_accepted: "Accepted to join this event"
   invite_event_refused: "Refused to join this event"
   invite_event_text: "You have been invited to join this event"
@@ -391,7 +391,7 @@ en:
   no_past_events: "There are no past events to display."
   no_past_events: No past events to show
   no_people: "Sorry: there are no directory entries accessible by your account."
-  no_permission: 'No Permission'
+  no_permission: 'No permission'
   no_person_description: "No biography available."
   no_results: "Sorry: nothing to show here."
   no_stream: "Nothing yet to show here."
@@ -450,7 +450,7 @@ en:
   password_reset_message_sent_html: "A message has been sent to your email address containing a link that will let you reset your password. Please allow a few minutes for it to arrive, and keep an eye on your spam folder. The address it will seem to come from is <code>%{sender}</code>."
   password_reset_welcome: "Please use the form below to set a new password for your account. A confirmation box will appear when your password meets the requirements, and the submit button will go green and become clickable when the passwords match."
   password_set: "Thank you. Your password has been set and your account is fully active."
-  past_events: "Past Events"
+  past_events: "Past events"
   pending_organisations_introduction:
     zero: "No applications"
     one: "Review one application"
@@ -552,8 +552,8 @@ en:
   search: "Search"
   search: Search
   search_still_dumb: "This is a very basic title search. Full-text coming soon."
-  search_youtube: "Search Youtube"
-  send_message: "Send Message"
+  search_youtube: "Search youtube"
+  send_message: "Send message"
   send_reset_instructions: "Send reset instructions"
   set_password: "Set password"
   set_password_preamble: "We notice this is the first time that your account has been used. Before we go any further, please choose a password to secure the account."
@@ -612,11 +612,11 @@ en:
   update_person_email: "also update your public email address"
   user_admin: "User admin"
   user_preferences: "User preferences"
-  user_profile_account: "Account Information"
+  user_profile_account: "Account information"
   user_profile_biography: "Biography"
   user_profile_contact: "Contact"
   user_profile_groups: "Groups"
-  user_profile_personal: "Personal Information"
+  user_profile_personal: "Personal information"
   user_profile_rs_with_croucher: "Relationship with Croucher"
   user_profile_statuses: "Statuses"
   user_setup:
@@ -627,7 +627,7 @@ en:
   user_updated: "Preferences for %{name} have been updated."
   users_introduction: "This is a list of everyone known to the data room. It may include many people who do not have access to the data room itself but whom we authenticate for access to other services."
   venue_name: "Venue name"
-  venue_post_code: "Post Code"
+  venue_post_code: "Post code"
   views:
     pagination:
       previous: "&laquo;"
