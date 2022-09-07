@@ -317,7 +317,7 @@ en:
     edit: "Edit help note"
     new: "Add help note"
   hide_empty_folders: "hide empty folders"
-  hong_koong_time: "Hong Kong Time"
+  hong_koong_time: "Hong Kong time"
   invitation_successful: "Success: %{name} has been invited."
   invitations_highlighted: "Events to which you are invited will be highlighted."
   invite: "Invite"
@@ -367,6 +367,9 @@ en:
     zero: "No subfolders"
     one: "and one subfolder..."
     other: "and %{count} subfolders..."
+  more_subfolders_only_count:
+    one: "One subfolder..."
+    other: "%{count} subfolders..."
   my_future_events: "Your invitations"
   my_group_documents: "Your documents"
   my_past_events: "Your past events"
