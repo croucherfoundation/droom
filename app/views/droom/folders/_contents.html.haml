@@ -31,7 +31,10 @@
     - if flat # floated in event view
       - if for_more && children.any?
         %li.more
-          = link_to t(:more_subfolders_count, :count => children.count), for_more
+          - if document_count > 0 
+            = link_to t(:more_subfolders_count, :count => children.count), for_more
+          - else
+            = link_to t(:more_subfolders_only_count, :count => children.count), for_more
 
     - else
       %li.folders
