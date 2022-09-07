@@ -316,7 +316,7 @@ en:
   helps:
     edit: "Edit help note"
     new: "Add help note"
-  hide_empty_folders: "hide empty folders"
+  hide_empty_folders: "Hide empty folders"
   hong_koong_time: "Hong Kong time"
   invitation_successful: "Success: %{name} has been invited."
   invitations_highlighted: "Events to which you are invited will be highlighted."
