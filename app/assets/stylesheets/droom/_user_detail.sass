@@ -41,21 +41,6 @@
       section
         margin-bottom: 1em
 
-        ul.address_book
-          list-style: none
-          margin: 0
-          padding: 0
-          li
-            clear: left
-            padding: 5px 0
-            +clearfix
-            svg.icon
-              float: left
-            span.contact
-              float: left
-              width: calc(100% - 24px)
-              overflow: hidden
-
       section.contacts
         h2.section
           margin-top: 0
@@ -225,3 +210,17 @@
     .last_content_box
       width: 34%
       float: left
+ul.address_book
+  list-style: none !
+  margin: 0
+  padding: 0
+  li
+    clear: left
+    padding: 5px 0
+    +clearfix
+    svg.icon
+      float: left
+    span.contact
+      float: left
+      width: calc(100% - 24px)
+      overflow: hidden

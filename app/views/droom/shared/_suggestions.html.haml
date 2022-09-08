@@ -1,7 +1,7 @@
 %h2.section
   = @title || "Search Results"
   
-%ul.suggestion_search
+.suggestion_search
   - if @suggestions.any?
     - @suggestions.each do |sugg|
       = render :partial => "#{sugg.class.to_s.pluralize.underscore}/suggested", :object => sugg
@@ -9,6 +9,6 @@
   - else
     %li.error
       = t :no_results
-
-  %li.cancel
+  
+  %p.cancel
     = link_to t(:clear_search), '#', :class => "cancel"

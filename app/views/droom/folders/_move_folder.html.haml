@@ -1,6 +1,6 @@
 %form.edit.folder{action: "/folders/#{@folder.id}/moved", :method => 'put'}
     = hidden_field_tag :new_parent_id, ''
-    = select_tag 'folders', options_from_collection_for_select(Droom::Folder.roots, "id", "name"), id: 'folders_list_1', class: 'folders_list', prompt: "Please Select a Root Folder"
+    = select_tag 'folders', options_from_collection_for_select(Droom::Folder.roots, "id", "name"), id: 'folders_list_1', class: 'folders_list', prompt: "Please select a root folder"
     #child_folders
     .buttons
         %input{name: "submit", type: "submit", value: t(:save_folder)}
@@ -39,7 +39,7 @@
             $.ajax({url: "/child_folders?target_parent_id="+selected_parent_id, success: function(result){
                 var $option = $("<option/>", {
                         "value": '',
-                        "html": "Please Select a Sub-Folder"
+                        "html": "Please select a sub-folder"
                     });
                 if(result != ''){
                     options = [$option];

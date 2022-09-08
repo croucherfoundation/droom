@@ -14,7 +14,7 @@
       = link_to t(:subscribe_to_calendar), subscribe_events_url(current_user.authentication_token, protocol: "webcal", format: "ics"), class: "subscribe"
 
 - content_for :margin do
-  = render :partial => "droom/shared/calendar_holder"
+  = render :partial => "droom/shared/calendar_and_search"
   = render :partial => "droom/invitations/invitations"
   = render :partial => "droom/dashboard/stream_events"
 
