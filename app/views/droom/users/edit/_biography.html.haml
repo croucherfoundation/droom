@@ -1,0 +1,14 @@
+- user ||= @user
+#note
+  = render 'droom/shared/popup_header', title: t(:biography_for, name: user.name)
+
+  = form_for user, :html => {class: 'poppedup'}, data: {remote: true, type: :html} do |f|
+    = hidden_field_tag :view, @view
+
+    - if Droom.use_biogs?
+      - user.description = "" unless user.description?
+      .description.wysihtml
+        .toolbar#t1
+          = f.text_area :description
+
+    = render partial: 'droom/users/edit/buttons', locals: {f: f}

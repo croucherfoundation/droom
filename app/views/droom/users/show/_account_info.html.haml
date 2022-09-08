@@ -29,13 +29,13 @@
           = @user.last_sign_in_at.present? ? @user.last_sign_in_at.strftime('%e %b %Y') : t(:not_known)
 
       .right_pane
-        = 'Data Room Access: '
+        = 'Data room access: '
         %b
           = @user.data_room_user? ? 'Yes' : 'No'
 
     .account_info_contents
       .left_pane
-        = 'Account Confirmed?: '
+        = 'Account confirmed?: '
         %b
           = @user.confirmed? ? 'Yes' : 'No'
 
@@ -48,4 +48,4 @@
         = 'Administrator?: '
         %b
           = @user.admin? ? 'Yes' : 'No'
-    
+%br

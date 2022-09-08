@@ -24,7 +24,7 @@
             %table
               %tr
                 %td Title
-                %td Family Name
+                %td Family name
               %tr
                 %td
                   - if Droom.use_titles?
@@ -35,8 +35,8 @@
                     = f.text_field :family_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.family_name")
 
               %tr
-                %td Given Name
-                %td Chinese Name
+                %td Given name
+                %td Chinese name
               %tr
                 %td
                   %span.name>
@@ -48,7 +48,7 @@
                       = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")
 
               %tr
-                %td Professional Name
+                %td Professional name
                 %td Pronoun
               %tr
                 %td
