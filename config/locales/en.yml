@@ -627,10 +627,10 @@ en:
   user_profile_rs_with_croucher: "Relationship with Croucher"
   user_profile_statuses: "Statuses"
   user_setup:
-    check_name: "Please check that your name is correct"
-    give_name: "Please give your name"
+    check_name: "Check that your name is correct"
+    give_name: "Give your name"
     set_password: "and choose a strong password"
-    time_zone: "Please choose a time zone"
+    time_zone: "Choose a time zone"
   user_updated: "Preferences for %{name} have been updated."
   users_introduction: "This is a list of everyone known to the data room. It may include many people who do not have access to the data room itself but whom we authenticate for access to other services."
   venue_name: "Venue name"
