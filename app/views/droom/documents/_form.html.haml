@@ -13,7 +13,10 @@
   .non-file-data
     %p.error{style: 'color: red'}
     %p#document-info.name
-      - name, extension = @document.name.split('.') if @document.name
+    - if name = @document.name
+      - arr = name.split('.')
+      - extension = arr.last
+      - name = arr.reverse.drop(1).reverse.join('.')
       = f.hidden_field :name, :class => 'name'
       = text_field_tag :filename, name, class: 'filename', :placeholder => t(:"helpers.label.document.name"), :autofocus => true, style: "width: 75%"
       = text_field_tag :extension, ".#{extension}", class: 'extension', readonly: true, style: "width: 20%; background: #eee"

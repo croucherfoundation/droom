@@ -16,6 +16,7 @@ module Droom
     end
 
     def show
+      @timezone_feature = FeatureFlag.enabled?('time-zone-feature', current_user)
       respond_with @event_type
     end
 
