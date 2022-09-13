@@ -7,7 +7,14 @@ module Droom
       @organisation = organisation
       @user = organisation.owner
       @subject = I18n.t("registration.confirmation_subject", name: organisation.name)
-      mail(to: @user.email, subject: @subject)
+      
+      if Rails.env.production?
+        @email = @user.email
+      else
+        @email = Settings.email.sandbox
+      end
+      
+      mail(to: @email, subject: @subject)
     end
 
     def org_notification(organisation, admin)
@@ -15,7 +22,14 @@ module Droom
       @admin = admin
       @user = organisation.owner
       @subject = I18n.t("registration.notification_subject", name: organisation.name)
-      mail(to: @admin.email, subject: @subject)
+      
+      if Rails.env.production?
+        @email = @admin.email
+      else
+        @email = Settings.email.sandbox
+      end
+      
+      mail(to: @email, subject: @subject)
     end
 
     def org_welcome(organisation, token)
@@ -23,7 +37,14 @@ module Droom
       @user = organisation.owner
       @token = token
       @subject = I18n.t("registration.welcome_subject", name: organisation.name)
-      mail(to: @user.email, subject: @subject)
+      
+      if Rails.env.production?
+        @email = @user.email
+      else
+        @email = Settings.email.sandbox
+      end
+      
+      mail(to: @email, subject: @subject)
     end
 
   end
