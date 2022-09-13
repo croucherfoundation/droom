@@ -1,6 +1,6 @@
 - event ||= @event
 - folder ||= event.folder
-.col.attachments{data: {droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}", refreshes: "#event_#{event.id}"}}
+.col.attachments{data: {droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}", refreshes: "#event_#{event.id}"}, style: "margin-bottom: 20px"}
   - if folder.documents.count > 0 || folder.children.count > 0
     %h3{style: "font-size: 1.17rem; font-weight: bold;"}
       = t :attachments

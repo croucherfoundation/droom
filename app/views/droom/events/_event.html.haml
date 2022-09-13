@@ -106,8 +106,9 @@
   - if show_folder && full_attachments
     .addenda
       = render :partial => 'droom/events/attachments', :locals => {:event => event}
+      	
       - if event_invitation
-        %h3{style: "padding-top: 1.5rem"}
+        %h3
           = t :invite_event
         = render :partial => 'droom/events/event_invitation', :locals => {:event => event}
       = render :partial => 'droom/events/invitations', :locals => {:event => event}

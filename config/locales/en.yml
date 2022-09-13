@@ -118,6 +118,7 @@ en:
   delete_service: "Delete service"
   delete_symbol: "✕"
   delete_user: "Remove person"
+  delete_user_from_invitations: "Remove person from invitations"
   detach_upload: "Detach upload"
   devices: "Devices"
   directory: "Directory"
