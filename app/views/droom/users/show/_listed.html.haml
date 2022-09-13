@@ -3,6 +3,7 @@
 - membership ||= false
 - event ||= false
 - group ||= false
+- invitation ||= false
 - liclass = "person"
 - liclass << " unconfirmed" unless user.confirmed?
 - ineditable ||= false
@@ -29,4 +30,4 @@
       = action_menulink(user)
     %br
     = mail_to user.email, user.email, class: "email"
-    = action_menu(user, event: event, group: group)
+    = action_menu(user, event: event, group: group, invitation: invitation)

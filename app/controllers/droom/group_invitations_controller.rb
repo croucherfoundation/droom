@@ -22,15 +22,12 @@ module Droom
     def create
       Droom::GroupInvitationJob.perform_now(group_invitation_params[:group_id], params[:event_id])
 
-      if GroupInvitation.find_by(group_id: group_invitation_params[:group_id], event_id: params[:event_id])
-        Rails.logger.warn "⚠️ Email sent to already invited group!."
-        return true
-      end
-      
       if @group_invitation.update(group_invitation_params)
         render :partial => "created"
       else
-        respond_with @group_invitation
+        @existing_group_invitation = GroupInvitation.find_by(group_id: group_invitation_params[:group_id], event_id: params[:event_id])
+        @existing_group_invitation.create_personal_invitations
+        render :partial => "created"
       end
     end
 
