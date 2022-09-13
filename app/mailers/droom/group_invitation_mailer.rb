@@ -8,7 +8,14 @@ module Droom
       @user = user
       @event = event
       @subject = "Invitation to #{@event.name}"
-      mail(to: @user.email, subject: @subject)
+      
+      if Rails.env.production?
+        @email = @user.email
+      else
+        @email = Settings.email.sandbox
+      end
+      
+      mail(to: @email, subject: @subject)
     end
   end
 end
