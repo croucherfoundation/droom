@@ -8,8 +8,8 @@
 - liclass << " unconfirmed" unless user.confirmed?
 - ineditable ||= false
 
-- if user.image?
-  - mugstyle = "background-image: url(#{user.image.url(:thumb)})"
+- if user.image.attached?
+  - mugstyle = "background-image: url(#{user.image_url(:thumb)})"
 - else
   - mugstyle = ""
 

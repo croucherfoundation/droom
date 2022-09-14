@@ -19,8 +19,8 @@ module Droom
     end
 
     def show
-      if @document.file
-        redirect_to @document.file.expiring_url(600)
+      if @document.file.attached?
+        redirect_to @document.file.url
       else
         raise ActiveRecord::RecordNotFound
       end
@@ -55,8 +55,9 @@ module Droom
       @document.assign_attributes(attributes)
 
       if @document.description_changed? || @data.blank?
-        @document.synchronize_with_s3 if @document.name_changed?
+        @document.as_synchronize_with_s3 if @document.name_changed?
         @document.save
+        @document.file.update(filename: @document.name)
         render :partial => 'listing', :object => @document
       else
         render json: 'File with this name already exists!', status: 409

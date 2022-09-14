@@ -28,30 +28,30 @@ class Droom::VideoSerializer < ActiveModel::Serializer
   end
 
   def url
-    if object.file?
-      object.file_url(:original)
+    if object.file.attached?
+      object.file.url
     end
   end
 
   def icon_url
-    if object.file?
-      object.file_url(:icon)
+    if object.file.attached?
+      object.file.url
     else
       object.thumbnail_small
     end
   end
 
   def half_url
-    if object.file?
-      object.file_url(:half)
+    if object.file.attached?
+      object.file.url
     else
       object.thumbnail_medium
     end
   end
 
   def full_url
-    if object.file?
-      object.file_url(:full)
+    if object.file.attached?
+      object.file.url
     else
       object.thumbnail_large
     end

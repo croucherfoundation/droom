@@ -3,24 +3,14 @@ module Droom
     belongs_to :user
     belongs_to :organisation
 
-    has_attached_file :file,
-                      default_url: nil,
-                      preserve_files: true,
-                      processors: [:transcoder],
-                      styles: {
-                        icon: { geometry: "48x48#", format: 'png', time: 3 },
-                        half: { geometry: "540x304<", format: 'jpg', time: 3 },
-                        full: { geometry: "1120x630<", format: 'jpg', time: 3 }
-                      }
+    has_one_attached :file
 
-    validates_attachment_content_type :file, :content_type => /\Avideo/
     before_validation :get_organisation
     before_validation :get_metadata
 
-    def url(style=:original, decache=true)
-      if file?
-        url = file.url(style, decache)
-        url.sub(/^\//, "#{Settings.protocol}://#{Settings.host}/")
+    def url(style=:original)
+      if file.attached?
+        url = file.url
       else
         ""
       end

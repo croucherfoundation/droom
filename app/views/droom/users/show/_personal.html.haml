@@ -11,8 +11,8 @@
 
   #personal_info_content
     #left_pane
-      - if @user.image?
-        - img = @user.image.url(:thumb)
+      - if @user.image.attached?
+        - img = @user.image_url(:thumb)
       - else
         - img = image_url('droom/missing/user.png')
 

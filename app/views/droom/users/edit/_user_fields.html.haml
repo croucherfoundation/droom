@@ -2,8 +2,8 @@
 - minimal ||= false
 - timezone_id ||= "user_timezone"
 
-- if user.image?
-  - img = user.image.url(:thumb)
+- if user.image.attached?
+  - img = user.image_url(:thumb)
 
 = render "droom/users/edit/name_fields", f: f, user: user
 

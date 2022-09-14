@@ -14,15 +14,15 @@
         - if scrap.event.start.year != Date.today.year
           %span.year= scrap.event.start.strftime('%Y')
 
-    - elsif scrap.scraptype == 'image' && scrap.image?
-      = link_to "image:", url, :class => "thumb", :style =>"background-image: url('#{scrap.image.url(:icon)}')", :data => {:scrap => scrap.id}
+    - elsif scrap.scraptype == 'image' && scrap.image.attached?
+      = link_to "image:", url, :class => "thumb", :style =>"background-image: url('#{scrap.image_url(:icon)}')", :data => {:scrap => scrap.id}
 
     - elsif scrap.scraptype == 'link' && scrap.url?
       = link_to "link:", scrap.url_with_protocol, :class => "icon link", :data => {:scrap => scrap.id}
-      
+
     - elsif scrap.scraptype == 'quote' && scrap.url?
       = link_to "quote:", url, :class => "icon quote", :data => {:scrap => scrap.id}
-      
+
     - else
       = link_to "text:", url, :class => "icon text", :data => {:scrap => scrap.id}
 
@@ -33,4 +33,3 @@
         = shorten(precis, 120)
 
       = render :partial => "droom/scraps/credit", :locals => {:scrap => scrap}
-

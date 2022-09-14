@@ -3,8 +3,8 @@
 - liclass << " unconfirmed" unless user.confirmed?
 - liclass << " org_admin" if user.organisation_admin?
 
-- if user.image?
-  - mugstyle = "background-image: url(#{user.image.url(:thumb)})"
+- if user.image.attached?
+  - mugstyle = "background-image: url(#{user.image_url(:thumb)})"
 - else
   - mugstyle = ""
 
