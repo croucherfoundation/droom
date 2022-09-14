@@ -163,12 +163,18 @@ jQuery ($) ->
           console.log 'response', response
           console.log 'replaced', replaced
           console.log 'replacement', replacement
-          replaced?.remove()
+          if replaced[0].id == 'new_round'
+            replaced?.hide()
+          else
+            replaced?.remove()
           replacement.activate()
           replacement.hide().slideDown() if options.slide
           replacement.signal_confirmation() if options.confirm
           replacement.trigger('updated')
           $(affected).trigger('refresh')
+          $('.cancel_new_round').bind 'click', (e) ->
+            replacement?.hide()
+            replaced?.show()
       if options.force
         $.rails.handleRemote($el)
 
