@@ -12,7 +12,6 @@ module Droom
     acts_as_list scope: :folder_id
 
     before_create :inherit_confidentiality
-    after_save :set_file_properties
     
     validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
@@ -193,24 +192,6 @@ module Droom
         tempfile_path = copy_to_local_tempfile
         yield tempfile_path
         File.delete(tempfile_path) if File.file?(tempfile_path)
-      end
-    end
-    
-    def set_file_properties
-      if self.file.attached?
-        document_name = self.file.filename.to_s
-        document_type = self.file.content_type
-        document_size = self.file.byte_size
-        document_updated_at = DateTime.now
-        document_fingerprint = SecureRandom.hex(16)
-        
-        self.update_columns(
-          file_file_name: document_name, 
-          file_content_type: document_type, 
-          file_file_size: document_size,
-          file_fingerprint: document_fingerprint,
-          file_updated_at: document_updated_at
-        )
       end
     end
     
