@@ -10,6 +10,10 @@ module Droom::Api
     rescue_from Droom::DroomError, with: :blew_up
 
     protected
+    
+    def api_controller?
+      true
+    end
 
     def not_found(exception)
       render json: { errors: exception.message }.to_json, status: :not_found

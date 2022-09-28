@@ -9,7 +9,7 @@ module Droom
     protected
 
     def set_timezone
-      if user_signed_in?
+      if user_signed_in? && !api_controller?
         FeatureFlag.upsert_flags
 
         if current_user.timezone.present?
@@ -19,6 +19,10 @@ module Droom
         end
 
       end
+    end
+    
+    def api_controller?
+      false
     end
 
   end
