@@ -15,7 +15,6 @@ module Droom::Concerns::ControllerHelpers
 
     prepend_before_action :read_auth_cookie, except: [:cors_check]
     before_action :authenticate_user!, except: [:cors_check]
-    before_action :set_exception_context
 
     before_action :check_user_is_confirmed, except: [:cors_check, :setup], unless: :devise_controller?
     before_action :check_user_setup, except: [:cors_check, :setup], unless: :devise_controller?
@@ -129,22 +128,6 @@ module Droom::Concerns::ControllerHelpers
       Droom::AuthCookie.new(warden.cookies).unset
     end
   end
-
-  ## Exception reporting
-  #
-  def set_exception_context
-    Honeybadger.context({
-      :service => "Data room"
-    })
-    # if current_user
-    #   Honeybadger.context({
-    #     :user_name => current_user.name,
-    #     :user_uid => current_user.uid,
-    #     :user_email => current_user.email
-    #   })
-    # end
-  end
-
 
   ## Error responses
   #
