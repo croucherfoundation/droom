@@ -34,7 +34,7 @@ jQuery ($) ->
 
   # set flags that scripts can observe cheaply.
   #
-  if window.matchMedia('(max-width: 700px)').matches
+  if window.matchMedia('(max-width: 991px)').matches
     $('body').addClass('mobile')
     if window.matchMedia('(orientation: portrait)').matches
       $('body').addClass('portrait')
@@ -116,7 +116,8 @@ jQuery ($) ->
     @find_including_self('form.fancy').captive()
     @find_including_self('li.folder').folder()
     @find_including_self('form#suggestions').suggestion_form()
-    @find_including_self('.sortable_files').sortable_files()
+    if !$('body').hasClass('mobile')
+      @find_including_self('.sortable_files').sortable_files()
     @find_including_self('[data-draggable]').draggable()
     @find_including_self('.gridbox:not(.notice)').gridBox()
     @find_including_self('.tagger').tagger()
