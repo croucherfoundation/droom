@@ -57,6 +57,8 @@ Droom::Engine.routes.draw do
     get '/api/users/authenticable/:id' => 'api/users#authenticable', as: 'authenticable'
   end
 
+  get '/users/check_email' => "users#check_email", as: "check_email"
+
   resources :helps
 
   resources :pages do

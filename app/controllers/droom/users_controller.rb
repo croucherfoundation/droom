@@ -129,6 +129,18 @@ module Droom
       head :ok
     end
 
+    def check_email
+      message = 'whoops'
+      user_ids = []
+      if params[:email].present?
+        user_ids = Droom::Email.where(email: params[:email]).pluck(:user_id)
+      end
+      unless user_ids.empty?
+        message = 'oops'
+      end
+      render json: {message: message, user_ids: user_ids.to_s}
+    end
+
   protected
 
     def search_users
