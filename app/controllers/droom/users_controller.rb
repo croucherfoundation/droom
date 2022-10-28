@@ -133,7 +133,7 @@ module Droom
       message = 'whoops'
       user_ids = []
       if params[:email].present?
-        user_ids = Droom::Email.where(email: params[:email]).pluck(:user_id)
+        user_ids = Droom::Email.where(email: params[:email]).map(&:check_user_exist)
       end
       unless user_ids.empty?
         message = 'oops'
