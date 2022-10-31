@@ -16,7 +16,9 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :honours,
              :affiliation,
              :email,
+             :emails,
              :phone,
+             :phones,
              :mobile,
              :address,
              :correspondence_address,
@@ -40,6 +42,14 @@ class Droom::UserSerializer < ActiveModel::Serializer
 
   def password_set
     object.password_set?
+  end
+
+  def emails
+    object.emails.pluck(:email).join(', ')
+  end
+  
+  def phones
+    object.phones.pluck(:phone).join(', ')
   end
 
   def images
