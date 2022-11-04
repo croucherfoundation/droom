@@ -71,6 +71,29 @@ module Droom
     def empty?
       !populated?
     end
+
+    def folder_path
+      folders = is_event? ? [] : [self.name]
+      if self.ancestors.present?
+        folders << ancestors.reject{|x| x.parent_id.nil? || x.holder_type.present?}.map{|x| x.name }.flatten
+      end
+      "/" + folders.flatten.reverse.join('/')
+    end
+
+    def event
+      if is_event?
+        @event = Droom::Event.find_by_id(holder_id)
+      else
+        if @folder = ancestors.find{|e| e.is_event?}
+          @event = Droom::Event.find(@folder.holder_id)
+        end
+      end
+      @event
+    end
+
+    def is_event?
+      holder_type == "Droom::Event" && holder_id.present?
+    end
     
     def simple?
       children.empty? && documents.count <= 3

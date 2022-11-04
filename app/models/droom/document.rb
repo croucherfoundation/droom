@@ -6,13 +6,15 @@ module Droom
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :folder
     belongs_to :scrap, :dependent => :destroy
+    belongs_to :event, optional: true
 
     has_one_attached :file
 
     acts_as_list scope: :folder_id
 
     before_create :inherit_confidentiality
-    
+    before_save :set_file_path_and_event
+
     validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
 
@@ -67,6 +69,13 @@ module Droom
 
     def full_path
       "#{folder.path if folder}/#{file_file_name}"
+    end
+
+    def set_file_path_and_event
+      if folder.present? && folder.ancestors.last.name == "Events"
+        self.file_full_path = folder.folder_path.tr(" ", "_")
+        self.event_id = folder.event.try(:id)
+      end
     end
 
     def changed_since_creation?
