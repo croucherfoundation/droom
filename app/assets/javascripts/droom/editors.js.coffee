@@ -11,7 +11,7 @@ jQuery ($) ->
         customClassOption: null
         customClassOptionText: 'Button'
         linkValidation: false
-        placeholderText: 'URL...'
+        placeholderText: 'URL must start with https:// or http://'
         targetCheckbox: false
       anchorPreview: false
       paste:
