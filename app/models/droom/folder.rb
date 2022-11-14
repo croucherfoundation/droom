@@ -10,6 +10,7 @@ module Droom
     acts_as_tree :order => "droom_folders.name ASC"
 
     before_validation :set_properties
+    after_save :set_file_path
     validates :slug, :presence => true, :uniqueness => { :scope => :parent_id }
 
     default_scope -> { includes(:documents) }
@@ -156,6 +157,20 @@ module Droom
     def distribute_confidentiality
       documents.each {|document| document.set_confidentiality!(confidential?) }
       children.each {|folder| folder.set_confidentiality!(confidential?) }
+    end
+
+    def set_file_path
+      self.documents.map{|m| m.update_columns(file_full_path: m.folder.folder_path.tr(" ", "_")) unless m.file_full_path.nil?}
+      unless self.children.empty?
+        self.all_children
+      end
+    end
+
+    def all_children
+      self.children.each do |child|
+        child.documents.map{|m| m.update_columns(file_full_path: m.folder.folder_path.tr(" ", "_")) unless m.file_full_path.nil?}
+        child.all_children
+      end
     end
 
     protected
