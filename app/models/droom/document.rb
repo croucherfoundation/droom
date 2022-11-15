@@ -72,9 +72,9 @@ module Droom
     end
 
     def set_file_path_and_event
-      if folder.present? && folder.ancestors.last.name == "Events"
+      if folder.present? && folder.event.present? && folder.ancestors.last.present? && folder.ancestors.last.name == "Events"
         self.file_full_path = folder.folder_path.tr(" ", "_")
-        self.event_id = folder.event.try(:id)
+        self.event_id = folder.event.id
       end
     end
 
