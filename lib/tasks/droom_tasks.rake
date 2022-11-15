@@ -20,6 +20,4 @@ namespace :droom do
     end
   end
 
-
-
 end

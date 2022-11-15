@@ -16,7 +16,7 @@ module Droom
 
     has_many :agenda_categories, :dependent => :destroy
     has_many :categories, :through => :agenda_categories
-
+    has_many :documents
     belongs_to :venue, optional: true
     accepts_nested_attributes_for :venue
 

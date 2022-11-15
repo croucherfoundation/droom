@@ -10,6 +10,7 @@ module Droom
     acts_as_tree :order => "droom_folders.name ASC"
 
     before_validation :set_properties
+    after_save :set_file_path
     validates :slug, :presence => true, :uniqueness => { :scope => :parent_id }
 
     default_scope -> { includes(:documents) }
@@ -70,6 +71,29 @@ module Droom
 
     def empty?
       !populated?
+    end
+
+    def folder_path
+      folders = is_event? ? [] : [self.name]
+      if self.ancestors.present?
+        folders << ancestors.reject{|x| x.parent_id.nil? || x.holder_type.present?}.map{|x| x.name }.flatten
+      end
+      "/" + folders.flatten.reverse.join('/')
+    end
+
+    def event
+      if is_event?
+        @event = Droom::Event.find_by_id(holder_id)
+      else
+        if @folder = ancestors.find{|e| e.is_event?}
+          @event = Droom::Event.find(@folder.holder_id)
+        end
+      end
+      @event
+    end
+
+    def is_event?
+      holder_type == "Droom::Event" && holder_id.present?
     end
     
     def simple?
@@ -133,6 +157,20 @@ module Droom
     def distribute_confidentiality
       documents.each {|document| document.set_confidentiality!(confidential?) }
       children.each {|folder| folder.set_confidentiality!(confidential?) }
+    end
+
+    def set_file_path
+      self.documents.map{|m| m.update_columns(file_full_path: m.folder.folder_path.tr(" ", "_")) unless m.file_full_path.nil?}
+      unless self.children.empty?
+        self.all_children
+      end
+    end
+
+    def all_children
+      self.children.each do |child|
+        child.documents.map{|m| m.update_columns(file_full_path: m.folder.folder_path.tr(" ", "_")) unless m.file_full_path.nil?}
+        child.all_children
+      end
     end
 
     protected
