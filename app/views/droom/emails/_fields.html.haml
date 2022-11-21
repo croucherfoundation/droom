@@ -11,7 +11,7 @@
           = f.email_field :email,  :placeholder => t("placeholders.email.email"), :required => true, data: {role: "email", check_url: check_email_path, users_path: users_path}, class: "required"
           = f.hidden_field :current_email, value: user.id.present? ? user.email : nil, id: "selected_user_email"
           %span.warning.hidden.email_error
-            This email already exists! Please try a different email address.
+            This email already exists! Please try with a different email address.
             %br
             %strong
           - unless user.new_record? || fields_counter == 0
