@@ -21,8 +21,7 @@
       - @services.each do |service|
         - read_permissions = service.permissions.select{ |p| p.name.include?('.read')}
         - width = service.permissions.count - read_permissions.length
-        - service.permissions.each_with_index do |perm, i|
-          - next if perm.name.include?('.read')
+        - service.permissions.reject{|p| p.name.include?('.read')}.each_with_index do |perm, i|
           %td{:class => "s_#{service.id} p_#{perm.id} #{'d' if i == width-1}".strip}
             = action_menulink(perm, :class => "small")
             %span.rotated
@@ -37,9 +36,7 @@
           - @services.each do |service|
             - read_permissions = service.permissions.select{ |p| p.name.include?('.read') }
             - width = service.permissions.count - read_permissions.length
-            - service.permissions.each_with_index do |perm, i|
-
-              - next if perm.name.include?('.read')
+            - service.permissions.reject{|p| p.name.include?('.read')}.each_with_index do |perm, i|
               - read_permission = perm.get_read_permission
 
               %td.toggle{:class => "s_#{service.id}  p_#{perm.id} #{'d' if i == width-1}".strip}
