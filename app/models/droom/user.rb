@@ -34,6 +34,7 @@ module Droom
 
     before_validation :ensure_uid!
     before_save :ensure_authentication_token!
+    before_save :title_blank_to_nil
     before_save :org_admin_if_alone
     after_save :send_confirmation_if_directed
 
@@ -595,7 +596,7 @@ module Droom
     ## Names
     #
     def title_ordinary?
-      title.nil? || ['mr', 'ms', 'mrs', 'mr.', 'ms.', 'mrs.', ''].include?(title.downcase.strip)
+      title.nil? || ['Dr', 'Professor'].exclude?(title)
     end
 
     def title_if_it_matters
@@ -920,6 +921,10 @@ module Droom
       if organisation && organisation.users.length == 1
         self.organisation_admin = true
       end
+    end
+
+    def title_blank_to_nil
+      self.title = title.blank? ? nil: title
     end
 
     def send_confirmation_if_directed
