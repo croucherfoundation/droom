@@ -2,7 +2,7 @@
   Dear
   = @user.formal_name + ','
 %p
-  You are invited to join following event from Croucher Foundation.
+  You are invited to join the following event from the Croucher Foundation.
 %p
   %strong
     = @event.name
@@ -32,13 +32,14 @@
   = link_to "Click here to view the event detail", event_url(@event)
 %p
   Please don’t hesitate to contact me if you have any difficulties accessing the site or finding the information
-  you need. If anything goes wrong or could be improved, feel free also to contact our web builder
-  directly: his name is Aung Kyaw Phyo and he can be reached at
-  = mail_to("akp@binarylab.io") + "."
+  you need. If anything goes wrong or could be improved, feel free also to contact our IT Support team
+  = mail_to("it-support@croucher.org.hk") + "."
 
 %p
   Regards,
   %br
   David Foster
+  %br
+  Director
   %br
   = link_to "Croucher Foundation", "http://www.croucher.org.hk/", style: "color: black;"
