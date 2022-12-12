@@ -671,7 +671,6 @@ jQuery ($) ->
 
     set: (e) =>
       e.preventDefault() if e
-      @_state = localStorage?.getItem("show_folder_#{@_label}")
       @_state = "open" if @_container.hasClass('open')
       if @_state is "open"
         @_container.addClass("open")
@@ -694,13 +693,11 @@ jQuery ($) ->
 
     show: (e) =>
       e.preventDefault() if e
-      localStorage?.setItem("show_folder_#{@_label}", "open")
       @_container.addClass('open')
       @_list.stop().slideDown("fast")
 
     hide: (e) =>
       e.preventDefault() if e
-      localStorage?.setItem("show_folder_#{@_label}", "closed")
       @_list.stop().slideUp "normal", () =>
         @_container.removeClass('open')
 
