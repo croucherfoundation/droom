@@ -6,10 +6,18 @@
 
 %li.document{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id}}
   - extension = document.file_extension.downcase
-  = link_to droom.folder_document_url(document.folder, document), class: "document #{extension == 'pdf' ? 'no-bg-image' : ''} #{extension}", target: "_blank" do
+  - detail_url = droom.folder_document_url(document.folder, document)
+  - if document.google_doc_link.present?
+    - detail_url = document.google_doc_link
+    - extension = 'gdoc'
+  
+  = link_to detail_url, class: "document #{['pdf', 'gdoc'].include?(extension) ? 'no-bg-image' : ''} #{extension}", target: "_blank" do
     - if extension == 'pdf'
       %svg.icon.medium
         %use{"xlink:href" => "#pdf_symbol"}
+    - elsif extension == 'gdoc'
+      %svg.icon.pint-sized3
+        %use{"xlink:href" => "#google_doc_symbol"}
     %span
       = shorten(document.name, character_count, '')
   - unless omit_menu

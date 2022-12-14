@@ -15,7 +15,7 @@ module Droom
     before_create :inherit_confidentiality
     before_save :set_file_path_and_event
 
-    validates :file, :presence => true
+    # validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
 
     scope :all_private, -> { where("private = 1") }

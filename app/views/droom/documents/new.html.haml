@@ -1,3 +1,5 @@
 #document
-  = render 'droom/shared/popup_header', title: t(:add_document)
+  - title = @view == 'google_doc' ? t(:add_google_doc) : t(:add_document)
+    
+  = render 'droom/shared/popup_header', title: title
   = render :partial => 'form'

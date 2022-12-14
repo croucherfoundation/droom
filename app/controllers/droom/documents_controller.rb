@@ -27,6 +27,7 @@ module Droom
     end
 
     def new
+      @view = params[:view]
       render
     end
 
@@ -44,23 +45,34 @@ module Droom
     end
 
     def edit
+      @view = params[:view]
       render
     end
 
     def update
-      attributes = document_params
-      attributes[:name] = params[:filename] + params[:extension]
-      @data = Document.where(name: attributes[:name], folder_id: params[:folder_id])
-
-      @document.assign_attributes(attributes)
-
-      if @document.description_changed? || @data.blank?
-        @document.as_synchronize_with_s3 if @document.name_changed?
-        @document.save
-        @document.file.update(filename: @document.name)
-        render :partial => 'listing', :object => @document
+      if @document.google_doc_link.present?
+        @data = Document.where(name: document_params[:name], folder_id: params[:folder_id])
+        @document.assign_attributes(document_params)
+        if @data.blank?
+          @document.save
+          render :partial => 'listing', :object => @document
+        else
+          render json: 'File with this name already exists!', status: 409
+        end
       else
-        render json: 'File with this name already exists!', status: 409
+        attributes = document_params
+        attributes[:name] = params[:filename] + params[:extension]
+        @data = Document.where(name: attributes[:name], folder_id: params[:folder_id])
+
+        @document.assign_attributes(attributes)
+        if @document.description_changed? || @data.blank?
+          @document.as_synchronize_with_s3 if @document.name_changed?
+          @document.save
+          @document.file.update(filename: @document.name)
+          render :partial => 'listing', :object => @document
+        else
+          render json: 'File with this name already exists!', status: 409
+        end
       end
     end
 
@@ -118,7 +130,7 @@ module Droom
 
     def document_params
       if params[:document]
-        params.require(:document).permit(:name, :file, :description, :folder_id, :position)
+        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link)
       else
         {}
       end

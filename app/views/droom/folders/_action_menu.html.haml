@@ -6,6 +6,8 @@
       %li
         = link_to t(:add_document), '#', class: "add", id: "upload_to_folder_#{folder.id}", data: {role: "upload-file"}
       %li
+        = link_to t(:add_google_doc), droom.new_folder_document_url(folder, view: 'google_doc'), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
+      %li
         = link_to t(:add_subfolder), droom.new_folder_folder_url(folder), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
       %li
         = link_to t(:move_folder), droom.move_folder_folder_url(folder), :class => "edit", :id => "move_folder_#{folder.id}", :data => {:action => "popup", :type => "html", :affected => "#folders"}

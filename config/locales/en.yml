@@ -22,6 +22,7 @@ en:
   add_event: "Add event"
   add_event_type: "Add event type"
   add_folder: "Add folder"
+  add_google_doc: "Add Google Doc"
   add_group: "Add group"
   add_member: "Add group member"
   add_member_to: "Add a member to the %{name} group"
@@ -143,6 +144,7 @@ en:
   edit_event_folder: "Edit event folder"
   edit_document: "Edit document"
   edit_folder: "Edit folder"
+  edit_google_doc: "Edit Google Doc"
   edit_group: "Edit group"
   edit_organisation: "Edit organisation"
   edit_organisation_external: "Edit organisation"
@@ -243,6 +245,8 @@ en:
         attached_to: "Attached to"
         name: "Document name"
         description: "Document description"
+        gogole_doc_name: 'Google Doc name'
+        gogole_doc_link: 'Google Doc link'
       event:
         name: "Event name"
         venue_name: "Choose or add a location"
