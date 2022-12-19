@@ -36,12 +36,19 @@
 
               %tr
                 %td Given name
-                %td Chinese name
+                %td Christian name
               %tr
                 %td
                   %span.name>
                     = f.text_field :given_name, :required => true, placeholder: t("placeholders.user.given_name")
-
+                
+                %td
+                  %span.christian_name>
+                    = f.text_field :christian_name, placeholder: t("placeholders.user.christian_name")
+              
+              %tr
+                %td Chinese name
+              %tr
                 %td
                   - if Droom.use_chinese_names?
                     %span.chinese_name>

@@ -171,6 +171,7 @@ module Droom
         :title,
         :family_name,
         :given_name,
+        :christian_name,
         :chinese_name,
         :honours,
         :organisation_id,
@@ -228,7 +229,7 @@ module Droom
     end
 
     def setup_params
-      params.require(:user).permit(:title, :given_name, :family_name, :chinese_name, :honours, :password, :password_confirmation, :timezone)
+      params.require(:user).permit(:title, :given_name, :family_name, :christian_name, :chinese_name, :honours, :password, :password_confirmation, :timezone)
     end
 
     def set_organisation_params

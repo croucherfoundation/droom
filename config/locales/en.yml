@@ -303,6 +303,7 @@ en:
         given_name: "Forename"
         family_name: "Surname"
         chinese_name: "中国姓名"
+        christian_name: 'Christian name'
         email: "Email"
         phone: "Telephone"
         mobile: "Mobile/cell"
@@ -513,6 +514,7 @@ en:
     user:
       address: "Postal address"
       chinese_name: "中国姓名"
+      christian_name: 'Christian name'
       description: "Brief biography or notes on role."
       dob: "Date of birth"
       email: "Email"

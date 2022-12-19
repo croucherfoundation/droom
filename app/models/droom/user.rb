@@ -811,13 +811,14 @@ module Droom
 
     ## Search
     #
-    searchkick _all: false, callbacks: :async, default_fields: [:name, :chinese_name, :emails, :organisation_name]
+    searchkick _all: false, callbacks: :async, default_fields: [:name, :christian_name, :chinese_name, :emails, :organisation_name]
 
     def search_data
       data = {
         uid: uid,
         title: title,
         name: name,
+        christian_name: christian_name,
         chinese_name: chinese_name,
         emails: emails.map(&:email),
         addresses: addresses.map(&:address),
@@ -909,6 +910,17 @@ module Droom
         group_id = perm.group_permission.group_id
         perm.delete unless group_ids.map(&:to_i).include?(group_id)
       end
+    end
+    
+    def display_name
+      if christian_name.present?
+        name = [title, christian_name, family_name, given_name]
+      elsif chinese_name.present?
+        name = [title, family_name, given_name]
+      else
+        name = [title, given_name, family_name] # western names
+      end
+      name.reject(&:blank?).join(' ')
     end
 
   protected

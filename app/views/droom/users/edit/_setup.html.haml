@@ -23,6 +23,8 @@
             = f.text_field :given_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.given_name")
           %span.name>
             = f.text_field :family_name, :required => true, placeholder: t("placeholders.user.family_name")
+          %span.name>
+            = f.text_field :christian_name, placeholder: t("placeholders.user.christian_name")
           - if Droom.use_chinese_names?
             %span.chinese_name>
               = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")

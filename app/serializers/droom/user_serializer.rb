@@ -12,6 +12,7 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :given_name,
              :family_name,
              :chinese_name,
+             :christian_name,
              :name,
              :honours,
              :affiliation,

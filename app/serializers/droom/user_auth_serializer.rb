@@ -7,6 +7,7 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
              :given_name,
              :family_name,
              :chinese_name,
+             :christian_name,
              :honours,
              :email,
              :phone,
