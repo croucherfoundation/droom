@@ -4,6 +4,7 @@
 - here ||= event == @event
 - full_attachments ||= false
 - show_folder = event.folder && can?(:read, event.folder)
+- skip_gdoc = true
 
 - event_master_id = event.master_id || event.id
 - if @seen_events[event_master_id]
@@ -100,12 +101,12 @@
           .attachments
             - if can?(:edit, event.folder)
               %ul.uploads{id: "queue_to_#{event.folder.id}"}
-            = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => event_url(event)}
+            = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => event_url(event), skip_gdoc: skip_gdoc}
 
 
   - if show_folder && full_attachments
     .addenda
-      = render :partial => 'droom/events/attachments', :locals => {:event => event}
+      = render :partial => 'droom/events/attachments', :locals => {:event => event, skip_gdoc: skip_gdoc}
       	
       - if event_invitation
         %h3

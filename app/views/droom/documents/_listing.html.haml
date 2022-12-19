@@ -1,3 +1,4 @@
+- skip_gdoc ||= false
 - listing ||= nil
 - omit_menu ||= false
 - document ||= listing || @document
@@ -11,15 +12,16 @@
     - detail_url = document.google_doc_link
     - extension = 'gdoc'
   
-  = link_to detail_url, class: "document #{['pdf', 'gdoc'].include?(extension) ? 'no-bg-image' : ''} #{extension}", target: "_blank" do
-    - if extension == 'pdf'
-      %svg.icon.medium
-        %use{"xlink:href" => "#pdf_symbol"}
-    - elsif extension == 'gdoc'
-      %svg.icon.pint-sized3
-        %use{"xlink:href" => "#google_doc_symbol"}
-    %span
-      = shorten(document.name, character_count, '')
-  - unless omit_menu
-    = action_menulink(document)
-  = action_menu(document)
+  - unless skip_gdoc && document.google_doc_link.present?
+    = link_to detail_url, class: "document #{['pdf', 'gdoc'].include?(extension) ? 'no-bg-image' : ''} #{extension}", target: "_blank" do
+      - if extension == 'pdf'
+        %svg.icon.medium
+          %use{"xlink:href" => "#pdf_symbol"}
+      - elsif extension == 'gdoc'
+        %svg.icon.pint-sized3
+          %use{"xlink:href" => "#google_doc_symbol"}
+      %span
+        = shorten(document.name, character_count, '')
+    - unless omit_menu
+      = action_menulink(document)
+    = action_menu(document)

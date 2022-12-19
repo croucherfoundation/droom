@@ -17,6 +17,7 @@ module Droom
     end
 
     def show
+      @skip_gdoc = params[:skip_gdoc] == 'true'
       respond_with @folder do |format|
         format.js {
           render :partial => 'droom/folders/folder'

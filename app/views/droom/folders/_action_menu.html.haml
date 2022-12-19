@@ -5,8 +5,9 @@
         = link_to t(:edit_folder), droom.edit_folder_url(folder), :class => "edit", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
       %li
         = link_to t(:add_document), '#', class: "add", id: "upload_to_folder_#{folder.id}", data: {role: "upload-file"}
-      %li
-        = link_to t(:add_google_doc), droom.new_folder_document_url(folder, view: 'google_doc'), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
+      - unless @skip_gdoc_menu
+        %li
+          = link_to t(:add_google_doc), droom.new_folder_document_url(folder, view: 'google_doc'), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
       %li
         = link_to t(:add_subfolder), droom.new_folder_folder_url(folder), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
       %li

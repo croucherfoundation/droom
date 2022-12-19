@@ -1,3 +1,4 @@
+- skip_gdoc ||= false
 - event ||= @event
 - folder ||= event.folder
 .col.attachments{data: {droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}", refreshes: "#event_#{event.id}"}, style: "margin-bottom: 20px"}
@@ -5,4 +6,4 @@
     %h3{style: "font-size: 1.17rem; font-weight: bold;"}
       = t :attachments
   %ul.uploads{id: "queue_to_#{folder.id}"}
-  = render :partial => "droom/folders/contents", :locals => {folder: folder, narrow: false, drop_refreshes: ""}
+  = render :partial => "droom/folders/contents", :locals => {folder: folder, narrow: false, drop_refreshes: "", skip_gdoc: skip_gdoc}
