@@ -133,9 +133,9 @@ module Droom::Concerns::ControllerHelpers
   ## Exception reporting
   #
   def set_exception_context
-    Honeybadger.context({
-      :service => "Data room"
-    })
+    # Honeybadger.context({
+    #   :service => "Data room"
+    # })
     # if current_user
     #   Honeybadger.context({
     #     :user_name => current_user.name,
