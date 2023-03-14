@@ -5,11 +5,12 @@
   -content_for :standfirst do
     = render :partial => "droom/dashboard/welcome"
 
-  -content_for :margin do
-    - Droom.margin_dashboard_modules.each do |mod|
-      = render :partial => "droom/dashboard/#{mod}"
+  - if current_user.admin? || current_user.permitted?('droom.calendar') || current_user.permitted?('droom.calendar.read')
+    -content_for :margin do
+      - Droom.margin_dashboard_modules.each do |mod|
+        = render :partial => "droom/dashboard/#{mod}"
 
-  .dashboard
-    - Droom.main_dashboard_modules.each do |mod|
-      = render :partial => "droom/dashboard/#{mod}"
+    .dashboard
+      - Droom.main_dashboard_modules.each do |mod|
+        = render :partial => "droom/dashboard/#{mod}"
 
