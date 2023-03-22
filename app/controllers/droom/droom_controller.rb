@@ -10,7 +10,7 @@ module Droom
 
     def set_timezone
       if user_signed_in? && !api_controller?
-        FeatureFlag.upsert_flags
+        # FeatureFlag.upsert_flags
 
         if current_user.timezone.present?
           cookies[:timezone] = current_user.timezone
