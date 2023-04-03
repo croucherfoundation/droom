@@ -37,7 +37,7 @@ module Droom
     after_save :send_confirmation_if_directed
 
     after_save :enqueue_mailchimp_job
-    after_destroy :remove_from_mailchimp_list
+    before_destroy :remove_from_mailchimp_list
 
     scope :admins, -> { where(admin: true) }
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }
