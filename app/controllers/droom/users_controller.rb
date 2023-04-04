@@ -12,9 +12,10 @@ module Droom
     # :admin is the new elasticsearch index. The actual search work is done in `search_users`.
     #
     def index
+      params[:q] ||= params[:email]
       @users = @users.in_name_order.includes(:permissions)
       @users = @users.matching(params[:q]) unless params[:q].blank?
-      @users = @users.from_email(params[:email]) unless params[:email].blank?
+      # @users = @users.from_email(params[:email]) unless params[:email].blank?
       @users = paginated(@users, params[:pp].presence || 24)
       respond_with @users do |format|
         format.js { render :partial => 'droom/users/users' }
