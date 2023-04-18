@@ -31,6 +31,10 @@
 
 jQuery ($) ->
   console.log "loading droom"
+  
+  $('#people_filter').on 'keypress', (e) ->
+    if e.which == 13
+      window.location.reload()
 
   # set flags that scripts can observe cheaply.
   #
