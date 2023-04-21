@@ -17,6 +17,7 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
              :password_set,
              :images,
              :preferred_professional_name,
+             :preferred_name,
              :preferred_pronoun,
              :user_groups
 

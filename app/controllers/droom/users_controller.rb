@@ -193,6 +193,7 @@ module Droom
         :image,
         :timezone,
         :preferred_professional_name,
+        :preferred_name,
         :preferred_pronoun,
         group_ids: []
       ]

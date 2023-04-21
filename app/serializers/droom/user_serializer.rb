@@ -30,7 +30,8 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :organisation_data,
              :password_set,
              :preferred_pronoun,
-             :preferred_professional_name
+             :preferred_professional_name,
+             :preferred_name
 
   def name
     object.colloquial_name
