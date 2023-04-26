@@ -22,7 +22,8 @@
           %use{"xlink:href" => "#google_doc_symbol"}
       %span
         = shorten(document.name, character_count, '')
-        = "(#{document.position})"
+        - unless Rails.env.production?
+          = "(#{document.position})"
     - unless omit_menu
       = action_menulink(document)
     = action_menu(document)
