@@ -14,7 +14,6 @@ module Droom
 
     before_create :inherit_confidentiality
     before_save :set_file_path_and_event
-    after_commit :bump_same_position
 
     # validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
@@ -264,12 +263,5 @@ module Droom
       end
     end
 
-     def bump_same_position
-      documents = folder.documents.where("position = ? AND id != ?", position, id)
-      documents.each_with_index do |d, i|
-        d.update_column(:position, (d.position + i + 1))
-        puts "Bump document #{d.id} position to #{d.position}!"
-      end
-    end
   end
 end

@@ -13,6 +13,9 @@
   - uldata = {folder_id: folder.id}
   - ulclass = 'sortable_files'
 
+- folder.documents.each_with_index do |d, i|
+  - d.update(position: i + 1)
+
 %ul.filing<
   - if limit && document_count > 0 && limit < document_count
     %li.files{data: lidata}
