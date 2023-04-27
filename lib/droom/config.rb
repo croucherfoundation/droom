@@ -105,7 +105,7 @@ module Droom
     end
  
     def email_from_name
-      @email_from ||= "Please Set Email-From Name In Droom Initializer"
+      @email_from_name ||= "Please Set Email-From Name In Droom Initializer"
     end
  
     def email_return_path
