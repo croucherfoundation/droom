@@ -481,7 +481,7 @@ en:
       email_domain: "@example.com"
       keywords: "Start typing here then choose from the list"
       name: "Organisation name"
-      url: "Full url including http part"
+      url: "Website or social media (full url including the http part)"
     phone:
       phone: "Phone number"
     scrap:
