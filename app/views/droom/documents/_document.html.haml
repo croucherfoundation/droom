@@ -1,5 +1,5 @@
 - document ||= @document
-- details ||= nil
+- highlight ||= nil
 - cssclasses = ["dl", "small"]
 - cssclasses << document.file_extension.downcase
 - cssclasses << 'changed' if document.changed_since_creation?
@@ -18,7 +18,7 @@
           = File.join document.folder.path, document.file_file_name
   %p.description
     %span.details
-      - if details && details[:highlight]
-        = details[:highlight][:content].html_safe
+      - if highlight && highlight[:content]
+        = highlight[:content].html_safe
       - else
         = document.description

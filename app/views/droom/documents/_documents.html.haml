@@ -21,8 +21,8 @@
           = paginate @documents, :params => {:format => nil}
 
       - if @q.present?
-        - @documents.with_details.each do |document, details|
-          = render "droom/documents/document", document: document, details: details
+        - @documents.with_highlights.each do |document, highlight|
+          = render "droom/documents/document", document: document, highlight: highlight
       - else
         = render :partial => 'droom/documents/document', :collection => @documents
 
