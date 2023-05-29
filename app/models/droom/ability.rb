@@ -21,6 +21,8 @@ module Droom
           if user.organisation && user.organisation_admin?
             can :manage, Droom::Organisation, id: user.organisation_id
             can :manage, Droom::User, organisation_id: user.organisation_id
+            can :read, Droom::Event
+            can :read, Droom::Scrap
           end
 
           if !Droom.require_internal_organisation? || user.internal?

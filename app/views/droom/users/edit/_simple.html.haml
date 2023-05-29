@@ -21,11 +21,16 @@
 
     - if Droom.use_organisations?
       - if admin?
-        %p.organisation.admin
+        %p.organisation.admin{style: 'margin-top: -6px !important;'}
           = f.label :organisation_id
           = f.select :organisation_id, Droom::Organisation.for_selection, :class => 'preferences'
       - else
         = f.hidden_field :organisation_id
+
+      - if admin? || organisation_admin?
+        %br
+        = f.check_box :organisation_admin, checked: true, class: "fancy"
+        = f.label :organisation_admin
 
     .buttons
       - if user == current_user

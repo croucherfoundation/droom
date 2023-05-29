@@ -37,6 +37,9 @@
         %span.subordinate{data: {dependent: "#user_admin"}}
           = f.check_box :gatekeeper, class: "fancy"
           = f.label :gatekeeper
+      - elsif organisation_admin?
+        = f.check_box :organisation_admin, class: "fancy"
+        = f.label :organisation_admin
 
     .buttons
       - if @user == current_user
