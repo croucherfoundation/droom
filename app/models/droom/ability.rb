@@ -18,7 +18,7 @@ module Droom
           can :new, [Droom::Email, Droom::Phone, Droom::Address], :user_id => user.id
           can :read, :dashboard
 
-          if user.organisation && user.organisation_admin?
+          if user.organisation.persisted? && !user.organisation.external? && user.organisation_admin?
             can :manage, Droom::Organisation, id: user.organisation_id
             can :manage, Droom::User, organisation_id: user.organisation_id
             can :read, Droom::Event
