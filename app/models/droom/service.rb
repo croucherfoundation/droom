@@ -17,8 +17,10 @@ module Droom
     end
     
     def create_basic_permissions
-      permissions.create(:name => 'login')
-      permissions.create(:name => 'admin')
+      unless slug == 'event'
+        permissions.create(:name => 'login')
+        permissions.create(:name => 'admin')
+      end
     end
     
     def update_permissions
