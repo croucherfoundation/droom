@@ -39,6 +39,7 @@ module Droom
     after_save :send_confirmation_if_directed
 
     after_save :enqueue_mailchimp_job
+    after_save :attend_conference_or_not
     after_destroy :remove_from_mailchimp_list
 
     scope :admins, -> { where(admin: true) }
@@ -116,6 +117,31 @@ module Droom
 
     def names?
       (given_name? and family_name?) || (Droom.use_chinese_names? && chinese_name?)
+    end
+
+    def attend_conference_or_not
+      return if person.nil?
+
+      events = ["Symposium 2023"]
+      events.each do |event|
+
+        group_names = groups.map(&:name)
+        event_name  = event.split(" ")
+        name        = event_name.first
+        slug        = event_name.last
+        conference  = Conference.find_by(short_name: name, slug: slug)
+
+        next if conference.nil?
+
+        if group_names.include?(event)
+          ConferencePerson.first_or_initialize(conference: conference, person_uid: person.id) do |cp|
+            cp.attend = true if cp.new?
+            cp.save
+          end
+        else
+          ConferencePerson.where(conference: conference, person_uid: person.id).destroy_all
+        end
+      end
     end
 
 
