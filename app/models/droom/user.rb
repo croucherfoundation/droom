@@ -124,7 +124,6 @@ module Droom
 
       events = ["Symposium 2023"]
       events.each do |event|
-
         group_names = groups.map(&:name)
         event_name  = event.split(" ")
         name        = event_name.first
@@ -132,11 +131,10 @@ module Droom
         conference  = Conference.find_by(short_name: name, slug: slug)
 
         next if conference.nil?
-
+        
         if group_names.include?(event)
-          ConferencePerson.first_or_initialize(conference: conference, person_uid: person.id) do |cp|
-            cp.attend = true if cp.new?
-            cp.save
+          ConferencePerson.find_or_create_by(conference: conference, person_uid: person.id) do |cp|
+            cp.attend = true if cp.new_record?
           end
         else
           ConferencePerson.where(conference: conference, person_uid: person.id).destroy_all
