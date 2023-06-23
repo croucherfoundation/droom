@@ -25,7 +25,7 @@
   - cssclass << " auto" if folder.automatic? && can?(:edit, folder)
 
   %li{class: cssclass, id: "folder_#{folder.id}", data: {refreshing: url, label: folder.slug }}<
-    = link_to shorten(title, length), url, class: "folder", data: {droppable: droom.folder_documents_path(folder), picker: "#upload_to_folder_#{folder.id}", queue: "#queue_to_#{folder.id}", refreshes: "#folder_#{folder.id}"}
+    = link_to shorten(title.html_safe, length), url, class: "folder", data: {droppable: droom.folder_documents_path(folder), picker: "#upload_to_folder_#{folder.id}", queue: "#queue_to_#{folder.id}", refreshes: "#folder_#{folder.id}"}
     - unless omit_menu
       = action_menulink(folder)
     %ul.uploads{id: "queue_to_#{folder.id}"}
