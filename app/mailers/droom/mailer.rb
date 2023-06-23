@@ -1,7 +1,7 @@
 module Droom
   class Mailer < ActionMailer::Base
     layout Droom.email_layout
-    default from: %{#{Droom.email_from_name} <#{Droom.email_from}>}
+    default from: '"Hong Kong Foundations Exchange" <info@hkfx.org>'
 
     def org_confirmation(organisation)
       @organisation = organisation
@@ -11,11 +11,12 @@ module Droom
       mail(to: @email, subject: @subject)
     end
 
-    def org_notification(organisation, admin)
+    def org_notification(organisation, admin, noti_type)
       @organisation = organisation
       @admin = admin
       @user = organisation.owner
-      @subject = I18n.t("registration.notification_subject", name: organisation.name)
+      @noti_type = noti_type
+      @subject = @noti_type == :created ? I18n.t("registration.notification_subject", name: organisation.name) : I18n.t("withdraw.notification_subject")
       @email = Rails.env.produciton? ? @admin.email : Settings.email.sandbox
       mail(to: @email, subject: @subject)
     end

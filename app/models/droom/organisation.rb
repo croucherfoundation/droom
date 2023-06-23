@@ -22,7 +22,9 @@ module Droom
     default_scope -> {order("name ASC")}
 
     after_save :capture_owner
-    after_create :send_notifications
+
+    after_create -> { send_notifications(:created) }
+    after_destroy -> { send_notifications(:destroyed) }
 
     attr_accessor :other_id
 
@@ -113,14 +115,24 @@ module Droom
       end
     end
 
-    def send_notifications
-      send_registration_confirmation_messages if external?
+    def send_notifications(noti_type)
+      @noti_type = noti_type
+
+      if external?
+        if @noti_type == :created
+          send_registration_confirmation_messages 
+        else
+          Droom::User.gatekeepers.each do |admin|
+            Droom.mailer.send(:org_notification, self, admin, @noti_type).deliver_now
+          end
+        end
+      end
     end
 
     def send_registration_confirmation_messages
       Droom.mailer.send(:org_confirmation, self).deliver_later
       Droom::User.gatekeepers.each do |admin|
-        Droom.mailer.send(:org_notification, self, admin).deliver_later
+        Droom.mailer.send(:org_notification, self, admin, @noti_type).deliver_later
       end
     end
 
