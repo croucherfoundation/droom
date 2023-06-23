@@ -559,6 +559,7 @@ jQuery ($) ->
       replacement.find('a.cancel').click(@revert)
       @bindLinks()
       $("html, body").animate({ scrollTop: 0 }, "slow")
+      window.cacheFunc && window.cacheFunc()      
 
     revert: (e) =>
       @display(@_original_content)
