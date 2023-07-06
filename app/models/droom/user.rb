@@ -41,6 +41,8 @@ module Droom
     after_save :enqueue_mailchimp_job
     after_destroy :remove_from_mailchimp_list
 
+    before_save :sync_with_person
+
     scope :admins, -> { where(admin: true) }
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }
     scope :external, -> { joins(:organisation).where(droom_organisations: {external: true}) }
@@ -750,7 +752,22 @@ module Droom
     def data_room_user?
       !Droom.require_login_permission? || admin? || permitted?('droom.login')
     end
-
+    
+    def sync_with_person
+      @person = person
+      if @person
+        [:title, :given_name, :family_name, :chinese_name, :email, :preferred_name].each do |col|
+          if has_attribute?(col)
+            if send("#{col}_changed?")
+              @person.send "#{col}=".to_sym, send(col)
+            elsif @person.send(col) != send(col)
+              send "#{col}=".to_sym, @person.send(col)
+            end
+          end
+        end
+        @person.save
+      end
+    end
 
     ## Other ownership
     #
