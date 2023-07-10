@@ -7,7 +7,7 @@
       %use{"xlink:href" => "#address_type_#{email.address_type.slug}_symbol"}
   - else
     %svg.icon.small
-      %use{"xlink:href" => "#address_type_symbol"}
+      %use{"xlink:href" => "#email_symbol"}
   %span.contact
     = mail_to email.email, truncate(email.email, length: 56)
   
