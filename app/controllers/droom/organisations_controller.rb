@@ -23,7 +23,8 @@ module Droom
     end
 
     def create
-      @organisation.update(organisation_params)
+      @organisation.owner_id = current_user.id if @organisation.owner_id.nil?
+      @organisation.update(organisation_params) 
       @organisation.approve!(current_user)
       respond_with @organisation
     end

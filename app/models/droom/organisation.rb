@@ -118,15 +118,13 @@ module Droom
     def send_notifications(noti_type)
       @noti_type = noti_type
 
-      if external?
         if @noti_type == :created
           send_registration_confirmation_messages 
         else
           Droom::User.gatekeepers.each do |admin|
-            Droom.mailer.send(:org_notification, self, admin, @noti_type).deliver_now
+            Droom.mailer.send(:org_notification, self, admin, @noti_type).deliver_later
           end
         end
-      end
     end
 
     def send_registration_confirmation_messages
