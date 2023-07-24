@@ -25,6 +25,7 @@ Droom::Engine.routes.draw do
     resources :organisations do
       post :register, on: :collection
     end
+    resources :documents, only: [:index, :show]
   end
 
   devise_for :users,
