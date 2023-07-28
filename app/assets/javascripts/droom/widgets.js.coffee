@@ -149,7 +149,12 @@ jQuery ($) ->
           arr = this._filename.split('.')
           ext = arr.last()
           arr.length = arr.length - 1
-          @_form.find('input.filename').val(arr.join('.'))
+          @_form.find('input.filename') 
+          filename = @_form.find('input.filename')
+          if filename.hasClass('file_with_extension')
+            filename.val(this._filename)
+          else
+            filename.val(arr.join('.'))
           return @_form.find('input.extension').val("." + ext)
 
 
