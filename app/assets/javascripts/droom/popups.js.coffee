@@ -68,7 +68,7 @@ jQuery ($) ->
 
     receive: (e, data) =>
       e?.stopPropagation()
-      if @_iteration == 0 || $(data).find('form').not('.button_to').length
+      if @_iteration == 0 || $(data).find('form:not(#edit_cell)').not('.button_to').length
         @display(data)
       else
         @conclude(data)
