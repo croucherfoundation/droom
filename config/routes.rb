@@ -25,6 +25,7 @@ Droom::Engine.routes.draw do
     resources :organisations do
       post :register, on: :collection
     end
+    resources :documents, only: [:show]
     resources :folders, only: [:show] do
       member do
         get :children

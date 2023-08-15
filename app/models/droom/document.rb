@@ -173,9 +173,20 @@ module Droom
       Droom::IndexDocumentJob.perform_later(id, Time.now.to_i)
     end
 
+    def wiki_reindex
+      WikiDocument.reindex_document(id)
+    end
+
+    def check_wiki_folder(w_folder_id)
+      w_folder_id == (Rails.env.production? ? 1293 : (Rails.env.staging? ? 1132 : 36))
+    end
+
     def enqueue_for_indexing
       if saved_change_to_name? || saved_change_to_file_file_name? || saved_change_to_file_fingerprint?
         enqueue_for_indexing!
+        if (folder.ancestors.present? && check_wiki_folder(folder.ancestors.last.id)) || check_wiki_folder(folder.id)
+          Droom::IndexWikiDocumentJob.perform_later(id)
+        end
       end
     end
 
