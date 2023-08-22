@@ -4,6 +4,7 @@ class Droom::DocumentSerializer < ActiveModel::Serializer
              :folder_name,
              :folder_path,
              :name,
+             :file_key,
              :file_url,
              :file_file_name,
              :file_content_type,
@@ -15,6 +16,12 @@ class Droom::DocumentSerializer < ActiveModel::Serializer
   def file_url
     if object.file.attached?
       object.file.url
+    end
+  end
+
+  def file_key
+    if object.file.attached?
+      object.file.key
     end
   end
 
