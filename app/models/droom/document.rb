@@ -121,6 +121,7 @@ module Droom
     #
     searchkick callbacks: false, default_fields: [:name, :content], highlight: [:name, :content]
     after_save :enqueue_for_indexing
+    before_destroy :enqueue_for_wiki_deindexing
 
     def search_data
       {
@@ -177,14 +178,18 @@ module Droom
       WikiDocument.reindex_document(id)
     end
 
+    def enqueue_for_wiki_deindexing
+      Droom::DeindexWikiDocumentJob.perform_later(folder_id, id)
+    end
+
     def check_wiki_folder(w_folder_id)
-      w_folder_id == (Rails.env.production? ? 1293 : (Rails.env.staging? ? 1132 : 36))
+      w_folder_id == (Rails.env.production? ? 1293 : (Rails.env.staging? ? 1132 : 1132))
     end
 
     def enqueue_for_indexing
       if saved_change_to_name? || saved_change_to_file_file_name? || saved_change_to_file_fingerprint?
         enqueue_for_indexing!
-        if (folder.ancestors.present? && check_wiki_folder(folder.ancestors.last.id)) || check_wiki_folder(folder.id)
+        if (folder.ancestors.present? && check_wiki_folder(folder.ancestors[-2].id)) || check_wiki_folder(folder.id)
           Droom::IndexWikiDocumentJob.perform_later(id)
         end
       end
