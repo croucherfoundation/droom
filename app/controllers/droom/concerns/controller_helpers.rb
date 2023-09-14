@@ -50,13 +50,13 @@ module Droom::Concerns::ControllerHelpers
   end
 
   def set_access_control_headers
-    if request.env["HTTP_ORIGIN"].present? && Droom.cors_domains.empty? || Droom.cors_domains.include?(request.env["HTTP_ORIGIN"])
-      headers['Access-Control-Allow-Origin'] = request.env["HTTP_ORIGIN"]
+    # if request.env["HTTP_ORIGIN"].present? && Droom.cors_domains.empty? || Droom.cors_domains.include?(request.env["HTTP_ORIGIN"])
+      headers['Access-Control-Allow-Origin'] = "https://hkfxs.croucher.org.hk" #request.env["HTTP_ORIGIN"]
       headers["Access-Control-Allow-Credentials"] = "true"
       headers["Access-Control-Allow-Methods"] = %{DELETE, GET, PATCH, POST, PUT}
       headers['Access-Control-Request-Method'] = '*'
       headers['Access-Control-Allow-Headers'] = 'Origin, X-PJAX, X-Requested-With, X-ClientID, Content-Type, Accept, Authorization'
-    end
+    # end
   end
 
 
