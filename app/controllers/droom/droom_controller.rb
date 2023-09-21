@@ -16,7 +16,7 @@ module Droom
       content_security_policy.worker_src :self
       content_security_policy.manifest_src :self
       content_security_policy.frame_src :self
-      content_security_policy.form_action :none
+      content_security_policy.form_action :self
       content_security_policy.frame_ancestors :none
     end
 
