@@ -13,6 +13,21 @@
     - if organisation.chinese_name?
       %span.chinese_name
         = organisation.chinese_name
+  - if organisation.url
+    %span.description
+      = organisation.url
+
+  - if organisation.phone
+    %span.description
+      = organisation.phone
+
+  - if organisation.email_domain
+    %span.description
+      = organisation.email_domain
+
+  - if organisation.address
+    %span.description
+      = organisation.address
 
   - if organisation.description?
     %p.description
