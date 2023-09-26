@@ -1,5 +1,6 @@
 - pending ||= nil
 - organisation ||= pending || @organisation
+-# - byebug
 
 .organisation.holder{:id => "organisation_#{organisation.id}", :data => {:refreshing => true, :url => droom.organisation_path(organisation, view: "pending")} }
   - if admin?
@@ -13,6 +14,23 @@
     - if organisation.chinese_name?
       %span.chinese_name
         = organisation.chinese_name
+  
+  %span
+    .mon
+      = organisation.created_at.strftime('%b %d %Y')
+  - if organisation.tags.any?
+    %ul.tags
+      - organisation.tags.each do |tag|
+        %li.tag
+          %svg.prefix
+            %use{"xlink:href" => "#tag_symbol"}
+          %span.label
+            = tag.name
+
+  - if organisation.users.any?
+    %ul.people
+      = render partial: "droom/users/show/listed_minimal", collection: organisation.users.in_name_order
+
   - if organisation.url
     %span.description
       = organisation.url
@@ -31,4 +49,4 @@
 
   - if organisation.description?
     %p.description
-      = shorten organisation.description, length: 240
+      = shorten organisation.description
