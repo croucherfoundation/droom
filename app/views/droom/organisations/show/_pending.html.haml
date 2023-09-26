@@ -48,5 +48,6 @@
       = organisation.address
 
   - if organisation.description?
+    - lenght = organisation.description.length
     %p.description
-      = shorten organisation.description
+      = shorten organisation.description ,length: lenght
