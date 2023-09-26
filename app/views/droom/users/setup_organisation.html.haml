@@ -59,8 +59,8 @@
       %ul.taglist{data: {role: 'chooser'}}
         - Droom::Tag.by_term.each do |tag|
           %li.checkbox
-            = orgf.check_box :tags, {multiple: true, class: 'fancy'}, tag.id, nil
-            = orgf.label :tags, tag.name, value: tag.id
+            = orgf.check_box :tag_ids, {multiple: true, class: 'fancy'}, tag.id, nil
+            = orgf.label :tatag_idsgs, tag.name, value: tag.id
 
 
 
