@@ -60,7 +60,7 @@
         - Droom::Tag.by_term.each do |tag|
           %li.checkbox
             = orgf.check_box :tag_ids, {multiple: true, class: 'fancy'}, tag.id, nil
-            = orgf.label :tatag_idsgs, tag.name, value: tag.id
+            = orgf.label :tag_ids, tag.name, value: tag.id
 
 
 
