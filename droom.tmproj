@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>app/assets/javascripts/droom/popups.js.coffee</string>
+	<string>app/assets/javascripts/droom/popups.js</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -65,7 +65,7 @@
 				<integer>16</integer>
 			</dict>
 		</dict>
-		<key>app/assets/javascripts/droom.js.coffee</key>
+		<key>app/assets/javascripts/droom.js</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -95,7 +95,7 @@
 				<integer>36</integer>
 			</dict>
 		</dict>
-		<key>app/assets/javascripts/droom/actions.js.coffee</key>
+		<key>app/assets/javascripts/droom/actions.js</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -125,7 +125,7 @@
 				<integer>42</integer>
 			</dict>
 		</dict>
-		<key>app/assets/javascripts/droom/ajax.js.coffee</key>
+		<key>app/assets/javascripts/droom/ajax.js</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -199,7 +199,7 @@
 				<integer>416</integer>
 			</dict>
 		</dict>
-		<key>app/assets/javascripts/droom/popups.js.coffee</key>
+		<key>app/assets/javascripts/droom/popups.js</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -213,7 +213,7 @@
 			<key>firstVisibleLine</key>
 			<integer>39</integer>
 		</dict>
-		<key>app/assets/javascripts/droom/widgets.js.coffee</key>
+		<key>app/assets/javascripts/droom/widgets.js</key>
 		<dict>
 			<key>caret</key>
 			<dict>
@@ -2045,16 +2045,16 @@
 		<string>app/models/droom/membership.rb</string>
 		<string>app/models/droom/folder.rb</string>
 		<string>app/views/droom/users/show.html.haml</string>
-		<string>app/assets/javascripts/droom.js.coffee</string>
+		<string>app/assets/javascripts/droom.js</string>
 		<string>app/controllers/droom/users_controller.rb</string>
 		<string>app/views/droom/users/admin.html.haml</string>
 		<string>lib/droom.rb</string>
 		<string>app/views/droom/users/_form.html.haml</string>
 		<string>app/views/droom/users/_user_fields.html.haml</string>
-		<string>app/assets/javascripts/droom/widgets.js.coffee</string>
-		<string>app/assets/javascripts/droom/popups.js.coffee</string>
+		<string>app/assets/javascripts/droom/widgets.js</string>
+		<string>app/assets/javascripts/droom/popups.js</string>
 		<string>app/views/droom/dashboard/index.html.haml</string>
-		<string>app/assets/javascripts/droom/actions.js.coffee</string>
+		<string>app/assets/javascripts/droom/actions.js</string>
 		<string>app/views/droom/users/_users_table.html.haml</string>
 		<string>app/views/droom/users/_tabled.html.haml</string>
 		<string>app/views/droom/groups/_group.html.haml</string>
