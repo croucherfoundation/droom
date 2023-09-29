@@ -23,9 +23,13 @@ module Droom
     private
 
     def prevent_delivery_in_nonproduction
-      unless Rails.env.production? && FeatureFlag.enabled?('email-service-feature')
-        mail.perform_deliveries = false
+      unless Rails.env.production?
+        unless false #FeatureFlag.enabled?('email-service-feature', @user)
+          puts "⛔️ Disabed Email Delivery!"
+          mail.perform_deliveries = false
+        end
       end
     end
+
   end
 end
