@@ -1,7 +1,9 @@
 module Droom
   class Mailer < ActionMailer::Base
     layout Droom.email_layout
-    default from: %{#{Droom.email_from_name} <#{Droom.email_from}>}
+    default from: %{'Croucher Foundation' <#{Droom.email_from}>}
+
+    after_action :prevent_delivery_in_nonproduction
 
     def org_confirmation(organisation)
       @organisation = organisation
@@ -45,6 +47,14 @@ module Droom
       end
       
       mail(to: @email, subject: @subject)
+    end
+
+    private
+
+    def prevent_delivery_in_nonproduction
+      unless Rails.env.production? && FeatureFlag.enabled?('email-service-feature')
+        mail.perform_deliveries = false
+      end
     end
 
   end
