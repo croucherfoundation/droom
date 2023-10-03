@@ -159,6 +159,22 @@ module Droom
         (current_user.organisation_admin? && !organisation || current_user.organisation == organisation)
     end
 
+    def staff?
+      if user_signed_in?
+        groups = current_user.groups
+        return groups.any? && groups.pluck(:slug).include?('croucher-office')
+      end
+      false
+    end
+
+    def developer?
+      if user_signed_in?
+        groups = current_user.groups
+        return groups.any? && groups.pluck(:slug).include?('developers')
+      end
+      return false
+    end
+
     def external_user?
       Droom.require_internal_organisation? && current_user.external?
     end
