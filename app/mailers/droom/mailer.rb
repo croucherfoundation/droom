@@ -7,7 +7,7 @@ module Droom
       @organisation = organisation
       @user = organisation.owner
       @subject = I18n.t("registration.confirmation_subject", name: organisation.name)
-      @email = Rails.env.produciton? ? @user.email : Settings.email.sandbox
+      @email = Rails.env.production? ? @user.email : Settings.email.sandbox
       mail(to: @email, subject: @subject)
     end
 
@@ -17,7 +17,7 @@ module Droom
       @user = organisation.owner
       @noti_type = noti_type
       @subject = @noti_type == :created ? I18n.t("registration.notification_subject", name: organisation.name) : I18n.t("withdraw.notification_subject")
-      @email = Rails.env.produciton? ? @admin.email : Settings.email.sandbox
+      @email = Rails.env.production? ? @admin.email : Settings.email.sandbox
       mail(to: @email, subject: @subject)
     end
 
@@ -26,7 +26,7 @@ module Droom
       @user = organisation.owner
       @token = token
       @subject = I18n.t("registration.welcome_subject", name: organisation.name)
-      @email = Rails.env.produciton? ? @user.email : Settings.email.sandbox
+      @email = Rails.env.production? ? @user.email : Settings.email.sandbox
       mail(to: @email, subject: @subject)
     end
 
