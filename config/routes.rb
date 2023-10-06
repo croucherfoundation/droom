@@ -47,6 +47,7 @@ Droom::Engine.routes.draw do
     patch "/users/:id/confirm" => "users/confirmations#update", as: :confirm_password
     get "/users/passwords/show" => "users/passwords#show", as: :show_confirmation
     get "/users/passwords/completed" => "users/passwords#completed", as: :complete_confirmation
+    get "/users/sso_login" => "users/sessions#sso_login", as: :sso_login
 
     # droom_client authentication calls
     post '/api/users/sign_in' => 'api/sessions#create', as: :api_sign_in
