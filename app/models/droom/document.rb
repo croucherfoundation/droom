@@ -189,7 +189,7 @@ module Droom
     def enqueue_for_indexing
       if saved_change_to_name? || saved_change_to_file_file_name? || saved_change_to_file_fingerprint?
         enqueue_for_indexing!
-        if (folder.ancestors.present? && check_wiki_folder(folder.ancestors[-2].id)) || check_wiki_folder(folder.id)
+        if (folder.ancestors.present? && check_wiki_folder(folder.ancestors[-2]&.id)) || check_wiki_folder(folder.id)
           Droom::IndexWikiDocumentJob.perform_later(id)
         end
       end
