@@ -194,7 +194,7 @@ module Droom::Concerns::ControllerHelpers
   end
 
   def check_user_setup
-    if user_signed_in? && (!current_user.encrypted_password? || !current_user.names?)
+    if user_signed_in? && (!current_user.encrypted_password? || !current_user.names?) && (!current_user.external_id?)
       @destination = request.fullpath
       raise Droom::SetupRequired
     end

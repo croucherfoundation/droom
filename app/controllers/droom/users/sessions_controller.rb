@@ -76,7 +76,7 @@ module Droom::Users
     end
 
     def set_sso_user
-      @user = Droom::User.new(given_name: @decode_hash['given_name'], family_name: @decode_hash['family_name'], email: @decode_hash['email'], external_id: @decode_hash['external_id'], admin: true, organisation_id: 3 ,password: SecureRandom.uuid)
+      @user = Droom::User.new(given_name: @decode_hash['given_name'], family_name: @decode_hash['family_name'], email: @decode_hash['email'], external_id: @decode_hash['external_id'], admin: true, organisation_id: 3)
       @user.title = @decode_hash['title'] if @decode_hash['title']
       @user.chinese_name = @decode_hash['chinese_name'] if @decode_hash['chinese_name']
       @user.skip_confirmation!
