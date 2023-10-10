@@ -58,7 +58,7 @@ module Droom::Users
     private
 
     def payload_decode
-      secret = ENV['SSO_SECRET']
+      secret = Settings.sso_secret
       decoded = Base64.decode64(params[:sso])
       @decode_hash = Rack::Utils.parse_query(decoded)
       payload = Base64.strict_encode64(decoded)
