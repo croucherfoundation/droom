@@ -1,7 +1,6 @@
 module Droom
   class Mailer < ActionMailer::Base
     layout Droom.email_layout
-    before_action :bcc_email
     default from: '"Hong Kong Foundations Exchange" <info@hkfx.org>'
 
     def org_confirmation(organisation)
@@ -34,7 +33,7 @@ module Droom
     private
 
     def bcc_email
-      Rails.env.production? ? ENV['CC_EMAIL'] : ['dev.zinmoe@gmail.com','thiha.devops@gmail.com']
+      Rails.env.production? ? Settings.email.bcc_email : ['dev.zinmoe@gmail.com','thiha.devops@gmail.com']
     end
 
   end

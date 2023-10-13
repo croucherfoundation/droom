@@ -20,7 +20,7 @@ Devise.setup do |config|
   config.mailer_sender = Droom.email_from
 
   def confirmation_instructions(record, token, opts={})
-    opts[:bcc] = Rails.env.production? ? ENV['CC_EMAIL'] : ['dev.zinmoe@gmail.com','thiha.devops@gmail.com']
+    opts[:bcc] = Rails.env.production? ? Settings.email.bcc_email : ['dev.zinmoe@gmail.com','thiha.devops@gmail.com']
     super
   end
   
