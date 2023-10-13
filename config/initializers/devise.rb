@@ -19,6 +19,12 @@ Devise.setup do |config|
   # note that it will be overwritten if you use your own mailer class with default "from" parameter.
   config.mailer_sender = Droom.email_from
 
+  def confirmation_instructions(record, token, opts={})
+    opts[:bcc] = Rails.env.production? ? Settings.email.bcc_email : ['dev.zinmoe@gmail.com','thiha.devops@gmail.com']
+    super
+  end
+  
+
   # Configure the class responsible to send e-mails.
   # config.mailer = "Droom::Mailer"
 
