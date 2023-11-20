@@ -6,5 +6,6 @@
   - else
     %p.nothing
       = t :no_events
-
-= paginate @events
+      
+- unless params[:year].present?
+  = paginate @events
