@@ -6,24 +6,29 @@
 - character_count = narrow ? 28 : 64
 
 %li.document{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id}}
-  - extension = document.file_extension.downcase
-  - detail_url = droom.folder_document_url(document.folder, document)
   - if document.google_doc_link.present?
     - detail_url = document.google_doc_link
     - extension = 'gdoc'
+  - elsif document.notion_page_link.present?
+    - detail_url = document.notion_page_link
+    - extension = 'notion'
+  - else
+    - extension = document.file_extension.downcase
+    - detail_url = droom.folder_document_url(document.folder, document)
   
-  - unless skip_gdoc && document.google_doc_link.present?
-    = link_to detail_url, class: "document #{['pdf', 'gdoc'].include?(extension) ? 'no-bg-image' : ''} #{extension}", target: "_blank" do
+  - unless skip_gdoc && (document.google_doc_link.present? || document.notion_page_link.present?)
+    = link_to detail_url, class: "document #{['pdf', 'gdoc', 'notion'].include?(extension) ? 'no-bg-image' : ''} #{extension}", target: "_blank" do
       - if extension == 'pdf'
         %svg.icon.medium
           %use{"xlink:href" => "#pdf_symbol"}
       - elsif extension == 'gdoc'
         %svg.icon.pint-sized3
           %use{"xlink:href" => "#google_doc_symbol"}
+      - elsif extension == 'notion'
+        %svg.icon.pint-sized3
+          %use{"xlink:href" => "#notion_symbol"}
       %span
         = shorten(document.name, character_count, '')
-        - if Rails.env.development?
-          = "(#{document.position})"
     - unless omit_menu
       = action_menulink(document)
     = action_menu(document)

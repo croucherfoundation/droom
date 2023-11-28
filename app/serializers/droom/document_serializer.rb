@@ -11,6 +11,7 @@ class Droom::DocumentSerializer < ActiveModel::Serializer
              :file_extension,
              :file_full_path,
              :google_doc_link,
+             :notion_page_link,
              :position
   
   def file_url

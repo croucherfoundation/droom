@@ -1,5 +1,10 @@
 #document
-  - title = @view == 'google_doc' ? t(:add_google_doc) : t(:add_document)
+  - if @view == 'google_doc'
+    - title = t(:add_google_doc)
+  - elsif @view == 'notion_page'
+    - title = t(:add_notion_page)
+  - else
+    - title = t(:add_document)
     
   = render 'droom/shared/popup_header', title: title
   = render :partial => 'form'

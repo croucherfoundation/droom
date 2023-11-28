@@ -28,6 +28,7 @@ en:
   add_member_to: "Add a member to the %{name} group"
   add_new_user: "Invite a new network user"
   add_notice: "Add a notice"
+  add_notion_page: "Add Notion page"
   add_page: "Add page"
   add_permission: "Add a permission"
   add_permission: "Add permission"
@@ -146,6 +147,7 @@ en:
   edit_folder: "Edit folder"
   edit_google_doc: "Edit Google Doc"
   edit_group: "Edit group"
+  edit_notion_page: "Edit Notion page"
   edit_organisation: "Edit organisation"
   edit_organisation_external: "Edit organisation"
   edit_permission: "Edit permission"
@@ -247,6 +249,8 @@ en:
         description: "Document description"
         gogole_doc_name: 'Google Doc name'
         gogole_doc_link: 'Google Doc link'
+        notion_page_name: 'Notion page name'
+        notion_page_link: 'Notion page link'
       event:
         name: "Event name"
         venue_name: "Choose or add a location"

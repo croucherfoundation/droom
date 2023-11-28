@@ -2,10 +2,11 @@
   .menu{:data =>{:for => "document_#{document.id}"}}
     %ul.actions
       - if document.google_doc_link.present?
-        %li
-          = link_to t(:edit_document), droom.edit_folder_document_url(document.folder, document, view: 'google_doc'), :class => 'edit', :data => {:action => "popup", :replaced => "#document_#{document.id}"}
-      - else
-        %li
-          = link_to t(:edit_document), droom.edit_folder_document_url(document.folder, document), :class => 'edit', :data => {:action => "popup", :replaced => "#document_#{document.id}"}
+        - view = 'google_doc'
+      - elsif document.notion_page_link.present?
+        - view = 'notion_page'
+      
+      %li
+        = link_to t(:edit_document), droom.edit_folder_document_url(document.folder, document, view: view), :class => 'edit', :data => {:action => "popup", :replaced => "#document_#{document.id}"}
       %li
         = link_to t(:delete_document), droom.folder_document_url(document.folder, document), :method => 'delete', :class => 'delete', :data => {:action => "remove", :removed => "#document_#{document.id}", :affected => ".minimonth", :confirm => t(:confirm_delete_document, :name => document.name)}
