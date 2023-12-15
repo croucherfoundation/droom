@@ -8,7 +8,7 @@
   %p.url
     = f.label :url
     %br
-    = f.text_field :url, required: true, class: "url", placeholder: t("helpers.label.link.url"), autofocus: true, data: {role: 'url'}
+    = f.text_field :url, required: true, class: "url", placeholder: t("helpers.label.link.url"), data: {role: 'url'}
 
   .buttons
     = f.submit t(:save_link)
