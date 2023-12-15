@@ -1,0 +1,7 @@
+- if can? :edit, link
+  .menu{:data =>{:for => "link_#{link.id}"}}
+    %ul.actions
+      %li
+        = link_to t(:edit_link), droom.edit_link_url(link), :class => "edit", :data => {:action => "popup", :type => "html", :affected => "#link_#{link.id}"}
+      %li
+        = link_to t(:delete_link), droom.link_url(link), :method => 'delete', :class => 'delete', :data => {:action => "remove", :removed => "#link_#{link.id}", :confirm => t(:confirm_delete_link)}

@@ -5,6 +5,7 @@ module Droom
     before_action :get_root_folders, :only => [:index]
     before_action :get_parent_folder, :only => [:new, :create]
     before_action :find_by_name, only: [:create, :update]
+    before_action :get_links, :only => [:index]
     load_and_authorize_resource
 
     def index
@@ -94,8 +95,11 @@ module Droom
   protected
 
     def find_by_name
-      @data = Folder.where(name: folder_params[:name])
-      @data = @data.where(parent_id: folder_params[:parent_id]) if folder_params[:parent_id].present?
+      @data = Folder.where(name: folder_params[:name], parent_id: folder_params[:parent_id].present? ? folder_params[:parent_id] : nil) 
+    end
+
+    def get_links
+      @links = Droom::Link.all
     end
 
     def folder_params

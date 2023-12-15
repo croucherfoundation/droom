@@ -1,0 +1,16 @@
+= form_for @link, :html => {:class => 'edit link'} do |f|
+
+  %p.error{style: 'color: red'}
+  %p.name
+    = f.label :name
+    %br
+    = f.text_field :name, required: true, class: "name", placeholder: t("helpers.label.link.name"), autofocus: true, data: {role: 'name'}
+  %p.url
+    = f.label :url
+    %br
+    = f.text_field :url, required: true, class: "url", placeholder: t("helpers.label.link.url"), autofocus: true, data: {role: 'url'}
+
+  .buttons
+    = f.submit t(:save_link)
+    = t :or
+    = link_to t(:cancel), '#', :class => 'cancel'

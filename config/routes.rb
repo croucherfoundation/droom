@@ -117,6 +117,8 @@ Droom::Engine.routes.draw do
     resources :folders
   end
 
+  resources :links
+
   get "child_folders" => "folders#child_folders"
 
   resources :organisations do
