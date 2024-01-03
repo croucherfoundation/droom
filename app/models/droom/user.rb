@@ -9,6 +9,9 @@ module Droom
     # validates :given_name, :presence => true
     validates :uid, :uniqueness => true, :presence => true
 
+    has_many :droom_users_books, foreign_key: :droom_user_id
+    has_many :books, through: :droom_users_books
+
     has_many :preferences, :foreign_key => "created_by_id"
     accepts_nested_attributes_for :preferences, :allow_destroy => true
 
