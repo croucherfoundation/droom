@@ -1,0 +1,2 @@
+%ul#droom_links{data: {refreshing: true, url: "#{links_path}.js"}}
+  = render :partial => 'droom/links/link', :collection => @links, :locals => {:open => true}

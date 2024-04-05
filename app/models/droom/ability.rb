@@ -67,9 +67,11 @@ module Droom
 
               if user.permitted?('droom.library')
                 can :manage, Droom::Folder
+                can :manage, Droom::Link
                 can :manage, Droom::Document
               elsif user.permitted?('droom.library.read')
                 can :read, Droom::Folder
+                can :read, Droom::Link
                 can :read, Droom::Document
               end
 

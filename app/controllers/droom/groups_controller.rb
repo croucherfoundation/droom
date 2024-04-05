@@ -55,7 +55,7 @@ module Droom
     end
     
     def get_groups
-      @groups = Droom::Group.shown_in_directory.accessible_by(current_ability).order("name ASC")
+      @groups = Droom::Group.shown_in_directory.accessible_by(current_ability).reorder(:position)
     end
 
   end

@@ -130,7 +130,7 @@ module Droom
 
     def document_params
       if params[:document]
-        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link)
+        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link, :notion_page_link)
       else
         {}
       end

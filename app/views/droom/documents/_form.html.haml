@@ -4,15 +4,25 @@
   
   %p.error{style: 'color: red'}
   
-  - if @view == 'google_doc'
-    %p.name
-      = f.label :name, t("helpers.label.document.gogole_doc_name")
-      %br
-      = f.text_field :name, required: true, class: "name", placeholder: t("helpers.label.document.gogole_doc_name"), autofocus: true, data: {role: 'name'}
-    %p.name
-      = f.label :google_doc_link, t("helpers.label.document.gogole_doc_link")
-      %br
-      = f.text_field :google_doc_link, required: true, class: "name", placeholder: t("helpers.label.document.gogole_doc_link"), data: {role: 'name'}
+  - if ['google_doc', 'notion_page'].include?(@view)
+    - if @view == 'google_doc'
+      %p.name
+        = f.label :name, t("helpers.label.document.gogole_doc_name")
+        %br
+        = f.text_field :name, required: true, class: "name", placeholder: t("helpers.label.document.gogole_doc_name"), autofocus: true, data: {role: 'name'}
+      %p.name
+        = f.label :google_doc_link, t("helpers.label.document.gogole_doc_link")
+        %br
+        = f.text_field :google_doc_link, required: true, class: "name", placeholder: t("helpers.label.document.gogole_doc_link"), data: {role: 'name'}
+    - else
+      %p.name
+        = f.label :name, t("helpers.label.document.notion_page_name")
+        %br
+        = f.text_field :name, required: true, class: "name", placeholder: t("helpers.label.document.notion_page_name"), autofocus: true, data: {role: 'name'}
+      %p.name
+        = f.label :notion_page_link, t("helpers.label.document.notion_page_link")
+        %br
+        = f.text_field :notion_page_link, required: true, class: "name", placeholder: t("helpers.label.document.notion_page_link"), data: {role: 'name'}
     .buttons
       = f.submit 'Save'
       = t :or

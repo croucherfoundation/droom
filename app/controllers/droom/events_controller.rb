@@ -103,7 +103,7 @@ module Droom
       get_my_events
       if params[:year].present?
         @year = params[:year].to_i
-        @events = paginated(@events.in_year(@year).order('start ASC'))
+        @events = @events.in_year(@year).order('start ASC')
       elsif @direction == 'past'
         @events = paginated(@events.past.order('start DESC'))
       else

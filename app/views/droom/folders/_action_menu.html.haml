@@ -8,6 +8,8 @@
       - unless @skip_gdoc_menu
         %li
           = link_to t(:add_google_doc), droom.new_folder_document_url(folder, view: 'google_doc'), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
+        %li
+          = link_to t(:add_notion_page), droom.new_folder_document_url(folder, view: 'notion_page'), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
       %li
         = link_to t(:add_subfolder), droom.new_folder_folder_url(folder), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
       %li

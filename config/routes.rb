@@ -25,6 +25,14 @@ Droom::Engine.routes.draw do
     resources :organisations do
       post :register, on: :collection
     end
+    resources :documents, only: [:show]
+    resources :folders, only: [:show] do
+      member do
+        get :children
+        get :documents
+        get :all_documents
+      end
+    end
   end
 
   devise_for :users,
@@ -108,6 +116,8 @@ Droom::Engine.routes.draw do
     resources :documents
     resources :folders
   end
+
+  resources :links
 
   get "child_folders" => "folders#child_folders"
 
