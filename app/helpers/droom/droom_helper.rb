@@ -175,6 +175,32 @@ module Droom
       return false
     end
 
+    def committee?
+      if user_signed_in?
+        committees = ['audit-committee', 'investment-committee', 'nomination-committee']
+        groups = current_user.groups
+        return groups.any? && (groups.pluck(:slug) & committees).present?
+      end
+      return false
+    end
+
+    def trustee?
+      if user_signed_in?
+        trustee = /trustee/i
+        groups = current_user.groups
+        return groups.any? { |group| group.slug.match(trustee) }
+      end
+      return false
+    end
+
+    def test_group?
+      if user_signed_in?
+        groups = current_user.groups
+        return groups.any? && groups.pluck(:slug).include?('test-group')
+      end
+      return false
+    end
+
     def external_user?
       Droom.require_internal_organisation? && current_user.external?
     end
