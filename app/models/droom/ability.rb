@@ -23,6 +23,10 @@ module Droom
             can :manage, Droom::User, organisation_id: user.organisation_id
           end
 
+          if user.staff?
+            can :manage, Order
+          end
+
           if !Droom.require_internal_organisation? || user.internal?
 
             if user.data_room_user?

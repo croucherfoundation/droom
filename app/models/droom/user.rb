@@ -274,6 +274,9 @@ module Droom
       organisation && !organisation.external?
     end
 
+    def staff?
+      return groups.any? && groups.pluck(:slug).include?('croucher-office')
+    end
 
     ## Group memberships
     #
