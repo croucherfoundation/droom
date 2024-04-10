@@ -57,9 +57,9 @@ module Droom
 
     scope :between, -> start, finish { where(['start > :start AND start < :finish AND (finish IS NULL or finish < :finish)', :start => start, :finish => finish]) }
 
-    scope :future_and_current, -> { where(['(finish > :now) OR (finish IS NULL AND start > :now)', :now => Time.zone.now]) }
+    scope :future_and_current, -> { where(['(finish > :midnight) OR (finish IS NULL AND start > :midnight)', :midnight => Time.zone.now.beginning_of_day]) }
 
-    scope :finished, -> { where(['(finish < :now) OR (finish IS NULL AND start < :now)', :now => Time.zone.now]) }
+    scope :finished, -> { where(['(finish < :midnight) OR (finish IS NULL AND start < :midnight)', :midnight => Time.zone.now.beginning_of_day]) }
 
     scope :unbegun, -> { where(['start > :now', :now => Time.zone.now])}
 
