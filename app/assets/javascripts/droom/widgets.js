@@ -198,7 +198,7 @@
       };
 
       FilePicker.prototype.display = function() {
-        var arr, ext, ref;
+        var arr, ext, filename, ref;
         if (ref = this._ext, indexOf.call(this.extensions(), ref) >= 0) {
           this._link.addClass(this._ext);
         }
@@ -208,7 +208,13 @@
             arr = this._filename.split('.');
             ext = arr.last();
             arr.length = arr.length - 1;
-            this._form.find('input.filename').val(arr.join('.'));
+            this._form.find('input.filename');
+            filename = this._form.find('input.filename');
+            if (filename.hasClass('file_with_extension')) {
+              filename.val(this._filename);
+            } else {
+              filename.val(arr.join('.'));
+            }
             return this._form.find('input.extension').val("." + ext);
           }
         }

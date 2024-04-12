@@ -79,7 +79,7 @@
         if (e != null) {
           e.stopPropagation();
         }
-        if (this._iteration === 0 || $(data).find('form').not('.button_to').length) {
+        if (this._iteration === 0 || $(data).find('form:not(#edit_cell)').not('.button_to').length) {
           return this.display(data);
         } else {
           return this.conclude(data);
