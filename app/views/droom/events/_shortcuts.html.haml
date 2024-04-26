@@ -1,9 +1,10 @@
-- years = Droom::Event.pluck(:start).compact.map(&:year).uniq.sort.reverse
+- start_year = 1978
+- max_year = Droom::Event.pluck(:start).compact.map(&:year).uniq.max
+- years = (start_year..max_year).to_a.reverse
 
-%p.navigation
-  = link_to_unless_current "Future events", droom.events_url
-  \|
-  = link_to_unless_current "Past events", droom.past_events_url
-  - years.each do |y|
-    \|
-    = link_to_unless_current y, events_url(year: y)
+.navigation
+  .links-group
+    = link_to "Future events", droom.events_url, class: "link-item #{params[:action] == 'index' && params[:year].nil? ? 'active' : ''}"
+    = link_to "Past events", droom.past_events_url, class: "link-item #{params[:action] == 'past' ? 'active' : ''}"
+    = select_tag :year, options_for_select(years, params[:year]), {prompt: 'Year', class: "link-item", onchange: "this.options[this.selectedIndex].value && location.replace('/events?year=' + this.options[this.selectedIndex].value);"}
+

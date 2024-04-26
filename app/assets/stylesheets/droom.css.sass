@@ -1092,6 +1092,57 @@ span.delete
   border-radius: 100%;
   cursor: pointer;
 
+#calendar
+  .navigation
+    margin-bottom: 40px
+
+    .links-group
+      display: flex
+      flex-direction: row
+
+      select.link-item
+          height: 42px
+          font-size: 16px
+          font-weight: normal
+
+      .link-item
+        display: flex
+        justify-content: center
+        align-items: center
+        color: $pearl_black
+        border: 1px solid $pearl_black
+        width: 100%
+        max-width: 264px
+        height: 40px
+        text-align: center
+        text-decoration: none
+        letter-spacing: 0.01em
+        border-radius: unset
+        font-weight: bold
+
+        &.active
+          border: 1px solid $red
+          background: $red 
+          color: $page
+
+          &:first-child + .link-item
+            border-left: none
+
+          &:nth-child(2).active ~ .link-item:last-child
+            border-left: none
+          
+          &:hover
+            color: $page
+
+        &:first-child, &:nth-child(2)
+          border-right: none
+
+        &:hover
+          color: $red
+        
+        a:visited
+          color: $pearl_black
+        
 
 @import droom/columns
 @import droom/datepicker

@@ -1,12 +1,5 @@
-- if @year
-  - title = t(:events_in, period: @year)
-- elsif @direction == "past"
-  - title = t(:past_events)
-- else
-  - title = t(:calendar)
-
 - content_for :title do
-  = "#{title}"
+  = t(:calendar)
   .button-group
     %span.action
       - if can?(:create, Droom::Event)
