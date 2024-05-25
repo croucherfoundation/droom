@@ -20,6 +20,7 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :phone,
              :phone_list,
              :mobile,
+             :address_list,
              :address,
              :correspondence_address,
              :country_code,
@@ -48,9 +49,13 @@ class Droom::UserSerializer < ActiveModel::Serializer
   def email_list
     object.emails.pluck(:email).join('; ')
   end
-  
+
   def phone_list
     object.phones.pluck(:phone).join('; ')
+  end
+
+  def address_list
+    object.addresses.pluck(:address).join('; ')
   end
 
   def images
