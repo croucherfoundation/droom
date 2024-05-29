@@ -11,7 +11,11 @@ module Droom::Api
     end
 
     def show
-      render json: @user
+      if params[:type].present? && params[:type] == 'minimal'
+        render json: @user, serializer: Droom::UserMinimalSerializer
+      else
+        render json: @user
+      end
     end
 
     # This would usually be a session-init call from a front end SPA
@@ -27,6 +31,13 @@ module Droom::Api
     def authenticable
       @user.ensure_unique_session_id!
       render json: @user, serializer: Droom::UserAuthSerializer
+    end
+
+    def update_contact
+      @user.assign_nested_emails(contact_params[:emails]) if contact_params[:emails].present?
+      @user.assign_nested_phones(contact_params[:phones]) if contact_params[:phones].present?
+      @user.assign_nested_addresses(contact_params[:addresses]) if contact_params[:addresses].present?
+      render json: @user, serializer: Droom::UserMinimalSerializer
     end
 
     def update
@@ -94,6 +105,14 @@ module Droom::Api
     def user_params
       params.require(:user).permit(:uid, :person_uid, :title, :family_name, :given_name, :chinese_name, :honours, :affiliation, :email, :phone, :mobile, :description, :address, :post_code, :correspondence_address, :country_code, :organisation_id, :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data, :image_name, :last_request_at, :preferred_pronoun, :preferred_professional_name, :preferred_name)
     end
+
+    def contact_params
+      params.require(:user).permit(
+        emails: [:id, :email, :email_type],
+        phones: [:id, :phone, :phone_type],
+        addresses: [:id, :address, :address_type]
+      )
+    end    
 
   end
 end

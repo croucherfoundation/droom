@@ -959,6 +959,72 @@ module Droom
       end
     end
 
+    def assign_nested_records(records_params, association_name, attribute_mappings)
+      transaction do
+        association = self.send(association_name)
+        existing_ids = association.pluck(:id)
+        incoming_ids = records_params.map { |param| param[:id].to_i }
+
+        # Delete records that are not present in the incoming params
+        records_to_delete = existing_ids - incoming_ids
+
+        association.where(id: records_to_delete).destroy_all
+  
+        records_params.each_with_index do |param, index|
+          type_name = param[attribute_mappings[:type]]
+          record_type = Droom::AddressType.find_by(name: type_name)
+  
+          unless record_type
+            raise ActiveRecord::RecordNotFound, "Address type '#{type_name}' not found"
+          end
+  
+          record_attributes = attribute_mappings[:attributes].each_with_object({}) do |(key, value), hash|
+            hash[key] = param[value]
+          end.merge(address_type: record_type)
+  
+          if param[:id].present?
+            record = association.find(param[:id])
+            record.update!(record_attributes)
+          else
+            association.create!(record_attributes)
+          end
+        end
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      errors.add(:base, e.message)
+      false
+    rescue ActiveRecord::RecordInvalid => e
+      errors.add(:base, e.message)
+      false
+    end
+  
+    def assign_nested_emails(emails_params)
+      assign_nested_records(
+        emails_params,
+        :emails,
+        type: :email_type,
+        attributes: { email: :email }
+      )
+    end
+  
+    def assign_nested_phones(phones_params)
+      assign_nested_records(
+        phones_params,
+        :phones,
+        type: :phone_type,
+        attributes: { phone: :phone }
+      )
+    end
+  
+    def assign_nested_addresses(addresses_params)
+      assign_nested_records(
+        addresses_params,
+        :addresses,
+        type: :address_type,
+        attributes: { address: :address }
+      )
+    end
+
   protected
 
     def ensure_uid!
