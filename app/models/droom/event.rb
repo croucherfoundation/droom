@@ -154,6 +154,11 @@ module Droom
       finished.order('start DESC')
     end
 
+    def self.for_scholar
+      @event_type = Droom::EventType.find_by_slug('other_events')
+      self.where(event_type_id: @event_type.id)
+    end
+
     ## Instance methods
     #
     def invite(user)

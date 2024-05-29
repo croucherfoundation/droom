@@ -57,6 +57,9 @@ module Droom
                 can :read, Droom::Invitation
                 can :read, Droom::GroupInvitation
                 can :read, Droom::AgendaCategory
+
+                can :past, Droom::Event
+                can :calendar, Droom::Event
               end
 
               if user.permitted?('droom.directory')
@@ -76,6 +79,8 @@ module Droom
               elsif user.permitted?('droom.library.read')
                 can :read, Droom::Folder
                 can :read, Droom::Link
+                can :read, Droom::Document
+              elsif user.permitted?('droom.library.read_event_documents')
                 can :read, Droom::Document
               end
 

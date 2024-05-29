@@ -86,7 +86,7 @@ module Droom
     end
 
   protected
-  
+
     def set_timezone_feature
       @timezone_feature = FeatureFlag.enabled?('time-zone-feature', current_user)
     end
@@ -95,6 +95,10 @@ module Droom
       @events = Droom::Event.accessible_by(current_ability)
       if Droom.config.separate_calendars?
         @events = @events.in_calendar(Droom::Calendar.default_calendar)
+      end
+      if scholar?
+        @event_type = Droom::EventType.find_by_slug('other_events')
+        @events = @events.where(event_type_id: @event_type.id)
       end
       @events
     end

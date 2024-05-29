@@ -3,7 +3,7 @@
 - event_invitation ||= @event_invitation
 - here ||= event == @event
 - full_attachments ||= false
-- show_folder = event.folder && can?(:read, event.folder)
+- show_folder = (event.folder && can?(:read, event.folder)) || current_user.permitted?('droom.library.read_event_documents')
 - skip_gdoc = true
 
 - event_master_id = event.master_id || event.id

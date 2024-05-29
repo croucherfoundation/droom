@@ -2,6 +2,7 @@
 - group ||= @group
 - permission ||= @permission
 - read_permission ||= @read_permission
+- read_event_documents_permission ||= @read_event_documents_permission
 
 - unless group_permission
   - if @group_permissions
@@ -13,10 +14,10 @@
 - permission ||= group_permission.permission
 - linkid = "#{group.slug}_#{permission.slug.gsub('.', '_')}"
 
--if read_permission.present?
-  - classname = permission.define_permission_color(group_permission, group, read_permission)
+-if read_permission.present? || read_event_documents_permission.present?
+  - classname = permission.define_permission_color(group_permission, group, read_permission, read_event_documents_permission)
   = link_to t(:disallow), "#", :class => "#{classname}", :data => { :menu => "#{linkid}" }
-  = render :partial => "droom/group_permissions/action_menu", :locals => { :group_permission => group_permission, :group => group, :permission => permission, :read_permission => read_permission, :linkid => linkid }
+  = render :partial => "droom/group_permissions/action_menu", :locals => { :group_permission => group_permission, :group => group, :permission => permission, :read_permission => read_permission, :read_event_documents_permission => read_event_documents_permission, :linkid => linkid, classname: classname }
 
 -else
   - if group_permission && !group_permission.destroyed?

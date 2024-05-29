@@ -175,6 +175,14 @@ module Droom
       return false
     end
 
+    def scholar?
+      if user_signed_in?
+        groups = current_user.groups
+        return groups.any? && groups.pluck(:slug).include?('scholars')
+      end
+      false
+    end
+
     def committee?
       if user_signed_in?
         committees = ['audit-committee', 'investment-committee', 'nomination-committee']
