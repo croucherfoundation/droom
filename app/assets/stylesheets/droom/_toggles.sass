@@ -70,13 +70,15 @@ table.toggles
   td.toggle
     min-height: 32px
     text-align: center
-    span.no, span.yes, a.yes, a.no, a.read
+    span.no, span.yes, a.yes, a.no, a.read, a.read-documents
       +icon("droom/minisymbols.png")
       margin: 5px 0 0 3px
       &.yes
         background-position: 0 -384px
       &.read
         background-position: 0 -455px
+      &.read-documents
+        background-position: 0 -432px
       &.no
         background-position: 0 -528px
         opacity: 0.3
@@ -91,7 +93,7 @@ table.toggles
       opacity: 0.3
     a.no:hover
       background-position: 0 -648px
-    a.yes:hover, a.read:hover
+    a.yes:hover, a.read:hover, a.read-documents:hover
       background-position: 0 -480px
   tr.unconfirmed
     td, th, td.name

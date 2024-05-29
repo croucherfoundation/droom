@@ -553,7 +553,8 @@ en:
   quick_search: "Quick search"
   quick_search: "Quick search"
   quick_search_prompt: "Type anything here"
-  read_permission: "Read Permission"
+  read_event_document_permission: 'Read event documents permission'
+  read_permission: "Read permission"
   recent_events: "Past events"
   register_organisation: "Apply to register your organisation"
   reject: "reject"

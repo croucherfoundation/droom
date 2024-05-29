@@ -103,6 +103,30 @@ module Droom::Concerns::ControllerHelpers
       (current_user.organisation_admin? && !organisation || current_user.organisation == organisation)
   end
 
+  def staff?
+    if user_signed_in?
+      groups = current_user.groups
+      return groups.any? && groups.pluck(:slug).include?('croucher-office')
+    end
+    false
+  end
+
+  def developer?
+    if user_signed_in?
+      groups = current_user.groups
+      return groups.any? && groups.pluck(:slug).include?('developers')
+    end
+    return false
+  end
+
+  def scholar?
+    if user_signed_in?
+      groups = current_user.groups
+      return groups.any? && groups.pluck(:slug).include?('scholars')
+    end
+    false
+  end
+
   def note_current_user
     if user_signed_in? && !devise_controller?
       RequestStore.store[:current_user] = current_user

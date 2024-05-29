@@ -1,5 +1,7 @@
 - calendar = Droom::Calendar.where(name: 'main').first_or_create
-- events ||= calendar.events.past.limit(5)
+- past_events = calendar.events.past 
+- past_events = past_events.for_scholar if scholar?
+- events ||= past_events.limit(5)
 
 - if events.any?
   .divider
@@ -8,9 +10,9 @@
       %h2.section
         = link_to droom.past_events_url do
           = t(:recent_events)
-          - if calendar.events.past.count > 5
+          - if past_events.count > 5
             %span.addendum
-              =t(:click_for_more, count: calendar.events.past.count - 5)
+              =t(:click_for_more, count: past_events.count - 5)
 
       - if events.any?
         = render :partial => "droom/events/event", :collection => events, :locals => {:brief => true}

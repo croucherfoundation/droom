@@ -12,10 +12,16 @@ module Droom
       self.class.find_by(name: "#{self.name}.read")
     end
 
-    def define_permission_color(group_permission, group, read_permission)
-      group_read_permission = Droom::GroupPermission.find_by(group_id: group.id, permission_id: read_permission.id)
+    def get_read_event_documents_permission
+      self.class.find_by(name: "#{self.name}.read_event_documents")
+    end
+
+    def define_permission_color(group_permission, group, read_permission, read_event_documents_permission)
+      group_read_permission = Droom::GroupPermission.find_by(group_id: group.id, permission_id: read_permission&.id)
+      group_read_event_documents_permission = Droom::GroupPermission.find_by(group_id: group.id, permission_id: read_event_documents_permission&.id)
       color = 'no'
       color = 'read' if group_read_permission && !group_read_permission.destroyed?
+      color = 'read-documents' if group_read_event_documents_permission && !group_read_event_documents_permission.destroyed?
       color = 'yes' if group_permission && !group_permission.destroyed?
 
       color
