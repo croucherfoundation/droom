@@ -16,7 +16,7 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
       {
         id: email.id,
         email: email.email,
-        email_type: email.address_type.name
+        email_type: email.address_type&.name
       }
     end
   end
@@ -26,7 +26,7 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
       {
         id: phone.id,
         phone: phone.phone,
-        phone_type: phone.address_type.name
+        phone_type: phone.address_type&.name
       }
     end
   end
@@ -36,10 +36,10 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
       {
         id: address.id,
         address: address.address,
-        address_type: address.address_type.name
+        address_type: address.address_type&.name
       }
     end
   end
-  
+
 
 end

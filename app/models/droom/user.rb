@@ -137,7 +137,7 @@ module Droom
         conference  = Conference.find_by(short_name: name, slug: slug)
 
         next if conference.nil?
-        
+
         if group_names.include?(event)
           ConferencePerson.find_or_create_by(conference: conference, person_uid: person.id) do |cp|
             cp.attend = true if cp.new_record?
@@ -783,13 +783,13 @@ module Droom
     def data_room_user?
       !Droom.require_login_permission? || admin? || permitted?('droom.login')
     end
-    
+
     def sync_with_person
       @person = person
       if @person
         [:title, :given_name, :family_name, :chinese_name, :email, :preferred_name].each do |col|
           if has_attribute?(col)
-            if send("#{col}_changed?")
+            if send(col).present? && send("#{col}_changed?")
               @person.send "#{col}=".to_sym, send(col)
             elsif @person.send(col) != send(col)
               send "#{col}=".to_sym, @person.send(col)
@@ -969,19 +969,19 @@ module Droom
         records_to_delete = existing_ids - incoming_ids
 
         association.where(id: records_to_delete).destroy_all
-  
+
         records_params.each_with_index do |param, index|
           type_name = param[attribute_mappings[:type]]
           record_type = Droom::AddressType.find_by(name: type_name)
-  
+
           unless record_type
             raise ActiveRecord::RecordNotFound, "Address type '#{type_name}' not found"
           end
-  
+
           record_attributes = attribute_mappings[:attributes].each_with_object({}) do |(key, value), hash|
             hash[key] = param[value]
           end.merge(address_type: record_type)
-  
+
           if param[:id].present?
             record = association.find(param[:id])
             record.update!(record_attributes)
@@ -997,7 +997,7 @@ module Droom
       errors.add(:base, e.message)
       false
     end
-  
+
     def assign_nested_emails(emails_params)
       assign_nested_records(
         emails_params,
@@ -1006,7 +1006,7 @@ module Droom
         attributes: { email: :email }
       )
     end
-  
+
     def assign_nested_phones(phones_params)
       assign_nested_records(
         phones_params,
@@ -1015,7 +1015,7 @@ module Droom
         attributes: { phone: :phone }
       )
     end
-  
+
     def assign_nested_addresses(addresses_params)
       assign_nested_records(
         addresses_params,
