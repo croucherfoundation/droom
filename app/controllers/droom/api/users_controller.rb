@@ -40,6 +40,14 @@ module Droom::Api
       render json: @user, serializer: Droom::UserMinimalSerializer
     end
 
+    def change_password
+      if @user.present?
+        @user.assign_attributes(password: params[:user][:password], password_confirmation: params[:user][:password_confirmation])
+        @user.save
+      end
+      render json: @user, serializer: Droom::UserMinimalSerializer
+    end
+
     def update
       @user.update(user_params)
       render json: @user
@@ -112,7 +120,7 @@ module Droom::Api
         phones: [:id, :phone, :phone_type],
         addresses: [:id, :address, :address_type]
       )
-    end    
+    end
 
   end
 end
