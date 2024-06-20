@@ -40,11 +40,11 @@ module Droom::Api
       render json: @user, serializer: Droom::UserMinimalSerializer
     end
 
-    def change_password
-      if @user.present?
-        @user.assign_attributes(password: params[:user][:password], password_confirmation: params[:user][:password_confirmation])
-        @user.save
-      end
+    def account_update
+      @user.assign_nested_emails(account_params[:emails]) if account_params[:emails].present?
+      @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
+      @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
+      @user.save
       render json: @user, serializer: Droom::UserMinimalSerializer
     end
 
@@ -119,6 +119,13 @@ module Droom::Api
         emails: [:id, :email, :email_type],
         phones: [:id, :phone, :phone_type],
         addresses: [:id, :address, :address_type]
+      )
+    end
+
+    def account_params
+      params.require(:user).permit(
+       :password, :password_confirmation, :timezone,
+        emails: [:id, :email, :email_type]
       )
     end
 

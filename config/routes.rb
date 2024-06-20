@@ -15,7 +15,7 @@ Droom::Engine.routes.draw do
       put 'update_contact',  on: :member, as: :update_contact
       get "whoami" , on: :collection, as: :whoami
       get "authenticable", on: :member, as: :authenticable
-      put 'change_password', on: :member, as: :change_password
+      put 'account_update', on: :member, as: :account_update
     end
     put "update_timezone" => 'users#update_timezone', as: 'update_timezone'
     resources :events

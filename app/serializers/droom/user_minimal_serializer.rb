@@ -9,7 +9,8 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
   attributes :uid,
              :email_list,
              :phone_list,
-             :address_list
+             :address_list,
+             :timezone
 
   def email_list
     object.emails.map do |email|
