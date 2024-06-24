@@ -14,10 +14,10 @@
       - if @user.image.attached?
         - img = @user.image_url(:thumb)
       - else
-        - img = image_url('droom/missing/user.png')
+        - img = image_url('missing/user.png')
 
       .image-upload{:data => {:role => "imagepicker"}}
-        %a.box{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
+        %a.box.border-0{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
 
     #right_pane
       .right_pane_container
