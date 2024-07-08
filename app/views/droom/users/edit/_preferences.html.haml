@@ -40,8 +40,8 @@
 
     .buttons
       - if @user == current_user
-        = f.submit t(:save_your_preferences)
+        = f.submit t(:save_your_preferences), class: 'croucher-standard-btn inline'
       - else
-        = f.submit t(:save_preferences)
+        = f.submit t(:save_preferences), class: 'croucher-standard-btn inline'
       = t :or
       = link_to t(:cancel), '#', :class => 'cancel'

@@ -6,7 +6,7 @@
   = render "devise/shared/error_messages", resource: resource
 
   = f.email_field :email, autofocus: true, autocomplete: "email", placeholder: t("placeholders.registration.email"), class: "half"
-  = f.submit t('registration.submit'), id: 'submitWithRecaptcha'
+  = f.submit t('registration.submit'), id: 'submitWithRecaptcha', class: 'croucher-standard-btn'
   
   - if check_recaptcha?
     = recaptcha_execute('submit')

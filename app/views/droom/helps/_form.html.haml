@@ -17,6 +17,6 @@
     = f.text_area :content, :id => 'd1', :class => "rte", :placeholder => t("helpers.label.help.content"), data: {role: 'content'}
 
   .buttons
-    = f.submit t(:save)
+    = f.submit t(:save), class: 'croucher-standard-btn inline'
     = t :or
     = link_to t(:cancel), '#', :class => 'cancel'

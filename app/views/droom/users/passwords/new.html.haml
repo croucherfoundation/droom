@@ -1,6 +1,6 @@
 #account
   %h1.pagetitle
-    =t :forgot_password
+    =t :forgot_password_title
 
   = form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f|
 
@@ -9,11 +9,9 @@
 
     %p
       = f.email_field :email, class: 'login', autofocus: true, placeholder: t('placeholders.session.email')
-      %span.note
-        = t :email_note
-
+      
     .controls
       .save.button
         %p
-          = f.submit t(:send_reset_instructions), :class => "submit"
+          = f.submit t(:send_reset_instructions), :class => "submit croucher-standard-btn"
 

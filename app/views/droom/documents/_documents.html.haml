@@ -6,7 +6,7 @@
 
     %fieldset.search<
       = text_field_tag :q, params[:q], name: 'q', class: 'search', placeholder: t(:search), data: {slow: true}
-      = submit_tag t(:search)
+      = submit_tag t(:search), class: 'croucher-standard-btn'
 
     = link_to "▾ more options", '#', class: "select", data: {action: "toggle", affected: ".document_selection", sticky: true}
 

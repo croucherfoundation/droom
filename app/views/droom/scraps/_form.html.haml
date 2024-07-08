@@ -57,6 +57,6 @@
       = f.text_field :note, :class => 'note', placeholder: t("placeholders.scrap.caption")
 
     .buttons
-      = f.submit t(:save)
+      = f.submit t(:save), class: 'croucher-standard-btn inline'
       = t :or
       = link_to t(:cancel), "/", :class => 'cancel'

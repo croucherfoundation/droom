@@ -5,6 +5,7 @@ module Droom
     helper ApplicationHelper
 
     before_action :set_timezone
+    before_action :footer_visibility
 
     protected
 
@@ -20,7 +21,11 @@ module Droom
 
       end
     end
-    
+
+    def footer_visibility
+      @show_footer = controller_name == 'passwords' && action_name == 'new'
+    end
+
     def api_controller?
       false
     end
