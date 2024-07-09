@@ -23,7 +23,7 @@ module Droom
     end
 
     def footer_visibility
-      @show_footer = controller_name == 'passwords' && action_name == 'new'
+      @show_footer = controller_name == 'passwords'
     end
 
     def api_controller?
