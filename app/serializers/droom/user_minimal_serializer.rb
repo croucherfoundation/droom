@@ -10,7 +10,8 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
              :email_list,
              :phone_list,
              :address_list,
-             :timezone
+             :timezone,
+             :user_groups
 
   def email_list
     object.emails.map do |email|
@@ -41,6 +42,12 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
       }
     end
   end
+
+  def user_groups
+    object.groups.pluck(:name) if object.groups.any?
+  end
+
+
 
 
 end
