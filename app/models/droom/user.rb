@@ -13,6 +13,9 @@ module Droom
     has_many :order_items, through: :orders
     has_many :books, through: :order_items, source: :item, source_type: 'Book'
 
+    has_many :photo_collections, dependent: :destroy
+    accepts_nested_attributes_for :photo_collections, allow_destroy: true
+
     has_many :preferences, :foreign_key => "created_by_id"
     accepts_nested_attributes_for :preferences, :allow_destroy => true
 
