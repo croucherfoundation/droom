@@ -88,6 +88,8 @@ module Droom
     def cookie_options
       @session_options ||= Rails.configuration.session_options
       @session_options[:domain] = cookie_domain
+      @session_options[:httponly] = true
+      @session_options[:secure] = true
       @session_options.slice(:path, :domain, :secure, :httponly)
     end
 
