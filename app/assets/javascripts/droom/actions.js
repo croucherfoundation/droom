@@ -699,9 +699,12 @@
       return this.each(function() {
         var clipboard;
         clipboard = new ClipboardJS(this);
-        return clipboard.on('success', function(e) {
-          $(e.trigger).signal_confirmation();
-          return console.log("copied", e.text);
+        clipboard.on('success', function(e) {
+          console.info('Action:', e.action);
+        });
+        
+        clipboard.on('error', function(e) {
+            console.error('Action:', e.action);
         });
       });
     };
