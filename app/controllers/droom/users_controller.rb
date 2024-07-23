@@ -195,6 +195,9 @@ module Droom
         :preferred_professional_name,
         :preferred_name,
         :preferred_pronoun,
+        :hkid,
+        :pob,
+        :nationality,
         group_ids: []
       ]
 

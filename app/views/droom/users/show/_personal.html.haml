@@ -22,43 +22,53 @@
     #right_pane
       .right_pane_container
         .right_pane_contents
+          = 'Name: '
+          %b
+            = [@user.informal_name, @user.chinese_name].join(' ')
+        
+        .right_pane_contents
           = 'Title: '
           %b
             = @user.title.present? ? @user.title : t(:not_known)
-        .right_pane_contents
-          = 'Family name: '
-          %b
-            = @user.family_name.present? ? @user.family_name : t(:not_known)
-
       .right_pane_container
         .right_pane_contents
-          = 'Given name: '
+          = 'Gender: '
           %b
-            = @user.given_name.present? ? @user.given_name : t(:not_known)
+            = @user.gender.present? ? ( @user.gender == 'm' ? 'Male' : 'Female') : t(:not_known)
+        
         .right_pane_contents
-          = 'Chinese name: '
+          = 'Date of birth: '
           %b
-            = @user.chinese_name.present? ? @user.chinese_name : t(:not_known)
+            = @user.dob.present? ? @user.dob.strftime('%e %b %Y') : t(:not_known)
+      
       .right_pane_container
         .right_pane_contents
-          = 'Preferred name: '
+          = 'Place of birth: '
           %b
-            -# = @user.preferred_professional_name.present? ? @user.preferred_professional_name : t(:not_known)
+            = @user.pob.present? ? @user.pob : t(:not_known)
+        
+        .right_pane_contents
+          = 'Nationality: '
+          %b
+            = @user.nationality.present? ? @user.nationality : t(:not_known)
+      
+      .right_pane_container
+        .right_pane_contents
+          = 'HKID name: '
+          %b
             = @user.preferred_name.present? ? @user.preferred_name : t(:not_known)
+        
+        .right_pane_contents
+          = 'HKID: '
+          %b
+            = @user.hkid.present? ? @user.hkid : t(:not_known)
+      
       .right_pane_container
         .right_pane_contents
           = 'Pronoun: '
           %b
             = @user.preferred_pronoun.present? ? @user.preferred_pronoun : t(:not_known)
-      .right_pane_container
-        .right_pane_contents
-          = 'Date of birth: '
-          %b
-            = @user.dob.present? ? @user.dob.strftime('%e %b %Y') : t(:not_known)
-        .right_pane_contents
-          = 'Gender: '
-          %b
-            = @user.gender.present? ? ( @user.gender == 'm' ? 'Male' : 'Female') : t(:not_known)
+
         - if FeatureFlag.enabled?('time-zone-feature', current_user)
           .right_pane_contents
             = 'Timezone: '
