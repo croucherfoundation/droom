@@ -794,18 +794,19 @@ module Droom
       self.class.sync_in_progress = true
 
       begin
-        if person
+        @person = person
+        if @person
           [:title, :given_name, :family_name, :chinese_name, :gender, :email, :preferred_name, :hkid, :dob, :pob, :nationality].each do |col|
             if has_attribute?(col)
-              next if person.send(col) == send(col)
+              next if @person.send(col) == send(col)
               if send("saved_change_to_#{col}?")
-                person.send "#{col}=", send(col)
-              elsif person.send(col) != send(col)
-                send "#{col}=", person.send(col)
+                @person.send "#{col}=", send(col)
+              elsif @person.send(col) != send(col)
+                send "#{col}=", @person.send(col)
               end
             end
           end
-          person.save if person.changed?
+          @person.save if @person.changed?
           save if changed?
         end
       ensure
