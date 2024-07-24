@@ -528,8 +528,8 @@ en:
       description: "Brief biography or notes on role."
       dob: "Date of birth"
       email: "Email"
-      family_name: "Family name"
-      given_name: "Given name"
+      family_name: "eg Wong"
+      given_name: "eg Alice"
       hkid: 'A123456(1)'
       honours: "Honours"
       mobile: "Mobile/cell"

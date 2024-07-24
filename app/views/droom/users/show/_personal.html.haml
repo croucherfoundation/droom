@@ -24,7 +24,10 @@
         .right_pane_contents
           = 'Name: '
           %b
-            = [@user.informal_name, @user.chinese_name].join(' ')
+            = @user.informal_name
+            - if @user.chinese_name
+              %span.chinese_name
+                = @user.chinese_name
         
         .right_pane_contents
           = 'Title: '

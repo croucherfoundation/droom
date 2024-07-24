@@ -24,7 +24,7 @@
             %table
               %tr
                 %td Title
-                %td Family name
+                %td First name
               %tr
                 %td
                   - if Droom.use_titles?
@@ -32,15 +32,15 @@
                       = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']]
                 %td
                   %span.name>
-                    = f.text_field :family_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.family_name")
-
+                    = f.text_field :given_name, :required => true, placeholder: t("placeholders.user.given_name")
+                    
               %tr
-                %td Given name
+                %td Last name
                 %td Chinese name
               %tr
                 %td
                   %span.name>
-                    = f.text_field :given_name, :required => true, placeholder: t("placeholders.user.given_name")
+                    = f.text_field :family_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.family_name")
 
                 %td
                   - if Droom.use_chinese_names?
