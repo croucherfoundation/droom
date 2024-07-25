@@ -1,1 +1,2 @@
-= render :partial => "folder"
+%div{id: ("single_folder" if params[:shareable] == 'true')}
+  = render :partial => "folder"

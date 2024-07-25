@@ -13,7 +13,7 @@
   - stem ||= ""
   - narrow ||= false
   - length = narrow ? 28 : 64
-  - url = droom.folder_path(folder, skip_gdoc: skip_gdoc)
+  - url = droom.folder_path(folder, skip_gdoc: skip_gdoc, shareable: true)
 
   - if @folder
     - open = true if folder == @folder || folder.ancestor_of?(@folder)

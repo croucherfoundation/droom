@@ -1,6 +1,8 @@
 - if can? :edit, folder
   .menu{:data =>{:for => "folder_#{folder.id}"}}
     %ul.actions
+      %li 
+        = link_to t(:copy_link), 'javascript:void(0)', :class => "copy add", :id => "copy_folder_#{folder.id}", data: {:action => 'copy', :clipboard_text => droom.folder_url(folder, shareable: true)}
       %li
         = link_to t(:edit_folder), droom.edit_folder_url(folder), :class => "edit", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
       %li
