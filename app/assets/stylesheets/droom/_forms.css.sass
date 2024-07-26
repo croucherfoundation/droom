@@ -1,5 +1,5 @@
 div.popup
-  input[type="text"], input[type="password"], input[type="email"],  input[type="tel"], input[type="url"], input[type="date"], input[type="time"], textarea, [contenteditable]:not([contenteditable=false]), 
+  input[type="text"], input[type="password"], input[type="email"],  input[type="tel"], input[type="url"], input[type="date"], input[type="time"], textarea, [contenteditable]:not([contenteditable=false]),
     padding: 8px
     border: 1px solid $pale
     background-color: white
@@ -159,9 +159,17 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
     width: 100%
 
 [contenteditable]:not([contenteditable=false])
-  p:first-child, h2:first-child, h3:first-child, ul:first-child
+  ul, ol
+    display: block
+    margin-block-start: 1em
+    margin-block-end: 1em
+    margin-inline-start: 0px
+    margin-inline-end: 0px
+    padding-inline-start: 40px
+
+  p:first-child, h2:first-child, h3:first-child, ul:first-child, ol:first-child
     margin-top: 0
-  p:last-child, h2:last-child, h3:last-child, ul:last-child
+  p:last-child, h2:last-child, h3:last-child, ul:last-child, ol:last-child
     margin-bottom: 0
   &.rte
     min-height: 4em
@@ -244,7 +252,6 @@ textarea
   &.long
     height: 360px
 
-
 // checkbox cosmetics
 
 ul.taglist
@@ -311,7 +318,6 @@ input.fancy[type="radio"]
     opacity: 0.25
     pointer-events: none
 
-
 // This is old layout from the early droom days
 // and much in need of updating.
 
@@ -338,7 +344,6 @@ form
     clear: left
     input[type="text"], input[type="email"], input[type="password"], select, textarea
       width: 97%
-
 
 form#login
   a.reminder
@@ -430,12 +435,11 @@ form.faceter, form.droom_faceter
     .selection, .action, .caption
       display: inline-block
       vertical-align: top
-    
+
     .caption
       span.note
         display: block
         padding: 10px 0 0 6px
-
 
 @media (max-width: 700px)
   form
