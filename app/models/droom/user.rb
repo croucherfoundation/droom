@@ -132,7 +132,7 @@ module Droom
     def attend_conference_or_not
       return if person.nil?
 
-      events = ["Symposium 2023"]
+      events = ["Symposium 2023", "Symposium 2024"]
       events.each do |event|
         group_names = groups.map(&:name)
         event_name  = event.split(" ")
