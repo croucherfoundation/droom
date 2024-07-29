@@ -32,7 +32,12 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :password_set,
              :preferred_pronoun,
              :preferred_professional_name,
-             :preferred_name
+             :preferred_name,
+             :hkid,
+             :dob,
+             :pob,
+             :nationality,
+             :gender
 
   def name
     object.colloquial_name
@@ -59,7 +64,7 @@ class Droom::UserSerializer < ActiveModel::Serializer
   end
 
   def images
-    if object.image.attached?
+    if object.image.attached? && !Rails.env.development?
       {
         icon: object.image_url(:icon),
         thumbnail: object.image_url(:thumb),

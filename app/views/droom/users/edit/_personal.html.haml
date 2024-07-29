@@ -24,7 +24,7 @@
             %table
               %tr
                 %td Title
-                %td Family name
+                %td First name
               %tr
                 %td
                   - if Droom.use_titles?
@@ -32,15 +32,15 @@
                       = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']]
                 %td
                   %span.name>
-                    = f.text_field :family_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.family_name")
-
+                    = f.text_field :given_name, :required => true, placeholder: t("placeholders.user.given_name")
+                    
               %tr
-                %td Given name
+                %td Last name
                 %td Chinese name
               %tr
                 %td
                   %span.name>
-                    = f.text_field :given_name, :required => true, placeholder: t("placeholders.user.given_name")
+                    = f.text_field :family_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.family_name")
 
                 %td
                   - if Droom.use_chinese_names?
@@ -48,35 +48,54 @@
                       = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")
 
               %tr
-                %td Preferred name
-                %td Pronoun
+                %td HKID name
+                %td HKID
               %tr
                 %td
                   %span.pro_name>
-                    -# = f.text_field :preferred_professional_name, placeholder: 'Professional name'
-                    = f.text_field :preferred_name, placeholder: 'E.g., Peter'
+                    = f.text_field :preferred_name, placeholder: t("placeholders.user.preferred_name")
+
                 %td
-                  %span.pronoun>
-                    = f.select :preferred_pronoun, [['He', 'He'], ['She', 'She'], ['They', 'They']]
+                  %span.hkid>
+                    = f.text_field :hkid, placeholder: t("placeholders.user.hkid"), class: "hkid", data: {role: "hkid"}
 
               %tr
                 %td Gender
                 %td Date of birth
               %tr
                 %td{valign: 'top'}
-                  = f.radio_button :gender, "f"
-                  = f.label :gender, t(:"helpers.label.user.gender_f"), value: "f"
                   = f.radio_button :gender, "m"
                   = f.label :gender, t(:"helpers.label.user.gender_m"), value: "m"
+                  = f.radio_button :gender, "f"
+                  = f.label :gender, t(:"helpers.label.user.gender_f"), value: "f"
                 %td{valign: 'top'}
                   = f.date_select :dob, {order: [:day, :month, :year], prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }, start_year: 1940, end_year: Date.today.year}
+              
+              %tr
+                %td Place of birth
+                %td Nationality
+              %tr
+                %td
+                  %span.pro_name>
+                    = f.text_field :pob, placeholder: t("placeholders.user.pob")
 
-              - if FeatureFlag.enabled?('time-zone-feature', current_user)
-                %tr
+                %td
+                  %span.hkid>
+                    = f.text_field :nationality, placeholder: t("placeholders.user.nationality")
+
+              %tr
+                %td 
+                  Pronoun 
+                - if FeatureFlag.enabled?('time-zone-feature', current_user)
                   %td
                     Timezone
-                %tr
-                  %td{colspan: "2"}
+              %tr
+                %td
+                  %span.pronoun>
+                    = f.select :preferred_pronoun, [['He', 'He'], ['She', 'She'], ['They', 'They']]
+                
+                - if FeatureFlag.enabled?('time-zone-feature', current_user)
+                  %td
                     = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
                     :javascript
                       $('#user_timezone').selectize();

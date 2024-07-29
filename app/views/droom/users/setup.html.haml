@@ -34,4 +34,4 @@
     = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
 
   %p.buttons{:data => {:role => "confirmation"}}>
-    = f.submit t :continue, class: 'croucher-standard-btn'
+    = f.submit t(:continue), class: 'croucher-standard-btn'

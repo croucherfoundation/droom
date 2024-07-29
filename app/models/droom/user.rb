@@ -49,7 +49,8 @@ module Droom
     after_save :attend_conference_or_not
     after_destroy :remove_from_mailchimp_list
 
-    before_save :sync_with_person
+    class_attribute :sync_in_progress
+    # after_commit :sync_with_person
 
     scope :admins, -> { where(admin: true) }
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }
@@ -131,7 +132,7 @@ module Droom
     def attend_conference_or_not
       return if person.nil?
 
-      events = ["Symposium 2023"]
+      events = ["Symposium 2023", "Symposium 2024"]
       events.each do |event|
         group_names = groups.map(&:name)
         event_name  = event.split(" ")
@@ -788,18 +789,28 @@ module Droom
     end
 
     def sync_with_person
-      @person = person
-      if @person
-        [:title, :given_name, :family_name, :chinese_name, :email, :preferred_name].each do |col|
-          if has_attribute?(col)
-            if send(col).present? && send("#{col}_changed?")
-              @person.send "#{col}=".to_sym, send(col)
-            elsif @person.send(col) != send(col)
-              send "#{col}=".to_sym, @person.send(col)
+      return if self.class.sync_in_progress
+
+      self.class.sync_in_progress = true
+
+      begin
+        @person = person
+        if @person
+          [:title, :given_name, :family_name, :chinese_name, :gender, :email, :preferred_name, :hkid, :dob, :pob, :nationality].each do |col|
+            if has_attribute?(col)
+              next if @person.send(col) == send(col)
+              if send("saved_change_to_#{col}?")
+                @person.send "#{col}=", send(col)
+              elsif @person.send(col) != send(col)
+                send "#{col}=", @person.send(col)
+              end
             end
           end
+          @person.save if @person.changed?
+          save if changed?
         end
-        @person.save
+      ensure
+        self.class.sync_in_progress = false
       end
     end
 

@@ -111,7 +111,10 @@ module Droom::Api
     end
 
     def user_params
-      params.require(:user).permit(:uid, :person_uid, :title, :family_name, :given_name, :chinese_name, :honours, :affiliation, :email, :phone, :mobile, :description, :address, :post_code, :correspondence_address, :country_code, :organisation_id, :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data, :image_name, :last_request_at, :preferred_pronoun, :preferred_professional_name, :preferred_name)
+      params.require(:user).permit(:uid, :person_uid, :title, :family_name, :given_name, :chinese_name, :honours, :affiliation,
+          :email, :phone, :mobile, :description, :address, :post_code, :correspondence_address, :country_code, :organisation_id,
+          :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data,
+          :image_name, :last_request_at, :preferred_pronoun, :preferred_professional_name, :preferred_name, :hkid, :dob, :pob, :nationality, :gender)
     end
 
     def contact_params
