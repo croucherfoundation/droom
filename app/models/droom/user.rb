@@ -50,7 +50,7 @@ module Droom
     after_destroy :remove_from_mailchimp_list
 
     class_attribute :sync_in_progress
-    # after_commit :sync_with_person
+    after_commit :sync_with_person
 
     scope :admins, -> { where(admin: true) }
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }
