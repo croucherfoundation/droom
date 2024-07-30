@@ -24,7 +24,7 @@
         = hidden_field_tag :destination, @destination
         = f.hidden_field :organisation_id, value: org.id
         %p
-          = f.submit value: t(:join_organisation, name: org.name)
+          = f.submit value: t(:join_organisation, name: org.name), class: 'croucher-standard-btn inline'
 
       %p
         = t :or_create_organisation
@@ -65,4 +65,4 @@
 
 
     %p.buttons{:data => {:role => "confirmation"}}>
-      = f.submit t :continue
+      = f.submit t :continue, class: 'croucher-standard-btn'

@@ -17,9 +17,9 @@
 
     .buttons
       - if user == current_user
-        = f.submit t(:save_your_profile)
+        = f.submit t(:save_your_profile), class: 'croucher-standard-btn inline'
       - else
-        = f.submit t(:save_profile)
+        = f.submit t(:save_profile), class: 'croucher-standard-btn inline'
       = t :or
       = link_to t(:cancel), '#', :class => 'cancel'
 

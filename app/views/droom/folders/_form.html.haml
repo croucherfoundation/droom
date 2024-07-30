@@ -17,6 +17,6 @@
     = f.text_field :slug, :class => "slug", :placeholder => t("helpers.label.folder.slug"), data: {role: 'slug'}, readonly: true, style: "background: #eee"
 
   .buttons
-    = f.submit t(:save_folder)
+    = f.submit t(:save_folder), class: 'croucher-standard-btn inline'
     = t :or
     = link_to t(:cancel), '#', :class => 'cancel'

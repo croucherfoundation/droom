@@ -11,7 +11,11 @@ module Droom::Api
     end
 
     def show
-      render json: @user
+      if params[:type].present? && params[:type] == 'minimal'
+        render json: @user, serializer: Droom::UserMinimalSerializer
+      else
+        render json: @user
+      end
     end
 
     # This would usually be a session-init call from a front end SPA
@@ -27,6 +31,21 @@ module Droom::Api
     def authenticable
       @user.ensure_unique_session_id!
       render json: @user, serializer: Droom::UserAuthSerializer
+    end
+
+    def update_contact
+      @user.assign_nested_emails(contact_params[:emails]) if contact_params[:emails].present?
+      @user.assign_nested_phones(contact_params[:phones]) if contact_params[:phones].present?
+      @user.assign_nested_addresses(contact_params[:addresses]) if contact_params[:addresses].present?
+      render json: @user, serializer: Droom::UserMinimalSerializer
+    end
+
+    def account_update
+      @user.assign_nested_emails(account_params[:emails]) if account_params[:emails].present?
+      @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
+      @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
+      @user.save
+      render json: @user, serializer: Droom::UserMinimalSerializer
     end
 
     def update
@@ -92,7 +111,25 @@ module Droom::Api
     end
 
     def user_params
-      params.require(:user).permit(:uid, :person_uid, :title, :family_name, :given_name, :chinese_name, :honours, :affiliation, :email, :phone, :mobile, :description, :address, :post_code, :correspondence_address, :country_code, :organisation_id, :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data, :image_name, :last_request_at, :preferred_pronoun, :preferred_professional_name, :preferred_name)
+      params.require(:user).permit(:uid, :person_uid, :title, :family_name, :given_name, :chinese_name, :honours, :affiliation,
+          :email, :phone, :mobile, :description, :address, :post_code, :correspondence_address, :country_code, :organisation_id,
+          :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data,
+          :image_name, :last_request_at, :preferred_pronoun, :preferred_professional_name, :preferred_name, :hkid, :dob, :pob, :nationality, :gender)
+    end
+
+    def contact_params
+      params.require(:user).permit(
+        emails: [:id, :email, :email_type],
+        phones: [:id, :phone, :phone_type],
+        addresses: [:id, :address, :address_type]
+      )
+    end
+
+    def account_params
+      params.require(:user).permit(
+       :password, :password_confirmation, :timezone,
+        emails: [:id, :email, :email_type]
+      )
     end
 
   end

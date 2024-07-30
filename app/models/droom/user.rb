@@ -13,6 +13,9 @@ module Droom
     has_many :order_items, through: :orders
     has_many :books, through: :order_items, source: :item, source_type: 'Book'
 
+    has_many :photo_collections, dependent: :destroy
+    accepts_nested_attributes_for :photo_collections, allow_destroy: true
+
     has_many :preferences, :foreign_key => "created_by_id"
     accepts_nested_attributes_for :preferences, :allow_destroy => true
 
@@ -46,7 +49,8 @@ module Droom
     after_save :attend_conference_or_not
     after_destroy :remove_from_mailchimp_list
 
-    before_save :sync_with_person
+    class_attribute :sync_in_progress
+    after_commit :sync_with_person
 
     scope :admins, -> { where(admin: true) }
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }
@@ -128,7 +132,7 @@ module Droom
     def attend_conference_or_not
       return if person.nil?
 
-      events = ["Symposium 2023"]
+      events = ["Symposium 2023", "Symposium 2024"]
       events.each do |event|
         group_names = groups.map(&:name)
         event_name  = event.split(" ")
@@ -137,7 +141,7 @@ module Droom
         conference  = Conference.find_by(short_name: name, slug: slug)
 
         next if conference.nil?
-        
+
         if group_names.include?(event)
           ConferencePerson.find_or_create_by(conference: conference, person_uid: person.id) do |cp|
             cp.attend = true if cp.new_record?
@@ -783,20 +787,30 @@ module Droom
     def data_room_user?
       !Droom.require_login_permission? || admin? || permitted?('droom.login')
     end
-    
+
     def sync_with_person
-      @person = person
-      if @person
-        [:title, :given_name, :family_name, :chinese_name, :email, :preferred_name].each do |col|
-          if has_attribute?(col)
-            if send("#{col}_changed?")
-              @person.send "#{col}=".to_sym, send(col)
-            elsif @person.send(col) != send(col)
-              send "#{col}=".to_sym, @person.send(col)
+      return if self.class.sync_in_progress
+
+      self.class.sync_in_progress = true
+
+      begin
+        @person = person
+        if @person
+          [:title, :given_name, :family_name, :chinese_name, :gender, :email, :preferred_name, :hkid, :dob, :pob, :nationality].each do |col|
+            if has_attribute?(col)
+              next if @person.send(col) == send(col)
+              if send("saved_change_to_#{col}?")
+                @person.send "#{col}=", send(col)
+              elsif @person.send(col) != send(col)
+                send "#{col}=", @person.send(col)
+              end
             end
           end
+          @person.save if @person.changed?
+          save if changed?
         end
-        @person.save
+      ensure
+        self.class.sync_in_progress = false
       end
     end
 
@@ -957,6 +971,72 @@ module Droom
         group_id = perm.group_permission.group_id
         perm.delete unless group_ids.map(&:to_i).include?(group_id)
       end
+    end
+
+    def assign_nested_records(records_params, association_name, attribute_mappings)
+      transaction do
+        association = self.send(association_name)
+        existing_ids = association.pluck(:id)
+        incoming_ids = records_params.map { |param| param[:id].to_i }
+
+        # Delete records that are not present in the incoming params
+        records_to_delete = existing_ids - incoming_ids
+
+        association.where(id: records_to_delete).destroy_all
+
+        records_params.each_with_index do |param, index|
+          type_name = param[attribute_mappings[:type]]
+          record_type = Droom::AddressType.find_by(name: type_name)
+
+          unless record_type
+            raise ActiveRecord::RecordNotFound, "Address type '#{type_name}' not found"
+          end
+
+          record_attributes = attribute_mappings[:attributes].each_with_object({}) do |(key, value), hash|
+            hash[key] = param[value]
+          end.merge(address_type: record_type)
+
+          if param[:id].present?
+            record = association.find(param[:id])
+            record.update!(record_attributes)
+          else
+            association.create!(record_attributes)
+          end
+        end
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      errors.add(:base, e.message)
+      false
+    rescue ActiveRecord::RecordInvalid => e
+      errors.add(:base, e.message)
+      false
+    end
+
+    def assign_nested_emails(emails_params)
+      assign_nested_records(
+        emails_params,
+        :emails,
+        type: :email_type,
+        attributes: { email: :email }
+      )
+    end
+
+    def assign_nested_phones(phones_params)
+      assign_nested_records(
+        phones_params,
+        :phones,
+        type: :phone_type,
+        attributes: { phone: :phone }
+      )
+    end
+
+    def assign_nested_addresses(addresses_params)
+      assign_nested_records(
+        addresses_params,
+        :addresses,
+        type: :address_type,
+        attributes: { address: :address }
+      )
     end
 
   protected

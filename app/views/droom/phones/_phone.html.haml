@@ -3,7 +3,7 @@
 
 %li{class: cssclass}
   %svg.icon.small
-    - icon = phone.address_type ? phone.address_type.slug : "unknown"
+    - icon = phone.address_type ? phone.address_type.slug : "correspondence"
     %use{"xlink:href" => "#address_type_#{icon}_symbol"}
   %span.contact
     = phone.phone

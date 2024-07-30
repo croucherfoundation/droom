@@ -34,7 +34,8 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
   end
 
   def images
-    if object.image.attached?
+    # I added env checking becuase we are facing rack-time-out error in development mode
+    if object.image.attached? && !Rails.env.development?
       {
         icon: object.image_url(:icon),
         thumbnail: object.image_url(:thumb),

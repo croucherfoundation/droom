@@ -5,7 +5,7 @@
   - url = droom.link_path(link)
 
   %li{id: "link_#{link.id}", data: {refreshing: url}, class: "link_icon"}<
-    = link_to link.name, link.url, class: "link manage"
+    = link_to link.name, link.url, class: "link manage", target: '_blank'
     = action_menulink(link)
     = action_menu(link)
 
