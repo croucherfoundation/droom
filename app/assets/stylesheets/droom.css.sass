@@ -12,7 +12,6 @@
   100%
     background-color: $page
 
-
 p.quitelarge
   font-size: 1.4em
 
@@ -110,7 +109,6 @@ a.setter
     color: $hover
   +waitable
 
-
 .unavailable
   +small
   +pale
@@ -187,7 +185,6 @@ ul.enquiries
     margin-bottom: 1em
     a.email
       color: $pale
-
 
 form.invitation
   min-height: 200px
@@ -334,8 +331,8 @@ div.document
     font-size: 1rem
     color: $mid
     date
-      margin-right: 10px
-      color: $red
+    margin-right: 10px
+    color: $red
   p.description
     margin-left: 40px
     font-size: 1rem
@@ -489,8 +486,6 @@ table.people
   td.buttons
     width: 80px
 
-
-
 table.groups
   margin-bottom: 25px
   th, td
@@ -512,17 +507,12 @@ table.groups
   td.buttons
     width: 80px
 
-
-
 .eventline
   font-size: 80%
   h4
     margin: 0
   p
     margin-top: 0
-
-
-
 
 div.pag
   position: relative
@@ -568,7 +558,6 @@ div.pag
 p.notification
   color: $green
   +icon_link("droom/tick.png")
-
 
 span.erratic
   display: block
@@ -708,7 +697,7 @@ div.nested_set
   position: relative
   p:last-child
     margin-bottom: 0.25em
-  margin-bottom: 0.75em
+    margin-bottom: 0.75em
   p:first-child
     margin-top: 0
   .repeating
@@ -799,7 +788,6 @@ div.kal
   background-color: white
   z-index: 300
 
-
 #stream, .search_results, .suggestion_search
   .scrolled
     width: 320px
@@ -814,7 +802,6 @@ div.kal
 .suggestion_search
   list-style: none
   margin-bottom: 10px
-
 
 #groups
   div.group
@@ -843,7 +830,6 @@ div.kal
 
 #search, .search_results
   position: relative
-
 
 h3.setup
   padding-left: 22px
@@ -917,7 +903,7 @@ p.twister
       background-position: 0 -94px
   &.closed
     a
-      background-position:  0 2px
+      background-position: 0 2px
       &:hover
         background-position: 0 -30px
 
@@ -950,12 +936,10 @@ a.expander
     &:hover
       background-position: 0 -96px
 
-
 input.search_box
   font-size: 1.5em
   padding: 10px
   width: 80%
-
 
 #flashes
   position: absolute
@@ -990,8 +974,6 @@ input.search_box
         position: 0 -96px
         repeat: no-repeat
 
-
-
 /* -------- drag_sort -------- */
 
 .handle
@@ -1001,14 +983,12 @@ input.search_box
   height: 40px
   background: #def
 
-
 ul.documents, #margin ul.documents
   margin: 20px 0 0 -2px
   padding: 0
   list-style: none
   li
     margin-bottom: 0.25em
-
 
 .search_results
   position: relative
@@ -1017,9 +997,9 @@ ul.documents, #margin ul.documents
     width: 100%
     a
       font-size: 1.3em
-    clear: left
-    position: relative
-    margin: 5px 0 25px 0
+      clear: left
+      position: relative
+      margin: 5px 0 25px 0
     a.icon, a.thumb
       position: absolute
       display: block
@@ -1054,7 +1034,6 @@ ul.documents, #margin ul.documents
     a.icon
       background-position: 0 -196px
 
-
 ul.checklist
   font-size: 80%
   list-style: none
@@ -1085,12 +1064,12 @@ ul.checklist
       display: none
 
 span.delete
-  margin: 10px;
-  background: red;
-  padding: 5px;
-  font-size: 15px;
-  border-radius: 100%;
-  cursor: pointer;
+  margin: 10px
+  background: red
+  padding: 5px
+  font-size: 15px
+  border-radius: 100%
+  cursor: pointer
 
 #calendar
   .navigation
@@ -1101,9 +1080,8 @@ span.delete
       flex-direction: row
 
       select.link-item
-          height: 42px
-          font-size: 16px
-          font-weight: normal
+        font-size: 16px
+        font-weight: normal
 
       .link-item
         display: flex
@@ -1122,7 +1100,7 @@ span.delete
 
         &.active
           border: 1px solid $red
-          background: $red 
+          background: $red
           color: $page
 
           &:first-child + .link-item
@@ -1130,7 +1108,7 @@ span.delete
 
           &:nth-child(2).active ~ .link-item:last-child
             border-left: none
-          
+
           &:hover
             color: $page
 
@@ -1139,10 +1117,9 @@ span.delete
 
         &:hover
           color: $red
-        
+
         a:visited
           color: $pearl_black
-        
 
 @import droom/columns
 @import droom/datepicker
