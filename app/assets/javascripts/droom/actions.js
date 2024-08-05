@@ -304,6 +304,7 @@
           })(this),
           on_success: (function(_this) {
             return function(e, response) {
+              var parent = e.currentTarget.closest('div.nested_set');
               var addition, counter, offset;
               if (!response) {
                 response = e;
@@ -321,6 +322,45 @@
               addition.hide().appendTo(affected).slideDown('fast');
               addition.activate();
               addition.trigger('appended', addition);
+              
+              var emailField = parent.querySelector('#email_fields');
+              var fieldset = emailField.getElementsByTagName('fieldset');
+              var lastChild = fieldset[fieldset.length - 1];
+              let selected = lastChild.querySelector(".email-type-selected");
+              let selectedPreview = lastChild.querySelector(".email-type-selected p");
+              let selectedInput = lastChild.querySelector(".email-type-selected input");
+              let typeLists = lastChild.querySelector(".email-type-list");
+              let listBtns = typeLists.querySelectorAll("button");
+
+              selected.addEventListener("click", function () {
+                typeLists.classList.toggle("hidden-list");
+                setTimeout(() => {
+                  if (typeLists.classList.contains("hidden-list")) {
+                    typeLists.classList.remove("show-list");
+                  } else {
+                    typeLists.classList.add("show-list");
+                    listBtns.forEach((btn) => {
+                      let span = btn.querySelector("span");
+                      if (span.textContent === selectedPreview.textContent) {
+                        btn.classList.add("active");
+                      } else {
+                        btn.classList.remove("active");
+                      }
+                      btn.addEventListener("click", () => {
+                        selectedInput.value = btn.getAttribute("data-value");
+                        selectedPreview.textContent = span.textContent;
+                        typeLists.classList.add("hidden-list");
+                      });
+                    });
+                  }
+                }, 1);
+              });
+              
+              let btn = listBtns[0];
+              let span = btn.querySelector("span");
+              selectedInput.value = btn.getAttribute("data-value");
+              selectedPreview.textContent = span.textContent;
+            
               return set_visibility();
             };
           })(this)
