@@ -106,7 +106,7 @@ module Droom::Concerns::ControllerHelpers
   def staff?
     if user_signed_in?
       groups = current_user.groups
-      return groups.any? && groups.pluck(:slug).include?('croucher-office')
+      return groups.any? && groups.exists?(slug: 'croucher-office')
     end
     false
   end
@@ -114,16 +114,17 @@ module Droom::Concerns::ControllerHelpers
   def developer?
     if user_signed_in?
       groups = current_user.groups
-      return groups.any? && groups.pluck(:slug).include?('developers')
+      return groups.any? && groups.exists?(slug: 'developers')
     end
     return false
   end
 
   def scholar?
     if user_signed_in?
-      return current_user.person_awards.any?
+      groups = current_user.groups
+      return groups.any? && groups.exists?(slug: 'scholars')
     end
-    false
+    return false
   end
 
   def note_current_user
