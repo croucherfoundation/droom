@@ -70,8 +70,17 @@ module Droom
         params[:user][:timezone] = nil
       end
       if @user.update(user_params)
-        respond_with @user, location: user_url(view: @view) do |format|
-          format.js { head :no_content }
+        if params[:emergency_contact].present?
+          Person.update_personal_info(@user.person.id, {
+            emergency_contact: params[:emergency_contact]
+          })
+        end
+        if params[:reload] == "true"
+          redirect_to request.referrer
+        else
+          respond_with @user, location: user_url(view: @view) do |format|
+            format.js { head :no_content }
+          end
         end
       end
     end
