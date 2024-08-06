@@ -785,7 +785,7 @@ module Droom
     end
 
     def data_room_user?
-      !Droom.require_login_permission? || admin? || permitted?('droom.login')
+      !Droom.require_login_permission? || admin? || permitted?('droom.login') || person_awards.any?
     end
 
     def sync_with_person

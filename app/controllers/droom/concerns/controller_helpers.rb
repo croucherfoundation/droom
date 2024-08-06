@@ -121,8 +121,7 @@ module Droom::Concerns::ControllerHelpers
 
   def scholar?
     if user_signed_in?
-      groups = current_user.groups
-      return groups.any? && groups.pluck(:slug).include?('scholars')
+      return current_user.person_awards.any?
     end
     false
   end
