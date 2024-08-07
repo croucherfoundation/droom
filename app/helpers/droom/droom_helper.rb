@@ -176,7 +176,7 @@ module Droom
     end
 
     def scholar?
-      if user_signed_in?
+      if user_signed_in? && !admin? && !committee? && !trustee? && !developer? && !staff?
         groups = current_user.groups
         return groups.any? && groups.exists?(slug: 'scholars')
       end

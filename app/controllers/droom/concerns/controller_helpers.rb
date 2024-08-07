@@ -120,9 +120,27 @@ module Droom::Concerns::ControllerHelpers
   end
 
   def scholar?
-    if user_signed_in?
+    if user_signed_in? && !admin? && !committee? && !trustee? && !developer? && !staff?
       groups = current_user.groups
       return groups.any? && groups.exists?(slug: 'scholars')
+    end
+    return false
+  end
+
+  def committee?
+    if user_signed_in?
+      committees = ['audit-committee', 'investment-committee', 'nomination-committee']
+      groups = current_user.groups
+      return groups.any? && (groups.pluck(:slug) & committees).present?
+    end
+    return false
+  end
+
+  def trustee?
+    if user_signed_in?
+      trustee = /trustee/i
+      groups = current_user.groups
+      return groups.any? { |group| group.slug.match(trustee) }
     end
     return false
   end
