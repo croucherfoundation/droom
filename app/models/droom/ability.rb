@@ -25,6 +25,8 @@ module Droom
 
           if user.staff?
             can :manage, Order
+            can :manage, Book
+            can :manage, Author
           end
 
           if !Droom.require_internal_organisation? || user.internal?
