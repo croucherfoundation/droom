@@ -145,6 +145,15 @@ module Droom::Concerns::ControllerHelpers
     return false
   end
 
+  def governor?
+    if user_signed_in?
+      governors = ['cfl-governors']
+      groups = current_user.groups
+      return groups.any? && (groups.pluck(:slug) & governors).present?
+    end
+    return false
+  end
+
   def note_current_user
     if user_signed_in? && !devise_controller?
       RequestStore.store[:current_user] = current_user

@@ -201,6 +201,15 @@ module Droom
       return false
     end
 
+    def governor?
+      if user_signed_in?
+        governors = ['cfl-governors']
+        groups = current_user.groups
+        return groups.any? && (groups.pluck(:slug) & governors).present?
+      end
+      return false
+    end
+
     def test_group?
       if user_signed_in?
         groups = current_user.groups
