@@ -34,6 +34,25 @@
 
   jQuery(function($) {
     console.log("loading droom");
+
+    $('.password-reset-btn').on('click', function() {
+      var $form = $(this).closest('form');
+      var url = $form.attr('action');
+      var formData = $form.serialize();
+      $.ajax({
+        url: url,
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+          $('.password_reset_sent').addClass('show');
+        },
+        error: function(xhr) {
+          var errors = xhr.responseJSON.errors;
+          alert('Error: ' + errors.join(', '));
+        }
+      });
+    });
+
     if (window.matchMedia('(max-width: 991px)').matches) {
       $('body').addClass('mobile');
       if (window.matchMedia('(orientation: portrait)').matches) {
