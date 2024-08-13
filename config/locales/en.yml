@@ -470,7 +470,7 @@ en:
   password_requirement: "At least six characters"
   password_requirements: "Ideally your password should include numbers and punctuation and should not resemble a dictionary word."
   password_reset_complete: "Thank you for persevering with the account administration. Your password has been reset and you have been signed in automatically."
-  password_reset_sent: "If the e-mail exists, a password reset has been sent."
+  password_reset_sent: "If the email exists, a password reset email has been sent."
   password_reset_instructions: "We will send you a message with instructions."
   password_reset_message_sent_html: "A message has been sent to your email address containing a link that will allow you to reset your password. If you can't see it within a few minutes check your spam folder."
   password_reset_welcome: "Please use the form below to set a new password for your account. A confirmation box will appear when your password meets the requirements, and the submit button will go green and become clickable when the passwords match."
