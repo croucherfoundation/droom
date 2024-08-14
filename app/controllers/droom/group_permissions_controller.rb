@@ -52,7 +52,7 @@ module Droom
       unless @group_permission.present?
         params[:permission_id] = read_permission.id
         @read_group_permission = gp_klass.where(params)
-        @read_event_documents_group_permission = gp_klass.where(permission_id: read_event_documents_permission.id)
+        @read_event_documents_group_permission = gp_klass.where(permission_id: read_event_documents_permission.id) if read_event_documents_permission
       end
     end
 
