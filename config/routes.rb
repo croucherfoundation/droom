@@ -18,6 +18,7 @@ Droom::Engine.routes.draw do
       put 'account_update', on: :member, as: :account_update
     end
     put "update_timezone" => 'users#update_timezone', as: 'update_timezone'
+    resources :emails
     resources :events
     resources :venues
     resources :images

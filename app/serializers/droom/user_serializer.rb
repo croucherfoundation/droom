@@ -17,6 +17,7 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :affiliation,
              :email,
              :email_list,
+             :emails,
              :phone,
              :phone_list,
              :mobile,
@@ -53,6 +54,10 @@ class Droom::UserSerializer < ActiveModel::Serializer
 
   def email_list
     object.emails.pluck(:email).join('; ')
+  end
+
+  def emails
+    object.emails
   end
 
   def phone_list
