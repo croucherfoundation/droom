@@ -37,7 +37,8 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :dob,
              :pob,
              :nationality,
-             :gender
+             :gender,
+             :addresses
 
   def name
     object.colloquial_name
@@ -81,6 +82,16 @@ class Droom::UserSerializer < ActiveModel::Serializer
 
   def organisation_data
     Droom::OrganisationSerializer.new(object.organisation).as_json if object.organisation
+  end
+
+  def addresses
+    object.addresses.map do |a|
+      {
+        id: a.id,
+        address: a.address,
+        type: a.address_type&.name
+      }
+    end
   end
 
 end
