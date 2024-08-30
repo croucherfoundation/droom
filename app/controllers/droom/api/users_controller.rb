@@ -42,6 +42,7 @@ module Droom::Api
 
     def account_update
       @user.assign_nested_emails(account_params[:emails]) if account_params[:emails].present?
+      @user.assign_nested_addresses(account_params[:addresses]) if account_params[:addresses].present?
       @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
       @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
       @user.save
@@ -128,7 +129,8 @@ module Droom::Api
     def account_params
       params.require(:user).permit(
        :password, :password_confirmation, :timezone,
-        emails: [:id, :email, :email_type]
+        emails: [:id, :email, :email_type],
+        addresses: [:id, :address, :address_type]
       )
     end
 
