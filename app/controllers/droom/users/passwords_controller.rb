@@ -14,6 +14,12 @@ module Droom::Users
       render
     end
 
+    def create
+      self.resource = resource_class.send_reset_password_instructions(resource_params)
+      yield resource if block_given?
+      head :found
+    end
+
     def clear_session
       original_token       = params[:reset_password_token]
       reset_password_token = Devise.token_generator.digest(self, :reset_password_token, original_token)
