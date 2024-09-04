@@ -43,12 +43,10 @@
         url: url,
         type: 'POST',
         data: formData,
-        success: function(response) {
-          $('.password_reset_sent').addClass('show');
-        },
-        error: function(xhr) {
-          var errors = xhr.responseJSON.errors;
-          alert('Error: ' + errors.join(', '));
+        complete: function(xhr) {
+          if (xhr.status === 302) {
+            $('.password_reset_sent').addClass('show');
+          }
         }
       });
     });
