@@ -44,7 +44,7 @@
         type: 'POST',
         data: formData,
         complete: function(xhr) {
-          if (xhr.status === 302) {
+          if (xhr.status === 302 || xhr.status === 200) {
             $('.password_reset_sent').addClass('show');
           }
         }
