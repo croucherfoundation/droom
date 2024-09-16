@@ -642,6 +642,7 @@ en:
   unattached_folder_note: "A folder not attached to anything is visible to everyone and can be used to share documents of general interest."
   uninvite: "uninvite"
   update_person_email: "also update your public email address"
+  user_account_number: "Account number"
   user_admin: "User admin"
   user_preferences: "User preferences"
   user_profile_account: "Account information"
