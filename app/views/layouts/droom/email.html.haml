@@ -1,59 +1,55 @@
-!!!
-%html{:lang => 'en'}
+- @subject  ||= subject
+- @body     ||= body
+
+!!! Strict
+%html{:xmlns => 'http://www.w3.org/1999/xhtml'}
   %head
-    %title
-      = @subject
-    = stylesheet_link_tag "http://fast.fonts.com/cssapi/bca9b200-3c71-403e-a64f-7192988f33be.css"
-    %style{:type => 'text/css'}
-      :sass
-        body
-          font-size: 125%
-          line-height: 1.5
-      
-        a, a:visited
-          color: #ED1C24
-          text-decoration: none
-          &:visited
-            color: #ED1C24
-          &:hover
-            color: #9a9b9d
-          &:active
-            color: #d1005d
+    %meta{:content => 'text/html; charset=utf-8', 'http-equiv' => 'Content-Type'}/
+    %meta{:content => 'width=device-width', :name => 'viewport'}/
+    %title= @subject 
 
-        h1
-          font-family: 'Frutiger Next W01 Light', helvetica, arial, sans-serif
-          font-weight: normal
-          line-height: 1
-          font-size: 3em
-          letter-spacing: -0.04em
-          margin: 0.25em 0
+  %body.content{style: 'font-size:12pt;font-family:"Arial",sans-serif;color:#101820;min-width:100%;'}
+    %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :style => "width:100.0%;border-collapse:collapse;border-spacing:0;padding-top:30px;background:#f3f3f0;", :width => "100%"}
+      %tbody
+        %tr
+          %td{:style => "padding:0cm 0cm 0cm 0cm;padding-top:20px;padding-bottom:20px;", align: "center"}
+            %div{:align => "center"}
+              %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :style => "background:#ffffff;width:600px;min-width:600px", :width => "600"}
+                %tbody
+                  %tr
+                    %td
+                      %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :style => "width:100.0%;min-width:100%;padding-top:40px;padding-bottom:40px;", :width => "100%"}
+                        %tbody
+                          %tr
+                            %td{:style => "padding:0cm 0cm 0cm 0cm"}
+                              %div{:align => "center"}
+                                %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :style => "background:fff;width:405.0pt;border-collapse:collapse;border-spacing:0", :width => "540"}
+                                  %tbody
+                                    %tr
+                                      %td{:style => "padding:0cm 0cm 0cm 0cm", :valign => "top"}
+                                        %div
+                                          %p.MsoNormal{:align => "left", :style => "text-align:left;margin:0;"}
+                                            %a{:href => "https://croucher.org.hk", :target => "_blank", :title => "Croucher Foundation"}
+                                              %span{:style => "color:windowtext;text-decoration:none"}
+                                                %span{:style => "color:blue"}
+                                                  %img{:border => "0", "data-bit" => "iit", :src => "https://front.croucherscienceweek.hk/symposium/email-templates-assets/croucher-red-logo.png", :width => "40"}
 
-        h2, h3
-          font-family: 'Frutiger Next W01 Bold', helvetica, arial, sans-serif
-          font-weight: normal
-          line-height: 1.2
-          margin: 1em 0 0.25em 0
-          &.flush
-            margin: 0
-
-        p
-          overflow: hidden
-          padding: 0
-          &.clear
-            clear: both
-
-        strong, b
-          font-family: 'Frutiger Next W01 Bold'
-
-        em, i
-          font-family: 'FrutigerNextW01-LightIt'
-
-  %body{:style => "font-family: 'Frutiger Next W01 Light', helvetica, arial, sans-serif; font-size: 125%; line-height: 1.5;"}
-    #header{:style => "margin: 10px"}
-      #logo
-        = link_to(image_tag('http://scholars.croucher.org.hk/assets/logo.png', :alt => "Croucher Foundation Logo"), 'http://www.croucher.org.hk/')
-      
-    #page{:style => "margin: 30px 40px 20px 62px;"}
-      #content
-        = yield
-
+                      %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :style => "width:100.0%;min-width:100%;padding-bottom:40px", :width => "100%"}
+                        %tbody
+                          %tr
+                            %td{:style => "padding:0cm 0cm 0cm 0cm"}
+                              %div{:align => "center"}
+                                %table{:border => "0", :cellpadding => "0", :cellspacing => "0", :style => "width:405.0pt;border-collapse:collapse;border-spacing:0", :width => "540"}
+                                  %tbody
+                                    %tr
+                                      %td{:style => "padding:0cm 0cm 0cm 0cm;font-size:12pt;line-height:20px;margin:0;font-family:'Arial',sans-serif;", :valign => "top"}
+                                        = @body.html_safe
+                                        
+                                    %tr{:style => "height:7.5pt"}
+                                      %td{:style => "padding:0cm 0cm 0cm 0cm;height:7.5pt"}
+                                        %p.MsoNormal
+                                          %span{:style => "font-size:1.0pt"}
+              
+                  %tr
+                    %td{style: "padding:0cm 0cm 0cm 0cm;", align: "center"}
+                      = render 'message_envelopes/layouts/footer'

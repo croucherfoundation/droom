@@ -608,6 +608,9 @@ en:
     zero: ""
     one: "one subfolder"
     other: "%{count} subfolders"
+  subjects: 
+    user:
+      otp_verification: "OTP Verification Code for Bank Account Update"
   subscribe_to_calendar: "Subscribe"
   subsume_organisation: "Subsume organisation"
   suggestions: "Suggestions"

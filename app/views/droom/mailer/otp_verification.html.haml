@@ -1,0 +1,24 @@
+- support_email = Settings.email.it_support
+
+%p 
+  Dear 
+  = @user.given_name + ','
+ 
+%p 
+  We have received a request to update the bank account information associated with your account. 
+  For your security, please use the following One-Time Password (OTP) to verify this request:
+
+%p{style: "font-size:18pt;font-weight:bold;letter-spacing:0.2em;"}
+  = @user.otp_code
+ 
+%p 
+  This code is valid for the next 2 hours. If you did not initiate this request, please contact our support team immediately at 
+  = mail_to(support_email, support_email, style: "color:#EE3A43;text-decoration:none;") + "."
+ 
+%p 
+  Thank you for helping us keep your account secure.
+
+%p 
+  Best regards,
+  %br
+  = link_to "Croucher Foundation", "http://www.croucher.org.hk/", style: "color: black;text-decoration:underline;"
