@@ -49,6 +49,18 @@ module Droom::Api
       render json: @user, serializer: Droom::UserMinimalSerializer
     end
 
+    def send_otp
+      VerificationService.new(@user).send_otp
+      head :ok
+    end
+
+    def verify_otp
+      otp = params[:user][:otp].to_i
+      if VerificationService.new(@user,otp).verify_otp
+        render json: @user, serializer: Droom::UserMinimalSerializer
+      end
+    end
+
     def update
       @user.update(user_params)
       render json: @user

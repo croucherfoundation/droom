@@ -7,17 +7,17 @@ class VerificationService
 
   def send_otp
     generate_otp
-    Droom.mailer.send(:otp_verification, @user).deliver_later
+    Droom.mailer.send(:otp_verification, @user).deliver_now
   end
 
   def verify_otp
-    @user.otp_code == @otp_code
+    @user.otp_code == @otp_code && @user.otp_expired_at > Time.zone.now
   end
 
   private
 
   def generate_otp
-    @user.update_columns(otp_code: rand(100000..999999), otp_expired_at: Time.zone.now + 2.hours)
+    @user.update_columns(otp_code: rand(100000..999999), otp_expired_at: Time.zone.now + 5.minutes)
   end
 
 end

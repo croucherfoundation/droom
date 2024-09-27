@@ -16,6 +16,8 @@ Droom::Engine.routes.draw do
       get "whoami" , on: :collection, as: :whoami
       get "authenticable", on: :member, as: :authenticable
       put 'account_update', on: :member, as: :account_update
+      get 'send_otp', on: :member, as: :send_otp
+      post 'verify_otp', on: :member, as: :verify_otp
     end
     put "update_timezone" => 'users#update_timezone', as: 'update_timezone'
     resources :events
