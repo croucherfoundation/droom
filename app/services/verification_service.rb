@@ -20,4 +20,6 @@ class VerificationService
     @user.update_columns(otp_code: rand(100000..999999), otp_expired_at: Time.zone.now + 5.minutes)
   end
 
+
+
 end
