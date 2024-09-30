@@ -88,7 +88,10 @@ module Droom::Api
       if params[:timezone]
         timezone = Timezones.find_by_key(params[:timezone])
         current_user.update(timezone: timezone)
-        return current_user.timezone
+        # return current_user.timezone
+        respond_to do |format|
+          format.json { render json: { notice: "The timezone of your profile has been updated to #{params[:timezone]}." }, status: :ok }
+        end
       end
     end
 
