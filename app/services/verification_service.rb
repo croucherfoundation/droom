@@ -17,7 +17,7 @@ class VerificationService
   private
 
   def generate_otp
-    @user.update_columns(otp_code: rand(100000..999999), otp_expired_at: Time.zone.now + 5.minutes)
+    @user.update_columns(otp_code: rand(100000..999999), otp_expired_at: Time.zone.now + 10.minutes)
   end
 
 
