@@ -121,11 +121,10 @@ module Droom
       end
     end
 
-    def subsume
-      user = Droom::User.find(params[:user_id])
-      other_user = Droom::User.find(params[:other_id])
-      user.subsume(other_user)
-      render json: {subsume: "queued"}
+    def merge
+      @other_user = Droom::User.find(merge_params[:other_id])
+      @other_user.subsume(@user)
+      head :no_content
     end
 
     def destroy
@@ -240,6 +239,10 @@ module Droom
       end
     end
 
+    def merge_params
+      params.require(:user).permit(:other_id)
+    end
+
     def setup_params
       params.require(:user).permit(:title, :given_name, :family_name, :chinese_name, :honours, :password, :password_confirmation, :timezone)
     end
@@ -249,7 +252,7 @@ module Droom
     end
 
     def set_view
-      @view = params[:view] if %w{simple listed listed_minimal tabled profile preferences my_profile title contact personal account_info statuses groups biography result}.include?(params[:view])
+      @view = params[:view] if %w{simple listed listed_minimal tabled profile preferences my_profile title contact personal account_info statuses groups biography result subsume}.include?(params[:view])
       #@view ||= 'profile'
     end
 

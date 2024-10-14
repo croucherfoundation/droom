@@ -13,8 +13,8 @@
     #left_pane
       - if @user.image.attached?
         - img = @user.image_url(:thumb)
-      - else
-        - img = image_url('missing/user.png')
+      
+      - img = img.presence || image_url('missing/user.png')
 
       .image-upload{:data => {:role => "imagepicker"}}
         %a.box.border-0{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}

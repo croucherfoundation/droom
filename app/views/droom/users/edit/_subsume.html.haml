@@ -1,0 +1,28 @@
+- user ||= @user
+
+- title = t(:subsume_user)
+
+#edit_user
+  = render 'droom/shared/popup_header', title: title
+
+  = form_for [droom, user], url: merge_user_url(user), method: 'put', :html => {:class => 'edit user', :autocomplete => false} do |f|
+    %p
+      You are about to transfer all the applications, awards, grants, screener, interviewer, and organisers of
+      %strong
+        = user.name
+      into the user you choose below. Please be careful: the user
+      = user.name
+      will vanish completely.
+    
+    %p.onecol
+      %span.col>
+        = f.label :other_id
+        = f.text_field :other_id, placeholder: t('placeholders.user.other_id')
+
+    %p.note 
+      Note: The account merging process will be handled by a background job and may take some time to complete.
+      
+    .buttons
+      = f.submit t(:subsume_user), class: 'croucher-standard-btn inline'
+      = t :or
+      = link_to t(:cancel), '#', :class => 'cancel'

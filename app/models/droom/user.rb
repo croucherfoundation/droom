@@ -68,7 +68,7 @@ module Droom
     # defer_confirmation is also set by remote services that send out their own invitations,
     # eg. when a new user is invited to screen an application round.
     #
-    attr_accessor :defer_confirmation, :send_confirmation, :confirming
+    attr_accessor :defer_confirmation, :send_confirmation, :confirming, :other_id
 
     def ability
       @ability ||= Ability.new(self)
@@ -280,6 +280,10 @@ module Droom
 
     def staff?
       return groups.any? && groups.pluck(:slug).include?('croucher-office')
+    end
+
+    def trustee?
+      groups.any? { |group| group.slug.match(/trustee/i) }
     end
 
     ## Group memberships
@@ -625,8 +629,8 @@ module Droom
 
     # For select box
     #
-    def self.for_selection
-      self.published.map{|p| [p.name, p.id] }
+    def self.for_selection(exclude_id=nil)
+      @users ||= where.not(id: exclude_id).limit(2).pluck(:given_name, :id)
     end
 
 
@@ -888,13 +892,18 @@ module Droom
         phones: phones.map(&:phone),
         groups: group_slugs,
         liveliness: liveliness,
-        privileged: privileged?
+        privileged: privileged?,
+        deleted: deleted?
       }
       data.merge(additional_search_data)
     end
 
     def group_slugs
       groups.pluck(:slug).map(&:presence).compact.uniq
+    end
+
+    def deleted?
+      !!deleted_at
     end
 
     def organisation_name
@@ -946,24 +955,28 @@ module Droom
     end
 
     def subsume(other_user)
-      Droom::MergeUsersJob.perform_later(id, other_user.id, Time.now.to_i)
+      Droom::MergeUsersJob.perform_later(id, other_user.id)
     end
 
     def subsume!(other_user)
       Droom::User.transaction do
-        %w{emails phones addresses memberships scraps documents invitations memberships user_permissions dropbox_tokens dropbox_documents personal_folders}.each do |association|
-          self.send(association.to_sym) << other_user.send(association.to_sym)
+        %w{emails phones addresses memberships invitations memberships user_permissions personal_folders}.each do |association|
+          self.send(association.to_sym).concat(other_user.send(association.to_sym)).to_a
         end
-        %w{encrypted_password password_salt family_name given_name chinese_name title gender organisation_id description image}.each do |property|
+        %w{encrypted_password password_salt family_name given_name chinese_name title gender description image}.each do |property|
           self.send "#{property}=".to_sym, other_user.send(property.to_sym) unless self.send(property.to_sym).present?
         end
-        if self.merged_with?
+        if self.merged_with? && !merged_ids.include?(other_user.uid)
           self.merged_with += "\n#{other_user.uid}"
         else
           self.merged_with = other_user.uid
         end
         save!
       end
+    end
+
+    def merged_ids
+      self.merged_with.split("\n")
     end
 
     def delete_user_permissions(group_ids = [])
