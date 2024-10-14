@@ -10,8 +10,14 @@ module Droom
           kept_user.subsume_remote_resources(merged_user)
         end
         sleep 5
-        # merged_user.destroy
+
+        # Destroy remaining associations due to skipped identical attributes during merging
+        merged_user.reload
+        merged_user.emails.destroy_all if merged_user.emails.any?
+        merged_user.phones.destroy_all if merged_user.phones.any?
+        merged_user.addresses.destroy_all if merged_user.addresses.any?
         merged_user.update(deleted_at: Time.current)
+
         kept_user.reindex
       end
     end

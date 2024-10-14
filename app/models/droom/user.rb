@@ -961,9 +961,19 @@ module Droom
     def subsume!(other_user)
       Droom::User.transaction do
         %w{emails phones addresses memberships invitations memberships user_permissions personal_folders}.each do |association|
-          self.send(association.to_sym).concat(other_user.send(association.to_sym)).to_a
+          other_association = other_user.send(association.to_sym)
+
+          if %w{emails phones addresses}.include?(association)
+            attribute_name = association.singularize
+            self.send(association.to_sym) << other_association.reject do |asso|
+              self.send(association.to_sym).exists?(attribute_name => asso.send(attribute_name))
+            end
+          else
+            self.send(association.to_sym) << other_association
+          end
         end
-        %w{encrypted_password password_salt family_name given_name chinese_name title gender description image}.each do |property|
+
+        %w{encrypted_password password_salt family_name given_name chinese_name title gender description}.each do |property|
           self.send "#{property}=".to_sym, other_user.send(property.to_sym) unless self.send(property.to_sym).present?
         end
         if self.merged_with? && !merged_ids.include?(other_user.uid)
