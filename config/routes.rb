@@ -37,6 +37,13 @@ Droom::Engine.routes.draw do
         get :all_documents
       end
     end
+
+    devise_scope :user do
+      post '/users/sign_up', to: 'users/registrations#create', as: :sign_up
+      get '/users/registrations/confirm' => 'users/confirmations#show', as: :user_confirmation
+      post '/users/confirmations/resend' => 'users/confirmations#create', as: :resend_confirmation
+    end 
+    
   end
 
   devise_for :users,

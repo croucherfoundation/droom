@@ -1,0 +1,31 @@
+- support_email = Settings.email.it_support
+
+%p 
+  Dear 
+  = @user.given_name + ','
+ 
+%p 
+  Thanks for setting up a Croucher account. We're excited to have you as a member of our community.
+
+  With your Croucher account, you'll be able to:
+  %p
+    • Book tickets, register for events, and apply for funding opportunities
+  %p
+    • Stay informed with our monthly newsletter featuring the latest updates about Croucher and Hong Kong science
+
+%p
+  You can access your account anytime by clicking “Sign in” on our homepage and using the email and password you set up during registration.
+
+%p
+  To confirm your account click the link below.
+%p{style: "font-size:18pt;font-weight:bold"}
+  = link_to "Confirm my account", confirmation_url(@user, confirmation_token: @token), style: "color:#FFFFFF;text-decoration:none;background-color:#EE3A43;padding:10px 20px;border-radius:30px;display:inline-block;"
+ 
+%p 
+  If you have any questions about your account, feel free to reach out to us at
+  = mail_to(support_email, support_email, style: "color:#EE3A43;text-decoration:none;") + "."
+
+%p 
+  Best regards,
+  %br
+  = link_to "Croucher Foundation", "http://www.croucher.org.hk/", style: "color: black;text-decoration:underline;"

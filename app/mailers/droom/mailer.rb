@@ -57,6 +57,20 @@ module Droom
       mail(to: @email, subject: @subject)
     end
 
+    def confirmation_instructions(user, token, opts={})
+      @user = user
+      @token = token
+      @subject = I18n.t("devise.mailer.confirmation_instructions.subject")
+
+      if Rails.env.production?
+        @email = @user.email
+      else
+        @email = Settings.email.sandbox
+      end
+
+      mail(to: email, subject: @subject)
+    end
+
     private
 
     def prevent_delivery_in_nonproduction
