@@ -68,7 +68,7 @@ module Droom
         @email = Settings.email.sandbox
       end
 
-      mail(to: email, subject: @subject)
+      mail(to: @email, subject: @subject)
     end
 
     private

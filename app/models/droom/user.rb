@@ -1062,6 +1062,18 @@ module Droom
       )
     end
 
+
+    # def sync_attendee
+    #   csw_attendee = Csw::Attendee.find_by(email: email)
+    #   puts "🐵 sync_attendee: #{csw_attendee.inspect}"
+    # end
+
+    def generate_authentication_token
+      loop do
+        token = Devise.friendly_token
+        break token unless User.where(authentication_token: token).first
+      end
+    end
   protected
 
     def ensure_uid!
@@ -1090,13 +1102,5 @@ module Droom
     def confirmed_if_password_set
       self.update_column(:confirmed_at, Time.now) if password_set? && !confirmed?
     end
-
-    def generate_authentication_token
-      loop do
-        token = Devise.friendly_token
-        break token unless User.where(authentication_token: token).first
-      end
-    end
-
   end
 end
