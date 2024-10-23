@@ -20,7 +20,7 @@
 %p
   To confirm your account click the link below.
 %p{style: "font-size:12pt;font-weight:bold"}
-  = link_to "Confirm your account", confirmation_url(@user, confirmation_token: @token), style: "color:#FFFFFF;text-decoration:none;background-color:#EE3A43;padding:10px 20px;border-radius:30px;display:inline-block;"
+  = link_to "Confirm your account", "#{Settings.cms_url}/en/confirmation?confirmation_token=#{@token}" , style: "color:#FFFFFF;text-decoration:none;background-color:#EE3A43;padding:10px 20px;border-radius:30px;display:inline-block;"
  
 %p 
   If you have any questions about your account, feel free to reach out to us at
