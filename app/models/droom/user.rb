@@ -1063,10 +1063,25 @@ module Droom
     end
 
 
-    # def sync_attendee
-    #   csw_attendee = Csw::Attendee.find_by(email: email)
-    #   puts "🐵 sync_attendee: #{csw_attendee.inspect}"
-    # end
+    def sync_attendee(preferred_language)
+      preferred_language = preferred_language
+      csw_attendee = Csw::Attendee.find_by_email(email)
+      if csw_attendee.nil?
+        csw_attendee = Csw::Attendee.create(name: name, email: email, preferred_language: preferred_language , 
+                                            password: password, account_type: "member_public", coucher_account: true, 
+                                            confirmation_token: confirmation_token, confirmed_at: confirmed_at, 
+                                            confirmation_token_created_at: confirmation_sent_at,
+                                            show_member_popup: false, is_approved: true)
+      end
+    end
+
+    def confirm_attendee
+      csw_attendee = Csw::Attendee.find_by_email(email)
+      if csw_attendee
+        csw_attendee.confirmed_at = confirmed_at
+        csw_attendee.save
+      end
+    end
 
     def generate_authentication_token
       loop do
@@ -1104,3 +1119,6 @@ module Droom
     end
   end
 end
+
+
+

@@ -4,11 +4,14 @@ module Droom::Api
     respond_to :json, 
 
     def create
+      return render json: { errors: ["Email is already taken"] }, status: :unprocessable_entity if Droom::User.find_by_any_email(params[:user][:email])
+
       build_resource(sign_up_params)
       resource.save
       yield resource if block_given?
       if resource.persisted?
         send_confirmation_instructions(resource)
+        resource.sync_attendee(params[:preferred_language])
         render json: { message: "Signed up successfully. Please confirm your email." }, status: :created
       else
         clean_up_passwords resource
@@ -25,7 +28,7 @@ module Droom::Api
 
     def send_confirmation_instructions(resource)
       generate_confirmation_token!(resource)
-      Droom::Mailer.confirmation_instructions(resource, resource.confirmation_token).deliver_now
+      # Droom::Mailer.confirmation_instructions(resource, resource.confirmation_token).deliver_now
     end
 
     def generate_confirmation_token!(resource)
