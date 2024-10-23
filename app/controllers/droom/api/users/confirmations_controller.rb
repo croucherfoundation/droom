@@ -8,7 +8,6 @@ module Droom::Api
     #
     def show
       @resource = self.resource = resource_class.confirm_by_token(params[:confirmation_token])
-
       if @resource.errors.empty?
         @resource.confirm_attendee
         sign_in(@resource)

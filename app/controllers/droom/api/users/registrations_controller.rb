@@ -28,7 +28,7 @@ module Droom::Api
 
     def send_confirmation_instructions(resource)
       generate_confirmation_token!(resource)
-      # Droom::Mailer.confirmation_instructions(resource, resource.confirmation_token).deliver_now
+      Droom::Mailer.confirmation_instructions(resource, resource.confirmation_token).deliver_now
     end
 
     def generate_confirmation_token!(resource)
