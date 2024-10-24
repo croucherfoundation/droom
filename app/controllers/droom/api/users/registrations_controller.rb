@@ -10,7 +10,10 @@ module Droom::Api
       resource.save
       yield resource if block_given?
       if resource.persisted?
+        resource.groups << Droom::Group.find_by_slug(params[:group]) if params[:group].present?
+        resource.save
         send_confirmation_instructions(resource)
+        
         resource.sync_attendee(params[:preferred_language])
         render json: { message: "Signed up successfully. Please confirm your email." }, status: :created
       else

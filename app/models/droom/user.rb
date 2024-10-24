@@ -1079,6 +1079,14 @@ module Droom
       Csw::Attendee.confirm(confirmation_token)
     end
 
+    def update_password_attendee(password)
+      csw_attendee = Csw::Attendee.find_by_email(email)
+      if csw_attendee
+        csw_attendee.password = password
+        csw_attendee.save
+      end
+    end
+
     def generate_authentication_token
       loop do
         token = Devise.friendly_token
