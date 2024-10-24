@@ -5,6 +5,9 @@
   %p
     = t :directory_introduction
 
+- content_for :subnavbar do
+  = render :partial => 'subnavbar'
+
 - content_for :margin do
   %p.action
     - if can?(:create, Droom::Group)

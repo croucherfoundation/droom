@@ -1,0 +1,5 @@
+.navbar_sub_container.mobile--show
+  .container.navbar_sub_links.hide-scroll
+    = link_to t(:manage_users), droom.admin_users_url, class: 'text-sub-nav-title'
+    = link_to t(:manage_permissions), droom.services_url, class: 'text-sub-nav-title'
+    = link_to t("navigation.acccess_logs"), croucher_droom_url("/bank-account-access-logs"), class: 'text-sub-nav-title'
