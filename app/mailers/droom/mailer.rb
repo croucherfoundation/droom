@@ -65,7 +65,7 @@ module Droom
       if Rails.env.production?
         @email = @user.email
       else
-        @email = "thiha.dve@gmail.com, sixxxxthihanaing@gmail.com"
+        @email = Settings.email.sandbox
       end
 
       mail(to: @email, subject: @subject)
