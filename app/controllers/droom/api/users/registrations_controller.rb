@@ -4,7 +4,7 @@ module Droom::Api
     respond_to :json, 
 
     def create
-      return render json: { errors: ["Email is already taken"] }, status: :unprocessable_entity if Droom::User.find_by_any_email(params[:user][:email])
+      return render json: { errors: ["Email has already been taken."] }, status: :unprocessable_entity if Droom::User.find_by_any_email(params[:user][:email])
 
       build_resource(sign_up_params)
       resource.save
