@@ -13,8 +13,9 @@ module Droom::Api
         resource.groups << Droom::Group.find_by_slug(params[:group]) if params[:group].present?
         resource.save
         send_confirmation_instructions(resource)
+        Droom::SubscribeToMailchimpJob.perform_later(resource.email, resource.given_name, resource.family_name) if Rails.env.production?
         
-        resource.sync_attendee(params[:preferred_language])
+        resource.sync_attendee
         render json: { message: "Signed up successfully. Please confirm your email." }, status: :created
       else
         clean_up_passwords resource
@@ -26,7 +27,7 @@ module Droom::Api
     private
 
     def sign_up_params
-      params.require(:user).permit(:given_name, :family_name, :email , :password, :password_confirmation)
+      params.require(:user).permit(:given_name, :family_name, :email , :password)
     end
 
     def send_confirmation_instructions(resource)

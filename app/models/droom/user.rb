@@ -1063,15 +1063,21 @@ module Droom
     end
 
 
-    def sync_attendee(preferred_language)
-      preferred_language = preferred_language
+    def sync_attendee
       csw_attendee = Csw::Attendee.find_by_email(email)
       if csw_attendee.nil?
-        csw_attendee = Csw::Attendee.create(name: name, email: email, preferred_language: preferred_language , 
-                                            password: password, account_type: "member_public", croucher_account: true, 
-                                            confirmation_token: confirmation_token, confirmed_at: confirmed_at, 
-                                            confirmation_token_created_at: confirmation_sent_at,
-                                            show_member_popup: false, is_approved: true)
+        Csw::Attendee.new(
+          name: name,
+          password: password,
+          email: email,
+          account_type: "member_public",
+          croucher_account: true,
+          confirmation_token: confirmation_token,
+          confirmed_at: confirmed_at,
+          confirmation_token_created_at: confirmation_sent_at,
+          show_member_popup: false,
+          is_approved: true,
+        ).save
       end
     end
 
@@ -1079,13 +1085,12 @@ module Droom
       Csw::Attendee.confirm(confirmation_token)
     end
 
-    def update_password_attendee(password)
-      csw_attendee = Csw::Attendee.find_by_email(email)
-      if csw_attendee
-        csw_attendee.password = password
-        csw_attendee.save
+    def update_password_attendee(new_password)
+      if (csw_attendee = Csw::Attendee.find_by_email(email: email))
+        csw_attendee.update(password: new_password)
       end
     end
+
 
     def generate_authentication_token
       loop do

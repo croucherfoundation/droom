@@ -9,9 +9,9 @@
 
 %p 
   With your Croucher account, you'll be able to:
-  %p{style: "padding-left: 20px;"}
+  %p{style: "line-height: 1.5;letter-spacing: 0.5px;"}
     = "— Book tickets, register for events, and apply for funding opportunities"
-  %p{style: "padding-left: 20px;"}
+  %p{style: "line-height: 1.5; letter-spacing: 0.5px;"}
     = "— Stay informed with our monthly newsletter featuring the latest updates about Croucher and Hong Kong science"
 
 %p
@@ -20,7 +20,7 @@
 %p
   To confirm your account click the link below.
 %p{style: "font-size:12pt;font-weight:bold"}
-  = link_to "Confirm your account", "#{Settings.cms_url}/en?confirmation_token=#{@token}" , style: "color:#FFFFFF;text-decoration:none;background-color:#EE3A43;padding:10px 20px;border-radius:30px;display:inline-block;"
+  = link_to "Confirm my account", "#{Settings.cms_url}/en?confirmation_token=#{@token}" , style: "color:#FFFFFF;text-decoration:none;background-color:#EE3A43;padding:10px 20px;border-radius:30px;display:inline-block;"
  
 %p 
   If you have any questions about your account, feel free to reach out to us at
@@ -29,4 +29,4 @@
 %p 
   Best regards,
   %br
-  = link_to "Croucher Foundation", "http://www.croucher.org.hk/", style: "color: black;text-decoration:underline;"
+  The Croucher Team
