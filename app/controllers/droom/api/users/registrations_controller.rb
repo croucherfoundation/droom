@@ -13,7 +13,7 @@ module Droom::Api
         resource.groups << Droom::Group.find_by_slug(params[:group]) if params[:group].present?
         resource.save
         send_confirmation_instructions(resource)
-        Droom::SubscribeToMailchimpJob.perform_later(resource.email, resource.given_name, resource.family_name) if Rails.env.production?
+        Droom::SubscribeToMailchimpJob.perform_later(resource.email, resource.given_name, resource.family_name) if Rails.env.production? || Rails.env.staging?
         
         resource.sync_attendee
         render json: { message: "Signed up successfully. Please confirm your email." }, status: :created
