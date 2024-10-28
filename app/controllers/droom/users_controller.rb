@@ -128,6 +128,7 @@ module Droom
     end
 
     def destroy
+      Csw::Attendee.find_by_email(@user.email).try(:destroy)
       @user.destroy
       head :ok
     end
