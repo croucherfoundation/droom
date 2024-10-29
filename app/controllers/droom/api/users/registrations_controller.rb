@@ -10,6 +10,10 @@ module Droom::Api
       resource.save
       yield resource if block_given?
       if resource.persisted?
+        correspondence_address_type = Droom::AddressType.find_by_name("Correspondence")
+        resource.emails.each do |email|
+          email.address_type = correspondence_address_type
+        end
         resource.groups << Droom::Group.find_by_slug(params[:group]) if params[:group].present?
         resource.save
         send_confirmation_instructions(resource)
