@@ -46,6 +46,7 @@ module Droom::Api
       @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
       @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
       @user.save
+      @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
       render json: @user, serializer: Droom::UserMinimalSerializer
     end
 

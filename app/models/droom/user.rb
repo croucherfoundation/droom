@@ -1062,6 +1062,42 @@ module Droom
       )
     end
 
+
+    def sync_attendee
+      csw_attendee = Csw::Attendee.find_by_email(email)
+      if csw_attendee.nil?
+        Csw::Attendee.new(
+          name: name,
+          password: password,
+          email: email,
+          account_type: "member_public",
+          croucher_account: true,
+          confirmation_token: confirmation_token,
+          confirmed_at: confirmed_at,
+          confirmation_token_created_at: confirmation_sent_at,
+          show_member_popup: false,
+          is_approved: true,
+        ).save
+      end
+    end
+
+    def confirm_attendee
+      Csw::Attendee.confirm(confirmation_token)
+    end
+
+    def update_password_attendee(new_password)
+      if (csw_attendee = Csw::Attendee.find_by_email(email: email))
+        csw_attendee.update(password: new_password)
+      end
+    end
+
+
+    def generate_authentication_token
+      loop do
+        token = Devise.friendly_token
+        break token unless User.where(authentication_token: token).first
+      end
+    end
   protected
 
     def ensure_uid!
@@ -1090,13 +1126,8 @@ module Droom
     def confirmed_if_password_set
       self.update_column(:confirmed_at, Time.now) if password_set? && !confirmed?
     end
-
-    def generate_authentication_token
-      loop do
-        token = Devise.friendly_token
-        break token unless User.where(authentication_token: token).first
-      end
-    end
-
   end
 end
+
+
+
