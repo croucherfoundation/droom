@@ -10,6 +10,7 @@ module Droom::Api
       @resource = self.resource = resource_class.confirm_by_token(params[:confirmation_token])
       if @resource.errors.empty?
         @resource.confirm_attendee
+        Droom::SubscribeToMailchimpJob.perform_later(@resource.email, @resource.given_name, @resource.family_name) if Rails.env.production?
         sign_in(@resource)
         render json: {user: @resource, message: "Email confirmed."}, status: :ok
       else
@@ -36,7 +37,7 @@ module Droom::Api
 
     def send_confirmation_instructions(resource)
       generate_confirmation_token!(resource)
-      Droom::Mailer.confirmation_instructions(resource, resource.confirmation_token).deliver_now
+      Droom::Mailer.confirmation_instructions(resource, resource.confirmation_token).deliver_later
     end
 
     def generate_confirmation_token!(resource)
