@@ -6,6 +6,8 @@ class Droom::EmailSerializer < ActiveModel::Serializer
              :address_type_id,
              :address_type
 
+  belongs_to :user
+
   def address_type
     object&.address_type&.name
   end
