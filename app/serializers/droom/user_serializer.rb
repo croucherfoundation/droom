@@ -98,7 +98,8 @@ class Droom::UserSerializer < ActiveModel::Serializer
       {
         id: a.id,
         address: a.address,
-        type: a.address_type&.name
+        type: a.address_type&.name,
+        address_type_id: a.address_type.id
       }
     end
   end
