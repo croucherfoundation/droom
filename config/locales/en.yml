@@ -218,7 +218,7 @@ en:
   folder: "folder"
   follow_stream: "Follow the stream in an RSS reader"
   forgot_password: "Forgotten your password?"
-  forgot_password_title: "Enter the email address associated with your Croucher account"
+  forgot_password_title: "Enter the email address associated with your Croucher account."
   future_event_count:
     zero: "No events coming up"
     one: "One event coming up"
