@@ -1,19 +1,36 @@
 - if flash[:notice]
   %p.standfirst.green
     = flash[:notice]
+%section#signin-box.auth_container.auth_container_open
+  .auth_container_wrapper
+    .croucher_container
+      .cross_icon_container
+        %button{disabled: true}
+          %svg{fill: "transparent",  height: "23", viewbox: "0 0 24 23", width: "24", xmlns: "http://www.w3.org/2000/svg"}
+            %line{stroke: "#f8f8f5", "stroke-linecap" => "round", "stroke-width" => "2", transform: "matrix(0.719281 -0.694719 0.765788 0.643093 1.93701 22.1875)", x1: "1", x2: "29.4986", y1: "-1", y2: "-1"}
+            %line{stroke: "#f8f8f5", "stroke-linecap" => "round", "stroke-width" => "2", transform: "matrix(0.719281 0.694719 -0.669051 0.743216 0 1.1875)", x1: "1", x2: "29.4986", y1: "-1", y2: "-1"}
 
-= form_for(resource, as: resource_name, url: session_path(resource_name), html: {id: "login"}) do |f|
-  - if params[:backto].present?
-    = hidden_field_tag :backto, CGI.escape(params[:backto])
+    .croucher_container
+      %h2.text-subtitle Sign in
+    
+      = form_for(resource, as: resource_name, url: session_path(resource_name), method: 'post', html: { class: 'sign_in_form' }) do |f|
+        = hidden_field_tag :destination, params[:destination]
+        -# = hidden_field_tag :backto, CGI.escape(params[:backto])
+        
+        .input_group
+          %label{for: "email"} Email
+          = f.email_field :email, class: 'rounded-b-5 mb-1 outline-none border-none', placeholder: t("placeholders.session.email")
+        
+        .input_group
+          %label{for: "password"} Password
+          = f.password_field :password, class: 'rounded-b-5 mb-1 outline-none border-none sign_in_password', placeholder: t("placeholders.session.password")
+          %button.eye{type: "button"}
+            %img{alt: "open", src: "https://cmss.croucher.org.hk/assets/images/icons/eye-02.svg"}/
 
-  %p
-    = f.email_field :email, class: 'login', autofocus: true, placeholder: t('placeholders.session.email')
+        .sign_in_btn
+          = f.submit t(:sign_in), class: "croucher-standard-btn"
 
-  %p
-    = f.password_field :password, class: 'login', placeholder: t('placeholders.session.password')
-    = link_to t(:forgot_password), new_password_path(resource_name), class: "reminder note right"
-
-  .controls
-    .save.button
-      %p
-        = f.submit t(:sign_in), :class => "submit croucher-standard-btn"
+      .forgot_password
+        %p.pb-0
+          %button.underline{data: {'toggle': 'modal', 'target': 'passwordModal'}} 
+            = t(:forgot_password)

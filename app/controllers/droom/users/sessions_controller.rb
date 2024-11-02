@@ -4,6 +4,7 @@ module Droom::Users
   class SessionsController < Devise::SessionsController
     before_action :set_access_control_headers
     skip_before_action :verify_authenticity_token, raise: false
+    layout 'droom/sign_in'
 
     def new
       cookie = Droom::AuthCookie.new(cookies)

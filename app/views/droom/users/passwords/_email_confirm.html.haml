@@ -1,0 +1,14 @@
+
+#passwordConfirmModal.modal
+  .modal-wrapper{role: "document"}
+    .modal-content
+      .croucher_container.my-custom-modal-content
+        %h1 Password reset instructions sent
+        .form-fields
+          %section
+            %p
+              = t :password_reset_sent
+
+          %section.actions
+            %button.croucher-standard-btn.modal-btn.cancel{type: "button"}
+              Close
