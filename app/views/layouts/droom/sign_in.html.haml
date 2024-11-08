@@ -22,12 +22,13 @@
     %link{rel: "apple-touch-icon", href: "/images/apple-touch-icon.png"}
     %link{rel: "icon", type: "image/png", href: "/images/favicon.png"}
 
-    %script(async src="https://www.googletagmanager.com/gtag/js?id=UA-38204053-9")
-    :javascript
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-38204053-9');
+    - if Rails.env.production?
+      %script(async src="https://www.googletagmanager.com/gtag/js?id=UA-38204053-9")
+      :javascript
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-38204053-9');
 
   %body
     = hidden_field_tag :user_status, nil, data: {sign_in: "#{user_signed_in?}", tz_enabled: "#{FeatureFlag.enabled?('time-zone-feature', current_user)}"}
