@@ -50,7 +50,7 @@ module Droom
     end
 
     def update
-      if @document.google_doc_link.present?
+      if @document.google_doc_link.present? || @document.notion_page_link.present?
         @data = Document.where(name: document_params[:name], folder_id: params[:folder_id])
         @document.assign_attributes(document_params)
         if @data.blank?
