@@ -7,9 +7,4 @@
 
   = render :partial => 'droom/events/minimal', collection: Droom::Event.of_type(@event.event_type).other_than(@event).by_date_descending
 
-
-- content_for :standfirst do
-  %p
-    = t :event_introduction
-
 = render :partial => 'droom/events/event', :object => @event, :locals => {:full_attachments => true}
