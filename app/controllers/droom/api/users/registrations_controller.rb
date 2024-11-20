@@ -1,7 +1,7 @@
 module Droom::Api
   class Users::RegistrationsController < Devise::RegistrationsController
     skip_before_action :verify_authenticity_token, raise: false
-    respond_to :json, 
+    respond_to :json,
 
     def create
       return render json: { errors: ["Email has already been taken."] }, status: :unprocessable_entity if Droom::User.find_by_any_email(params[:user][:email])
@@ -14,10 +14,10 @@ module Droom::Api
         resource.emails.each do |email|
           email.address_type = correspondence_address_type
         end
-        resource.groups << Droom::Group.find_by_slug(params[:group]) if params[:group].present?
+        # resource.groups << Droom::Group.find_by_slug(params[:group]) if params[:group].present?
         resource.save
         send_confirmation_instructions(resource)
-        
+
         resource.sync_attendee
         render json: { message: "Signed up successfully. Please confirm your email." }, status: :created
       else
