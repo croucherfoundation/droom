@@ -731,13 +731,27 @@ ul.downloads
 
 a.no-bg-image
   background-image: none !important
-  padding: 6px 0 0 0 !important
+  padding: 5px 0 0 0 !important
+  svg.icon.pint-sized3
+    margin-right: 2px
+  &.notion
+    svg 
+      width: 19px
+      margin-left: 4px
+      margin-right: 3px
+  &.gdoc
+    svg 
+      margin-left: 1px
+  &.pdf 
+    svg 
+      margin-top: -2px
+
 
 a.document
   display: inline-block
   padding: 6px 0 0 34px
   min-height: 20px
-  line-height: 22px
+  line-height: 1.8
   color: $mid
   background:
     repeat: no-repeat
@@ -753,13 +767,16 @@ a.document
     .icon
       color: #2e62ce
   &.doc, &.docx
-    background-position: 0 -96px
+    padding: 6px 0 0 32px
+    background-position: 0px -92px
     +hover
   &.xls, &.xlsx
-    background-position: 0 -144px
+    padding: 6px 0 0 32px
+    background-position: 0 -140px
     +hover
   &.mp4, &.mov, &.ogg
-    background-position: 0 -192px
+    padding: 6px 0 0 32px
+    background-position: 0px -188px
     +hover
   &.waiting
     color: $pale
