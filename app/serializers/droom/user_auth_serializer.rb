@@ -19,7 +19,8 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
              :preferred_professional_name,
              :preferred_name,
              :preferred_pronoun,
-             :user_groups
+             :user_groups,
+             :show_initial_image
 
   def name
     object.colloquial_name

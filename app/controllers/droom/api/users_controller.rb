@@ -1,10 +1,12 @@
 module Droom::Api
   class UsersController < Droom::Api::ApiController
+    before_action :authenticate_user , unless: :local_request? , only: [:update, :remove_profile] 
 
     before_action :get_users, only: [:index]
     before_action :find_or_create_user, only: [:create]
-    skip_before_action :assert_local_request!, only: [:update_timezone]
+    skip_before_action :assert_local_request!, only: [:update_timezone, :update, :remove_profile]
     load_resource find_by: :uid, class: "Droom::User"
+    
 
     def index
       render json: @users
@@ -64,11 +66,13 @@ module Droom::Api
 
     def update
       @user.update(user_params)
+      attach_base64_image(@user, :image, params[:profile_image]) if params[:profile_image].present?
       render json: @user
     end
 
     def create
       if @user && @user.persisted?
+        attach_base64_image(@user, :image, params[:profile_image]) if params[:profile_image].present?
         render json: @user
       else
         render json: { errors: @user.errors.to_a }
@@ -78,6 +82,11 @@ module Droom::Api
     def destroy
       @user.destroy
       head :ok
+    end
+
+    def remove_profile
+      @user.default_image_attach(true)
+      render json: @user
     end
 
     def reindex

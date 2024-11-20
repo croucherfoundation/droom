@@ -43,6 +43,7 @@ module Droom
 
     def create
       @user = Droom::User.new(user_params)
+      @user.show_initial_image = false if params[:user][:image].present?
       if current_user.organisation_admin? && !current_user.admin?
         @user.organisation = current_user.organisation
       end
@@ -66,6 +67,7 @@ module Droom
     #
     def update
       @user.delete_user_permissions(user_params[:group_ids]) unless user_params[:group_ids].blank?
+      @user.show_initial_image = false if params[:user][:image].present?
       if user_params[:timezone] == "null"
         params[:user][:timezone] = nil
       end
@@ -200,6 +202,7 @@ module Droom
         :mobile,
         :female,
         :image,
+        :show_initial_image,
         :timezone,
         :preferred_professional_name,
         :preferred_name,

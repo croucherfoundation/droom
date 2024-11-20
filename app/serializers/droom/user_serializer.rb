@@ -43,7 +43,8 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :timezone,
              :organisation_admin,
              :admin,
-             :gatekeeper
+             :gatekeeper,
+             :show_initial_image
 
 
     has_many :emails

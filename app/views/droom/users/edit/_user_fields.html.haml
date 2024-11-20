@@ -17,6 +17,8 @@
   .image-upload{:data => {:role => "imagepicker"}}
     %a.box{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
     = f.file_field :image
+    - if user.new_record?
+      = f.hidden_field :show_initial_image, value: true
 
   .description
     = f.text_area :description, class: "rte", data: {placeholder: t("placeholders.user.description")}

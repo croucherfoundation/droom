@@ -4,6 +4,7 @@ module Droom
   class User < Droom::DroomRecord
     include Droom::Concerns::Key
     include Droom::Concerns::Imaged
+    include Droom::Concerns::PngConvert
 
     # validates :family_name, :presence => true
     # validates :given_name, :presence => true
@@ -51,6 +52,9 @@ module Droom
 
     class_attribute :sync_in_progress
     after_commit :sync_with_person
+
+    after_save :default_image_attach
+    after_create :generate_image
 
     scope :admins, -> { where(admin: true) }
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }
@@ -1098,6 +1102,23 @@ module Droom
         break token unless User.where(authentication_token: token).first
       end
     end
+
+    def generate_image
+      if show_initial_image && (given_name? || family_name?)
+        attach_initials_image(self)
+      end
+    end
+
+    def default_image_attach(remove_image = false)
+      if remove_image
+        attach_initials_image(self)
+      elsif show_initial_image
+        if saved_change_to_given_name? || saved_change_to_family_name?
+          attach_initials_image(self)
+        end
+      end
+    end
+
   protected
 
     def ensure_uid!
