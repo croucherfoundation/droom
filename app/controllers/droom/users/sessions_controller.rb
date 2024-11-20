@@ -24,6 +24,22 @@ module Droom::Users
       end
     end
 
+    def create
+      if self.resource = warden.authenticate(auth_options)
+        sign_in(resource_name, resource)
+
+        if !session[:return_to].blank?
+          redirect_to session[:return_to]
+          session[:return_to] = nil
+        else
+          respond_with resource, :location => after_sign_in_path_for(resource)
+        end
+
+      else
+        redirect_to new_user_session_url(failed: true)
+      end
+    end
+
     def destroy
       current_user.clear_session_ids! if current_user
       Droom::AuthCookie.new(warden.cookies).unset

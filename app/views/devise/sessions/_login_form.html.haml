@@ -15,15 +15,18 @@
     
       = form_for(resource, as: resource_name, url: session_path(resource_name), method: 'post', html: { class: 'sign_in_form' }) do |f|
         = hidden_field_tag :destination, params[:destination]
-        -# = hidden_field_tag :backto, CGI.escape(params[:backto])
         
         .input_group
           %label{for: "email"} Email
-          = f.email_field :email, class: 'rounded-b-5 mb-1 outline-none border-none', placeholder: t("placeholders.session.email")
+          = f.email_field :email, class: "#{'has-error' if params[:failed].present?}", placeholder: t("placeholders.session.email")
+
+          - if params[:failed].present?
+            %p.error_message 
+              Incorrect email or password.
         
         .input_group
           %label{for: "password"} Password
-          = f.password_field :password, class: 'rounded-b-5 mb-1 outline-none border-none sign_in_password', placeholder: t("placeholders.session.password")
+          = f.password_field :password, class: "sign_in_password #{'has-error' if params[:failed].present?}", placeholder: t("placeholders.session.password")
           %button.eye{type: "button"}
             %img{alt: "open", src: "https://cmss.croucher.org.hk/assets/images/icons/eye-02.svg"}/
 
