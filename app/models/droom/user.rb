@@ -1,5 +1,5 @@
 require 'vcard'
-
+require 'open-uri'
 module Droom
   class User < Droom::DroomRecord
     include Droom::Concerns::Key
@@ -1104,7 +1104,7 @@ module Droom
     end
 
     def generate_image
-      if show_initial_image && (given_name? || family_name?)
+      unless image.attached?
         attach_initials_image(self)
       end
     end
@@ -1116,6 +1116,18 @@ module Droom
         if saved_change_to_given_name? || saved_change_to_family_name?
           attach_initials_image(self)
         end
+      end
+    end
+
+    def sync_profile_from_external(url)
+      return if url.blank?
+      begin
+        file = URI.open(url)
+        self.image.attach(io: file, filename: File.basename(URI.parse(url).path))
+        self.update(show_initial_image: false)
+        Rails.logger.info "Profile image attached for user #{name}"
+      rescue => e
+        Rails.logger.error "Error attaching profile image for user #{name}: #{e.message}"
       end
     end
 
@@ -1149,6 +1161,7 @@ module Droom
     end
   end
 end
+
 
 
 

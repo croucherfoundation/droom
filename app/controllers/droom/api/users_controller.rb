@@ -65,14 +65,14 @@ module Droom::Api
     end
 
     def update
-      @user.update(user_params)
-      attach_base64_image(@user, :image, params[:profile_image]) if params[:profile_image].present?
+      profile_image = user_params[:image] if user_params[:image].present?
+      @user.update(user_params.except(:image))
+      attach_base64_image(@user, :image, profile_image) if profile_image.present?
       render json: @user
     end
 
     def create
       if @user && @user.persisted?
-        attach_base64_image(@user, :image, params[:profile_image]) if params[:profile_image].present?
         render json: @user
       else
         render json: { errors: @user.errors.to_a }
@@ -86,6 +86,11 @@ module Droom::Api
 
     def remove_profile
       @user.default_image_attach(true)
+      render json: @user
+    end
+
+    def sync_profile_image
+      @user.sync_profile_from_external(params[:image_url]) if params[:image_url].present?
       render json: @user
     end
 
@@ -121,8 +126,11 @@ module Droom::Api
       end
       params = user_params
       # remotely created users are not usually meant to access the data room, but can set send_confirmation if that's what they want.
+      profile_image = params[:image] if params[:image].present?
       params[:defer_confirmation] = true
-      @user ||= Droom::User.create(params)
+      @user ||= Droom::User.create(params.except(:image))
+      attach_base64_image(@user, :image, profile_image) if profile_image.present?
+      @user
     end
 
     def get_users
@@ -139,7 +147,7 @@ module Droom::Api
     def user_params
       params.require(:user).permit(:uid, :person_uid, :title, :family_name, :given_name, :chinese_name, :honours, :affiliation,
           :email, :phone, :mobile, :description, :address, :post_code, :correspondence_address, :country_code, :organisation_id,
-          :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data,
+          :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data, :image,
           :image_name, :last_request_at, :preferred_pronoun, :preferred_professional_name, :preferred_name, :hkid, :dob, :pob, :nationality, :gender,
           :timezone, :organisation_admin, :admin, :gatekeeper,
           emails_attributes: [:id, :_destroy, :email, :address_type_id, :default], addresses_attributes: [:id, :_destroy, :address, :address_type_id, :default])

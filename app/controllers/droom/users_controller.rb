@@ -43,7 +43,6 @@ module Droom
 
     def create
       @user = Droom::User.new(user_params)
-      @user.show_initial_image = false if params[:user][:image].present?
       if current_user.organisation_admin? && !current_user.admin?
         @user.organisation = current_user.organisation
       end
