@@ -1077,6 +1077,7 @@ module Droom
           confirmation_token_created_at: confirmation_sent_at,
           show_member_popup: false,
           is_approved: true,
+          user_uid: uid
         ).save
       end
     end
@@ -1128,6 +1129,3 @@ module Droom
     end
   end
 end
-
-
-
