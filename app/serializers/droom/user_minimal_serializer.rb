@@ -13,6 +13,7 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
              :timezone,
              :user_groups,
              :images,
+             :profile_image,
              :show_initial_image
 
   def email_list
@@ -63,6 +64,10 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
         thumbnail: "",
         standard: ""
       }
+    end
+    
+    def profile_image
+      object.image.attached? ? object.image_url(:thumb) : ""
     end
   end
 end

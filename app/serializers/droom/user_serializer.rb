@@ -44,6 +44,7 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :organisation_admin,
              :admin,
              :gatekeeper,
+             :profile_image,
              :show_initial_image
 
 
@@ -105,4 +106,8 @@ class Droom::UserSerializer < ActiveModel::Serializer
     end
   end
 
+  def profile_image
+    object.image.attached? ? object.image_url(:thumb) : ""
+  end
+  
 end
