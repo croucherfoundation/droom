@@ -21,34 +21,27 @@ module Droom::Concerns::PngConvert
   def svg_template
     <<-SVG
       <?xml version="1.0" encoding="UTF-8"?>
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 50 50">
-          <style>
-            @font-face {
-              font-family: 'MarrSans';
-              src: url('https://front.croucherscienceweek.hk/MarrSans-Bold.otf') format('opentype');
-              font-weight: normal;
-              font-display: swap;
-              -webkit-font-smoothing: antialiased;
-            }
-            text {
-              font-family: "MarrSans", Arial, sans-serif;
-            }
-          </style>
-          <!-- Background Rectangle -->
-          <rect width="100%" height="100%" fill="<%= @background %>"/>
-          
-          <!-- Centered Text -->
-          <text 
-            fill="#fff" 
-            font-size="30" 
-            font-weight="500" 
-            x="50%" 
-            y="50%" 
-            dominant-baseline="middle" 
-            text-anchor="middle">
-            <%= @letters %>
-          </text>
-        </svg>
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 60 60">
+        <style>
+          @font-face {
+            font-family: 'MarrSans';
+            src: url('https://front.croucherscienceweek.hk/MarrSans-Bold.otf') format('opentype');
+            font-weight: normal;
+            font-display: swap;
+            -webkit-font-smoothing: antialiased;
+          }
+          text {
+            font-family: "MarrSans", Arial, sans-serif;
+          }
+        </style>
+        <!-- Background Rectangle -->
+        <rect width="100%" height="100%" fill="<%= @background %>"/>
+        
+        <!-- Centered Text with Equal Margins -->
+        <text fill="#fff" font-size="30" font-weight="500" x="50%" y="50%" dx="0" dy=".25em" text-anchor="middle" dominant-baseline="middle">
+          <%= @letters %>
+        </text>
+      </svg>
     SVG
   end
 
