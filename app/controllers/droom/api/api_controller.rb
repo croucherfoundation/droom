@@ -37,26 +37,26 @@ module Droom::Api
     end
 
     def authenticate_user
-      if user_signed_in?
-        set_auth_cookie_for(current_user)
-        return
-      end
-
-      if (token = retrieve_token).present?
-        user = Droom::User.find_by(unique_session_id: token)
-        if user
-          if user_session_valid?(user)
-            sign_in(user)
-            set_auth_cookie_for(user)
-            user.set_last_request_at! if user.respond_to?(:set_last_request_at!)
+      token = retrieve_token
+      user = Droom::User.find_by(unique_session_id: token)
+      if user
+        # ie. if user includes timeoutable...
+        if user.respond_to?(:timedout?) && user.last_request_at?
+          # here we borrow the devise timeout strategy but cannot refer to the session,
+          # so we use a last_request_at column.
+          if user.timedout?(user.last_request_at)
+            render json: { errors: "Session timed out" }, status: :unauthorized
           else
-            render_unauthorized("Session timed out")
+            bypass_sign_in user
+            user.set_last_request_at!
+            Droom::AuthCookie.new(cookies).set(user)
           end
         else
-          render_unauthorized("Token not recognized")
+          bypass_sign_in user
+          Droom::AuthCookie.new(cookies).set(user)
         end
       else
-        render_unauthorized("Unauthorized")
+        render json: { errors: "Token not recognised" }, status: :unauthorized
       end
     end
 
