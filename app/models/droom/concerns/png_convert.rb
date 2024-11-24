@@ -67,7 +67,7 @@ module Droom::Concerns::PngConvert
     return if user.given_name.blank? && user.family_name.blank?
     g_name = user.given_name.split(' ').first
     f_name = user.family_name.split(' ').first
-    png_name = [given_name, family_name].join(' ')
+    png_name = [g_name, f_name].join(' ')
     begin
       initials_image_path = convert_to_png(png_name)
       user.image.attach(io: File.open(initials_image_path), filename: File.basename(initials_image_path))
