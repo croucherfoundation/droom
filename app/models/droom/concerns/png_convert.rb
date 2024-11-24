@@ -21,26 +21,35 @@ module Droom::Concerns::PngConvert
   def svg_template
     <<-SVG
       <?xml version="1.0" encoding="UTF-8"?>
-      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 50 50">
-        <style>
-          @font-face {
-            font-family: 'MarrSans';
-            src: url('https://front.croucherscienceweek.hk/MarrSans-Bold.otf') format('opentype');
-            font-weight: normal;
-            font-display: swap;
-            -webkit-font-smoothing: antialiased;
-          }
-          text {
-            font-family: "MarrSans", Arial, sans-serif;
-          }
-        </style>
-        <rect width="100%" height="100%" fill="<%= @background %>"/>
-        <text fill="#fff" font-size="30" font-weight="500" x="50%" y="50%" dy=".20em" text-anchor="middle">
-          <%= @letters %>
-        </text>
-      </svg>
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 50 50">
+          <style>
+            @font-face {
+              font-family: 'MarrSans';
+              src: url('https://front.croucherscienceweek.hk/MarrSans-Bold.otf') format('opentype');
+              font-weight: normal;
+              font-display: swap;
+              -webkit-font-smoothing: antialiased;
+            }
+            text {
+              font-family: "MarrSans", Arial, sans-serif;
+            }
+          </style>
+          <!-- Background Rectangle -->
+          <rect width="100%" height="100%" fill="<%= @background %>"/>
+          
+          <!-- Centered Text -->
+          <text 
+            fill="#fff" 
+            font-size="30" 
+            font-weight="500" 
+            x="50%" 
+            y="50%" 
+            dominant-baseline="middle" 
+            text-anchor="middle">
+            <%= @letters %>
+          </text>
+        </svg>
     SVG
-
   end
 
   def convert_svg_to_png(svg_content, output_path, resolution = 600)
