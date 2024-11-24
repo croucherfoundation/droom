@@ -71,10 +71,12 @@ module Droom
         params[:user][:timezone] = nil
       end
       if @user.update(user_params)
+        @user.default_image_attach(true) if params[:remove_image] == "true"
         if params[:emergency_contact].present?
           Person.update_personal_info(@user.person.id, {
             emergency_contact: params[:emergency_contact]
           })
+
         end
         if params[:reload] == "true"
           redirect_to request.referrer

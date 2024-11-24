@@ -63,10 +63,13 @@ module Droom::Concerns::PngConvert
   end
 
   def attach_initials_image(user)
-    return if user.informal_name.blank?
-
+    
+    return if user.given_name.blank? && user.family_name.blank?
+    g_name = user.given_name.split(' ').first
+    f_name = user.family_name.split(' ').first
+    png_name = [given_name, family_name].join(' ')
     begin
-      initials_image_path = convert_to_png(user.informal_name)
+      initials_image_path = convert_to_png(png_name)
       user.image.attach(io: File.open(initials_image_path), filename: File.basename(initials_image_path))
       user.update(show_initial_image: true)
       puts "Initials image attached for user #{user.informal_name}"
