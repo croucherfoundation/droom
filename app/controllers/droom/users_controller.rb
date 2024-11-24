@@ -66,14 +66,17 @@ module Droom
     #
     def update
       @user.delete_user_permissions(user_params[:group_ids]) unless user_params[:group_ids].blank?
+      @user.show_initial_image = false if params[:user][:image].present?
       if user_params[:timezone] == "null"
         params[:user][:timezone] = nil
       end
       if @user.update(user_params)
+        @user.default_image_attach(true) if params[:remove_image] == "true"
         if params[:emergency_contact].present?
           Person.update_personal_info(@user.person.id, {
             emergency_contact: params[:emergency_contact]
           })
+
         end
         if params[:reload] == "true"
           redirect_to request.referrer
@@ -200,6 +203,7 @@ module Droom
         :mobile,
         :female,
         :image,
+        :show_initial_image,
         :timezone,
         :preferred_professional_name,
         :preferred_name,

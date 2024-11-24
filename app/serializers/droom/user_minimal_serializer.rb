@@ -11,7 +11,10 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
              :phone_list,
              :address_list,
              :timezone,
-             :user_groups
+             :user_groups,
+             :images,
+             :profile_image,
+             :show_initial_image
 
   def email_list
     object.emails.map do |email|
@@ -47,7 +50,24 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
     object.groups.pluck(:name) if object.groups.any?
   end
 
-
-
-
+  def images
+    # I added env checking becuase we are facing rack-time-out error in development mode
+    if object.image.attached? && !Rails.env.development?
+      {
+        icon: object.image_url(:icon),
+        thumbnail: object.image_url(:thumb),
+        standard: object.image_url(:standard)
+      }
+    else
+      {
+        icon: "",
+        thumbnail: "",
+        standard: ""
+      }
+    end
+    
+    def profile_image
+      object.image.attached? ? object.image_url(:thumb) : ""
+    end
+  end
 end

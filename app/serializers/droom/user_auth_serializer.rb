@@ -19,7 +19,9 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
              :preferred_professional_name,
              :preferred_name,
              :preferred_pronoun,
-             :user_groups
+             :user_groups,
+             :profile_image,
+             :show_initial_image
 
   def name
     object.colloquial_name
@@ -52,6 +54,10 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
 
   def user_groups
     object.groups.pluck(:name) if object.groups.any?
+  end
+
+  def profile_image
+    object.image.attached? ? object.image_url(:thumb) : ""
   end
 
 end
