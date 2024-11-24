@@ -25,20 +25,20 @@ module Droom::Concerns::PngConvert
         <style>
           @font-face {
             font-family: 'MarrSans';
-            src: url('https://front.croucherscienceweek.hk/MarrSans-Bold.otf') format('opentype');
-            font-weight: normal;
+            src: url('https://front.croucherscienceweek.hk/MarrSans-Semibold.otf') format('opentype');
+            font-weight: 500;
             font-display: swap;
             -webkit-font-smoothing: antialiased;
           }
           text {
             font-family: "MarrSans", Arial, sans-serif;
-          }
+        }
         </style>
         <!-- Background Rectangle -->
         <rect width="100%" height="100%" fill="<%= @background %>"/>
         
         <!-- Centered Text with Equal Margins -->
-        <text fill="#fff" font-size="30" font-weight="500" x="50%" y="50%" dx="0" dy=".35em" text-anchor="middle" dominant-baseline="middle">
+        <text fill="#ffffff" font-size="30" font-weight="500" x="50%" y="50%" dx="0" dy=".35em" text-anchor="middle" dominant-baseline="middle">
           <%= @letters %>
         </text>
       </svg>

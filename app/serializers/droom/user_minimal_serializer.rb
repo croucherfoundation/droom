@@ -67,7 +67,7 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
     end
     
     def profile_image
-      object.image.attached? ? object.image_url(:thumb) : ""
+      object.image.attached? ? object.image.url : ""
     end
   end
 end
