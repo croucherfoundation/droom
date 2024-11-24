@@ -1,12 +1,12 @@
 module Droom::Api
   class UsersController < Droom::Api::ApiController
-    before_action :authenticate_user , unless: :local_request? , only: [:update, :remove_profile] 
+    before_action :authenticate_user, unless: :local_request?, only: [:update, :remove_profile]
 
     before_action :get_users, only: [:index]
     before_action :find_or_create_user, only: [:create]
     skip_before_action :assert_local_request!, only: [:update_timezone, :update, :remove_profile]
     load_resource find_by: :uid, class: "Droom::User"
-    
+
 
     def index
       render json: @users

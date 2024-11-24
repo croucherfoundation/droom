@@ -11,7 +11,7 @@ module Droom::Api
     rescue_from Droom::AccessDenied, with: :not_authorized
 
     protected
-    
+
     def not_found(exception)
       render json: { errors: exception.message }.to_json, status: :not_found
     end
@@ -27,25 +27,27 @@ module Droom::Api
     def blew_up(exception)
       render json: { errors: exception.message }.to_json, status: :internal_server_error
     end
-    
+
     def name_from_controller
       params[:controller].sub("Controller", "").underscore.split('/').last
     end
-    
+
     def api_controller?
       true
     end
 
     def authenticate_user
-      return if current_user
-  
-      token = retrieve_token
-  
-      if token.present?
+      if user_signed_in?
+        set_auth_cookie_for(current_user)
+        return
+      end
+
+      if (token = retrieve_token).present?
         user = Droom::User.find_by(unique_session_id: token)
         if user
           if user_session_valid?(user)
             sign_in(user)
+            set_auth_cookie_for(user)
             user.set_last_request_at! if user.respond_to?(:set_last_request_at!)
           else
             render_unauthorized("Session timed out")
@@ -57,7 +59,11 @@ module Droom::Api
         render_unauthorized("Unauthorized")
       end
     end
-  
+
+    def set_auth_cookie_for(user)
+      Droom::AuthCookie.new(cookies).set(user)
+    end
+
     def retrieve_token
       # Try to get token from headers
       token = token_from_x_api_key ||
@@ -66,26 +72,26 @@ module Droom::Api
               token_from_cookie
       token
     end
-  
+
     def token_from_x_api_key
       if (api_key_header = request.headers["x-api-key"]).present?
         unique_session_id = JSON.parse(api_key_header) rescue nil
         unique_session_id&.dig(1, 0)
       end
     end
-  
+
     def token_from_authorization_header
       authenticate_with_http_token do |token, _options|
         return token if token.present?
       end
       nil
     end
-  
+
     def token_from_cookie
       cookie = Droom::AuthCookie.new(cookies)
       cookie.token if cookie.valid? && cookie.fresh?
     end
-  
+
     def user_session_valid?(user)
       if user.respond_to?(:timedout?) && user.last_request_at?
         !user.timedout?(user.last_request_at)
@@ -93,11 +99,11 @@ module Droom::Api
         true
       end
     end
-  
+
     def render_unauthorized(message)
       render json: { errors: message }, status: :unauthorized
     end
-    
-    
+
+
   end
 end
