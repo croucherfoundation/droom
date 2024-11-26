@@ -1,10 +1,15 @@
 module Droom::Api
   class Users::RegistrationsController < Devise::RegistrationsController
+    respond_to :json
+
     skip_before_action :verify_authenticity_token, raise: false
-    respond_to :json,
 
     def create
-      return render json: { errors: ["Email has already been taken."] }, status: :unprocessable_entity if Droom::User.find_by_any_email(params[:user][:email])
+      if spam_request?
+        return head :ok
+      end
+
+      return render json: { errors: ["Email has already been taken."] }, status: :unprocessable_entity if Droom::User.find_by_any_email(sign_up_params[:email])
 
       build_resource(sign_up_params)
       resource.save
@@ -29,8 +34,26 @@ module Droom::Api
 
     private
 
+    def spam_request?
+      return true if sign_up_params[:password].nil?
+
+      @hashed_params = sign_up_params
+      @hashed_params[:ip_address] ||= request.ip
+      @hashed_params[:browser_agent] ||= request.user_agent
+
+      browser = Browser.new(request.user_agent)
+      if browser.known?
+        # the browser been successfully detected.
+        false
+      else
+        # Log the rejected account details
+        RejectedAccountLog.create(@hashed_params)
+        true
+      end
+    end
+
     def sign_up_params
-      params.require(:user).permit(:given_name, :family_name, :email , :password)
+      params.require(:user).permit(:given_name, :family_name, :email, :password, :ip_address, :browser_agent)
     end
 
     def send_confirmation_instructions(resource)
