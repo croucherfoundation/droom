@@ -9,9 +9,9 @@ module Droom::Api
         return head :ok
       end
 
-      return render json: { errors: ["Email has already been taken."] }, status: :unprocessable_entity if Droom::User.find_by_any_email(sign_up_params[:email])
+      return render json: { errors: ["Email has already been taken."] }, status: :unprocessable_entity if Droom::User.find_by_any_email(@hashed_params[:email])
 
-      build_resource(sign_up_params)
+      build_resource(@hashed_params)
       resource.save
       yield resource if block_given?
       if resource.persisted?
@@ -41,7 +41,7 @@ module Droom::Api
       @hashed_params[:ip_address] ||= request.ip
       @hashed_params[:browser_agent] ||= request.user_agent
 
-      browser = Browser.new(request.user_agent)
+      browser = Browser.new(@hashed_params[:browser_agent])
       if browser.known?
         # the browser been successfully detected.
         false
