@@ -131,7 +131,9 @@ module Droom::Api
       params[:defer_confirmation] = true
       @user ||= Droom::User.create(params.except(:image))
       attach_base64_image(@user, :image, profile_image) if profile_image.present?
-      @user.default_image_attach(true) if params[:user][:remove_image] == true || params[:user][:remove_image] == "true"
+      if params[:user] && (params[:user][:remove_image] == true || params[:user][:remove_image] == "true")
+        @user.default_image_attach(true)
+      end
       @user
     end
 
