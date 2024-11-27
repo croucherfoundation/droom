@@ -243,6 +243,12 @@ module Droom
       self.confirmed_at = Time.now if value.present? and value != "false"
     end
 
+    def user_group=(value)
+      group = Droom::Group.find_by_slug(value) if value.present? 
+
+      self.groups << group if group && !self.groups.include?(group)
+    end
+
     def password_match?
       self.errors[:password] << "can't be blank" if password.blank?
       self.errors[:password_confirmation] << "can't be blank" if password_confirmation.blank?
