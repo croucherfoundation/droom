@@ -44,14 +44,15 @@ module Droom
     before_save :ensure_authentication_token!
     before_save :title_blank_to_nil
     before_save :org_admin_if_alone
+
+    class_attribute :sync_in_progress
+    after_save :sync_with_person
+
     after_save :send_confirmation_if_directed
 
     after_save :enqueue_mailchimp_job
     after_save :attend_conference_or_not
     after_destroy :remove_from_mailchimp_list
-
-    class_attribute :sync_in_progress
-    after_commit :sync_with_person
 
     after_save :default_image_attach
     after_create :generate_image
