@@ -183,6 +183,14 @@ module Droom
       return false
     end
 
+    def applicant?
+      if user_signed_in? && !admin? && !committee? && !trustee? && !developer? && !staff?
+        groups = current_user.groups
+        return groups.any? && groups.exists?(slug: 'applicants')
+      end
+      return false
+    end
+
     def committee?
       if user_signed_in?
         committees = ['audit-committee', 'investment-committee']

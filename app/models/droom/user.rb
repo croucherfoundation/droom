@@ -244,7 +244,7 @@ module Droom
     end
 
     def user_group=(value)
-      group = Droom::Group.find_by_slug(value) if value.present? 
+      group = Droom::Group.find_by_slug(value) if value.present?
 
       self.groups << group if group && !self.groups.include?(group)
     end
@@ -294,6 +294,14 @@ module Droom
 
     def trustee?
       groups.any? { |group| group.slug.match(/trustee/i) }
+    end
+
+    def scholar?
+      groups.any? { |group| group.slug.match(/scholars/i) }
+    end
+
+    def applicant?
+      groups.any? { |group| group.slug.match(/applicants/i) }
     end
 
     ## Group memberships
