@@ -5,8 +5,25 @@ require 'mini_magick'
 module Droom::Concerns::PngConvert
   extend ActiveSupport::Concern
   COLORS = %w(#531A04 #C82F32 #CDC405 #EDA306 #93B4D7).freeze
+
+  def attach_initials_image(user)
+    return if user.given_name.blank? && user.family_name.blank?
+    g_name = user.given_name.split(' ').first
+    f_name = user.family_name.split(' ').first
+    png_name = [g_name, f_name].join(' ')
+
+    begin
+      initials_image_path = convert_to_png(png_name)
+      user.image.attach(io: File.open(initials_image_path), filename: File.basename(initials_image_path))
+      user.update_column(:show_initial_image, true)
+      puts "Initials image attached for user #{user.informal_name}"
+
+    rescue => e
+      puts "Failed to attach initials image for user #{user.name}: #{e.message}"
+    end
+  end
+
   def convert_to_png(name)
-    
     @background = COLORS.sample
     @letters = name.split.take(2).map { |word| word[0].upcase }.join
 
@@ -36,7 +53,7 @@ module Droom::Concerns::PngConvert
         </style>
         <!-- Background Rectangle -->
         <rect width="100%" height="100%" fill="<%= @background %>"/>
-        
+
         <!-- Centered Text with Equal Margins -->
         <text fill="#ffffff" font-size="30" font-weight="500" x="50%" y="50%" dx="0" dy=".35em" text-anchor="middle" dominant-baseline="middle">
           <%= @letters %>
@@ -60,22 +77,6 @@ module Droom::Concerns::PngConvert
 
   def convert_to_underscored(name)
     name.strip.gsub(/\s+/, '_').downcase
-  end
-
-  def attach_initials_image(user)
-    
-    return if user.given_name.blank? && user.family_name.blank?
-    g_name = user.given_name.split(' ').first
-    f_name = user.family_name.split(' ').first
-    png_name = [g_name, f_name].join(' ')
-    begin
-      initials_image_path = convert_to_png(png_name)
-      user.image.attach(io: File.open(initials_image_path), filename: File.basename(initials_image_path))
-      user.update(show_initial_image: true)
-      puts "Initials image attached for user #{user.informal_name}"
-    rescue => e
-      puts "Failed to attach initials image for user #{user.name}: #{e.message}"
-    end
   end
 
 end
