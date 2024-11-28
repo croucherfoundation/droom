@@ -68,7 +68,7 @@ module Droom::Api
       profile_image = user_params[:image] if user_params[:image].present?
       @user.update(user_params.except(:image))
       attach_base64_image(@user, :image, profile_image) if profile_image.present?
-      @user.default_image_attach(true) if params[:user][:remove_image] == true  || params[:user][:remove_image] == "true"
+      @user.attach_default_image(true) if (params[:user][:remove_image] == true  || params[:user][:remove_image] == "true")
       render json: @user
     end
 
@@ -86,7 +86,7 @@ module Droom::Api
     end
 
     def remove_profile
-      @user.default_image_attach(true)
+      @user.attach_default_image(true)
       render json: @user
     end
 
@@ -132,7 +132,7 @@ module Droom::Api
       @user ||= Droom::User.create(params.except(:image))
       attach_base64_image(@user, :image, profile_image) if profile_image.present?
       if params[:user] && (params[:user][:remove_image] == true || params[:user][:remove_image] == "true")
-        @user.default_image_attach(true)
+        @user.attach_default_image(true)
       end
       @user
     end

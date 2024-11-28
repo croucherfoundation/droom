@@ -50,7 +50,7 @@ module Droom
       content_type, encoded_image = base64_image.split(',')
       decoded_image = Base64.decode64(encoded_image)
       file_extension = content_type.split('/')[1].split(';')[0]
-    
+
       record.public_send(attribute).attach(
         io: StringIO.new(decoded_image),
         filename: "#{attribute}.#{file_extension}",
@@ -58,7 +58,7 @@ module Droom
       )
 
       if record.class.name == 'Droom::User'
-        record.update(show_initial_image: false)
+        record.update_column(:show_initial_image, false)
       end
     end
 

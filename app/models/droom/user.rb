@@ -47,15 +47,12 @@ module Droom
 
     class_attribute :sync_in_progress
     after_save :sync_with_person
-
+    after_save :attach_default_image
     after_save :send_confirmation_if_directed
 
     after_save :enqueue_mailchimp_job
     after_save :attend_conference_or_not
     after_destroy :remove_from_mailchimp_list
-
-    after_save :default_image_attach
-    after_create :generate_image
 
     scope :admins, -> { where(admin: true) }
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }
@@ -1119,19 +1116,9 @@ module Droom
       end
     end
 
-    def generate_image
-      unless image.attached?
-        attach_initials_image(self)
-      end
-    end
-
-    def default_image_attach(remove_image = false)
-      if remove_image
-        attach_initials_image(self)
-      elsif show_initial_image
-        if saved_change_to_given_name? || saved_change_to_family_name?
-          attach_initials_image(self)
-        end
+    def attach_default_image(remove_image=false)
+      if remove_image || !image.attached? || (show_initial_image && (saved_change_to_given_name? || saved_change_to_family_name?))
+        Droom::AttachUserImageJob.perform_later(self.id)
       end
     end
 
