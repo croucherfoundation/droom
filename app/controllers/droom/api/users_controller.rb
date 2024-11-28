@@ -65,10 +65,15 @@ module Droom::Api
     end
 
     def update
+      @user.class.sync_in_progress = params[:user]['skip_person_sync'] == true
+
       profile_image = user_params[:image] if user_params[:image].present?
       @user.update(user_params.except(:image))
       attach_base64_image(@user, :image, profile_image) if profile_image.present?
       @user.attach_default_image(true) if (params[:user][:remove_image] == true  || params[:user][:remove_image] == "true")
+
+      @user.class.sync_in_progress = false
+
       render json: @user
     end
 
