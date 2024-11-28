@@ -47,12 +47,13 @@ module Droom
 
     class_attribute :sync_in_progress
     after_save :sync_with_person
-    after_save :attach_default_image
     after_save :send_confirmation_if_directed
 
     after_save :enqueue_mailchimp_job
     after_save :attend_conference_or_not
     after_destroy :remove_from_mailchimp_list
+
+    after_commit :attach_default_image
 
     scope :admins, -> { where(admin: true) }
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }
@@ -241,6 +242,12 @@ module Droom
       self.confirmed_at = Time.now if value.present? and value != "false"
     end
 
+    def user_group=(value)
+      group = Droom::Group.find_by_slug(value) if value.present?
+
+      self.groups << group if group && !self.groups.include?(group)
+    end
+
     def password_match?
       self.errors[:password] << "can't be blank" if password.blank?
       self.errors[:password_confirmation] << "can't be blank" if password_confirmation.blank?
@@ -286,6 +293,14 @@ module Droom
 
     def trustee?
       groups.any? { |group| group.slug.match(/trustee/i) }
+    end
+
+    def scholar?
+      groups.any? { |group| group.slug.match(/scholars/i) }
+    end
+
+    def applicant?
+      groups.any? { |group| group.slug.match(/applicants/i) }
     end
 
     ## Group memberships
@@ -795,7 +810,7 @@ module Droom
     end
 
     def sync_with_person
-      return if self.class.sync_in_progress
+      return if self.class.sync_in_progress || !saved_changes?
 
       self.class.sync_in_progress = true
 
@@ -812,7 +827,10 @@ module Droom
               end
             end
           end
-          @person.save if @person.changed?
+          if @person.changed?
+            @person.skip_user_sync = true
+            @person.save
+          end
           save if changed?
         end
       ensure
@@ -1104,7 +1122,7 @@ module Droom
 
     def attach_default_image(remove_image=false)
       if remove_image || !image.attached? || (show_initial_image && (saved_change_to_given_name? || saved_change_to_family_name?))
-        Droom::AttachUserImageJob.perform_later(self.id)
+        Droom::AttachUserImageJob.perform_now(self.id)
       end
     end
 
