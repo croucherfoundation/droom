@@ -1,20 +1,17 @@
 module Droom::Api
   class Users::ConfirmationsController < Devise::ConfirmationsController
-    # before_action :set_access_control_headers
     skip_before_action :verify_authenticity_token, raise: false
-    # skip_before_action :authenticate_user
-    # skip_before_action :verify_authenticity_token, raise: false
     respond_to :json
-    #
     def show
       @resource = self.resource = resource_class.confirm_by_token(params[:confirmation_token])
       if @resource.errors.empty?
         @resource.confirm_attendee
         Droom::SubscribeToMailchimpJob.perform_later(@resource.email, @resource.given_name, @resource.family_name) if Rails.env.production?
-        sign_in(@resource)
-        render json: {user: @resource, message: "Email confirmed."}, status: :ok
+        user = sign_in(@resource)
+        user_data = get_auth_cookie_for(user)
+        render json: {user: @resource, user_data: user_data.as_json, message: "Email confirmed."}, status: :ok
       else
-        render json: { user: @resource, message: @resource.errors.full_messages }, status: :unprocessable_entity
+        render json: { user: @resource, message: @resource.errors.full_messages, user_data: nil }, status: :unprocessable_entity
       end
     end
 
@@ -44,6 +41,28 @@ module Droom::Api
       resource.confirmation_token = resource.generate_authentication_token
       resource.confirmation_sent_at = Time.current
       resource.save(validate: false)
+    end
+
+    def get_auth_cookie_for(user)
+      return nil if user.nil?
+    
+      RequestStore.store[:current_user] = user
+      Droom::AuthCookie.new(cookies).set(user)
+    
+      cookie_name = ENV['DROOM_AUTH_COOKIE'] || Settings.auth.cookie_name
+      sign_in_cookie = cookies[cookie_name]
+    
+      return nil unless sign_in_cookie
+    
+      parsed_cookie = JSON.parse(sign_in_cookie)
+      {
+        _s: parsed_cookie[0],
+        _k: parsed_cookie[1][0],
+        _d: parsed_cookie[1][1]
+      }
+    rescue JSON::ParserError => e
+      Rails.logger.error "Failed to parse sign-in cookie: #{e.message}"
+      nil
     end
   end
 end

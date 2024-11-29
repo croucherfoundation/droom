@@ -53,7 +53,7 @@ module Droom::Api
     end
 
     def sign_up_params
-      params.require(:user).permit(:given_name, :family_name, :email, :password, :ip_address, :browser_agent)
+      params.require(:user).permit(:given_name, :family_name, :email, :password, :ip_address, :browser_agent, :after_confirmed_url)
     end
 
     def send_confirmation_instructions(resource)
