@@ -70,11 +70,11 @@ module Droom
     def update
       @user.delete_user_permissions(user_params[:group_ids]) unless user_params[:group_ids].blank?
       @user.show_initial_image = false if user_params[:image].present?
+      @user.show_initial_image = true if params[:remove_image] == "true"
       if user_params[:timezone] == "null"
         params[:user][:timezone] = nil
       end
       if @user.update(user_params)
-        @user.attach_default_image(true) if params[:remove_image] == "true"
         if params[:emergency_contact].present?
           Person.update_personal_info(@user.person.id, {
             emergency_contact: params[:emergency_contact]
