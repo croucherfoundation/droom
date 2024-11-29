@@ -67,7 +67,6 @@ module Droom
       else
         @email = Settings.email.sandbox
       end
-      @email = "ymn.dev.coder@gmail.com"
 
       mail(to: @email, subject: @subject)
     end
