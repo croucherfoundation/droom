@@ -36,6 +36,10 @@ module Droom::Api
       true
     end
 
+    def current_user
+      super.presence || RequestStore.store[:current_user]
+    end
+
     def authenticate_user
       token = retrieve_token
       user = Droom::User.find_by(unique_session_id: token)
@@ -49,10 +53,12 @@ module Droom::Api
           else
             bypass_sign_in user
             user.set_last_request_at!
+            RequestStore.store[:current_user] = user
             Droom::AuthCookie.new(cookies).set(user)
           end
         else
           bypass_sign_in user
+          RequestStore.store[:current_user] = user
           Droom::AuthCookie.new(cookies).set(user)
         end
       else
