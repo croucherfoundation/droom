@@ -74,7 +74,7 @@ module Droom::Api
 
       @user.class.sync_in_progress = false
 
-      render json: @user
+      render json: @user.reload
     end
 
     def create
@@ -91,8 +91,8 @@ module Droom::Api
     end
 
     def remove_profile
-      @user.attach_default_image(true)
-      render json: @user
+      @user.update(show_initial_image: true)
+      render json: @user.reload
     end
 
     def sync_profile_image

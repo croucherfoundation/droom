@@ -1124,7 +1124,7 @@ module Droom
       if !image.attached? ||
         (saved_change_to_show_initial_image? && show_initial_image) ||
         (show_initial_image && (saved_change_to_given_name? || saved_change_to_family_name?))
-        Droom::AttachUserImageJob.perform_later(self.id)
+        Droom::AttachUserImageJob.perform_now(self.id)
       end
     end
 
