@@ -1120,9 +1120,11 @@ module Droom
       end
     end
 
-    def attach_default_image(remove_image=false)
-      if remove_image || !image.attached? || (show_initial_image && (saved_change_to_given_name? || saved_change_to_family_name?))
-        Droom::AttachUserImageJob.perform_now(self.id)
+    def attach_default_image
+      if !image.attached? ||
+        (saved_change_to_show_initial_image? && show_initial_image) ||
+        (show_initial_image && (saved_change_to_given_name? || saved_change_to_family_name?))
+        Droom::AttachUserImageJob.perform_later(self.id)
       end
     end
 

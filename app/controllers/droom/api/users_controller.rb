@@ -68,9 +68,9 @@ module Droom::Api
       @user.class.sync_in_progress = params[:user]['skip_person_sync'] == true
 
       profile_image = user_params[:image] if user_params[:image].present?
-      @user.update(user_params.except(:image))
       attach_base64_image(@user, :image, profile_image) if profile_image.present?
-      @user.attach_default_image(true) if (params[:user][:remove_image] == true  || params[:user][:remove_image] == "true")
+      @user.show_initial_image = true if params[:user][:remove_image] == true || params[:user][:remove_image] == "true"
+      @user.update(user_params.except(:image))
 
       @user.class.sync_in_progress = false
 
@@ -130,16 +130,10 @@ module Droom::Api
           end
         end
       end
-      params = user_params
+      params = user_params.merge(show_initial_image: true)
       # remotely created users are not usually meant to access the data room, but can set send_confirmation if that's what they want.
-      profile_image = params[:image] if params[:image].present?
       params[:defer_confirmation] = true
-      @user ||= Droom::User.create(params.except(:image))
-      attach_base64_image(@user, :image, profile_image) if profile_image.present?
-      if params[:user] && (params[:user][:remove_image] == true || params[:user][:remove_image] == "true")
-        @user.attach_default_image(true)
-      end
-      @user
+      @user ||= Droom::User.create(params)
     end
 
     def get_users

@@ -11,7 +11,7 @@ module Droom::Api
 
       return render json: { errors: ["Email has already been taken."] }, status: :unprocessable_entity if Droom::User.find_by_any_email(@hashed_params[:email])
 
-      build_resource(@hashed_params)
+      build_resource(@hashed_params.merge(show_initial_image: true))
       resource.save
       yield resource if block_given?
       if resource.persisted?

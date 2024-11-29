@@ -15,7 +15,6 @@ module Droom::Concerns::PngConvert
     begin
       initials_image_path = convert_to_png(png_name)
       user.image.attach(io: File.open(initials_image_path), filename: File.basename(initials_image_path))
-      user.update_column(:show_initial_image, true)
       puts "Initials image attached for user #{user.informal_name}"
 
     rescue => e

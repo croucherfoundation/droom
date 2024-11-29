@@ -42,7 +42,10 @@ module Droom
     end
 
     def create
-      @user = Droom::User.new(user_params)
+      hashed_params = user_params
+      hashed_params[:show_initial_image] = !hashed_params[:image].present?
+
+      @user = Droom::User.new(hashed_params)
       if current_user.organisation_admin? && !current_user.admin?
         @user.organisation = current_user.organisation
       end
@@ -66,7 +69,7 @@ module Droom
     #
     def update
       @user.delete_user_permissions(user_params[:group_ids]) unless user_params[:group_ids].blank?
-      @user.show_initial_image = false if params[:user][:image].present?
+      @user.show_initial_image = false if user_params[:image].present?
       if user_params[:timezone] == "null"
         params[:user][:timezone] = nil
       end
