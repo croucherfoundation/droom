@@ -75,6 +75,7 @@ Droom::Engine.routes.draw do
     patch "/users/:id/confirm" => "users/confirmations#update", as: :confirm_password
     get "/users/passwords/show" => "users/passwords#show", as: :show_confirmation
     get "/users/passwords/completed" => "users/passwords#completed", as: :complete_confirmation
+    get "/users/suggest" => "users#suggest", as: :suggest_user
 
     # droom_client authentication calls
     post '/api/users/sign_in' => 'api/sessions#create', as: :api_sign_in
@@ -82,6 +83,7 @@ Droom::Engine.routes.draw do
     get '/api/authenticate/:tok' => 'api/sessions#authenticate', as: 'authenticate'
     get '/api/deauthenticate/:tok' => 'api/sessions#deauthenticate', as: 'deauthenticate'
     get '/api/users/authenticable/:id' => 'api/users#authenticable', as: 'authenticable'
+
   end
 
   get '/users/check_email' => "users#check_email", as: "check_email"
