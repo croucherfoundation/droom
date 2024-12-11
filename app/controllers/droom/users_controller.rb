@@ -156,7 +156,37 @@ module Droom
       render json: {message: message, user_ids: user_ids.to_s}
     end
 
+    def suggest
+      limit = params[:limit].presence || 10
+      if params[:email].present?
+        @users = Droom::User.joins(:emails).where("droom_emails.email LIKE ?", "%#{params[:email]}%").limit(limit)
+      elsif params[:name].present?
+        @users = Droom::User.where("given_name LIKE ? OR family_name LIKE ?", "%#{params[:name]}%", "%#{params[:name]}%").limit(limit)
+      end
+      
+      render json: format_users(@users)
+    end
+
   protected
+
+    def format_users(users)
+      users.map do |user|
+        {
+          uid: user.id,
+          title: user.title,
+          name: "#{user.given_name} #{user.family_name}".strip,
+          given_name: user.given_name,
+          family_name: user.family_name,
+          chinese_name: user.chinese_name,
+          email: user.email,
+          phone: user.phone,
+          mobile: user.mobile,
+          address: user.address,
+          correspondence_address: user.correspondence_address,
+          prompt: user.email
+        }
+      end
+    end
 
     def search_users
       filters = {}
