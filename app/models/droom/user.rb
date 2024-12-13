@@ -675,11 +675,7 @@ module Droom
     end
 
     def email_name
-      unless title.present?
-        given_name
-      else
-        [title, family_name].join(' ')
-      end
+      given_name || family_name
     end
 
     def colloquial_name
