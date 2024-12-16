@@ -1,5 +1,5 @@
 - content_for :title do
-  = link_to t(:calendar), droom.events_url
+  = link_to t(:calendar), droom.events_url, class: 'event_link_title'
 
 - content_for :subnavbar do
   = render :partial => 'subnavbar'
