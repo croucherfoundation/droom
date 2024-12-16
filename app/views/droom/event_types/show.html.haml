@@ -1,5 +1,7 @@
+- content_for :subnavbar do
+  = render :partial => 'shared/grants_subnavbar'
 #event_type
-  %h1
+  %h1.pt_title.pb_title
     = @event_type.name
 
   %p
