@@ -1,6 +1,9 @@
 - content_for :title do
   = t :event_type_admin
 
+- content_for :subnavbar do
+  = render :partial => 'shared/grants_subnavbar'
+
 - content_for :standfirst do
   %p
     = t :event_types_introduction
