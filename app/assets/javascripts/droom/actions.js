@@ -369,6 +369,7 @@
       return this.each(function() {
         var clipper, ref, selector;
         clipper = $(this);
+        
         selector = (ref = clipper.attr('data-holder')) != null ? ref : '.holder';
         return clipper.bind('click', function(e) {
           var holder;
@@ -379,6 +380,7 @@
             delete_field = holder.find('input[data-role="destroy"]');
             if (delete_field.length) {
               delete_field.val(1);
+              holder.find('input[data-role="email"]').removeAttr('required');
               return holder.find('input[type="file"]').disable();
             } else {
               return holder.remove();

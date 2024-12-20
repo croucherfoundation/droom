@@ -144,11 +144,13 @@ module Droom
       head :ok
     end
 
-    def check_email
+    def check_email  
       message = 'whoops'
       user_ids = []
       if params[:email].present?
-        user_ids = Droom::Email.where(email: params[:email]).map(&:check_user_exist)
+        # user_ids = Droom::Email.where(email: params[:email]).where.not(user_id: params[:user_id])
+        emails = Droom::Email.where.not(user_id: params[:user_id]).where(email: params[:email])
+        user_ids = emails.map(&:check_user_exist)
       end
       unless user_ids.empty?
         message = 'oops'
