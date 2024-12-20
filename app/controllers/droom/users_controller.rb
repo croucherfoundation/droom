@@ -144,12 +144,12 @@ module Droom
       head :ok
     end
 
-    def check_email  
+    def check_email
       message = 'whoops'
       user_ids = []
       if params[:email].present?
-        # user_ids = Droom::Email.where(email: params[:email]).where.not(user_id: params[:user_id])
-        emails = Droom::Email.where.not(user_id: params[:user_id]).where(email: params[:email])
+        emails = Droom::Email.where(email: params[:email])
+        emails = emails.where.not(user_id: params[:user_id]) if params[:user_id].present?
         user_ids = emails.map(&:check_user_exist)
       end
       unless user_ids.empty?
@@ -165,7 +165,7 @@ module Droom
       elsif params[:name].present?
         @users = Droom::User.where("given_name LIKE ? OR family_name LIKE ?", "%#{params[:name]}%", "%#{params[:name]}%").limit(limit)
       end
-      
+
       render json: format_users(@users)
     end
 
