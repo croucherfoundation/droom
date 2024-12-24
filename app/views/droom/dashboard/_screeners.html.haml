@@ -1,0 +1,17 @@
+- round = screener.round
+- total = screener.total_applications
+- sofar = screener.rated_applications
+- sofar = total if sofar > total
+- left  = (total - sofar).to_i
+- url   = screener.screening_url
+
+- if round
+  .screening_info
+    .round_title
+      - if round.open?
+        %svg.icon
+          %use{href: "#green_circle"}
+      = link_to round.name, url
+    .application_status
+      .status-item
+        = "#{t(:screener_total_application, count: total)}, #{t(:screener_total_rated_application, count: sofar)}, #{t(:screener_total_unrated_application, count: left)}"

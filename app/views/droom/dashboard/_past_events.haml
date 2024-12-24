@@ -4,19 +4,13 @@
 - events ||= past_events.limit(5)
 
 - if events.any?
-  .divider
   %section
     #past_events
-      %h2.section
+      %h3.text-subtitle.mb_subtitle
         = link_to droom.past_events_url do
           = t(:recent_events)
-          - if past_events.count > 5
-            %span.addendum
-              =t(:click_for_more, count: past_events.count - 5)
-
       - if events.any?
         = render :partial => "droom/events/event", :collection => events, :locals => {:brief => true}
-
       - else
         %p.nothing
           = t :no_past_events

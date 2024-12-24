@@ -9,6 +9,7 @@ module Droom
                   :mailer,
                   :layout,
                   :dashboard_layout,
+                  :centered_layout,
                   :page_layout,
                   :devise_layout,
                   :email_layout,
@@ -86,6 +87,10 @@ module Droom
  
     def page_layout
       @page_layout ||= "page"
+    end
+
+    def centered_layout
+      @centered_layout ||= "centered"
     end
  
     def devise_layout
