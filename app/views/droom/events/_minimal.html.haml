@@ -7,11 +7,13 @@
     %span.dom= event.start.strftime('%d')
     - if event.start.year != Date.today.year
       %span.year= event.start.strftime('%Y')
-  %p.sample
-    = link_to event.name.try(:strip), droom.event_url(event)
-    = action_menulink(event, :class => "small")
+  
+  %p.sample 
+    = link_to event.name.try(:strip), droom.event_url(event), class: 'event_title'
+    = action_menulink(event)
     %br
     %span.caption
       = shorten(event.description, 160)
+
   = action_menu(event)
 

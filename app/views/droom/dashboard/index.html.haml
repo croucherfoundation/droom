@@ -12,11 +12,11 @@
         = render :partial => "droom/dashboard/#{mod}"
     .outside_events
       - Droom.margin_dashboard_modules.each do |mod|
-        = render :partial => "droom/dashboard/#{mod}"
+        = render :partial => "droom/dashboard/#{mod}", :locals => {:centered => true}
     - if screeners.any?
       - open_screeners = screeners.select { |screener| screener.round.open? }.sort_by { |screener| screener.round.screening_end }
       - closed_screeners = screeners.select { |screener| !screener.round.open? }.sort_by { |screener| screener.round.screening_end }.reverse
       - sorted_screeners = open_screeners + closed_screeners
       .screeners.redline_section_divider
-        %h3.text-subtitle.mb_subtitle Screening
+        %h3.text-subtitle.mb_subtitle Screening applications
         = render partial: "droom/dashboard/screeners", collection: sorted_screeners, as: :screener

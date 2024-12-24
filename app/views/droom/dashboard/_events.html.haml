@@ -1,10 +1,10 @@
 - calendar = Droom::Calendar.where(name: 'main').first_or_create
 - events = calendar.events.future_and_current.order('start ASC').limit(5)
 
-%section.redline_section_divider.np_mobile
+%section
   #events{:data => {:refreshing => true, :url => droom.events_url(:limit => 5)}}
 
-    %h3.text-subtitle.mb_subtitle.redline_t_0
+    %h3.text-subtitle.mb_subtitle
       = link_to t(:upcoming_events), main_app.calendar_url
       %span.action
         - if can?(:create, Droom::Event)

@@ -1,8 +1,10 @@
+- centered ||= false
 #suggestion_box
 
 - if calendar = Droom::Calendar.where(name: 'stream').first
-  #other.redline_section_divider
-    %h3.text-subtitle.mb_subtitle.redline_t_0
+  #other{class: "#{centered ? 'redline_section_divider' : ''}"}
+    - tag = centered ? 'h3' : 'h2'
+    = content_tag tag, class: (centered ? 'text-subtitle mb_subtitle redline_t_0' : 'section') do
       = t(:external_events)
       - if can?(:create, Droom::Event)
         %span.action
