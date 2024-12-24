@@ -1,11 +1,10 @@
 #suggestion_box
 
 - if calendar = Droom::Calendar.where(name: 'stream').first
-  #other
-    %h2.section
+  #other.redline_section_divider
+    %h3.text-subtitle.mb_subtitle.redline_t_0
       = t(:external_events)
       - if can?(:create, Droom::Event)
         %span.action
-          = link_to t(:add_external_event), droom.new_event_url(event: {calendar_id: calendar.id}), :class => "add minimal", :data => {:action => "popup", :affected => "#minor_events"}
-
+          = link_to t(:add_event), droom.new_event_url(event: {calendar_id: calendar.id}), :class => "add", :data => {:action => "popup", :affected => "#minor_events"}
     = render "droom/calendars/event_list", calendar: calendar, events: calendar.events.by_date_descending.limit(10)

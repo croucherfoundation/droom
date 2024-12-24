@@ -1,28 +1,19 @@
 - calendar = Droom::Calendar.where(name: 'main').first_or_create
 - events = calendar.events.future_and_current.order('start ASC').limit(5)
 
-.divider
-%section
+%section.redline_section_divider.np_mobile
   #events{:data => {:refreshing => true, :url => droom.events_url(:limit => 5)}}
 
-    %h2.section
-      = link_to t(:calendar), main_app.calendar_url
-      - if calendar.events.future_and_current.count > 5
-        %span.addendum
-          =t(:click_for_more, count: calendar.events.future_and_current.count - 5)
+    %h3.text-subtitle.mb_subtitle.redline_t_0
+      = link_to t(:upcoming_events), main_app.calendar_url
       %span.action
         - if can?(:create, Droom::Event)
           = link_to t(:add_event), droom.new_event_url, :class => "add", :data => {:action => "popup", :affected => "#events"}
         = link_to t(:subscribe_to_calendar), subscribe_events_url(current_user.authentication_token, protocol: "webcal", format: "ics"), class: "subscribe"
 
+    - events = calendar.events.past.limit(5) unless events.any?
     - if events.any?
       = render :partial => "droom/events/event", :collection => events, :locals => {:brief => true}
-
     - else
-      - past_events ||= calendar.events.past.limit(5)
-      - if past_events.any?
-        = render :partial => "droom/events/event", :collection => past_events, :locals => {:brief => true}
-
-      - else
-        %p.nothing
-          = t :no_events
+      %p.nothing
+        = t :no_events

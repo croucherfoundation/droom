@@ -6,7 +6,7 @@ module Droom
     def index
       authorize! :read, :dashboard
       @timezone_feature = FeatureFlag.enabled?('time-zone-feature', current_user)
-      render layout: Droom.dashboard_layout.to_s
+      render layout: Droom.centered_layout.to_s
     end
 
   end
