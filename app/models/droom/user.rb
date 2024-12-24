@@ -53,7 +53,7 @@ module Droom
     after_save :attend_conference_or_not
     after_destroy :remove_from_mailchimp_list
 
-    after_commit :attach_default_image
+    after_save :attach_default_image
 
     scope :admins, -> { where(admin: true) }
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }
