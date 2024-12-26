@@ -18,5 +18,6 @@
       - closed_screeners = screeners.select { |screener| !screener.round.open? }.sort_by { |screener| screener.round.screening_end }.reverse
       - sorted_screeners = open_screeners + closed_screeners
       .screeners.redline_section_divider
-        %h3.text-subtitle.mb_subtitle Screening applications
+        %h3.text-subtitle.mb_subtitle
+          = t(:selection_rounds)
         = render partial: "droom/dashboard/screeners", collection: sorted_screeners, as: :screener

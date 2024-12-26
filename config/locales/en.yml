@@ -588,6 +588,7 @@ en:
   search: Search
   search_still_dumb: "This is a very basic title search. Full-text coming soon."
   search_youtube: "Search youtube"
+  selection_rounds: "Selection rounds"
   send_message: "Send message"
   send_reset_instructions: "Send"
   set_password: "Set password"
