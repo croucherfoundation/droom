@@ -8,4 +8,5 @@
       = t :no_events
       
 - unless params[:year].present?
-  = paginate @events
+  .fp_events.course-summary
+    = paginate @events
