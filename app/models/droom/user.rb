@@ -1136,6 +1136,21 @@ module Droom
       end
     end
 
+    def csw_admin
+      CswAdmin.find_by(user_uid: uid)
+    end
+
+    def for_email
+      {
+        name: name,
+        first_name: given_name,
+        informal_name: name,
+        formal_name: formal_name,
+        title: title,
+        email: email
+      }
+    end
+
   protected
 
     def ensure_uid!
