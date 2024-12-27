@@ -35,7 +35,7 @@ module Droom::Api
     private
 
     def spam_request?
-      return true if sign_up_params[:password].nil?
+      return true if sign_up_params[:password].nil? || sign_up_params[:email].nil?
 
       @hashed_params = sign_up_params
       @hashed_params[:ip_address] ||= request.ip
