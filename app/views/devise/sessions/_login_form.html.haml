@@ -30,8 +30,8 @@
 
       -if params[:failed].present?
         %p.error_message 
-              Incorrect email or password.
-              
+          Incorrect email or password.
+
       -if @not_confirmed_message
         %p.error_message 
           = @not_confirmed_message
