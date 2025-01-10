@@ -8,6 +8,7 @@ module Droom::Users
 
     def new
       cookie = Droom::AuthCookie.new(cookies)
+      @not_confirmed_message = "We haven't received your confirmation. Please check your email." if params[:not_confirmed]
       if cookie.valid? && cookie.fresh? && session['warden.user.user.key'].present?
         @user = Droom::User.find_by(unique_session_id: cookie.token)
         sign_in(@user)
@@ -26,8 +27,14 @@ module Droom::Users
 
     def create
       if self.resource = warden.authenticate(auth_options)
+        if resource.respond_to?(:confirmed?) && !resource.confirmed?
+          Rails.logger.info "User #{resource.email} not confirmed"
+          current_user.clear_session_ids! if current_user
+          Droom::AuthCookie.new(warden.cookies).unset
+          redirect_to new_user_session_url(not_confirmed: true)
+          return
+        end
         sign_in(resource_name, resource)
-
         if !session[:return_to].blank?
           redirect_to session[:return_to]
           session[:return_to] = nil

@@ -18,12 +18,7 @@
         
         .input_group
           %label{for: "email"} Email
-          = f.email_field :email, class: "#{'has-error' if params[:failed].present?}", placeholder: t("placeholders.session.email")
-
-          - if params[:failed].present?
-            %p.error_message 
-              Incorrect email or password.
-        
+          = f.email_field :email, class: "#{'has-error' if params[:failed].present?}", placeholder: t("placeholders.session.email")       
         .input_group
           %label{for: "password"} Password
           = f.password_field :password, class: "sign_in_password #{'has-error' if params[:failed].present?}", placeholder: t("placeholders.session.password")
@@ -32,6 +27,14 @@
 
         .sign_in_btn
           = f.submit t(:sign_in), class: "croucher-standard-btn"
+
+      -if params[:failed].present?
+        %p.error_message 
+              Incorrect email or password.
+              
+      -if @not_confirmed_message
+        %p.error_message 
+          = @not_confirmed_message
           
       .forgot_password
         %p.mb-2
