@@ -16,9 +16,12 @@
     - extension = document.file_extension.downcase
     - detail_url = droom.folder_document_url(document.folder, document)
   
+  - cssclasses = "document #{extension}"
+  - cssclasses << ' no-bg-image' if %w[pdf gdoc notion png jpg jpeg webp].include?(extension)
+  
   - unless skip_gdoc && (document.google_doc_link.present? || document.notion_page_link.present?)
-    = link_to detail_url, class: "document #{['pdf', 'gdoc', 'notion'].include?(extension) ? 'no-bg-image' : ''} #{extension}", target: "_blank" do
-      - if extension == 'pdf'
+    = link_to detail_url, class: cssclasses, target: "_blank" do
+      - if %w[pdf png jpg jpeg webp].include?(extension)
         %svg.icon.medium
           %use{"xlink:href" => "#pdf_symbol"}
       - elsif extension == 'gdoc'
