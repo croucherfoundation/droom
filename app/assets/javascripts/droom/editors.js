@@ -55,6 +55,26 @@
           ]
         }
       });
+      this.on('keydown', function(event) {
+        if (event.key === 'Enter' && event.shiftKey) {
+          event.preventDefault();
+
+          // Insert a <br> tag at the current cursor position
+          var selection = window.getSelection();
+          if (selection.rangeCount > 0) {
+            var range = selection.getRangeAt(0);
+            var br = document.createElement('br');
+            range.insertNode(br);
+            
+            // Move the cursor after the <br> tag
+            range.setStartAfter(br);
+            range.setEndAfter(br);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          }
+        }
+      });
+      return editor;
     };
   });
 
