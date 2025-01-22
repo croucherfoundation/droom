@@ -46,6 +46,9 @@
         data: formData,
         complete: function(xhr) {
           if (xhr.status === 302 || xhr.status === 200) {
+            if ($('.password_reset_sent').length) {
+              $('.password_reset_sent').addClass('show');
+            }
             $('#passwordModal').removeClass('modal-open');
             $("#passwordConfirmModal").addClass('modal-open');
           }
