@@ -133,7 +133,7 @@ module Droom::Api
       params = user_params.merge(show_initial_image: true)
       # remotely created users are not usually meant to access the data room, but can set send_confirmation if that's what they want.
       params[:defer_confirmation] = true
-      if @user.persisted? && user_params[:user_group].present?
+      if @user.present? && user_params[:user_group].present?
         @user.user_group = user_params[:user_group]
         @user.save
       end
