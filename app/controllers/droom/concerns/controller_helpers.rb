@@ -184,8 +184,9 @@ module Droom::Concerns::ControllerHelpers
   #
   def not_authorized(exception)
     Rails.logger.warn "⚠️ not_authorized"
+    @pub_nav_footer = true
     respond_to do |format|
-      format.html { render :file => "#{Rails.root}/public/403.html", :status => :forbidden, :layout => false }
+      format.html { render :template => 'errors/not_allowed', :status => :forbidden, :layout => 'centered' }
       format.js { head :unauthorized }
       format.json { head :unauthorized }
     end
@@ -193,8 +194,9 @@ module Droom::Concerns::ControllerHelpers
 
   def not_allowed(exception)
     Rails.logger.warn "⚠️ not_allowed"
+    @pub_nav_footer = true
     respond_to do |format|
-      format.html { render :file => "#{Rails.root}/public/403.html", :status => :forbidden, :layout => false }
+      format.html { render :template => 'errors/not_allowed', :status => :forbidden, :layout => 'centered' }
       format.js { head :forbidden }
       format.json { head :forbidden }
     end
