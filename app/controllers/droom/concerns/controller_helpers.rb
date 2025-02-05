@@ -14,6 +14,7 @@ module Droom::Concerns::ControllerHelpers
     rescue_from Droom::OrganisationApprovalRequired, :with => :await_organisation_approval
     rescue_from StandardError, :with => :handle_internal_server_error
     rescue_from ActiveRecord::RecordInvalid, :with => :unprocessable_entity
+    rescue_from ActiveRecord::RecordNotFound, :with => :page_not_found
 
     prepend_before_action :read_auth_cookie, except: [:cors_check]
     before_action :authenticate_user!, except: [:cors_check]
@@ -184,7 +185,18 @@ module Droom::Concerns::ControllerHelpers
 
   ## Error responses
   #
+  def page_not_found(exception)
+    Rails.logger.warn "⚠️ unprocessable_entity"
+    @pub_nav_footer = true
+    respond_to do |format|
+      format.html { render :template => 'errors/page_not_found', :status => :forbidden, :layout => 'centered' }
+      format.js { head :page_not_found }
+      format.json { head :page_not_found }
+    end
+  end
+
   def unprocessable_entity(exception)
+    Rails.logger.error "Error #422: #{exception.to_s}" if exception
     Rails.logger.warn "⚠️ unprocessable_entity"
     @pub_nav_footer = true
     respond_to do |format|
@@ -195,6 +207,7 @@ module Droom::Concerns::ControllerHelpers
   end
 
   def handle_internal_server_error(exception)
+    Rails.logger.error "Error #500: #{exception.to_s}" if exception
     Rails.logger.warn "⚠️ internal_server_error"
     @pub_nav_footer = true
     respond_to do |format|
