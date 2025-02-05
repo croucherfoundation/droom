@@ -186,7 +186,7 @@ module Droom::Concerns::ControllerHelpers
   ## Error responses
   #
   def page_not_found(exception)
-    Rails.logger.warn "⚠️ unprocessable_entity"
+    Rails.logger.warn "⚠️ page_not_found"
     @pub_nav_footer = true
     respond_to do |format|
       format.html { render :template => 'errors/page_not_found', :status => :forbidden, :layout => 'centered' }
