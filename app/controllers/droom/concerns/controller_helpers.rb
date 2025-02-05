@@ -12,6 +12,8 @@ module Droom::Concerns::ControllerHelpers
     rescue_from Droom::SetupRequired, :with => :prompt_for_setup
     rescue_from Droom::OrganisationRequired, :with => :prompt_for_organisation
     rescue_from Droom::OrganisationApprovalRequired, :with => :await_organisation_approval
+    rescue_from StandardError, :with => :handle_internal_server_error
+    rescue_from ActiveRecord::RecordInvalid, :with => :unprocessable_entity
 
     prepend_before_action :read_auth_cookie, except: [:cors_check]
     before_action :authenticate_user!, except: [:cors_check]
@@ -182,6 +184,26 @@ module Droom::Concerns::ControllerHelpers
 
   ## Error responses
   #
+  def unprocessable_entity(exception)
+    Rails.logger.warn "⚠️ unprocessable_entity"
+    @pub_nav_footer = true
+    respond_to do |format|
+      format.html { render :template => 'errors/unprocessable_entity', :status => :forbidden, :layout => 'centered' }
+      format.js { head :unprocessable_entity }
+      format.json { head :unprocessable_entity }
+    end
+  end
+
+  def handle_internal_server_error(exception)
+    Rails.logger.warn "⚠️ internal_server_error"
+    @pub_nav_footer = true
+    respond_to do |format|
+      format.html { render :template => 'errors/internal_server_error', :status => :forbidden, :layout => 'centered' }
+      format.js { head :internal_server_error }
+      format.json { head :internal_server_error }
+    end
+  end
+
   def not_authorized(exception)
     Rails.logger.warn "⚠️ not_authorized"
     @pub_nav_footer = true
