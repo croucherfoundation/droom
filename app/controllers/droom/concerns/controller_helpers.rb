@@ -196,7 +196,9 @@ module Droom::Concerns::ControllerHelpers
   end
 
   def unprocessable_entity(exception)
-    Rails.logger.error "Error #422: #{exception.to_s}" if exception
+    if exception
+      Rails.logger.error "Error #422: #{exception.message}\n#{exception.backtrace.join("\n")}"
+    end
     Rails.logger.warn "⚠️ unprocessable_entity"
     @pub_nav_footer = true
     respond_to do |format|
@@ -207,7 +209,9 @@ module Droom::Concerns::ControllerHelpers
   end
 
   def handle_internal_server_error(exception)
-    Rails.logger.error "Error #500: #{exception.to_s}" if exception
+    if exception
+      Rails.logger.error "Error #500: #{exception.message}\n#{exception.backtrace.join("\n")}"
+    end
     Rails.logger.warn "⚠️ internal_server_error"
     @pub_nav_footer = true
     respond_to do |format|
