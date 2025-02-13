@@ -6,4 +6,4 @@
     - icon = address.address_type ? address.address_type.slug : "correspondence"
     %use{"xlink:href" => "#address_type_#{icon}_symbol"}
   %span.contact
-    = address.address
+    = address.address.html_safe
