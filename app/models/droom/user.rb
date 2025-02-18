@@ -1083,7 +1083,8 @@ module Droom
       csw_attendee = Csw::Attendee.find_by_email(email)
       if csw_attendee.nil?
         Csw::Attendee.new(
-          name: name,
+          first_name: given_name,
+          last_name: family_name,
           password: password,
           email: email,
           account_type: "member_public",
