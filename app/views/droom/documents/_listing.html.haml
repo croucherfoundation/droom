@@ -22,7 +22,7 @@
   - unless skip_gdoc && (document.google_doc_link.present? || document.notion_page_link.present?)
     = link_to detail_url, class: cssclasses, target: "_blank" do
       - if %w[pdf png jpg jpeg webp].include?(extension)
-        %svg.icon.medium
+        %svg.icon.medium{style: "height: 28px"}
           %use{"xlink:href" => "#pdf_symbol"}
       - elsif extension == 'gdoc'
         %svg.icon.pint-sized3
