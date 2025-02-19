@@ -31,7 +31,7 @@
         %svg.icon.pint-sized3
           %use{"xlink:href" => "#notion_symbol"}
       %span
-        = shorten(document.name, character_count, '')
+        = shorten(document.name, 100, '')
     - unless omit_menu
       = action_menulink(document)
     = action_menu(document)

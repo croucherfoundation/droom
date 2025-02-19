@@ -92,17 +92,18 @@
             - if event.timezone == "London"
               = "(#{t(:uk_time)})"
 
+        - if show_folder && !full_attachments
+          - if event.folder.populated? || can?(:read, event.folder)
+            .attachments.no_float.ml
+              - if can?(:edit, event.folder)
+                %ul.uploads{id: "queue_to_#{event.folder.id}"}
+              = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => event_url(event), skip_gdoc: skip_gdoc}
+
         .detail
           - if event.description?
             .content{style: "width:100%"}
               = sanitize(event.description)
-      - if show_folder && !full_attachments
-        - if event.folder.populated? || can?(:read, event.folder)
-          .attachments
-            - if can?(:edit, event.folder)
-              %ul.uploads{id: "queue_to_#{event.folder.id}"}
-            = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => event_url(event), skip_gdoc: skip_gdoc}
-
+      
 
   - if show_folder && full_attachments
     %br
