@@ -2,18 +2,32 @@
 - event ||= minimal || @event
 
 .event.minimal
-  .datemark
-    %span.mon= event.start.strftime('%b')
-    %span.dom= event.start.strftime('%d')
-    - if event.start.year != Date.today.year
-      %span.year= event.start.strftime('%Y')
-  
-  %p.sample 
+  %p.sample
     = link_to event.name.try(:strip), droom.event_url(event), class: 'event_title'
     = action_menulink(event)
+    - if event.venue_name.present?
+      %span.location
+        %svg.icon.pint-sized
+          %use{"xlink:href" => "#location_symbol"}
+        - if event.venue&.url
+          = link_to event.venue&.definite_name, event.venue.url
+        - elsif Droom.show_venue_map?
+          = link_to event.venue&.definite_name, venues_url(:id => event.venue.id)
+        - else
+          = event.venue&.definite_name
+    %span.time
+      %svg.icon.pint-sized2
+        %use{"xlink:href" => "#clock_symbol"}
+      %time
+        = render 'droom/shared/date', event: event
+    = shorten(event.description, 160)
     %br
-    %span.caption
-      = shorten(event.description, 160)
+    - if event.url?
+      %span.inline
+        = t(:website) + ":"
+        = link_to ensure_protocol(event.url), target: "_blank", style: "color:black" do
+          %svg.icon{style: "height: 28px; padding-bottom: 1px"}
+            %use{href: "#arrow_icon"}
 
   = action_menu(event)
 

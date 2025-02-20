@@ -104,7 +104,10 @@ module Droom
       where('droom_events.name like :f OR droom_events.description like :f', :f => fragment)
     }
 
-
+    scope :current_and_onwards, -> { where(['(start > :start) OR (start BETWEEN :start AND :end) OR (end_date BETWEEN :start AND :end)', 
+      :start => DateTime.now.beginning_of_month, :end => DateTime.now.end_of_month])
+      .order(:start)
+    }
 
     # All of these class methods also return scopes.
     #

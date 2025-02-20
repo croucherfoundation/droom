@@ -251,11 +251,15 @@ module Droom
     end
 
     def shorten(text, length=64, separator=" ")
-      text = strip_tags(text)
+      text = sanitize(text, tags: ['a'])
       length = length[:length] if length.is_a?(Hash)
       content_tag :span, class: 'shortened' do
         truncate(text, {:length => length, :separator => separator, :escape => false})
       end
+    end
+
+    def ensure_protocol(url)
+      url =~ /\Ahttp(s)?:\/\// ? url : "http://#{url}"
     end
 
     def nav_link_to(name, url, options={})
