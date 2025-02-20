@@ -21,9 +21,8 @@
       %time
         = render 'droom/shared/date', event: event
     = shorten(event.description, 160)
-    %br
     - if event.url?
-      %span.inline
+      %span.web-link
         = t(:website) + ":"
         = link_to ensure_protocol(event.url), target: "_blank", style: "color:black" do
           %svg.icon{style: "height: 28px; padding-bottom: 1px"}

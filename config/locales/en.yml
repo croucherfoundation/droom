@@ -506,7 +506,7 @@ en:
       datemark: "Click to change date"
       description: "Please give a brief description"
       venue_name: "Venue name"
-      url: "Please add a website link"
+      url: "Website URL"
       start: "Event start date"
       end_date: "Event end date"
     organisation:
