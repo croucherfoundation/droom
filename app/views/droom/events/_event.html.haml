@@ -5,7 +5,7 @@
 - full_attachments ||= false
 - show_folder = (event.folder && can?(:read, event.folder)) || current_user.permitted?('droom.library.read_event_documents')
 - skip_gdoc = true
-- is_outside_event = @event&.event_type_id == 3
+- is_outside_event = @event&.calendar_id == 2
 
 - event_master_id = event.master_id || event.id
 - if @seen_events[event_master_id]

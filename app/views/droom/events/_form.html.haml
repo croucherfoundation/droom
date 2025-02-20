@@ -1,13 +1,27 @@
 - @event.calendar ||= Droom::Calendar.default_calendar
+- calendar_id = params.dig(:event, :calendar_id) || @event.calendar_id
+- is_outside_event = calendar_id.to_i == 2
 
 = form_for @event, :html => {:class => 'edit event', :remote => true, :data => {:type => :html}} do |f|
+  - unless is_outside_event
+    .datemark{data: {role: "datepicker"}}
+      %a{:href => "#", title: t("placeholders.event.datemark")}
+        - if @event.start
+          %span.mon= @event.start.strftime('%b')
+          %span.dom= @event.start.strftime('%d')
+          %span.year= @event.start.strftime('%Y')
+        - else
+          %span.mon= t(:mon)
+          %span.dom= t(:dom)
+          %span.year= t(:year)
+      = f.hidden_field :start_date
   .summary
     %p.name
       = f.text_field :name, :class => 'name', :placeholder => t(:event_name), :autofocus => true
-
-    %p.practicalities.input-dates
-      = f.text_field :start_date, class: "start_date mr-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.start"), autocomplete: "off"
-      = f.text_field :end_date, class: "end_date ml-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.end_date"), autocomplete: "off"
+    - if is_outside_event
+      %p.practicalities.input-dates
+        = f.text_field :start_date, class: "start_date mr-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.start"), autocomplete: "off"
+        = f.text_field :end_date, class: "end_date ml-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.end_date"), autocomplete: "off"
 
     %p.practicalities
       %span.times
@@ -40,8 +54,8 @@
         = f.select :calendar_id, Droom::Calendar.for_selection, {}, class: "small calendar_modelbox"
       - else
         = f.hidden_field :calendar_id
-
-    .buttons
+    %br
+    .button2
       = f.submit t(:save_event), class: 'croucher-standard-btn inline'
       = t :or
       = link_to t(:cancel), "/", :class => 'cancel'
