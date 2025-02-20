@@ -114,6 +114,8 @@ en:
       minicalendar_month: "%B"
       year: "%Y"
       month: "%B %Y"
+      day: "%-d"
+      day_month: "%-d %B"
   delete_document: "Delete document"
   delete_event: "Delete event"
   delete_folder: "Delete folder"
@@ -504,6 +506,9 @@ en:
       datemark: "Click to change date"
       description: "Please give a brief description"
       venue_name: "Venue name"
+      url: "Please add a website link"
+      start: "Event start date"
+      end_date: "Event end date"
     organisation:
       chinese_name: "中国姓名"
       description: "Brief description. Please keep within about 100 words."

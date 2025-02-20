@@ -71,6 +71,12 @@ div.event, form.event, div.project
     width: 100%
     margin-right: 0
 
+.event.minimal .sample
+  span.location, span.time
+    display: block
+    padding-bottom: 5px
+  .shortened a
+    color: red !important
 
 form.event
   span.interlabel
@@ -87,10 +93,12 @@ form.event
     margin-left: -$datemark_width
     margin-right: $datemark_margin - 4px
   input.name
-    width: 500px
+    width: 100%
     font-size: 1.5em
   p.practicalities
     margin: 10px 0
+    &.input-dates
+      display: flex
   input.timepicker
     width: 70px
     font-size: 1.2em
@@ -99,7 +107,7 @@ form.event
       font-weight: bold
   input.venuepicker
     font-size: 1.2em
-    width: 271px
+    width: 345px
     padding: 4px
   .description
     margin-top: 0.5em
@@ -137,6 +145,13 @@ div.timepicker
     &:active
       background: $link
       color: #fff
+
+.full-width
+  width: 100%
+.mr-5
+  margin-right: 5px
+.ml-5
+  margin-left: 5px
 
 @media (max-width: 700px)
   .datemark

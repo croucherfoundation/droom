@@ -98,13 +98,17 @@
               - if can?(:edit, event.folder)
                 %ul.uploads{id: "queue_to_#{event.folder.id}"}
               = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => event_url(event), skip_gdoc: skip_gdoc}
-
+        - if event.url?
+          .inline
+            = t(:website) + ":"
+            = link_to ensure_protocol(event.url), target: "_blank", style: "color:black" do
+              %svg.icon{style: "height: 28px; padding-bottom: 1px"}
+                %use{href: "#arrow_icon"}
         .detail
           - if event.description?
             .content{style: "width:100%"}
               = sanitize(event.description)
       
-
   - if show_folder && full_attachments
     %br
     .addenda
