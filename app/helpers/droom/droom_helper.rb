@@ -252,6 +252,7 @@ module Droom
 
     def shorten(text, length=64, separator=" ")
       text = sanitize(text, tags: ['a'])
+      length = length[:length] if length.is_a?(Hash)
       content_tag :span, class: 'shortened' do
         truncate(text, {:length => length, :separator => separator, :escape => false})
       end
