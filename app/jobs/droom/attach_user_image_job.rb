@@ -3,9 +3,9 @@ class Droom::AttachUserImageJob < ApplicationJob
 
   queue_as :default
 
-  def perform(user_id)
-    user = Droom::User.find(user_id)
-    attach_initials_image(user)
+  def perform(id, model_name='Droom::User')
+    record = model_name.constantize.find(id)
+    attach_initials_image(record)
   end
 
 end
