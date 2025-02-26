@@ -3,7 +3,7 @@
 
 #minor_events{:data => {:refreshing => true, :url => droom.calendar_url(calendar)}}
   - if events.any?
-    = render :partial => "droom/events/minimal", :collection => events
+    = render :partial => "droom/events/minimal", :collection => events, locals: { show_color_button: true }
   - else
     %p.note
       = t :no_external_events

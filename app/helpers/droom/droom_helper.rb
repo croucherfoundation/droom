@@ -258,6 +258,11 @@ module Droom
       end
     end
 
+    def full_text(text)
+      text = sanitize(text, tags: ['a'])
+      content_tag :span, text.html_safe, class: 'full-text'
+    end
+
     def ensure_protocol(url)
       url =~ /\Ahttp(s)?:\/\// ? url : "http://#{url}"
     end

@@ -1,7 +1,12 @@
 - minimal ||= nil
 - event ||= minimal || @event
+- show_color_button ||= false
 
 .event.minimal
+  = link_to event_url(event) do
+    - if show_color_button
+      %button.color_button{ style: "background-color: #{get_profile_color};" }
+
   %p.sample
     = link_to event.name.try(:strip), droom.event_url(event), class: 'event_title'
     = action_menulink(event)
@@ -20,7 +25,7 @@
         %use{"xlink:href" => "#clock_symbol"}
       %time
         = render 'droom/shared/date', event: event
-    = shorten(event.description, 160)
+    = full_text(event.description)
     - if event.url?
       %span.web-link
         = t(:website) + ":"
