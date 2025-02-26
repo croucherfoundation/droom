@@ -51,6 +51,10 @@ module Droom
       render template: "droom/events/index"
     end
 
+    def compile_pdf
+      
+    end
+
     def show
       @event_invitation = Droom::Invitation.where(user_id: current_user.id, event_id: @event.id).first if @event
       respond_with @event do |format|
@@ -148,7 +152,7 @@ module Droom
 
     def event_params
       if params[:event]
-        params.require(:event).permit(:name, :description, :event_set_id, :event_type_id, :calendar_id, :all_day, :master_id, :url, :start, :finish, :end_date, :timezone, :venue_id, :venue_name)
+        params.require(:event).permit(:name, :description, :video_conference_link, :meeting_number, :event_set_id, :event_type_id, :calendar_id, :all_day, :master_id, :url, :start, :finish, :end_date, :timezone, :venue_id, :venue_name)
       else
         {}
       end

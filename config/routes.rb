@@ -109,6 +109,7 @@ Droom::Engine.routes.draw do
   resources :calendars, only: [:show]
   resources :events do
     collection do
+      get :compile_pdf
       get :calendar
       get :past
       get "subscribe/:tok", action: "subscribe", as: :subscribe

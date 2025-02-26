@@ -39,13 +39,16 @@
         %label{for: "event_timezone_UK"}
           = t :uk_time
 
+    %p.video_conference_link
+      = f.text_field :video_conference_link, :class => 'name', :placeholder => "Add video conference link", :autofocus => true
+
     .description
       = f.text_area :description, class: "rte", placeholder: t("placeholders.event.description")
     
     .description
       = f.text_field :url, class: "full-width", placeholder: t("placeholders.event.url")
     
-    %p.admin.model_box
+    %p.admin.model_box{style: "margin-bottom: 0.75rem;"}
       - if Droom::EventType.count > 1
         = f.label :event_type_id, t(:file_under)
         = f.select :event_type_id, Droom::EventType.for_selection, {}, class: "small"
@@ -54,7 +57,10 @@
         = f.select :calendar_id, Droom::Calendar.for_selection, {}, class: "small calendar_modelbox"
       - else
         = f.hidden_field :calendar_id
-    %br
+
+    .meeting_number
+      = f.text_field :meeting_number, :class => 'name', :placeholder => "Meeting number", :autofocus => true
+
     .button2
       = f.submit t(:save_event), class: 'croucher-standard-btn inline'
       = t :or

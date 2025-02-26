@@ -3,6 +3,8 @@
     %ul.actions
       %li
         = link_to t(:edit_event), droom.edit_event_url(event), class: 'edit', data: {action: "popup", replaced: "#event_#{event.id}", affected: ".minimonth"}
+      %li 
+        = link_to t(:compile_pdf), droom.compile_pdf_events_url, class: 'edit'
       %li
         = link_to t(:add_document), '#', class: "add", data: {role: "upload-file"}
       %li

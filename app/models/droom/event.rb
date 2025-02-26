@@ -4,6 +4,8 @@ module Droom
     include ActionView::Helpers::SanitizeHelper
 
     belongs_to :created_by, :class_name => "Droom::User"
+    has_one_attached :compile_pdf
+
 
     belongs_to :calendar
     belongs_to :event_type

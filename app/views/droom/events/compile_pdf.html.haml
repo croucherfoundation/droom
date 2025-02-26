@@ -1,0 +1,79 @@
+%h1 Upload PDFs One by One
+
+#drop-area
+  %p Drop a PDF here or click to upload
+  %input#file-input{ type: "file", accept: "application/pdf", style: "display: none;" }
+  %button#upload-btn Upload PDF
+
+%h2 Combined PDF Content:
+%div#pdf-content-preview
+
+%script{ src: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js" }
+
+:javascript
+  document.addEventListener("DOMContentLoaded", function() {
+    let dropArea = document.getElementById("drop-area");
+    let fileInput = document.getElementById("file-input");
+    let uploadBtn = document.getElementById("upload-btn");
+    let pdfContentPreview = document.getElementById("pdf-content-preview");
+
+    dropArea.addEventListener("dragover", function(event) {
+      event.preventDefault();
+    });
+
+    dropArea.addEventListener("drop", function(event) {
+      event.preventDefault();
+      let files = event.dataTransfer.files;
+      if (files.length > 0) {
+        extractPDFContent(files[0]);
+      }
+    });
+
+    uploadBtn.addEventListener("click", function() {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener("change", function() {
+      if (fileInput.files.length > 0) {
+        extractPDFContent(fileInput.files[0]);
+      }
+    });
+
+    function extractPDFContent(file) {
+      if (file.type !== "application/pdf") {
+        alert("Please upload a valid PDF file.");
+        return;
+      }
+
+      let reader = new FileReader();
+      reader.onload = function(event) {
+        let typedArray = new Uint8Array(event.target.result);
+        
+        pdfjsLib.getDocument(typedArray).promise.then(function(pdf) {
+          let allText = "";
+          
+          let textPromises = [];
+          for (let i = 1; i <= pdf.numPages; i++) {
+            textPromises.push(
+              pdf.getPage(i).then(function(page) {
+                return page.getTextContent().then(function(textContent) {
+                  return textContent.items.map(item => item.str).join(" ");
+                });
+              })
+            );
+          }
+
+          Promise.all(textPromises).then(function(pagesText) {
+            allText = pagesText.join("\n\n");
+            
+            let newContent = document.createElement("p");
+            newContent.textContent = allText;
+
+            pdfContentPreview.appendChild(newContent);
+          });
+        });
+      };
+      
+      reader.readAsArrayBuffer(file);
+    }
+  });
