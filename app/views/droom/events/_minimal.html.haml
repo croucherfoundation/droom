@@ -2,7 +2,7 @@
 - event ||= minimal || @event
 - show_color_button ||= false
 
-.event.minimal
+.event.minimal.detail-practicalities
   = link_to event_url(event) do
     - if show_color_button
       %button.color_button{ style: "background-color: #{get_profile_color};" }

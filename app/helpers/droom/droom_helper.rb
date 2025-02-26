@@ -260,7 +260,7 @@ module Droom
 
     def full_text(text)
       text = sanitize(text, tags: ['a'])
-      content_tag :span, text.html_safe, class: 'full-text'
+      content_tag :span, text.html_safe, class: 'shortened'
     end
 
     def ensure_protocol(url)
