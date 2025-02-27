@@ -66,7 +66,11 @@ module Droom
 
     def create
       if @event.save
-        render :partial => "event"
+        if @event.stream?
+          render :partial => "minimal", locals: { show_color_button: true}
+        else
+          render :partial => "event"
+        end
       else
         respond_with @event
       end
@@ -74,7 +78,12 @@ module Droom
 
     def update
       if @event.update(event_params)
-        render :partial => "event"
+        
+        if @event.stream?
+          render :partial => "minimal", locals: { show_color_button: true}
+        else
+          render :partial => "event"
+        end
       else
         respond_with @event
       end

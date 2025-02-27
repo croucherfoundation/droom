@@ -1,37 +1,88 @@
+- @seen_events ||= []
 - minimal ||= nil
 - event ||= minimal || @event
 - show_color_button ||= false
 
-.event.minimal.detail-practicalities
+- event_invitation ||= @event_invitation
+- here ||= event == @event
+- full_attachments ||= false
+- show_folder = (event.folder && can?(:read, event.folder)) || current_user.permitted?('droom.library.read_event_documents')
+- skip_gdoc = true
+- event_master_id = event.master_id || event.id
+
+- if @seen_events[event_master_id]
+  - repeating = true
+  - brief = true
+- @seen_events[event_master_id] = true;
+
+- cssclasses = ['event']
+- cssclasses << 'repeat' if repeating
+- cssclasses << 'full' if here
+- cssclasses << 'invited' if event.attended_by?(current_user)
+
+- div_data = {refreshing: event_path(event, format: :js)}
+- if show_folder
+  - div_data[:droppable] = droom.folder_documents_path(event.folder)
+  - div_data[:queue] = "#queue_to_#{event.folder.id}"
+  - div_data[:refreshes] = "#event_#{event.id}"
+
+%div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
   = link_to event_url(event) do
-    - if show_color_button
-      %button.color_button{ style: "background-color: #{get_profile_color};" }
+    .datemark
+      - if show_color_button
+        %button.color_button{ style: "background-color: #{get_profile_color};" }
+  
+  .summary
+    .heading
+      %h2.name<
+        = link_to event.name, event_url(event), :class => "name"
+        = action_menulink(event)
+      = action_menu(event)
+      .detail-practicalities
+        %p.practicalities
+          - if event.venue&.definite_name.present?
+            %span.location
+              %svg.icon.pint-sized
+                %use{"xlink:href" => "#location_symbol"}
+              - if event.venue&.url
+                = link_to event.venue&.definite_name, event.venue.url
+              - elsif Droom.show_venue_map?
+                = link_to event.venue&.definite_name, venues_url(:id => event.venue.id)
+              - else
+                = event.venue&.definite_name
+          %span.time
+            %svg.icon.pint-sized2
+              %use{"xlink:href" => "#clock_symbol"}
+            %time
+              = render 'droom/shared/date', event: event
 
-  %p.sample
-    = link_to event.name.try(:strip), droom.event_url(event), class: 'event_title'
-    = action_menulink(event)
-    - if event.venue_name.present?
-      %span.location
-        %svg.icon.pint-sized
-          %use{"xlink:href" => "#location_symbol"}
-        - if event.venue&.url
-          = link_to event.venue&.definite_name, event.venue.url
-        - elsif Droom.show_venue_map?
-          = link_to event.venue&.definite_name, venues_url(:id => event.venue.id)
-        - else
-          = event.venue&.definite_name
-    %span.time
-      %svg.icon.pint-sized2
-        %use{"xlink:href" => "#clock_symbol"}
-      %time
-        = render 'droom/shared/date', event: event
-    = full_text(event.description)
-    - if event.url?
-      %span.web-link
-        = t(:website) + ":"
-        = link_to ensure_protocol(event.url), target: "_blank", style: "color:black" do
-          %svg.icon{style: "height: 28px; padding-bottom: 1px"}
-            %use{href: "#arrow_icon"}
+          - if show_folder && !full_attachments
+            - if event.folder.populated?
+              .attachments.no_float.ml
+                - if can?(:edit, event.folder)
+                  %ul.uploads{id: "queue_to_#{event.folder.id}"}
+                = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => event_url(event), skip_gdoc: skip_gdoc}
+          .detail
+            - if event.description?
+              .content{style: "width:100%"}
+                = sanitize(event.description)
+          - if event.url?
+            .inline
+              = t(:website) + ":"
+              = link_to ensure_protocol(event.url), target: "_blank", style: "color:black" do
+                %svg.icon{style: "height: 28px; padding-bottom: 1px"}
+                  %use{href: "#arrow_icon"}
+  
+  - if show_folder && full_attachments
+    %br
+    .addenda
+      = render :partial => 'droom/events/attachments', :locals => {:event => event, skip_gdoc: skip_gdoc}
+      	
+      - if event_invitation
+        %h3
+          = t :invite_event
+        = render :partial => 'droom/events/event_invitation', :locals => {:event => event}
+      = render :partial => 'droom/events/invitations', :locals => {:event => event}
 
-  = action_menu(event)
+
 

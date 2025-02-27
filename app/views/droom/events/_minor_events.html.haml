@@ -1,6 +1,6 @@
 - events ||= @events
 
-#minor_events{:data => {:refreshing => true, :url => droom.calendar_url(calendar)}}
+#outside_events{:data => {:refreshing => true, :url => droom.calendar_url(calendar)}}
   - if events.any
     = render :partial => "droom/events/minimal", :collection => events
 
