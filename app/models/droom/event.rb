@@ -172,6 +172,10 @@ module Droom
       self.documents << doc
     end
 
+    def stream?
+      !!(calendar&.name == "Stream")
+    end
+
     # We store the start and end points of the event as a single DateTime value to make comparison simple.
     # The setters for date and time are overridden to pass strings through chronic's natural language parser
     # and to treat numbers as epoch seconds. These should all work as you'd expect:
