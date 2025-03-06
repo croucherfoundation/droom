@@ -1,79 +1,169 @@
-%h1 Upload PDFs One by One
+.pdf-container 
+  .outer-container
+    .top-header
+      %h3 Event PDF
+  
+    .content-wrapper
+      .left-panel
+        .upload-boxes
 
-#drop-area
-  %p Drop a PDF here or click to upload
-  %input#file-input{ type: "file", accept: "application/pdf", style: "display: none;" }
-  %button#upload-btn Upload PDF
+          -# .upload-box
+          -#   %embed{ src: "/pdfs/first_pdf#page=1", width: "200px", height: "250px", type: "application/pdf" }
+          -#   %span.upload-number 001
+            
+          .upload-box
+            = image_tag 'https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg', alt: '', height: '', width: '200px', class: ''
+            %span.upload-number 1
+          
+          .upload-box
+            = image_tag 'https://www.typecalendar.com/wp-content/uploads/2022/05/Binder-Cover-Template.jpg', alt: '', height: '', width: '200px', class: ''
+            %span.upload-number 2
 
-%h2 Combined PDF Content:
-%div#pdf-content-preview
-
-%script{ src: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js" }
+          .upload-box
+            = image_tag 'https://marketplace.canva.com/EAGHUG_eCjQ/1/0/501w/canva-blue-illustrative-business-book-cover-vTEd7B2uzOo.jpg', alt: '', height: '', width: '200px', class: ''
+            %span.upload-number 3
+          
+          .upload-box
+            = image_tag 'https://www.resumeviking.com/wp-content/uploads/2023/10/Classy-Casey-Cover-Letter-768x994.jpg', alt: '', height: '', width: '200px', class: ''
+            %span.upload-number 4
+            -# = file_field_tag :pdf_file, class: 'pdf-file-input'
+              
+      .right-panel
+        .preview-area
 
 :javascript
-  document.addEventListener("DOMContentLoaded", function() {
-    let dropArea = document.getElementById("drop-area");
-    let fileInput = document.getElementById("file-input");
-    let uploadBtn = document.getElementById("upload-btn");
-    let pdfContentPreview = document.getElementById("pdf-content-preview");
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.upload-boxes').addEventListener('change', function(event) {
+      if (event.target.classList.contains('pdf-file-input')) {
+        const newUploadBox = document.createElement('div');
+        newUploadBox.classList.add('upload-box');
+        newUploadBox.innerHTML = '<input type="file" name="pdf_file" class="pdf-file-input">';
 
-    dropArea.addEventListener("dragover", function(event) {
-      event.preventDefault();
-    });
-
-    dropArea.addEventListener("drop", function(event) {
-      event.preventDefault();
-      let files = event.dataTransfer.files;
-      if (files.length > 0) {
-        extractPDFContent(files[0]);
+        document.querySelector('.upload-boxes').appendChild(newUploadBox);
       }
     });
-
-    uploadBtn.addEventListener("click", function() {
-      fileInput.click();
-    });
-
-    fileInput.addEventListener("change", function() {
-      if (fileInput.files.length > 0) {
-        extractPDFContent(fileInput.files[0]);
-      }
-    });
-
-    function extractPDFContent(file) {
-      if (file.type !== "application/pdf") {
-        alert("Please upload a valid PDF file.");
-        return;
-      }
-
-      let reader = new FileReader();
-      reader.onload = function(event) {
-        let typedArray = new Uint8Array(event.target.result);
-        
-        pdfjsLib.getDocument(typedArray).promise.then(function(pdf) {
-          let allText = "";
-          
-          let textPromises = [];
-          for (let i = 1; i <= pdf.numPages; i++) {
-            textPromises.push(
-              pdf.getPage(i).then(function(page) {
-                return page.getTextContent().then(function(textContent) {
-                  return textContent.items.map(item => item.str).join(" ");
-                });
-              })
-            );
-          }
-
-          Promise.all(textPromises).then(function(pagesText) {
-            allText = pagesText.join("\n\n");
-            
-            let newContent = document.createElement("p");
-            newContent.textContent = allText;
-
-            pdfContentPreview.appendChild(newContent);
-          });
-        });
-      };
-      
-      reader.readAsArrayBuffer(file);
-    }
   });
+
+
+
+
+-# .pdf_container
+-#   .pdf-preview
+-#     .sidebar
+-#       %ul#pdf-list
+
+-#     .viewer
+-#       #pdf-viewer-container
+
+-#   .upload-section
+-#     = file_field_tag :pdf_files, multiple: true, accept: "application/pdf", class: "pdf-upload"
+
+-# :javascript
+-#   document.addEventListener("DOMContentLoaded", function() {
+-#     let pdfList = document.getElementById("pdf-list");
+-#     let pdfViewerContainer = document.getElementById("pdf-viewer-container");
+-#     let pdfUpload = document.querySelector(".pdf-upload");
+
+-#     pdfUpload.addEventListener("change", function(event) {
+-#       let fileList = event.target.files;
+
+-#       Array.from(fileList).forEach(file => {
+-#         let listItem = document.createElement("li");
+        
+-#         listItem.dataset.url = URL.createObjectURL(file);
+-#         pdfList.appendChild(listItem);
+
+-#         let pdfFrame = document.createElement("iframe");
+-#         pdfFrame.src = listItem.dataset.url;
+-#         pdfFrame.width = "100%";
+-#         pdfFrame.height = "600px";
+-#         pdfFrame.style.border = "1px solid #ddd";
+-#         pdfFrame.style.marginBottom = "10px";
+
+-#         pdfViewerContainer.appendChild(pdfFrame);
+-#       });
+
+-#       // Clear input field so the user can upload more files
+-#       pdfUpload.value = "";
+-#     });
+-#   });
+
+
+
+
+
+
+-# .pdf_container
+-#   .pdf-preview
+-#     .sidebar
+-#       %h3 PDF Files
+-#       %ul#pdf-list
+
+-#     .viewer
+-#       %iframe#pdfFrame{ width: "100%", height: "600px", src: "" }
+
+-#   .upload-section
+-#     %label Upload PDFs:
+-#     = file_field_tag :pdf_files, multiple: true, accept: "application/pdf", class: "pdf-upload"
+
+-# :javascript
+-#   document.addEventListener("DOMContentLoaded", function() {
+-#     let pdfList = document.getElementById("pdf-list");
+-#     let pdfUpload = document.querySelector(".pdf-upload");
+
+-#     pdfUpload.addEventListener("change", function(event) {
+-#       let fileList = event.target.files;
+
+-#       Array.from(fileList).forEach(file => {
+-#         let listItem = document.createElement("li");
+-#         listItem.textContent = file.name;
+-#         listItem.dataset.url = URL.createObjectURL(file);
+        
+-#         listItem.addEventListener("click", function() {
+-#           document.getElementById("pdfFrame").src = this.dataset.url;
+-#         });
+
+-#         pdfList.appendChild(listItem);
+-#       });
+
+-#       // Clear the input field so the user can upload again
+-#       pdfUpload.value = "";
+-#     });
+-#   });
+
+
+
+
+
+
+
+
+-# .pdf_container
+-#   .pdf-preview
+-#     .sidebar
+-#       %h3 PDF Files
+-#       %ul#pdf-list
+
+-#     .viewer
+-#       %iframe#pdfFrame{ width: "100%", height: "600px", src: "" }
+
+-#   .upload-section
+-#     %label Upload PDFs:
+-#     = file_field_tag :pdf_files, multiple: true, accept: "application/pdf", class: "pdf-upload"
+
+-# :javascript
+-#   document.querySelector(".pdf-upload").addEventListener("change", function(event) {
+-#     let fileList = event.target.files;
+-#     let pdfList = document.getElementById("pdf-list");
+-#     pdfList.innerHTML = "";
+
+-#     Array.from(fileList).forEach(file => {
+-#       let listItem = document.createElement("li");
+-#       listItem.textContent = file.name;
+-#       listItem.dataset.url = URL.createObjectURL(file);
+-#       listItem.addEventListener("click", function() {
+-#         document.getElementById("pdfFrame").src = this.dataset.url;
+-#       });
+-#       pdfList.appendChild(listItem);
+-#     });
+-#   });

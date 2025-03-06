@@ -2,6 +2,7 @@ module Droom
   class EventsController < Droom::DroomController
     require "uri"
     require "icalendar"
+    layout 'no_layout', only: [:compile_pdf]
 
     respond_to :html, :json, :ics, :js
 
@@ -52,7 +53,20 @@ module Droom
     end
 
     def compile_pdf
-      
+      # pdf = Prawn::Document.new
+      # pdf.fill_color "87CEFA"
+      # pdf.fill_rectangle [pdf.bounds.left, pdf.bounds.top], pdf.bounds.width, pdf.bounds.height
+
+      # logo_path = Rails.root.join("app/assets/images/croucher_logo.png")
+      # pdf.image logo_path, at: [50, 700], height: 50 if File.exist?(logo_path)
+
+      # pdf.fill_color "FFFFFF"
+      # pdf.font "Helvetica"
+      # pdf.text_box "A Governors’ Meeting is to be held on Tuesday 22 October at 3:30pm",
+      #             at: [150, 650], size: 24, width: 400, align: :left
+
+      # send_data pdf.render, filename: "first_pdf.pdf", type: "application/pdf", disposition: "inline"
+    
     end
 
     def show
