@@ -79,10 +79,55 @@
       };
 
       Remote.prototype.receive = function(event, data, status, xhr) {
-        event.stopPropagation();
-        this._control.removeClass('waiting');
-        this._control.trigger('remote:success', data);
-        return this._control.trigger('remote:complete', status);
+        responseData = null;
+        if (xhr?.responseText && typeof xhr?.responseText === 'string') {
+          const responseText = xhr.responseText.trim();
+          if (responseText.startsWith("{")) {
+            try {
+              responseData = JSON.parse(responseText);
+            } catch (e) {
+              responseData = null;
+            }
+          }
+        }        
+
+        if (responseData?.return === true) {
+          const return_url = responseData?.return_url;
+          const message = responseData?.message;
+        
+          if (return_url) {
+            const flashes = document.getElementById("flashes");
+            if (flashes) {
+              flashes.innerHTML = `
+                <p class="notice ready unexpandable" style="display: block; grid-row-end: span 2;">
+                  <a href="#" class="closer timezone-flash-close" onclick="this.parentElement.style.display='none'; return false;">close</a>
+                  ${message}
+                </p>
+                <p class="alert"></p>
+              `;
+            }
+
+            const masks = document.getElementsByClassName("mask");
+            const popups = document.getElementsByClassName("popup");
+
+            Array.from(masks).forEach(mask => {
+              mask.style.display = "none";
+            });
+
+            Array.from(popups).forEach(popup => {
+              popup.style.display = "none";
+            });
+
+            setTimeout(() => {
+              window.location.href = return_url;
+            }, 1000);
+          }
+        } else {        
+          event.stopPropagation();
+          this._control.removeClass('waiting');
+          this._control.trigger('remote:success', data);
+          return this._control.trigger('remote:complete', status);
+        }
       };
 
       Remote.prototype.cancel = function(e) {
