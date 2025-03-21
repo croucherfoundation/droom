@@ -47,7 +47,7 @@
       = action_menu(event)
       .detail-practicalities
         %p.practicalities
-          - if event.venue
+          - if event.venue&.definite_name.present?
             %span.location
               %svg.icon.pint-sized
                 %use{"xlink:href" => "#location_symbol"}

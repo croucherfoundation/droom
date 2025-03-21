@@ -1,6 +1,7 @@
 module Droom::Api
   class ApiController < Droom::DroomController
     include Droom::Concerns::LocalApi
+    include Droom::Concerns::PaperTrailWhodunnit
 
     respond_to :json
     skip_before_action :verify_authenticity_token, raise: false
@@ -42,7 +43,7 @@ module Droom::Api
 
     def authenticate_user
       token = retrieve_token
-      user = Droom::User.find_by(unique_session_id: token)
+      user = Droom::User.find_by(unique_session_id: token) if token.present?
       if user
         # ie. if user includes timeoutable...
         if user.respond_to?(:timedout?) && user.last_request_at?

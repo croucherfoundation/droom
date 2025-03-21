@@ -48,6 +48,7 @@ module Droom
     def file_data=(data)
       self.file.attach(data: data)
     end
+    alias :image_data= :file_data=
 
     protected
 

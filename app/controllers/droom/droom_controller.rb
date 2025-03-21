@@ -1,8 +1,10 @@
 module Droom
   class DroomController < ActionController::Base
     include Droom::Concerns::ControllerHelpers
+    include Droom::Concerns::PaperTrailWhodunnit
     helper Droom::DroomHelper
     helper ApplicationHelper
+
 
     rescue_from Droom::NoChineseContent, :with => :render_holding_chinese
 

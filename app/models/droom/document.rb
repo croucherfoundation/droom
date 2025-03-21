@@ -3,6 +3,8 @@ require 'uri'
 module Droom
   class Document < Droom::DroomRecord
     include Droom::Concerns::Key
+    include Droom::Concerns::PdfThumbnailable
+
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :folder
     belongs_to :scrap, :dependent => :destroy
@@ -219,7 +221,7 @@ module Droom
         File.delete(tempfile_path) if File.file?(tempfile_path)
       end
     end
-    
+
     def copy_to_local_tempfile
       if file.attached?
         begin

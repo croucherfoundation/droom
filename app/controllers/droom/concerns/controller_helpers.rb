@@ -5,6 +5,7 @@ module Droom::Concerns::ControllerHelpers
     protect_from_forgery if :html_request?
     helper Droom::DroomHelper
 
+    rescue_from StandardError, :with => :handle_internal_server_error
     rescue_from Droom::AccessDenied, :with => :not_authorized
     rescue_from CanCan::AccessDenied, :with => :not_allowed
     rescue_from Droom::PermissionDenied, :with => :not_allowed
@@ -12,7 +13,6 @@ module Droom::Concerns::ControllerHelpers
     rescue_from Droom::SetupRequired, :with => :prompt_for_setup
     rescue_from Droom::OrganisationRequired, :with => :prompt_for_organisation
     rescue_from Droom::OrganisationApprovalRequired, :with => :await_organisation_approval
-    rescue_from StandardError, :with => :handle_internal_server_error
     rescue_from ActiveRecord::RecordInvalid, :with => :unprocessable_entity
     rescue_from ActiveRecord::RecordNotFound, :with => :page_not_found
 
