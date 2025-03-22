@@ -53,6 +53,14 @@ module Droom
     end
 
     def compile_pdf
+      @pdf_images = Droom::Thumbnail.where(document_id: 3896)
+      @pdf_img = [
+        { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 1 },
+        { url: "https://marketplace.canva.com/EAGHUG_eCjQ/1/0/501w/canva-blue-illustrative-business-book-cover-vTEd7B2uzOo.jpg", page_number: 2 },
+        { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 3 },
+        { url: "https://marketplace.canva.com/EAGHUG_eCjQ/1/0/501w/canva-blue-illustrative-business-book-cover-vTEd7B2uzOo.jpg", page_number: 4 },
+        { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 5 }
+      ]
       # pdf = Prawn::Document.new
       # pdf.fill_color "87CEFA"
       # pdf.fill_rectangle [pdf.bounds.left, pdf.bounds.top], pdf.bounds.width, pdf.bounds.height
