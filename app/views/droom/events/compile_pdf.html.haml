@@ -1,3 +1,6 @@
+= javascript_include_tag "pdfjs/pdf.js"
+= javascript_include_tag "pdfjs/pdf.worker.js"
+
 .pdf-container
   .outer-container
     .top-header
@@ -6,9 +9,9 @@
     .content-wrapper
       .left-panel
         .upload-boxes
-          - @pdf_img.each do |image|
+          - @images.each do |image, index|
             .upload-box{ data: { page_number: image[:page_number] } }
-              = image_tag image[:url], class: "thumbnail", width: "100px"
+              = image_tag image.image.url, class: "thumbnail", width: "100px"
               %br
             %div.upload-number{ data: {page_number: image[:page_number] } }
               = "#{image[:page_number]}" 
@@ -16,9 +19,12 @@
       .right-panel
         .preview-area
           %div#preview-list
-            - @pdf_img.each do |image|
-              .preview-image{ id: "page-#{image[:page_number]}", data: { page_number: image[:page_number] } }
-                = image_tag image[:url], class: "preview-img", style: "max-width: 60%"
+            - @pdfs.each do |pdf , index|
+              .preview-image{ id: "page-#{pdf[:page_number]}", data: { page_number: pdf[:page_number] } }
+                -# = image_tag pdf.pdf_single_page.url, class: "preview-img", style: "max-width: 60%"
+                .preview-img
+                  %iframe{ src: "#{pdf.pdf_single_page.url}#toolbar=0&navpanes=0&scrollbar=0&view=fitH", width: "70%", height: "1105", allowtransparency: "true", style: "border: none;  background-color: transparent; margin-left: 11rem;" }
+
 :javascript
   document.addEventListener("DOMContentLoaded", function () {
     const rightPanel = document.querySelector(".right-panel");
@@ -26,6 +32,7 @@
     const uploadBoxes = document.querySelectorAll(".upload-box");
     const previewImages = document.querySelectorAll(".preview-image");
     const uploadNumbers = document.querySelectorAll(".upload-number");
+    
 
     let visiblePageNumber = 1;
     let observer = new IntersectionObserver(

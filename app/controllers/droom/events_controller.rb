@@ -2,7 +2,7 @@ module Droom
   class EventsController < Droom::DroomController
     require "uri"
     require "icalendar"
-    layout 'no_layout', only: [:compile_pdf]
+    require "prawn"
 
     respond_to :html, :json, :ics, :js
 
@@ -52,31 +52,6 @@ module Droom
       render template: "droom/events/index"
     end
 
-    def compile_pdf
-      @pdf_images = Droom::Thumbnail.where(document_id: 3896)
-      @pdf_img = [
-        { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 1 },
-        { url: "https://marketplace.canva.com/EAGHUG_eCjQ/1/0/501w/canva-blue-illustrative-business-book-cover-vTEd7B2uzOo.jpg", page_number: 2 },
-        { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 3 },
-        { url: "https://marketplace.canva.com/EAGHUG_eCjQ/1/0/501w/canva-blue-illustrative-business-book-cover-vTEd7B2uzOo.jpg", page_number: 4 },
-        { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 5 }
-      ]
-      # pdf = Prawn::Document.new
-      # pdf.fill_color "87CEFA"
-      # pdf.fill_rectangle [pdf.bounds.left, pdf.bounds.top], pdf.bounds.width, pdf.bounds.height
-
-      # logo_path = Rails.root.join("app/assets/images/croucher_logo.png")
-      # pdf.image logo_path, at: [50, 700], height: 50 if File.exist?(logo_path)
-
-      # pdf.fill_color "FFFFFF"
-      # pdf.font "Helvetica"
-      # pdf.text_box "A Governors’ Meeting is to be held on Tuesday 22 October at 3:30pm",
-      #             at: [150, 650], size: 24, width: 400, align: :left
-
-      # send_data pdf.render, filename: "first_pdf.pdf", type: "application/pdf", disposition: "inline"
-    
-    end
-
     def show
       @event_invitation = Droom::Invitation.where(user_id: current_user.id, event_id: @event.id).first if @event
       respond_with @event do |format|
@@ -120,7 +95,71 @@ module Droom
       head :ok
     end
 
+    def compile_pdf
+      event = Event.find(params[:event_id])
+
+      @pdf_images = Droom::Thumbnail.where(document_id: 3894)
+      @images = @pdf_images.select { |t| t.image.attached? }
+      @pdfs = @pdf_images.select { |t| t.pdf_single_page.attached? }
+      # @pdf_img = [
+      #   { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 1 },
+      #   { url: "https://marketplace.canva.com/EAGHUG_eCjQ/1/0/501w/canva-blue-illustrative-business-book-cover-vTEd7B2uzOo.jpg", page_number: 2 },
+      #   { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 3 },
+      #   { url: "https://marketplace.canva.com/EAGHUG_eCjQ/1/0/501w/canva-blue-illustrative-business-book-cover-vTEd7B2uzOo.jpg", page_number: 4 },
+      #   { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 5 }
+      # ]
+      render layout: 'no_layout'
+      
+      # pdf_cover_generate(event)
+    end
+
+
   protected
+
+    def pdf_cover_generate(event)
+      meeting_texts = {
+        1 => "A Trustees’ Meeting is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
+        2 => "A meeting of the NCF Nomination Committee is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
+        3 => "An Investment Committee Meeting is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
+        4 => "An Audit Committee Meeting is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
+        5 => "A Governors’ Meeting is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
+        6 => "A meeting of the CF Nomination & Remuneration Committee is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
+        7 => "A meeting of the Academic Assessment Working Group is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}"
+      }
+      meeting_text = meeting_texts[event.event_type_id]
+
+
+      pdf = Prawn::Document.new(page_size: "A4", margin: 0)
+      pdf.fill_color = [1, 2, 3, 6].include?(event.event_type_id) ? "EE3A43" : "56C1FF"
+
+      pdf.fill_rectangle [pdf.bounds.left, pdf.bounds.top], pdf.bounds.width, pdf.bounds.height
+
+      logo_path = Rails.root.join("app/assets/images/croucher_logo.png")
+      pdf.image logo_path, at: [45, 790], height: 110 if File.exist?(logo_path)
+
+      pdf.fill_color "FFFFFF"
+      pdf.font_families.update("MarrSans" => {
+        :normal => Rails.root + "app/assets/stylesheets/ui-library/fonts/MarrSans-Regular.otf",
+      })
+      pdf.font "MarrSans"
+      pdf.text_box meeting_text,
+                  at: [40, 630], size: 30, width: 450, align: :left
+                  
+      pdf.stroke_color "FFFFFF" 
+
+      pdf.text_box "\n\nTo join the meeting click <u><link href='#{"https://#{event.video_conference_link}"}'>here</link></u>", 
+                  at: [40, 450], size: 30, width: 450, align: :left, inline_format: true
+      
+      pdf.text_box "To go to the dataroom click <u><link href='https://data.croucher.org.hk'>here</link></u>",
+                  at: [40, 260], size: 30, width: 450, align: :left, inline_format: true
+
+      send_data pdf.render, filename: "first_pdf.pdf", type: "application/pdf", disposition: "inline"
+      # cover_path = Rails.root.join("public/uploads/cover_#{event.id}.pdf")
+      # pdf.render_file(cover_path)
+
+      # cover_path.to_s
+    
+    end
 
     def set_timezone_feature
       @timezone_feature = FeatureFlag.enabled?('time-zone-feature', current_user)
