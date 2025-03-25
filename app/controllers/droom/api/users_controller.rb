@@ -47,8 +47,11 @@ module Droom::Api
       @user.assign_nested_addresses(account_params[:addresses]) if account_params[:addresses].present?
       @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
       @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
-      @user.save
-      @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
+      
+      if @user.save
+        @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
+      end
+
       render json: @user, serializer: Droom::UserMinimalSerializer
     end
 

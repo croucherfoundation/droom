@@ -11,6 +11,9 @@ module Droom
     # validates :family_name, :presence => true
     # validates :given_name, :presence => true
     validates :uid, :uniqueness => true, :presence => true
+    
+    # validates :family_name, presence: true, length: { maximum: 30, too_long: "%{count} characters is the maximum allowed" }
+    # validates :given_name, presence: true, length: { maximum: 30, too_long: "%{count} characters is the maximum allowed"}
 
     has_many :orders
     has_many :order_items, through: :orders
@@ -1106,8 +1109,8 @@ module Droom
     end
 
     def update_password_attendee(new_password)
-      if (csw_attendee = Csw::Attendee.find_by_email(email: email))
-        csw_attendee.update(password: new_password)
+      if (csw_attendee = Csw::Attendee.find_by_email(email))
+        csw_attendee.update(password: new_password) if csw_attendee.user_uid == uid
       end
     end
 
