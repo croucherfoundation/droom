@@ -12,8 +12,8 @@ module Droom
     # validates :given_name, :presence => true
     validates :uid, :uniqueness => true, :presence => true
     
-    # validates :family_name, presence: true, length: { maximum: 30, too_long: "%{count} characters is the maximum allowed" }
-    # validates :given_name, presence: true, length: { maximum: 30, too_long: "%{count} characters is the maximum allowed"}
+    validates :family_name, length: { maximum: 30, too_long: "%{count} characters is the maximum allowed" }, allow_blank: true
+    validates :given_name, length: { maximum: 30, too_long: "%{count} characters is the maximum allowed" }, allow_blank: true
 
     has_many :orders
     has_many :order_items, through: :orders
