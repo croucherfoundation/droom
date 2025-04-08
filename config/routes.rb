@@ -113,6 +113,7 @@ Droom::Engine.routes.draw do
   resources :events do
     collection do
       get :compile_pdf, path: "compile-pdf"
+      delete :delete_pdf
       get :calendar
       get :past
       get "subscribe/:tok", action: "subscribe", as: :subscribe

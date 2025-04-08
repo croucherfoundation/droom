@@ -7,6 +7,7 @@ module Droom::Concerns::PdfThumbnailable
 
   included do
     has_many :thumbnails, dependent: :destroy
+    has_many :single_documents, dependent: :destroy
   end
 
   def generate_thumbnails
@@ -82,6 +83,7 @@ module Droom::Concerns::PdfThumbnailable
     temp_thumbnails.each_with_index do |thumbnail_path, index|
       thumbnail = thumbnails.create!(
         page_number: index + 1, # Ensure page numbering starts at 1
+        position: index + 1,
         image: {
           io: File.open(thumbnail_path),
           filename: "thumbnail_#{index + 1}.jpg",
@@ -90,9 +92,10 @@ module Droom::Concerns::PdfThumbnailable
       )
     end
     temp_pdf_pages.each_with_index do |pdf_path, index|
-      pdf_page = thumbnails.create!(
+      pdf_page = single_documents.create!(
         page_number: index + 1,
-        pdf_single_page: {
+        position: index +1,
+        pdf_single_document: {
           io: File.open(pdf_path),
           filename: "pdf_#{index + 1}.pdf",
           content_type: "application/pdf"

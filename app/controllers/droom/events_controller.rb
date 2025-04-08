@@ -95,24 +95,33 @@ module Droom
       head :ok
     end
 
+    def delete_pdf
+      thumbnail = Droom::Thumbnail.find_by(id: params[:image_id])
+      single_document = Droom::SingleDocument.find_by(id: params[:image_id])
+      
+      if thumbnail
+        thumbnail.image.purge if thumbnail.image.attached?
+        thumbnail.destroy 
+        if single_document
+          single_document.pdf_single_document.purge if single_document.pdf_single_document.attached?
+          single_document.destroy
+        end
+        render json: { success: true }
+      else
+        render json: { success: false, message: "File not found" }, status: 404
+      end
+    end
+
     def compile_pdf
       event = Event.find(params[:event_id])
 
-      @pdf_images = Droom::Thumbnail.where(document_id: 3894)
-      @images = @pdf_images.select { |t| t.image.attached? }
-      @pdfs = @pdf_images.select { |t| t.pdf_single_page.attached? }
-      # @pdf_img = [
-      #   { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 1 },
-      #   { url: "https://marketplace.canva.com/EAGHUG_eCjQ/1/0/501w/canva-blue-illustrative-business-book-cover-vTEd7B2uzOo.jpg", page_number: 2 },
-      #   { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 3 },
-      #   { url: "https://marketplace.canva.com/EAGHUG_eCjQ/1/0/501w/canva-blue-illustrative-business-book-cover-vTEd7B2uzOo.jpg", page_number: 4 },
-      #   { url: "https://www.slideteam.net/media/catalog/product/cache/1280x720/c/r/creative_one_page_booklet_cover_template_presentation_report_infographic_ppt_pdf_document_slide01.jpg", page_number: 5 }
-      # ]
-      render layout: 'no_layout'
+      @images = Droom::Thumbnail.where(document_id: 3894)
+      @pdfs = Droom::SingleDocument.where(document_id: 3894)
+      # @images = @pdf_images.select { |t| t.image.attached? }
+      # @pdfs = @pdf_images.select { |t| t.pdf_single_page.attached? }
       
-      # pdf_cover_generate(event)
+      render layout: 'no_layout'
     end
-
 
   protected
 
