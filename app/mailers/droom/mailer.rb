@@ -3,7 +3,7 @@ module Droom
     layout Droom.email_layout
     default from: %{'Croucher Foundation' <#{Droom.email_from}>}
 
-    # after_action :prevent_delivery_in_nonproduction
+    after_action :prevent_delivery_in_nonproduction
 
     def org_confirmation(organisation)
       @organisation = organisation
