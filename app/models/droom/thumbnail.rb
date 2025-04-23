@@ -1,10 +1,8 @@
 class Droom::Thumbnail < Droom::DroomRecord
   include Droom::Concerns::Key
 
-  belongs_to :document
+  belongs_to :event
   has_one_attached :image
 
-  acts_as_list scope: :document
-
-  validates :document_id, presence: true
+  acts_as_list scope: :event
 end

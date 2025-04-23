@@ -2,11 +2,9 @@ module Droom
   class Event < Droom::DroomRecord
     include Droom::Concerns::Slugged
     include ActionView::Helpers::SanitizeHelper
+    include Droom::Concerns::PdfThumbnailable
 
     belongs_to :created_by, :class_name => "Droom::User"
-    has_one_attached :pdf_file
-
-
     belongs_to :calendar
     belongs_to :event_type
 
@@ -106,7 +104,7 @@ module Droom
       where('droom_events.name like :f OR droom_events.description like :f', :f => fragment)
     }
 
-    scope :current_and_onwards, -> { where(['(start > :start) OR (start BETWEEN :start AND :end) OR (end_date BETWEEN :start AND :end)', 
+    scope :current_and_onwards, -> { where(['(start > :start) OR (start BETWEEN :start AND :end) OR (end_date BETWEEN :start AND :end)',
       :start => DateTime.now.beginning_of_month, :end => DateTime.now.end_of_month])
       .order(:start)
     }

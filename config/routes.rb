@@ -53,8 +53,8 @@ Droom::Engine.routes.draw do
 
       get '/users/passwords/confirm' => 'users/passwords#confirm', as: :confirm_password
       put '/users/passwords/update' => 'users/passwords#update_password', as: :update_password
-    end 
-    
+    end
+
   end
 
   devise_for :users,
@@ -112,11 +112,13 @@ Droom::Engine.routes.draw do
   resources :calendars, only: [:show]
   resources :events do
     collection do
-      get :compile_pdf, path: "compile-pdf"
       delete :delete_pdf
       get :calendar
       get :past
       get "subscribe/:tok", action: "subscribe", as: :subscribe
+    end
+    member do
+      get :compile_pdf, path: "compile-pdf"
     end
     resources :invitations do
       member do

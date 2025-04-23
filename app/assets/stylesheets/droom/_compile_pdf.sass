@@ -1,0 +1,65 @@
+.pdf-container
+  padding: 1rem
+
+  .top-header
+    text-align: center
+    margin-bottom: 1.5rem
+
+  .content-wrapper
+    display: flex
+    gap: 2rem
+
+  .left-panel
+    width: 25%
+    overflow-y: auto
+
+    #thumbnail-list
+      list-style: none
+      padding: 0
+
+      .thumbnail-item
+        margin-bottom: 1rem
+
+        .thumbnail-wrapper
+          position: relative
+
+          .delete-section
+            position: absolute
+            top: 0
+            right: 0
+
+            .delete-btn
+              background: transparent
+              border: none
+              cursor: pointer
+              color: red
+              font-weight: bold
+
+          .thumbnail
+            display: block
+            max-width: 100%
+            border: 1px solid #ccc
+            border-radius: 4px
+
+          .page-number
+            text-align: center
+            margin-top: 0.25rem
+            font-size: 0.9rem
+
+  .right-panel
+    flex: 1
+
+    .preview-area
+      #preview-list
+        list-style: none
+        padding: 0
+
+        .preview-item
+          margin-bottom: 1rem
+
+          .pdf-frame
+            display: block
+            width: 100%
+            height: 1105px
+            border: none
+            background-color: transparent

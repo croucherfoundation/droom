@@ -79,7 +79,7 @@ module Droom
 
     def update
       if @event.update(event_params)
-        
+
         if @event.stream?
           render :partial => "minimal", locals: { show_color_button: true}
         else
@@ -98,12 +98,12 @@ module Droom
     def delete_pdf
       thumbnail = Droom::Thumbnail.find_by(id: params[:image_id])
       single_document = Droom::SingleDocument.find_by(id: params[:image_id])
-      
+
       if thumbnail
         thumbnail.image.purge if thumbnail.image.attached?
-        thumbnail.destroy 
+        thumbnail.destroy
         if single_document
-          single_document.pdf_single_document.purge if single_document.pdf_single_document.attached?
+          single_document.file.purge if single_document.file.attached?
           single_document.destroy
         end
         render json: { success: true }
@@ -112,14 +112,14 @@ module Droom
       end
     end
 
-    def compile_pdf
-      event = Event.find(params[:event_id])
+    def upload_pdf
 
-      @images = Droom::Thumbnail.where(document_id: 3894)
-      @pdfs = Droom::SingleDocument.where(document_id: 3894)
-      # @images = @pdf_images.select { |t| t.image.attached? }
-      # @pdfs = @pdf_images.select { |t| t.pdf_single_page.attached? }
-      
+    end
+
+    def compile_pdf
+      @thumbnails = @event.thumbnails.order(:position)
+      @single_documents = @event.single_documents.order(:position)
+
       render layout: 'no_layout'
     end
 
@@ -153,12 +153,12 @@ module Droom
       pdf.font "MarrSans"
       pdf.text_box meeting_text,
                   at: [40, 630], size: 30, width: 450, align: :left
-                  
-      pdf.stroke_color "FFFFFF" 
 
-      pdf.text_box "\n\nTo join the meeting click <u><link href='#{"https://#{event.video_conference_link}"}'>here</link></u>", 
+      pdf.stroke_color "FFFFFF"
+
+      pdf.text_box "\n\nTo join the meeting click <u><link href='#{"https://#{event.video_conference_link}"}'>here</link></u>",
                   at: [40, 450], size: 30, width: 450, align: :left, inline_format: true
-      
+
       pdf.text_box "To go to the dataroom click <u><link href='https://data.croucher.org.hk'>here</link></u>",
                   at: [40, 260], size: 30, width: 450, align: :left, inline_format: true
 
@@ -167,7 +167,7 @@ module Droom
       # pdf.render_file(cover_path)
 
       # cover_path.to_s
-    
+
     end
 
     def set_timezone_feature

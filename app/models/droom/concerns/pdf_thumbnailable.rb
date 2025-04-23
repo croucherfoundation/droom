@@ -10,10 +10,10 @@ module Droom::Concerns::PdfThumbnailable
     has_many :single_documents, dependent: :destroy
   end
 
-  def generate_thumbnails
-    return unless file.attached?
+  def generate_thumbnails(file_path)
+    return unless file_path.present?
 
-    pdf_tempfile = download_pdf
+    pdf_tempfile = file_path
     total_pages = get_pages(pdf_tempfile)
     temp_thumbnails = convert_to_images(pdf_tempfile, total_pages)
     temp_pdf_pages = split_pdf_pages(pdf_tempfile, total_pages)
@@ -21,22 +21,13 @@ module Droom::Concerns::PdfThumbnailable
     attach_thumbnails_and_pdfs(temp_thumbnails, temp_pdf_pages)
 
     # Cleanup temp files
-    pdf_tempfile.unlink
     temp_thumbnails.each { |path| File.delete(path) }
     temp_pdf_pages.each { |path| File.delete(path) }
 
   end
 
-  def download_pdf
-    pdf_tempfile = Tempfile.new(["pdf_preview", ".pdf"])
-    pdf_tempfile.binmode
-    pdf_tempfile.write(file.download)
-    pdf_tempfile.close
-    pdf_tempfile
-  end
-
   def get_pages(pdf_tempfile)
-    pdf_info = MiniMagick::Image.open(pdf_tempfile.path)
+    pdf_info = MiniMagick::Image.open(pdf_tempfile)
     pdf_info.pages.length rescue 1
   end
 
@@ -51,7 +42,7 @@ module Droom::Concerns::PdfThumbnailable
       MiniMagick::Tool::Magick.new do |magick|
         magick.density '150'
         magick.quality '100'
-        magick << "#{pdf_tempfile.path}[#{page_number}]" # Extract each page
+        magick << "#{pdf_tempfile}[#{page_number}]" # Extract each page
         magick << thumbnail_tempfile.path
       end
 
@@ -63,16 +54,16 @@ module Droom::Concerns::PdfThumbnailable
 
   def split_pdf_pages(pdf_tempfile, total_pages)
     temp_pdfs = []
-    pdf = CombinePDF.load(pdf_tempfile.path)
-    
+    pdf = CombinePDF.load(pdf_tempfile)
+
     (0...total_pages).each do |page_number|
       single_page_pdf = CombinePDF.new
       single_page_pdf << pdf.pages[page_number] # Extract each page
 
       pdf_one_tempfile = Tempfile.new(["pdf_page_#{page_number}", ".pdf"])
-      
+
       single_page_pdf.save(pdf_one_tempfile.path)
-    
+
       temp_pdfs << pdf_one_tempfile.path
     end
 
@@ -81,9 +72,7 @@ module Droom::Concerns::PdfThumbnailable
 
   def attach_thumbnails_and_pdfs(temp_thumbnails, temp_pdf_pages)
     temp_thumbnails.each_with_index do |thumbnail_path, index|
-      thumbnail = thumbnails.create!(
-        page_number: index + 1, # Ensure page numbering starts at 1
-        position: index + 1,
+      thumbnail = self.thumbnails.create!(
         image: {
           io: File.open(thumbnail_path),
           filename: "thumbnail_#{index + 1}.jpg",
@@ -92,10 +81,8 @@ module Droom::Concerns::PdfThumbnailable
       )
     end
     temp_pdf_pages.each_with_index do |pdf_path, index|
-      pdf_page = single_documents.create!(
-        page_number: index + 1,
-        position: index +1,
-        pdf_single_document: {
+      pdf_page = self.single_documents.create!(
+        file: {
           io: File.open(pdf_path),
           filename: "pdf_#{index + 1}.pdf",
           content_type: "application/pdf"

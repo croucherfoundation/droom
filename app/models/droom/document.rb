@@ -3,7 +3,6 @@ require 'uri'
 module Droom
   class Document < Droom::DroomRecord
     include Droom::Concerns::Key
-    include Droom::Concerns::PdfThumbnailable
 
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :folder
