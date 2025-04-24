@@ -113,8 +113,16 @@ module Droom
     end
 
     def upload_pdf
-
-    end
+      file = params[:file]
+      if file.content_type == "application/pdf"
+        file_path = URI.open(file.tempfile).path
+        event = Event.find(params[:id])
+        event.generate_thumbnails(file_path)
+        render json: { success: true }
+      else
+        render json: { error: "Invalid file type" }, status: :unprocessable_entity
+      end
+    end    
 
     def compile_pdf
       @thumbnails = @event.thumbnails.order(:position)

@@ -19,6 +19,10 @@
                 = image_tag image.image.url, class: "thumbnail", width: "100", loading: "lazy"
                 %div.page-number{ data: { page_number: image.position } }
                   = index + 1
+          %li.thumbnail-item.files.upload-slot
+            .thumbnail-wrapper.upload-wrapper
+              %input.upload-input{ type: "file", accept: "application/pdf", style: "display: none;" }
+              %div.upload-label Click or drop PDF here
 
       .right-panel
         .preview-area

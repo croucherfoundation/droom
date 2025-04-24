@@ -26,15 +26,18 @@
 //= require droom/widgets
 //= require droom/editors
 //= require droom/grid
+//= require droom/pdf_upload
 //= require_self 
 
 
 
 (function() {
   $('#thumbnail-list .thumbnail-item').on('click', function() {
-    $(this).addClass('active').siblings().removeClass('active');
-    var pageNumber = $(this).data('page-number'); 
-    scrollToPDF(pageNumber);
+    if (!$(this).hasClass('upload-slot')) {
+      $(this).addClass('active').siblings().removeClass('active');
+      var pageNumber = $(this).data('page-number'); 
+      scrollToPDF(pageNumber);
+    }
   });
   
   function scrollToPDF(pageNumber) {
