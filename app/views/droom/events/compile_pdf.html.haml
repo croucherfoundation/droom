@@ -16,13 +16,12 @@
                 = image_tag image.image.url, class: "thumbnail", width: "100", loading: "lazy"
                 %div.page-number{ data: { page_number: image.position } }
                   = index + 1
-            .gap
 
       .right-panel
         .preview-area
           %ul#preview-list
             - @single_documents.each do |pdf|
-              %li.preview-item{ id: "page-#{pdf.position}", data: { page_number: pdf.position } }
+              %li.preview-item{ data: { page_number: pdf.position } }
                 %iframe.pdf-frame{ src: "#{pdf.file.url}#toolbar=0&navpanes=0&scrollbar=0&view=fitH", scrolling: 'no', width: "100%", height: "1105", allowtransparency: "true" }
 
 -# :javascript
