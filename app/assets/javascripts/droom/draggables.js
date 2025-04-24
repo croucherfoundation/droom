@@ -22,10 +22,15 @@
       function SortableFiling(element) {
         this.setParent = bind(this.setParent, this);
         this.setPosition = bind(this.setPosition, this);
+        this.setThumbPosition = bind(this.setThumbPosition, this);
         this.beginDrag = bind(this.beginDrag, this);
         this._container = $(element);
+        this._event_id = this._container.data('eventId');
         this._folder_id = this._container.data('folderId');
         this._droppables = this._container.parents('[data-droppable]');
+
+        var _caller = this._event_id ? this.setThumbPosition : this.setPosition;
+
         this._sortable = new Sortable(element, {
           group: "files",
           sort: true,
@@ -33,8 +38,8 @@
           put: true,
           revertClone: true,
           onStart: this.beginDrag,
-          onUpdate: this.setPosition,
-          onAdd: this.setPosition
+          onUpdate: _caller,
+          onAdd: _caller
         });
       }
 
@@ -54,6 +59,29 @@
               position: e.newIndex + 1,
               folder_id: this._folder_id
             }
+          };
+          return update = $.ajax({
+            method: "PUT",
+            url: url,
+            data: params,
+            success: function() {
+              return $el.signal_confirmation();
+            }
+          });
+        }
+      };
+
+      SortableFiling.prototype.setThumbPosition = function(e) {
+        var $el, doc_id, params, update, url;
+        $el = $(e.item || e.dragged);
+        if (doc_id = $el.data('docId')) {
+          url = "/thumbnails/" + doc_id + "/reposition";
+          params = {
+            thumbnail: {
+              position: e.newIndex + 1,
+              event_id: this._event_id
+            },
+            event_id: this._event_id
           };
           return update = $.ajax({
             method: "PUT",

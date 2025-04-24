@@ -132,6 +132,10 @@ Droom::Engine.routes.draw do
     resources :agenda_categories
   end
 
+  resources :thumbnails do
+    put "reposition", on: :member
+  end
+
   resources :documents do
     get "suggest", on: :collection
     put "reposition", on: :member

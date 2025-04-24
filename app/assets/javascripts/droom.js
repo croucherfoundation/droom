@@ -26,10 +26,54 @@
 //= require droom/widgets
 //= require droom/editors
 //= require droom/grid
-//= require_self
+//= require_self 
+
 
 
 (function() {
+  $('#thumbnail-list .thumbnail-item').on('click', function() {
+    $(this).addClass('active').siblings().removeClass('active');
+    var pageNumber = $(this).data('page-number'); 
+    scrollToPDF(pageNumber);
+  });
+  
+  function scrollToPDF(pageNumber) {
+    const $container = $('.preview-area'); 
+    const $targetPDF = $container.find('.preview-item[data-page-number="' + pageNumber + '"]');
+
+    if ($targetPDF.length > 0) {
+      const scrollTop = $targetPDF.position().top + $container.scrollTop();
+      $container.animate({ scrollTop: scrollTop }, 500);
+    } else {
+      console.warn("PDF not found for page:", pageNumber);
+    }
+  }
+
+  // delete event's thumb 
+  $('.delete-btn').on('click', function(e) {
+    e.preventDefault();
+    var imageId = $(this).data('image-id');
+    var eventId = $(this).data('event-id');
+    var url = "/thumbnails/" + imageId + '?event_id=' + eventId;
+    $.ajax({
+      url: url,
+      type: 'DELETE',
+      success: function(data) {
+        // location.reload();
+        console.log('thumb deleted!')
+      }
+    });
+  })
+  
+  
+
+
+
+
+
+
+
+
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   jQuery(function($) {
