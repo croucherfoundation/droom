@@ -7,14 +7,17 @@ module Droom::Concerns::PaperTrailWhodunnit
 
   included do
     before_action :set_paper_trail_whodunnit
-    before_action :info_for_paper_trail
+    before_action :set_paper_trail_info
   end
 
   def set_paper_trail_whodunnit
     PaperTrail.request.whodunnit = user_signed_in? ? current_user.uid : nil
   end
 
-  def info_for_paper_trail
-    { ip: request.remote_ip, user_agent: request.user_agent }
+  def set_paper_trail_info
+    PaperTrail.request.controller_info = {
+      ip: request.remote_ip,
+      user_agent: request.user_agent
+  }
   end
 end
