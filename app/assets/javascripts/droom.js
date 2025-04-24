@@ -32,12 +32,13 @@
 
 
 (function() {
-  $('#thumbnail-list .thumbnail-item').on('click', function() {
-    if (!$(this).hasClass('upload-slot')) {
-      $(this).addClass('active').siblings().removeClass('active');
-      var pageNumber = $(this).data('page-number'); 
-      scrollToPDF(pageNumber);
-    }
+  $('#thumbnail-list .thumbnail').on('click', function() {
+    console.log('clicking')
+    const $li = $($(this).closest('.thumbnail-item'));
+    const pageNumber = $li.data('page-number'); 
+
+    $li.addClass('active').siblings().removeClass('active');
+    scrollToPDF(pageNumber);
   });
   
   function scrollToPDF(pageNumber) {

@@ -8,21 +8,25 @@
         = @event.name
 
     .content-wrapper
-      .left-panel
+      .left-panel.hide-scrollbar
         %ul#thumbnail-list.sortable_files{data: {event_id: @event.id}}
           - @thumbnails.each_with_index do |image, index|
             %li.thumbnail-item.files{ data: { page_number: image.position, doc_id: image.id }, class: ('active' if index == 0)}
               .thumbnail-wrapper
                 .delete-section
-                  %button.delete-btn{ type: "button", data: { image_id: image.id, event_id: @event.id}, aria: { label: "Delete thumbnail" } }
+                  %button.delete-btn{ type: "button", data: { image_id: image.id, event_id: @event.id}, aria: { label: "Delete thumbnail" }, title: 'Delete PDF' }
                     .btn-text ×
                 = image_tag image.image.url, class: "thumbnail", width: "100", loading: "lazy"
-                %div.page-number{ data: { page_number: image.position } }
-                  = index + 1
-          %li.thumbnail-item.files.upload-slot
+              %div.page-number{ data: { page_number: image.position } }
+                = index + 1
+        
+        %ul#uploader
+          %li.thumbnail-item.upload-slot
             .thumbnail-wrapper.upload-wrapper
               %input.upload-input{ type: "file", accept: "application/pdf", style: "display: none;" }
-              %div.upload-label Click or drop PDF here
+              %div.upload-label 
+                %svg
+                  %use{href: "#add_symbol"}
 
       .right-panel
         .preview-area
@@ -30,121 +34,3 @@
             - @single_documents.each do |pdf|
               %li.preview-item{ data: { page_number: pdf.position } }
                 %iframe.pdf-frame{ src: "#{pdf.file.url}#toolbar=0&navpanes=0&scrollbar=0&view=fitH", scrolling: 'no', loading: 'lazy', width: "100%", height: "1105", allowtransparency: "true" }
-
--# :javascript
--#   document.addEventListener("DOMContentLoaded", function () {
--#     const leftPanel = document.querySelector(".left-panel");
--#     const rightPanel = document.querySelector(".right-panel");
--#     const leftList = document.getElementById("thumbnail-list");
--#     const rightList = document.getElementById("preview-list");
--#     const uploadBoxes = document.querySelectorAll(".upload-box");
--#     const previewImages = document.querySelectorAll(".preview-image");
-
--#     uploadBoxes.forEach((box) => {
--#       box.addEventListener("click", function () {
--#         let pageNumber = box.dataset.pageNumber;
--#         let target = document.getElementById(`page-${pageNumber}`);
-
--#         if (target) {
--#           rightPanel.scrollTo({
--#             top: target.offsetTop - rightPanel.offsetTop,
--#             behavior: "smooth",
--#           });
--#         }
--#       });
--#     });
-
--#     function reorderPanels() {
--#       const newOrder = Array.from(leftList.querySelectorAll(".upload-box"))
--#                             .map((box, index) => {
--#                               box.querySelector('.upload-number').textContent = index + 1;
--#                               return box.dataset.pageNumber;
--#                             });
-
--#       newOrder.forEach((pageNumber, index) => {
--#         const correspondingPreview = rightList.querySelector(`.preview-image[data-page-number="${pageNumber}"]`);
--#         if (correspondingPreview) {
--#           rightList.appendChild(correspondingPreview);
--#         }
--#       });
--#     }
-
--#     let observer = new IntersectionObserver(
--#       (entries) => {
--#         let firstVisible = null;
-
--#         entries.forEach((entry) => {
--#           if (entry.isIntersecting && firstVisible === null) {
--#             firstVisible = entry.target.dataset.pageNumber;
--#           }
--#         });
-
--#         if (firstVisible) {
--#           uploadBoxes.forEach((box) => {
--#             box.classList.toggle("active", box.dataset.pageNumber === firstVisible);
--#           });
-
--#           let activeBox = document.querySelector(`.upload-box[data-page-number="${firstVisible}"]`);
--#           if (activeBox) {
--#             leftPanel.scrollTo({
--#               top: activeBox.offsetTop - leftPanel.offsetTop - 50,
--#               behavior: "smooth",
--#             });
--#           }
--#         }
--#       },
--#       { root: rightPanel, threshold: 0.3 }
--#     );
-
--#     previewImages.forEach((image) => observer.observe(image));
-
--#     new Sortable(leftList, {
--#       group: "thumbnails-left",
--#       animation: 150,
--#       onEnd: function (evt) {
-        
--#         reorderPanels();
--#       }
--#     });
-
--#     new Sortable(rightList, {
--#       group: "thumbnails-right",
--#       animation: 150,
--#       onEnd: function (evt) {
-        
--#       }
--#     });
-
--#     document.addEventListener("click", function (event) {
--#       if (event.target.classList.contains("delete-btn")) {
--#         console.log("mmhmmh");
--#         console.log(event.target.classList.contains("delete-btn"));
--#         const imageId = event.target.dataset.imageId; 
-
--#         $.ajax({
--#           url: '/events/delete_pdf',  
--#           type: 'DELETE',
--#           data: { image_id: imageId }, 
--#           success: function(response) {
--#             if (response.success) {
--#               const li = event.target.closest('li');
--#               if (li) {
--#                 li.remove(); 
--#               }
--#               const pageNumber = event.target.closest('.upload-box').dataset.pageNumber;
--#               const correspondingPdf = rightList.querySelector(`.preview-image[data-page-number="${pageNumber}"]`);
--#               if (correspondingPdf) {
--#                 correspondingPdf.remove();  // Remove the corresponding PDF page from the right panel
--#               }
--#               console.log("Thumbnail deleted!");
--#             } else {
--#               alert(response.message); 
--#             }
--#           },
--#           error: function() {
--#             alert('An error occurred while deleting the thumbnail.');
--#           }
--#         });
--#       }
--#     });
--#   });
