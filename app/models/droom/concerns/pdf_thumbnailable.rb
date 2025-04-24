@@ -1,5 +1,5 @@
-# require 'combine_pdf'
 require 'mini_magick'
+require 'combine_pdf'
 require 'open-uri'
 
 module Droom::Concerns::PdfThumbnailable
@@ -13,81 +13,82 @@ module Droom::Concerns::PdfThumbnailable
   def generate_thumbnails(file_path)
     return unless file_path.present?
 
-    pdf_tempfile = file_path
-    total_pages = get_pages(pdf_tempfile)
-    temp_thumbnails = convert_to_images(pdf_tempfile, total_pages)
-    temp_pdf_pages = split_pdf_pages(pdf_tempfile, total_pages)
+    begin
+      total_pages = get_total_pages(file_path)
 
-    attach_thumbnails_and_pdfs(temp_thumbnails, temp_pdf_pages)
+      # Process page-by-page to reduce memory usage
+      (0...total_pages).each do |page_number|
+        thumbnail_path = convert_page_to_image(file_path, page_number)
+        pdf_page_path  = extract_single_pdf_page(file_path, page_number)
 
-    # Cleanup temp files
-    temp_thumbnails.each { |path| File.delete(path) }
-    temp_pdf_pages.each { |path| File.delete(path) }
+        attach_thumbnail(thumbnail_path, page_number)
+        attach_pdf_page(pdf_page_path, page_number)
 
-  end
-
-  def get_pages(pdf_tempfile)
-    pdf_info = MiniMagick::Image.open(pdf_tempfile)
-    pdf_info.pages.length rescue 1
-  end
-
-  def convert_to_images(pdf_tempfile, total_pages)
-    temp_thumbnails = []
-
-    (0...total_pages).each do |page_number|
-      thumbnail_tempfile = Tempfile.new(["pdf_thumbnail_#{page_number}", ".jpg"])
-      thumbnail_tempfile.close
-
-      # Using the updated 'magick' command for IMv7
-      MiniMagick::Tool::Magick.new do |magick|
-        magick.density '150'
-        magick.quality '100'
-        magick << "#{pdf_tempfile}[#{page_number}]" # Extract each page
-        magick << thumbnail_tempfile.path
+        cleanup_file(thumbnail_path)
+        cleanup_file(pdf_page_path)
       end
-
-      temp_thumbnails << thumbnail_tempfile.path
+    rescue => e
+      Rails.logger.error("PDF processing failed: #{e.message}")
     end
-
-    temp_thumbnails
+    Rails.logger.info("PDF processing complete: #{total_pages} pages")
   end
 
-  def split_pdf_pages(pdf_tempfile, total_pages)
-    temp_pdfs = []
+  def get_total_pages(pdf_tempfile)
+    CombinePDF.load(pdf_tempfile).pages.count
+  rescue => e
+    Rails.logger.error("Error reading PDF page count: #{e.message}")
+    1
+  end
+
+  def convert_page_to_image(pdf_tempfile, page_number)
+    output = Tempfile.new(["thumb_#{page_number}", ".jpg"])
+    output.close # allow ImageMagick to write
+
+    MiniMagick::Tool::Magick.new do |magick|
+      magick.density '100'
+      magick.quality '85'
+      magick << "#{pdf_tempfile}[#{page_number}]"
+      magick << output.path
+    end
+
+    output.path
+  end
+
+  def extract_single_pdf_page(pdf_tempfile, page_number)
     pdf = CombinePDF.load(pdf_tempfile)
+    single_page_pdf = CombinePDF.new
+    single_page_pdf << pdf.pages[page_number]
 
-    (0...total_pages).each do |page_number|
-      single_page_pdf = CombinePDF.new
-      single_page_pdf << pdf.pages[page_number] # Extract each page
+    output = Tempfile.new(["pdf_page_#{page_number}", ".pdf"])
+    output.close
+    single_page_pdf.save(output.path)
 
-      pdf_one_tempfile = Tempfile.new(["pdf_page_#{page_number}", ".pdf"])
-
-      single_page_pdf.save(pdf_one_tempfile.path)
-
-      temp_pdfs << pdf_one_tempfile.path
-    end
-
-    temp_pdfs
+    output.path
   end
 
-  def attach_thumbnails_and_pdfs(temp_thumbnails, temp_pdf_pages)
-    temp_thumbnails.each_with_index do |thumbnail_path, index|
-      thumbnail = self.thumbnails.create!(
-        image: {
-          io: File.open(thumbnail_path),
-          filename: "thumbnail_#{index + 1}.jpg",
-          content_type: "image/jpeg"
-        }
-      )
-    end
-    temp_pdf_pages.each_with_index do |pdf_path, index|
-      pdf_page = self.single_documents.create!(
-        file: {
-          io: File.open(pdf_path),
-          filename: "pdf_#{index + 1}.pdf",
-          content_type: "application/pdf"
-        }
-      )
-    end
+  def attach_thumbnail(thumbnail_path, page_number)
+    self.thumbnails.create!(
+      image: {
+        io: File.open(thumbnail_path),
+        filename: "event_#{self.id}_thumbnail_#{page_number + 1}.jpg",
+        content_type: "image/jpeg"
+      }
+    )
+  end
+
+  def attach_pdf_page(pdf_path, page_number)
+    self.single_documents.create!(
+      file: {
+        io: File.open(pdf_path),
+        filename: "event_#{self.id}_pdf_page_#{page_number + 1}.pdf",
+        content_type: "application/pdf"
+      }
+    )
+  end
+
+  def cleanup_file(path)
+    File.delete(path) if path && File.exist?(path)
+  rescue => e
+    Rails.logger.warn("Cleanup failed for #{path}: #{e.message}")
   end
 end

@@ -49,30 +49,32 @@
     }
   }
 
-  // delete event's thumb 
+  // Handle thumbnail delete event
   $('.delete-btn').on('click', function(e) {
     e.preventDefault();
-    var imageId = $(this).data('image-id');
-    var eventId = $(this).data('event-id');
-    var url = "/thumbnails/" + imageId + '?event_id=' + eventId;
+
+    const $button = $(this);
+    const imageId = $button.data('image-id');
+    const eventId = $button.data('event-id');
+    const url = `/thumbnails/${imageId}?event_id=${eventId}`;
+
     $.ajax({
-      url: url,
-      type: 'DELETE',
-      success: function(data) {
-        // location.reload();
-        console.log('thumb deleted!')
-      }
+        url: url,
+        type: 'DELETE',
+        success: function() {
+            const $thumb = $button.closest('li.thumbnail-item');
+            const pageNumber = $thumb.data('page-number');
+
+            $thumb.remove();
+            $(`li.preview-item[data-page-number="${pageNumber}"]`).remove();
+
+            console.log('Thumbnail deleted!');
+        },
+        error: function(xhr, status, error) {
+            console.error('Delete failed:', status, error);
+        }
     });
-  })
-  
-  
-
-
-
-
-
-
-
+  });
 
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
