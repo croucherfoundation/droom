@@ -7,7 +7,6 @@ module Droom
 
     def reposition
       @single_document = @event.single_documents.find_by(position: @thumbnail.position)
-      byebug
       @single_document.update(reposition_params) if @single_document
       @thumbnail.update(reposition_params)
       head :ok
