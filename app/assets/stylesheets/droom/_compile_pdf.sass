@@ -1,9 +1,15 @@
+.chrome
+  .pdf-container
+    background-color: #282828
+
+    .top-header
+      background-color: #3C3C3C
+
 .pdf-container
   display: flex
   flex-direction: row
   width: 100%
   height: 100vh
-  background-color: #f7f7f7
 
   .outer-container
     display: flex
@@ -13,7 +19,6 @@
 
   .top-header
     padding: 20px
-    background-color: $coolgrey0
     box-shadow: 0 2px 4px $dark
     font-size: 18px
     font-weight: 600
@@ -26,7 +31,6 @@
 
     .left-panel
       width: 260px
-      background-color: $page
       border-right: 1px solid $coolgrey1
       padding: 50px
       overflow-y: auto
@@ -80,6 +84,7 @@
               object-fit: cover
 
           .page-number
+            color: $page
             display: flex 
             justify-content: center
         
@@ -112,7 +117,6 @@
 
     .right-panel
       flex-grow: 1
-      background-color: $page
       padding: 20px
       overflow: hidden
       display: flex
@@ -133,14 +137,13 @@
             margin-bottom: 20px
             border-radius: 10px
             overflow: hidden
-            background-color: $coolgrey4
-            box-shadow: 0 1px 3px $dark
+            display: flex
+            justify-content: center
 
             .pdf-frame
-              width: 100%
+              width: 60%
               border: none
               border-radius: 10px
-              background-color: $page
               overflow: hidden
 
 .hide-scrollbar

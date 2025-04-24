@@ -95,23 +95,6 @@ module Droom
       head :ok
     end
 
-    def delete_pdf
-      thumbnail = Droom::Thumbnail.find_by(id: params[:image_id])
-      single_document = Droom::SingleDocument.find_by(id: params[:image_id])
-
-      if thumbnail
-        thumbnail.image.purge if thumbnail.image.attached?
-        thumbnail.destroy
-        if single_document
-          single_document.file.purge if single_document.file.attached?
-          single_document.destroy
-        end
-        render json: { success: true }
-      else
-        render json: { success: false, message: "File not found" }, status: 404
-      end
-    end
-
     def upload_pdf
       file = params[:file]
       if file.content_type == "application/pdf"
@@ -122,9 +105,11 @@ module Droom
       else
         render json: { error: "Invalid file type" }, status: :unprocessable_entity
       end
-    end    
+    end
 
     def compile_pdf
+      @event.pdf_cover_generate if @event.thumbnails.empty?
+
       @thumbnails = @event.thumbnails.order(:position)
       @single_documents = @event.single_documents.order(:position)
 

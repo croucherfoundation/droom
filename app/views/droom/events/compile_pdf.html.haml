@@ -33,4 +33,4 @@
           %ul#preview-list
             - @single_documents.each do |pdf|
               %li.preview-item{ data: { page_number: pdf.position } }
-                %iframe.pdf-frame{ src: "#{pdf.file.url}#toolbar=0&navpanes=0&scrollbar=0&view=fitH", scrolling: 'no', loading: 'lazy', width: "100%", height: "1105", allowtransparency: "true" }
+                %iframe.pdf-frame{ src: "#{pdf.file.url}#toolbar=0&navpanes=0&scrollbar=0&view=fitH", scrolling: 'no', frameborder: 0, loading: 'lazy', width: "100%", height: "1105", allowtransparency: "true", style: "background: transparent;"  }

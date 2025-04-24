@@ -10,6 +10,53 @@ module Droom::Concerns::PdfThumbnailable
     has_many :single_documents, dependent: :destroy
   end
 
+  def pdf_cover_generate
+    meeting_texts = {
+      1 => "A Trustees’ Meeting is to be held on",
+      2 => "A meeting of the NCF Nomination Committee is to be held on",
+      3 => "An Investment Committee Meeting is to be held on",
+      4 => "An Audit Committee Meeting is to be held on",
+      5 => "A Governors’ Meeting is to be held on",
+      6 => "A meeting of the CF Nomination & Remuneration Committee is to be held on",
+      7 => "A meeting of the Academic Assessment Working Group is to be held on"
+    }
+
+    datetime_str = "#{self.start.strftime('%A %d %B %Y')} at #{self.start.strftime('%I:%M%p')}"
+    meeting_text = "#{meeting_texts[self.event_type_id]} #{datetime_str}"
+
+    pdf = Prawn::Document.new(page_size: "A4", margin: 0)
+    bg_color = [1, 2, 3, 6].include?(self.event_type_id) ? "EE3A43" : "56C1FF"
+    pdf.fill_color = bg_color
+    pdf.fill_rectangle [pdf.bounds.left, pdf.bounds.top], pdf.bounds.width, pdf.bounds.height
+
+    logo_path = Rails.root.join("app/assets/images/croucher_white_logo.png")
+    pdf.image(logo_path, at: [45, 790], height: 110) if File.exist?(logo_path)
+
+    pdf.fill_color "FFFFFF"
+    pdf.font_families.update("MarrSans" => {
+      normal: Rails.root.join("app/assets/stylesheets/ui-library/fonts/MarrSans-Regular.otf")
+    })
+    pdf.font "MarrSans"
+
+    pdf.text_box meeting_text,
+                 at: [40, 630], size: 24, width: 450, align: :left
+
+    pdf.stroke_color "FFFFFF"
+
+    pdf.text_box "To join the meeting click <u><link href='https://#{self.video_conference_link}'>here</link></u>",
+                 at: [40, 480], size: 24, width: 450, align: :left, inline_format: true
+
+    pdf.text_box "To go to the dataroom click <u><link href='https://data.croucher.org.hk'>here</link></u>",
+                 at: [40, 430], size: 24, width: 450, align: :left, inline_format: true
+
+    # Save to tempfile instead of sending directly
+    tempfile = Tempfile.new(["cover_#{self.id}", ".pdf"])
+    tempfile.binmode
+    tempfile.write(pdf.render)
+    tempfile.rewind
+    generate_thumbnails(tempfile.path)
+  end
+
   def generate_thumbnails(file_path)
     return unless file_path.present?
 
