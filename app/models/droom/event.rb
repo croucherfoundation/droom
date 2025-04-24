@@ -29,6 +29,8 @@ module Droom
     after_destroy :destroy_related_folder
     around_update :update_folder_name
 
+    has_one_attached :compiled_file
+
     after_save :set_parent_folder_id
 
     validates :start, :presence => true, :date => true
@@ -382,6 +384,23 @@ module Droom
       "#{name} (#{month_name} #{year})"
     end
 
+    def combined_pdf
+      documents = self.single_documents.order(:position)
+      return nil if documents.empty?
+    
+      source_paths = documents.map { |doc| doc.file.url }
+      folder_path = Rails.root.join('tmp/applications')
+      Dir.mkdir(folder_path) unless Dir.exist?(folder_path)
+      merged_path = File.join(Dir.tmpdir, "combined_#{SecureRandom.uuid}.pdf")
+    
+      if merge_pdfs(source_paths, merged_path)
+        filename = generate_compiled_pdf_filename
+        self.compiled_file.attach(io: File.open(merged_path), filename: filename, content_type: 'application/pdf')
+        self.save
+        return self.compiled_file.url if self.compiled_file.attached?
+      end
+    end
+
   protected
 
     # Set event_type.folder.id to event.folder.parent_id if event.event_type changed
@@ -431,6 +450,71 @@ module Droom
         end
       end
     end
+
+    def generate_compiled_pdf_filename
+      acronym = if self.event_type&.name.present?
+                  self.event_type.name.split(' ').map { |word| word[0].upcase }.join
+                else
+                  ''
+                end
+      "#{acronym}#{meeting_number}Agendabook.pdf"
+    end    
+
+    def compress_pdf_with_ghostscript(input_path, output_path)
+      command = "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=#{output_path} #{input_path}"
+      result = `#{command}`
+      unless $?.success?
+        Rails.logger.error("Ghostscript failed: #{result}")
+      end
+      File.exist?(output_path)
+    end
+    
+    def merge_pdfs(source_paths, destination_path)
+      return false if source_paths.empty?
+    
+      pdf = CombinePDF.new
+      temp_files = []
+    
+      source_paths.each do |path|
+        if path.start_with?("http")
+          begin
+            # Generate a temporary file name without query parameters
+            file_name = "pdf_#{SecureRandom.uuid}.pdf"
+            temp_file_path = Rails.root.join('tmp', file_name)
+    
+            # Download the file to the temporary location
+            File.open(temp_file_path, 'wb') do |f|
+              f.write open(path).read
+            end
+            temp_files << temp_file_path
+    
+            # Compress the downloaded file
+            compressed_pdf_path = File.join(Dir.tmpdir, "compressed_#{SecureRandom.uuid}.pdf")
+            if compress_pdf_with_ghostscript(temp_file_path, compressed_pdf_path)
+              pdf << CombinePDF.load(compressed_pdf_path)
+            else
+              Rails.logger.error("Failed to compress PDF #{path}, skipping.")
+            end
+          rescue => e
+            Rails.logger.error("Error processing PDF #{path}: #{e.message}")
+          end
+        else
+          Rails.logger.error("Invalid file path, skipping: #{path}")
+        end
+      end
+    
+      # Ensure PDFs were merged
+      return false if pdf.pages.empty?
+    
+      # Save the final merged PDF
+      pdf.save(destination_path)
+    
+      # Clean up temporary files
+      temp_files.each { |file| File.delete(file) if File.exist?(file) }
+    
+      File.exist?(destination_path)
+    end
+
 
   end
 end

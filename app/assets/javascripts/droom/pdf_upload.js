@@ -77,4 +77,30 @@ $(document).ready(function () {
       }
     });
   }
+
+  $(document).on('click', '.download-combine-pdf', function(e) {
+    e.preventDefault();
+  
+    const eventId = $('#thumbnail-list').data('event-id');
+    $('body').addClass('overlay-active');
+
+    $.ajax({
+      type: 'POST',
+      url: `/events/${eventId}/download-pdf`,
+      dataType: 'json',
+      success: function(response) {
+        if (response.file_url) {
+          $('body').removeClass('overlay-active');
+          window.location.href = response.file_url;
+        } else {
+          $('body').removeClass('overlay-active');
+          alert('PDF download failed.');
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error('Download PDF error:', error);
+        alert('Something went wrong. Try again.');
+      }
+    });
+  });  
 });

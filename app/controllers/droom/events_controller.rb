@@ -116,6 +116,17 @@ module Droom
       render layout: 'no_layout'
     end
 
+    def download_pdf
+      @event = Event.find(params[:id])
+    
+      pdf_url = @event.combined_pdf
+      if pdf_url
+        render json: { file_url: pdf_url }
+      else
+        render json: { error: 'Failed to generate PDF' }, status: :unprocessable_entity
+      end
+    end 
+
   protected
 
     def pdf_cover_generate(event)
