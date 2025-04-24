@@ -42,6 +42,7 @@
       };
 
       Remote.prototype.pend = function(event, xhr, settings) {
+        console.log('get click and pend');
         var base, ref;
         event.stopPropagation();
         event.preventDefault();
@@ -68,6 +69,35 @@
           }
           $('input[type="submit"]').css("background-color", "#9b9b8e");
         }
+        if (xhr.status === 422) {
+          console.log('getting 422');
+          let $form = $(event.currentTarget);
+          let $errorParagraph = $form.find('p.error');
+          let responseData = null;
+
+          if (xhr?.responseText && typeof xhr?.responseText === 'string') {
+            const responseText = xhr.responseText.trim();
+            if (responseText.startsWith("{")) {
+              try {
+                responseData = JSON.parse(responseText);
+              } catch (e) {
+                responseData = null;
+              }
+            }
+          }
+
+          const errorMessage = responseData?.errors?.join(', ') || 'An error occurred.';
+
+          if ($errorParagraph.length === 0) {
+            $errorParagraph = $('<p class="error"></p>');
+            $form.prepend($errorParagraph);
+          }
+        
+          $errorParagraph.text(errorMessage);
+          $form.find('input[type="submit"]').addClass("waiting");
+          return this._control.trigger('remote:complete', status);
+        }
+        
         if (xhr.status === 401) {
           window.location.reload();
         }
@@ -79,6 +109,7 @@
       };
 
       Remote.prototype.receive = function(event, data, status, xhr) {
+        console.log(xhr);
         responseData = null;
         if (xhr?.responseText && typeof xhr?.responseText === 'string') {
           const responseText = xhr.responseText.trim();
