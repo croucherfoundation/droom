@@ -386,7 +386,7 @@ module Droom
 
     def combined_pdf
       documents = self.single_documents.order(:position)
-      return nil if documents.empty?
+      return false if documents.empty?
     
       source_paths = documents.map { |doc| doc.file.url }
       folder_path = Rails.root.join('tmp/applications')
@@ -397,8 +397,9 @@ module Droom
         filename = generate_compiled_pdf_filename
         self.compiled_file.attach(io: File.open(merged_path), filename: filename, content_type: 'application/pdf')
         self.save
-        return self.compiled_file.url if self.compiled_file.attached?
+        return self.compiled_file.attached?
       end
+      false
     end
 
   protected

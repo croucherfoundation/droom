@@ -120,7 +120,8 @@ Droom::Engine.routes.draw do
     member do
       get :compile_pdf, path: "compile-pdf"
       post :upload_pdf, path: "upload-pdf"
-      post :download_pdf, path: "download-pdf"
+      post :generate_pdf, path: "generate-pdf"
+      get :download_pdf, path: "download-pdf"
     end
     resources :invitations do
       member do

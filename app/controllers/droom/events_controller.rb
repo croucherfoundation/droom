@@ -116,16 +116,26 @@ module Droom
       render layout: 'no_layout'
     end
 
-    def download_pdf
-      @event = Event.find(params[:id])
-    
-      pdf_url = @event.combined_pdf
-      if pdf_url
-        render json: { file_url: pdf_url }
+    def generate_pdf
+      if @event.combined_pdf && @event.compiled_file.attached?
+        render json: { success: true }
       else
         render json: { error: 'Failed to generate PDF' }, status: :unprocessable_entity
       end
-    end 
+    end
+
+    def download_pdf
+      if @event.compiled_file.attached?
+        file = @event.compiled_file
+        data = URI.open(file.url)
+        send_data data.read,
+                  filename: file.filename.to_s,
+                  type: file.content_type,
+                  disposition: 'attachment'
+      else
+        head :not_found
+      end
+    end
 
   protected
 

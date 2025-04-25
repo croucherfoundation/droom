@@ -83,23 +83,24 @@ $(document).ready(function () {
   
     const eventId = $('#thumbnail-list').data('event-id');
     $('body').addClass('overlay-active');
-
+  
     $.ajax({
       type: 'POST',
-      url: `/events/${eventId}/download-pdf`,
+      url: `/events/${eventId}/generate-pdf`,
       dataType: 'json',
       success: function(response) {
-        if (response.file_url) {
-          $('body').removeClass('overlay-active');
-          window.location.href = response.file_url;
+        $('body').removeClass('overlay-active');
+        if (response.success) {
+          // trigger download from second endpoint
+          window.location.href = `/events/${eventId}/download-pdf`;
         } else {
-          $('body').removeClass('overlay-active');
-          alert('PDF download failed.');
+          alert('PDF generation failed.');
         }
       },
       error: function(xhr, status, error) {
-        console.error('Download PDF error:', error);
-        alert('Something went wrong. Try again.');
+        $('body').removeClass('overlay-active');
+        console.error('PDF generation error:', error);
+        alert('Something went wrong while generating the PDF.');
       }
     });
   });  
