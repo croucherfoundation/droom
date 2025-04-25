@@ -108,7 +108,7 @@ module Droom
     end
 
     def compile_pdf
-      @event.pdf_cover_generate if @event.thumbnails.empty?
+      @event.pdf_cover_generate if @event.thumbnails.empty? && @event.single_documents.empty?
 
       @thumbnails = @event.thumbnails.order(:position)
       @single_documents = @event.single_documents.order(:position)
@@ -138,51 +138,6 @@ module Droom
     end
 
   protected
-
-    def pdf_cover_generate(event)
-      meeting_texts = {
-        1 => "A Trustees’ Meeting is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
-        2 => "A meeting of the NCF Nomination Committee is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
-        3 => "An Investment Committee Meeting is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
-        4 => "An Audit Committee Meeting is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
-        5 => "A Governors’ Meeting is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
-        6 => "A meeting of the CF Nomination & Remuneration Committee is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}",
-        7 => "A meeting of the Academic Assessment Working Group is to be held on #{event.start.strftime('%A %d %B %Y')} at #{event.start.strftime('%I:%M%p')}"
-      }
-      meeting_text = meeting_texts[event.event_type_id]
-
-
-      pdf = Prawn::Document.new(page_size: "A4", margin: 0)
-      pdf.fill_color = [1, 2, 3, 6].include?(event.event_type_id) ? "EE3A43" : "56C1FF"
-
-      pdf.fill_rectangle [pdf.bounds.left, pdf.bounds.top], pdf.bounds.width, pdf.bounds.height
-
-      logo_path = Rails.root.join("app/assets/images/croucher_logo.png")
-      pdf.image logo_path, at: [45, 790], height: 110 if File.exist?(logo_path)
-
-      pdf.fill_color "FFFFFF"
-      pdf.font_families.update("MarrSans" => {
-        :normal => Rails.root + "app/assets/stylesheets/ui-library/fonts/MarrSans-Regular.otf",
-      })
-      pdf.font "MarrSans"
-      pdf.text_box meeting_text,
-                  at: [40, 630], size: 30, width: 450, align: :left
-
-      pdf.stroke_color "FFFFFF"
-
-      pdf.text_box "\n\nTo join the meeting click <u><link href='#{"https://#{event.video_conference_link}"}'>here</link></u>",
-                  at: [40, 450], size: 30, width: 450, align: :left, inline_format: true
-
-      pdf.text_box "To go to the dataroom click <u><link href='https://data.croucher.org.hk'>here</link></u>",
-                  at: [40, 260], size: 30, width: 450, align: :left, inline_format: true
-
-      send_data pdf.render, filename: "first_pdf.pdf", type: "application/pdf", disposition: "inline"
-      # cover_path = Rails.root.join("public/uploads/cover_#{event.id}.pdf")
-      # pdf.render_file(cover_path)
-
-      # cover_path.to_s
-
-    end
 
     def set_timezone_feature
       @timezone_feature = FeatureFlag.enabled?('time-zone-feature', current_user)

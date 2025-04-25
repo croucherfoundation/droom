@@ -11,7 +11,31 @@ module Droom::Concerns::PdfThumbnailable
   end
 
   def pdf_cover_generate
-    meeting_texts = {
+    ['thumbnail', 'pdf'].each do |mode|
+      meeting_text = generate_meeting_text
+      pdf = prepare_prawn(mode, meeting_text)
+
+      tempfile = create_tempfile(pdf)
+      generate_thumbnails(tempfile.path, mode)
+    end
+  end
+
+  def generate_thumbnails(file_path, mode=nil)
+    return unless file_path.present?
+
+    total_pages = get_total_pages(file_path)
+    process_pdf_pages(file_path, total_pages, mode)
+  end
+
+  private
+
+  def generate_meeting_text
+    datetime_str = "#{self.start.strftime('%A %d %B %Y')} at #{self.start.strftime('%I:%M%p')}"
+    "#{meeting_texts[self.event_type_id]} #{datetime_str}"
+  end
+
+  def meeting_texts
+    {
       1 => "A Trustees’ Meeting is to be held on",
       2 => "A meeting of the NCF Nomination Committee is to be held on",
       3 => "An Investment Committee Meeting is to be held on",
@@ -20,64 +44,62 @@ module Droom::Concerns::PdfThumbnailable
       6 => "A meeting of the CF Nomination & Remuneration Committee is to be held on",
       7 => "A meeting of the Academic Assessment Working Group is to be held on"
     }
+  end
 
-    datetime_str = "#{self.start.strftime('%A %d %B %Y')} at #{self.start.strftime('%I:%M%p')}"
-    meeting_text = "#{meeting_texts[self.event_type_id]} #{datetime_str}"
-
+  def prepare_prawn(mode, meeting_text)
     pdf = Prawn::Document.new(page_size: "A4", margin: 0)
-    bg_color = [1, 2, 3, 6].include?(self.event_type_id) ? "EE3A43" : "56C1FF"
+    set_background_color(pdf)
+    add_logo(pdf)
+    add_text(pdf, mode, meeting_text)
+    pdf
+  end
+
+  def set_background_color(pdf)
+    bg_color = ["1", "2", "3", "6"].include?(self.event_type_id.to_s) ? "EE3A43" : "56C1FF"
     pdf.fill_color = bg_color
     pdf.fill_rectangle [pdf.bounds.left, pdf.bounds.top], pdf.bounds.width, pdf.bounds.height
+  end
 
+  def add_logo(pdf)
     logo_path = Rails.root.join("app/assets/images/croucher_white_logo.png")
     pdf.image(logo_path, at: [45, 790], height: 110) if File.exist?(logo_path)
+  end
 
+  def add_text(pdf, mode, meeting_text)
     pdf.fill_color "FFFFFF"
-    pdf.font_families.update("MarrSans" => {
-      normal: Rails.root.join("app/assets/stylesheets/ui-library/fonts/MarrSans-Regular.otf")
-    })
-    pdf.font "MarrSans"
+    set_font(pdf, mode)
 
-    pdf.text_box meeting_text,
-                 at: [40, 630], size: 24, width: 450, align: :left
+    pdf.text_box meeting_text, at: [40, 630], size: 24, width: 450, align: :left
 
     pdf.stroke_color "FFFFFF"
 
-    pdf.text_box "To join the meeting click <u><link href='https://#{self.video_conference_link}'>here</link></u>",
+    add_links(pdf)
+  end
+
+  def set_font(pdf, mode)
+    if mode == 'thumbnail'
+      pdf.font("Helvetica")
+    else
+      font_path = Rails.root.join("app/assets/stylesheets/ui-library/fonts/MarrSans-Regular.otf")
+      pdf.font_families["MarrSans"] = { normal: font_path.to_s }
+      pdf.font("MarrSans")
+    end
+  end
+
+  def add_links(pdf)
+    pdf.text_box "To join the meeting click <u><link href='https://#{self.video_conference_link}' target='_blank'>here</link></u>",
                  at: [40, 480], size: 24, width: 450, align: :left, inline_format: true
 
-    pdf.text_box "To go to the dataroom click <u><link href='https://data.croucher.org.hk'>here</link></u>",
+    pdf.text_box "To go to the dataroom click <u><link href='https://data.croucher.org.hk' target='_blank'>here</link></u>",
                  at: [40, 430], size: 24, width: 450, align: :left, inline_format: true
+  end
 
-    # Save to tempfile instead of sending directly
+  def create_tempfile(pdf)
     tempfile = Tempfile.new(["cover_#{self.id}", ".pdf"])
     tempfile.binmode
     tempfile.write(pdf.render)
     tempfile.rewind
-    generate_thumbnails(tempfile.path)
-  end
-
-  def generate_thumbnails(file_path)
-    return unless file_path.present?
-
-    begin
-      total_pages = get_total_pages(file_path)
-
-      # Process page-by-page to reduce memory usage
-      (0...total_pages).each do |page_number|
-        thumbnail_path = convert_page_to_image(file_path, page_number)
-        pdf_page_path  = extract_single_pdf_page(file_path, page_number)
-
-        attach_thumbnail(thumbnail_path, page_number)
-        attach_pdf_page(pdf_page_path, page_number)
-
-        cleanup_file(thumbnail_path)
-        cleanup_file(pdf_page_path)
-      end
-    rescue => e
-      Rails.logger.error("PDF processing failed: #{e.message}")
-    end
-    Rails.logger.info("PDF processing complete: #{total_pages} pages")
+    tempfile
   end
 
   def get_total_pages(pdf_tempfile)
@@ -87,13 +109,37 @@ module Droom::Concerns::PdfThumbnailable
     1
   end
 
+  def process_pdf_pages(file_path, total_pages, mode)
+    (0...total_pages).each do |page_number|
+      generate_page(file_path, page_number, mode)
+    end
+  rescue => e
+    Rails.logger.error("PDF processing failed: #{e.message}")
+  ensure
+    Rails.logger.info("PDF processing complete: #{total_pages} pages")
+  end
+
+  def generate_page(file_path, page_number, mode)
+    if mode == 'thumbnail' || mode.nil?
+      thumbnail_path = convert_page_to_image(file_path, page_number)
+      attach_thumbnail(thumbnail_path, page_number)
+      cleanup_file(thumbnail_path)
+    end
+
+    if mode == 'pdf' || mode.nil?
+      pdf_page_path = extract_single_pdf_page(file_path, page_number)
+      attach_pdf_page(pdf_page_path, page_number)
+      cleanup_file(pdf_page_path)
+    end
+  end
+
   def convert_page_to_image(pdf_tempfile, page_number)
     output = Tempfile.new(["thumb_#{page_number}", ".jpg"])
-    output.close # allow ImageMagick to write
+    output.close
 
     MiniMagick::Tool::Magick.new do |magick|
-      magick.density '100'
-      magick.quality '85'
+      magick.density '300'
+      magick.quality '100'
       magick << "#{pdf_tempfile}[#{page_number}]"
       magick << output.path
     end

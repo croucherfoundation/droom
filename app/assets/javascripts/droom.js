@@ -46,7 +46,7 @@
     const $targetPDF = $container.find('.preview-item[data-page-number="' + pageNumber + '"]');
 
     if ($targetPDF.length > 0) {
-      const scrollTop = $targetPDF.position().top + $container.scrollTop();
+      const scrollTop = $targetPDF.position().top + $container.scrollTop() - 70;
       $container.animate({ scrollTop: scrollTop }, 500);
     } else {
       console.warn("PDF not found for page:", pageNumber);
