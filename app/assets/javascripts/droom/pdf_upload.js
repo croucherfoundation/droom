@@ -128,4 +128,97 @@ $(document).ready(function () {
     });
   });
 
+  // Select the left and right panels
+  const $leftPanel = $('.left-panel');
+  const $rightPanel = $('.preview-area');
+
+  function syncPanelsOnScroll() {
+    const $previewList = $('#preview-list');
+    const rightPanelHeight = $previewList.outerHeight();
+    const rightPanelScrollTop = $previewList.scrollTop();
+    
+    let activeItemFound = false; // Flag to track if an active item is found
+
+    $rightPanel.find('.preview-item').each(function() {
+      const $item = $(this);
+      const itemHeight = $item.outerHeight();
+      const itemTop = $item.position().top;
+      const itemBottom = itemTop + itemHeight;
+
+      // Check if the item is in the viewport (visible in the right panel)
+      if (rightPanelScrollTop + rightPanelHeight >= itemTop + 70 && rightPanelScrollTop <= itemBottom - 70) {
+        const pageNumber = $item.data('page-number');
+        
+        // Only activate the first item that is visible in the viewport
+        if (!activeItemFound) {
+          console.log('atciedd');
+          // Find the corresponding left panel item
+          const $correspondingLeftItem = $leftPanel.find(`.thumbnail-item[data-page-number="${pageNumber}"]`);
+          
+          // If the corresponding item is found, activate it
+          if ($correspondingLeftItem.length) {
+            // Deactivate all other items in the left panel
+            $leftPanel.find('.thumbnail-item').removeClass('active');
+            
+            // Activate the current item in the left panel
+            $correspondingLeftItem.addClass('active');
+
+            // Scroll the left panel if needed
+            const leftPanelHeight = $leftPanel.outerHeight();
+            const leftPanelScrollTop = $leftPanel.scrollTop();
+            const leftItemTop = $correspondingLeftItem.position().top;
+            const leftItemBottom = leftItemTop + $correspondingLeftItem.outerHeight();
+
+            // Scroll left panel if the active item is not in view
+            if (leftItemTop < leftPanelScrollTop) {
+              $leftPanel.scrollTop(leftItemTop); // Scroll up to the active item
+            } else if (leftItemBottom > leftPanelScrollTop + leftPanelHeight) {
+              $leftPanel.scrollTop(leftPanelScrollTop + leftItemBottom - leftPanelHeight); // Scroll down to the active item
+            }
+
+            activeItemFound = true; // Set the flag to true to stop further activation
+          }
+        }
+      } else {
+        // If the item is fully out of view, we should switch to the next one
+        const pageNumber = $item.data('page-number');
+        console.log(pageNumber);
+        const $correspondingLeftItem = $leftPanel.find(`.thumbnail-item[data-page-number="${pageNumber}"]`);
+
+        if ($correspondingLeftItem.length && $item.position().top + $item.outerHeight() < 0) {
+          // If current item is fully out of view, activate the next one
+          const nextItem = $rightPanel.find(`.preview-item[data-page-number="${pageNumber + 1}"]`);
+          if (nextItem.length) {
+            const nextPageNumber = nextItem.data('page-number');
+            const $correspondingNextLeftItem = $leftPanel.find(`.thumbnail-item[data-page-number="${nextPageNumber}"]`);
+            
+            // Deactivate all other items in the left panel
+            $leftPanel.find('.thumbnail-item').removeClass('active');
+            
+            // Activate the next item
+            if ($correspondingNextLeftItem.length) {
+              $correspondingNextLeftItem.addClass('active');
+            }
+          }
+        }
+      }
+    });
+
+    // If no active item is found, we might need to ensure the last item is marked active when scroll completes
+    if (!activeItemFound) {
+      const lastPreviewItem = $rightPanel.find('.preview-item').last();
+      const pageNumber = lastPreviewItem.data('page-number');
+      const $correspondingLeftItem = $leftPanel.find(`.thumbnail-item[data-page-number="${pageNumber}"]`);
+
+      // If the corresponding left item is found, activate it
+      if ($correspondingLeftItem.length) {
+        $leftPanel.find('.thumbnail-item').removeClass('active');
+        $correspondingLeftItem.addClass('active');
+      }
+    }
+  }
+
+  // Add a scroll event listener to the right panel
+  $rightPanel.on('scroll', syncPanelsOnScroll);
+
 });
