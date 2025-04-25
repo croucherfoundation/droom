@@ -39,7 +39,8 @@
         this.setParent = bind(this.setParent, this);
         this.setPosition = bind(this.setPosition, this);
         this.setThumbPosition = bind(this.setThumbPosition, this);
-        this.sortIframes = bind(this.sortIframes, this);
+        this.sortPDFPreviews = bind(this.sortPDFPreviews, this);
+        this.resetPageNumber = bind(this.resetPageNumber, this);
         this.beginDrag = bind(this.beginDrag, this);
         this._container = $(element);
         this._event_id = this._container.data('eventId');
@@ -110,14 +111,15 @@
             url: url,
             data: params,
             success: function () {
-              $this.sortIframes(oldIndex, newIndex);
+              $this.sortPDFPreviews(oldIndex, newIndex);
+              $this.resetPageNumber();
               return $el.signal_confirmation();
             },
           }));
         }
       };
 
-      SortableFiling.prototype.sortIframes = function (oldIndex, newIndex) {
+      SortableFiling.prototype.sortPDFPreviews = function (oldIndex, newIndex) {
         var container = $('.right-panel');
         var items = container.find('li.preview-item');
 
@@ -127,6 +129,14 @@
           itemToMove.insertBefore(items.eq(newIndex));
         } else {
           itemToMove.insertAfter(items.eq(newIndex));
+        }
+      };
+
+      SortableFiling.prototype.resetPageNumber = function () {
+        var container = $('.left-panel');
+        var items = container.find('li.thumbnail-item.files');
+        for (var i = 0; i < items.length; i++) {
+          $(items[i]).find('.page-number').html(i + 1);
         }
       };
 

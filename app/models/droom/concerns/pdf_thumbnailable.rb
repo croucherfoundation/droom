@@ -11,20 +11,18 @@ module Droom::Concerns::PdfThumbnailable
   end
 
   def pdf_cover_generate
-    ['thumbnail', 'pdf'].each do |mode|
-      meeting_text = generate_meeting_text
-      pdf = prepare_prawn(mode, meeting_text)
+    meeting_text = generate_meeting_text
+    pdf = prepare_prawn(meeting_text)
 
-      tempfile = create_tempfile(pdf)
-      generate_thumbnails(tempfile.path, mode)
-    end
+    tempfile = create_tempfile(pdf)
+    generate_thumbnails(tempfile.path)
   end
 
-  def generate_thumbnails(file_path, mode=nil)
+  def generate_thumbnails(file_path)
     return unless file_path.present?
 
     total_pages = get_total_pages(file_path)
-    process_pdf_pages(file_path, total_pages, mode)
+    process_pdf_pages(file_path, total_pages)
   end
 
   private
@@ -46,11 +44,11 @@ module Droom::Concerns::PdfThumbnailable
     }
   end
 
-  def prepare_prawn(mode, meeting_text)
+  def prepare_prawn(meeting_text)
     pdf = Prawn::Document.new(page_size: "A4", margin: 0)
     set_background_color(pdf)
     add_logo(pdf)
-    add_text(pdf, mode, meeting_text)
+    add_text(pdf, meeting_text)
     pdf
   end
 
@@ -65,9 +63,9 @@ module Droom::Concerns::PdfThumbnailable
     pdf.image(logo_path, at: [45, 790], height: 110) if File.exist?(logo_path)
   end
 
-  def add_text(pdf, mode, meeting_text)
+  def add_text(pdf, meeting_text)
     pdf.fill_color "FFFFFF"
-    set_font(pdf, mode)
+    set_font(pdf)
 
     pdf.text_box meeting_text, at: [40, 630], size: 24, width: 450, align: :left
 
@@ -76,14 +74,8 @@ module Droom::Concerns::PdfThumbnailable
     add_links(pdf)
   end
 
-  def set_font(pdf, mode)
-    if mode == 'thumbnail'
-      pdf.font("Helvetica")
-    else
-      font_path = Rails.root.join("app/assets/stylesheets/ui-library/fonts/MarrSans-Regular.otf")
-      pdf.font_families["MarrSans"] = { normal: font_path.to_s }
-      pdf.font("MarrSans")
-    end
+  def set_font(pdf)
+    pdf.font("Helvetica")  # Always use Helvetica
   end
 
   def add_links(pdf)
@@ -109,9 +101,9 @@ module Droom::Concerns::PdfThumbnailable
     1
   end
 
-  def process_pdf_pages(file_path, total_pages, mode)
+  def process_pdf_pages(file_path, total_pages)
     (0...total_pages).each do |page_number|
-      generate_page(file_path, page_number, mode)
+      generate_page(file_path, page_number)
     end
   rescue => e
     Rails.logger.error("PDF processing failed: #{e.message}")
@@ -119,18 +111,14 @@ module Droom::Concerns::PdfThumbnailable
     Rails.logger.info("PDF processing complete: #{total_pages} pages")
   end
 
-  def generate_page(file_path, page_number, mode)
-    if mode == 'thumbnail' || mode.nil?
-      thumbnail_path = convert_page_to_image(file_path, page_number)
-      attach_thumbnail(thumbnail_path, page_number)
-      cleanup_file(thumbnail_path)
-    end
+  def generate_page(file_path, page_number)
+    thumbnail_path = convert_page_to_image(file_path, page_number)
+    attach_thumbnail(thumbnail_path, page_number)
+    cleanup_file(thumbnail_path)
 
-    if mode == 'pdf' || mode.nil?
-      pdf_page_path = extract_single_pdf_page(file_path, page_number)
-      attach_pdf_page(pdf_page_path, page_number)
-      cleanup_file(pdf_page_path)
-    end
+    pdf_page_path = extract_single_pdf_page(file_path, page_number)
+    attach_pdf_page(pdf_page_path, page_number)
+    cleanup_file(pdf_page_path)
   end
 
   def convert_page_to_image(pdf_tempfile, page_number)
