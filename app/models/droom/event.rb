@@ -479,23 +479,14 @@ module Droom
       source_paths.each do |path|
         if path.start_with?("http")
           begin
-            # Generate a temporary file name without query parameters
             file_name = "pdf_#{SecureRandom.uuid}.pdf"
             temp_file_path = Rails.root.join('tmp', file_name)
-    
-            # Download the file to the temporary location
+
             File.open(temp_file_path, 'wb') do |f|
-              f.write open(path).read
+              f.write URI.open(path).read
             end
             temp_files << temp_file_path
-    
-            # Compress the downloaded file
-            compressed_pdf_path = File.join(Dir.tmpdir, "compressed_#{SecureRandom.uuid}.pdf")
-            if compress_pdf_with_ghostscript(temp_file_path, compressed_pdf_path)
-              pdf << CombinePDF.load(compressed_pdf_path)
-            else
-              Rails.logger.error("Failed to compress PDF #{path}, skipping.")
-            end
+            pdf << CombinePDF.load(temp_file_path)
           rescue => e
             Rails.logger.error("Error processing PDF #{path}: #{e.message}")
           end
