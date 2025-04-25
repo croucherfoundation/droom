@@ -103,5 +103,29 @@ $(document).ready(function () {
         alert('Something went wrong while generating the PDF.');
       }
     });
-  });  
+  });
+  
+  $('.preview-item').each(function () {
+    const $item = $(this);
+    const pdfUrl = $item.data('pdf-url');
+    const $canvas = $item.find('canvas')[0];
+    const ctx = $canvas.getContext('2d');
+
+    pdfjsLib.getDocument(pdfUrl).promise.then(function (pdf) {
+      return pdf.getPage(1);
+    }).then(function (page) {
+      const viewport = page.getViewport({ scale: 1.5 });
+      $canvas.height = viewport.height;
+      $canvas.width = viewport.width;
+
+      const renderContext = {
+        canvasContext: ctx,
+        viewport: viewport
+      };
+      page.render(renderContext);
+    }).catch(function (error) {
+      console.error('PDF rendering error:', error);
+    });
+  });
+
 });

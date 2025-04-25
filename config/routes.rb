@@ -134,6 +134,11 @@ Droom::Engine.routes.draw do
     resources :documents
     resources :agenda_categories
   end
+  resources :single_documents do
+    member do
+      get :serve_pdf
+    end
+  end
 
   resources :thumbnails do
     put "reposition", on: :member

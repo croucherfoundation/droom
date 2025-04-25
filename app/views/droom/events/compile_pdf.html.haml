@@ -35,9 +35,8 @@
 
       .right-panel
         .preview-area
-          - cache 'right-side-images' do
-            %ul#preview-list
-              - @thumbnails.each do |image|
-                %li.preview-item{ data: { page_number: image.position } }
-                  .thumbnail-preview-wrapper
-                    = image_tag image.image.url, class: "thumbnail-preview", width: "100", loading: "lazy"
+          %ul#preview-list
+            - @single_documents.each do |pdf|
+              %li.preview-item{ data: { page_number: pdf.position, pdf_url: serve_pdf_single_document_path(pdf) } }
+                %canvas.pdf-canvas{ id: "canvas-#{pdf.id}", width: "100%" }
+

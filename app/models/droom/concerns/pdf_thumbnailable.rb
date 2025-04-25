@@ -138,7 +138,7 @@ module Droom::Concerns::PdfThumbnailable
     output.close
 
     MiniMagick::Tool::Magick.new do |magick|
-      magick.density '300'
+      magick.density '100'
       magick.quality '100'
       magick << "#{pdf_tempfile}[#{page_number}]"
       magick << output.path
