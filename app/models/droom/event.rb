@@ -32,6 +32,7 @@ module Droom
     has_one_attached :compiled_file
 
     after_save :set_parent_folder_id
+    after_save :generate_compiled_pdf_cover
 
     validates :start, :presence => true, :date => true
     validates :finish, :date => {:after => :start, :allow_nil => true}
@@ -387,12 +388,12 @@ module Droom
     def combined_pdf
       documents = self.single_documents.order(:position)
       return false if documents.empty?
-    
+
       source_paths = documents.map { |doc| doc.file.url }
       folder_path = Rails.root.join('tmp/applications')
       Dir.mkdir(folder_path) unless Dir.exist?(folder_path)
       merged_path = File.join(Dir.tmpdir, "combined_#{SecureRandom.uuid}.pdf")
-    
+
       if merge_pdfs(source_paths, merged_path)
         filename = generate_compiled_pdf_filename
         self.compiled_file.attach(io: File.open(merged_path), filename: filename, content_type: 'application/pdf')
@@ -459,7 +460,7 @@ module Droom
                   ''
                 end
       "#{acronym}#{meeting_number}Agendabook.pdf"
-    end    
+    end
 
     def compress_pdf_with_ghostscript(input_path, output_path)
       command = "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=#{output_path} #{input_path}"
@@ -469,13 +470,13 @@ module Droom
       end
       File.exist?(output_path)
     end
-    
+
     def merge_pdfs(source_paths, destination_path)
       return false if source_paths.empty?
-    
+
       pdf = CombinePDF.new
       temp_files = []
-    
+
       source_paths.each do |path|
         if path.start_with?("http")
           begin
@@ -494,19 +495,22 @@ module Droom
           Rails.logger.error("Invalid file path, skipping: #{path}")
         end
       end
-    
+
       # Ensure PDFs were merged
       return false if pdf.pages.empty?
-    
+
       # Save the final merged PDF
       pdf.save(destination_path)
-    
+
       # Clean up temporary files
       temp_files.each { |file| File.delete(file) if File.exist?(file) }
-    
+
       File.exist?(destination_path)
     end
 
-
+    def generate_compiled_pdf_cover
+      return unless saved_change_to_event_type_id? || saved_change_to_video_conference_link? || saved_change_to_start?
+      pdf_cover_generate
+    end
   end
 end

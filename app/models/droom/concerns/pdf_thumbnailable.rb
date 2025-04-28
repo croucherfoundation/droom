@@ -15,11 +15,13 @@ module Droom::Concerns::PdfThumbnailable
     pdf = prepare_prawn(meeting_text)
 
     tempfile = create_tempfile(pdf)
-    generate_thumbnails(tempfile.path)
+    generate_thumbnails(tempfile.path, true)
   end
 
-  def generate_thumbnails(file_path)
+  def generate_thumbnails(file_path, is_cover=false)
     return unless file_path.present?
+
+    @is_cover = is_cover
 
     total_pages = get_total_pages(file_path)
     process_pdf_pages(file_path, total_pages)
@@ -148,7 +150,19 @@ module Droom::Concerns::PdfThumbnailable
   end
 
   def attach_thumbnail(thumbnail_path, page_number)
+    if @is_cover
+      if thumbnail = self.thumbnails&.find_by(is_cover: true)
+        thumbnail.image.attach(
+          io: File.open(thumbnail_path),
+          filename: "event_#{self.id}_thumbnail_#{page_number + 1}.jpg",
+          content_type: "image/jpeg"
+        )
+        return
+      end
+    end
+
     self.thumbnails.create!(
+      is_cover: @is_cover,
       image: {
         io: File.open(thumbnail_path),
         filename: "event_#{self.id}_thumbnail_#{page_number + 1}.jpg",
@@ -158,7 +172,19 @@ module Droom::Concerns::PdfThumbnailable
   end
 
   def attach_pdf_page(pdf_path, page_number)
+    if @is_cover
+      if pdf = self.single_documents&.find_by(is_cover: true)
+        pdf.file.attach(
+          io: File.open(pdf_path),
+          filename: "event_#{self.id}_pdf_page_#{page_number + 1}.pdf",
+          content_type: "application/pdf"
+        )
+        return
+      end
+    end
+
     self.single_documents.create!(
+      is_cover: @is_cover,
       file: {
         io: File.open(pdf_path),
         filename: "event_#{self.id}_pdf_page_#{page_number + 1}.pdf",
