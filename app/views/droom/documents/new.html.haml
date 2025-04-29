@@ -6,5 +6,4 @@
   - else
     - title = t(:add_document)
     
-  = render 'droom/shared/popup_header', title: title
-  = render :partial => 'form'
+  = render :partial => 'form', locals: {title: title}
