@@ -11,29 +11,31 @@ module Droom::Concerns::PdfThumbnailable
   end
 
   def pdf_cover_generate
-    tempfile = Tempfile.new(["cover_#{id}_", ".pdf"], binmode: true)
-  
-    begin
-      cover = WickedPdf.new.pdf_from_string(
-        ActionController::Base.new.render_to_string(
-          pdf: 'cover',
-          template: 'droom/events/compile_pdf_cover',
-          locals: { event: self }
-        ),
-        orientation: 'Portrait',
-        page_size: 'A4',
-        margin: { top: 20, bottom: 20, left: 15, right: 15 }
-      )
-  
-      tempfile.write(cover)
-      tempfile.flush
-  
-      generate_thumbnails(tempfile.path, true)
-    ensure
-      tempfile.close
-      tempfile.unlink # delete the file
-    end
-  end  
+    output_path = Rails.root.join("tmp", "cover_#{id}.pdf")
+
+    pdf_html = ::ApplicationController.renderer.new.render_to_string(
+      template: 'droom/events/compile_pdf_cover',
+      layout:   'compile_pdf',
+      formats:  [:html],
+      locals:   { event: self }
+    )
+
+    pdf_file = WickedPdf.new.pdf_from_string(
+      pdf_html,
+      orientation: 'Portrait',
+      page_size:   'A4',
+      margin:      { top: 20, bottom: 20, left: 15, right: 15 }
+    )
+
+    self.single_documents.create!(
+      is_cover: true,
+      file: {
+        io: StringIO.new(pdf_file),
+        filename: "event_#{self.id}_pdf.pdf",
+        content_type: "application/pdf"
+      }
+    )
+  end
 
   def generate_thumbnails(file_path, is_cover=false)
     return unless file_path.present?
