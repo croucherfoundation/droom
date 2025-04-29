@@ -1,35 +1,38 @@
 - user ||= @user || current_user
 
 #edit_user
-  = render 'droom/shared/popup_header', title: t("user_setup.welcome", name: user.name)
+  .standard-modal-overlay.active
+    .standard-modal-container.active
+      %svg.pl-96
+        %use{"xlink:href" => "#croucher_logo"}
 
-  = form_for user, :html => {class: 'poppedup'}, data: {remote: true, type: :html} do |f|
-    = hidden_field_tag :view, @view
+      = form_for user, :html => {class: 'poppedup'}, data: {remote: true, type: :html} do |f|
+        .container
+          %h2
+            = t("user_setup.welcome", name: user.name)
+          .inputs
+            = hidden_field_tag :view, @view
 
-    #setup
-      %h1
-        Welcome!
-      %p
-        Thank you for accepting our invitation.
-        This is a default welcome message that the owner of this site will want to override with their own,
-        which will probably include useful guidance nd links to key features.
+            #setup
+              %h1
+                Welcome!
+              %p
+                Thank you for accepting our invitation.
+                This is a default welcome message that the owner of this site will want to override with their own,
+                which will probably include useful guidance nd links to key features.
 
-      %fieldset{data: {role: 'preferences'}}
-        %p.names
-          - if Droom.use_titles?
-            %span.title>
-              = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']]
-          %span.name>
-            = f.text_field :given_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.given_name")
-          %span.name>
-            = f.text_field :family_name, :required => true, placeholder: t("placeholders.user.family_name")
-          - if Droom.use_chinese_names?
-            %span.chinese_name>
-              = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")
+              %fieldset{data: {role: 'preferences'}}
+                %p.names
+                  - if Droom.use_titles?
+                    %span.title>
+                      = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']],{}, { class: 'w-85' }
+                  %span.name>
+                    = f.text_field :given_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.given_name")
+                  %span.name>
+                    = f.text_field :family_name, :required => true, placeholder: t("placeholders.user.family_name")
+                  - if Droom.use_chinese_names?
+                    %span.chinese_name>
+                      = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")
 
-
-
-
-
-      .edit_account_info_content
-        = render partial: 'droom/users/edit/buttons', locals: {f: f}
+        .buttons
+          = render partial: 'droom/users/edit/buttons', locals: {f: f}
