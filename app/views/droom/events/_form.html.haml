@@ -46,22 +46,65 @@
               %label{for: "event_timezone_UK"}
                 = t :uk_time
 
+          %p.video_conference_link
+            = f.text_field :video_conference_link, :class => 'name', :placeholder => "Add video conference link", :autofocus => true
+
           .description
             = f.text_area :description, class: "rte", placeholder: t("placeholders.event.description")
           
-          .url
+          .description
             = f.text_field :url, class: "full-width", placeholder: t("placeholders.event.url")
           
-          %p.flex
+          %p.admin.model_box{style: "margin-bottom: 0.75rem;"}
             - if Droom::EventType.count > 1
               = f.label :event_type_id, t(:file_under)
-              = f.select :event_type_id, Droom::EventType.for_selection, {}, class: "small event-type"
+              = f.select :event_type_id, Droom::EventType.for_selection, {}, class: "small"
             - if Droom.config.separate_calendars? && Droom::Calendar.count > 1
               = f.label :calendar_id
               = f.select :calendar_id, Droom::Calendar.for_selection, {}, class: "small calendar_modelbox"
             - else
               = f.hidden_field :calendar_id
+
+          .meeting_number
+            = f.text_field :meeting_number, :class => 'name', :placeholder => "Meeting number", :autofocus => true
+          
           %br
+
+          %p Provide the necessary data to generate the meeting PDF cover.
+
+          %p.twocol
+            %span.col>
+              = f.select :short_code, ['AAWG', 'AC', 'CF', 'IC', 'NC', 'NCF', 'NRC']
+            %span.col.last>
+              = f.select :color_code, [['Blue', '56C1FF'], ['Red', 'EE3A43']]
+          
+          .cover_text
+            = f.text_area :cover_text, class: "rte", placeholder: t("placeholders.event.cover_text")
+          
+          %br
+          
+          %ul 
+            %li 
+              %strong {{date}}
+              %span date of the event, and the format of the date is 
+              %span.link-highlight "day of week month day year"
+
+            %li 
+              %strong {{time}}
+              %span time of the event date, and the format of the time is 
+              %span.link-highlight "h:mm am/pm"
+                
+            %li 
+              %strong {{video_conference_link}} 
+              %span take to the video conference, and the name of the link is 
+              %span.link-highlight "here"
+
+            %li 
+              %strong {{dataroom_link}} 
+              %span take to the dataroom system, and the name of the link is 
+              %span.link-highlight "here"
+
       .buttons
+        = f.submit t(:save_event), class: 'croucher-standard-btn inline'
+        = t :or
         = link_to t(:cancel), "/", :class => 'cancel submit-button'
-        = f.submit t(:save_event), class: 'standard-modal-submit'

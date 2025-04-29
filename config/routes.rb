@@ -33,6 +33,9 @@ Droom::Engine.routes.draw do
     resources :organisations do
       post :register, on: :collection
     end
+    namespace :ex do
+      resources :images
+    end
     resources :documents, only: [:show]
     resources :folders, only: [:show] do
       member do
@@ -50,8 +53,8 @@ Droom::Engine.routes.draw do
 
       get '/users/passwords/confirm' => 'users/passwords#confirm', as: :confirm_password
       put '/users/passwords/update' => 'users/passwords#update_password', as: :update_password
-    end 
-    
+    end
+
   end
 
   devise_for :users,
@@ -109,9 +112,16 @@ Droom::Engine.routes.draw do
   resources :calendars, only: [:show]
   resources :events do
     collection do
+      delete :delete_pdf
       get :calendar
       get :past
       get "subscribe/:tok", action: "subscribe", as: :subscribe
+    end
+    member do
+      get :compile_pdf, path: "compile-pdf"
+      post :upload_pdf, path: "upload-pdf"
+      post :generate_pdf, path: "generate-pdf"
+      get :download_pdf, path: "download-pdf"
     end
     resources :invitations do
       member do
@@ -123,6 +133,15 @@ Droom::Engine.routes.draw do
     resources :group_invitations
     resources :documents
     resources :agenda_categories
+  end
+  resources :single_documents do
+    member do
+      get :serve_pdf
+    end
+  end
+
+  resources :thumbnails do
+    put "reposition", on: :member
   end
 
   resources :documents do

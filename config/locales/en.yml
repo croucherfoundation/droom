@@ -80,6 +80,7 @@ en:
   click_to_upload: "Click here to choose an image file"
   close: "Close"
   close_symbol: "✕"
+  compile_pdf: "Compile PDF"
   confirm_delete_document: "Are you sure you want to delete the document '%{name}'? This cannot be undone."
   confirm_delete_event: "Are you sure you want to delete the event '%{name}'? This cannot be undone."
   confirm_delete_event_type: "Are you sure you want to delete the event type '%{name}'? This will not delete its events, but leaves them unattached."
@@ -503,6 +504,7 @@ en:
     email:
       email: "Email address"
     event:
+      cover_text: "Add meeting PDF cover details"
       datemark: "Click to change date"
       description: "Please give a brief description"
       venue_name: "Venue name"

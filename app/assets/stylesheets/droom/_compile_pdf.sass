@@ -1,0 +1,160 @@
+.pdf-container
+  display: flex
+  flex-direction: row
+  width: 100%
+  height: 100vh
+  background-color: $coolgrey0
+
+  .outer-container
+    display: flex
+    flex-direction: column
+    flex-grow: 1
+    overflow: hidden
+
+  .top-header
+    padding: 20px
+    box-shadow: 0 1px 1px $coolgrey4
+    font-size: 18px
+    font-weight: 600
+    color: $dark
+    display: flex
+    justify-content: space-between
+    h3 
+      margin-left: 28px
+      
+    .download-combine-pdf
+      cursor: pointer
+
+  .content-wrapper
+    display: flex
+    flex: 1
+    overflow: hidden
+
+    .left-panel
+      width: 260px
+      border-right: 1px solid $coolgrey1
+      padding: 20px 50px
+      overflow-y: auto
+
+      #thumbnail-list
+        list-style: none
+        padding: 0
+        margin: 0
+
+        .thumbnail-item
+          position: relative
+          cursor: pointer
+          display: block
+          margin-bottom: 15px
+          transition: transform 0.2s ease
+          background-color: unset !important
+
+          &:hover
+            transform: scale(1.05)
+
+          .thumbnail-wrapper
+            position: relative
+            display: block
+
+            .delete-section
+              position: absolute
+              top: -6px
+              right: 0px
+              padding: 5px
+              display: flex
+              justify-content: center
+              align-items: center
+              cursor: pointer
+              z-index: 10
+
+              .delete-btn
+                background: none
+                border: none
+                color: $red
+                font-weight: bold
+                font-size: 20px
+                padding: 0
+                cursor: pointer
+
+            .thumbnail
+              width: 100%
+              height: auto
+              max-height: 224px
+              min-height: 110px
+              border-radius: 5px
+              box-shadow: 0 1px 3px $dark
+              object-fit: cover
+
+          .page-number
+            color: $dark
+            display: flex 
+            justify-content: center
+        
+          &.active 
+            .thumbnail
+              border: 2px solid $blue
+      
+      ul#uploader
+        list-style: none
+
+        .upload-slot
+          width: 160px 
+          height: 224px
+          border-radius: 5px
+          box-shadow: 0 1px 3px $dark
+          cursor: pointer
+
+          .thumbnail-wrapper
+            width: 100%
+            height: 100%
+            display: flex
+            justify-content: center
+            align-items: center
+
+            .upload-label
+              color: $svggrey
+              svg 
+                width: 40px
+                height: 40px  
+
+    .right-panel
+      flex-grow: 1
+      padding: 20px
+      overflow: hidden
+      display: flex
+      flex-direction: column
+
+      .preview-area
+        flex-grow: 1
+        overflow: auto
+        padding-right: 20px
+
+        #preview-list
+          list-style: none
+          padding: 0
+          margin: 0
+
+          .preview-item
+            width: 100%
+            position: relative
+            margin-bottom: 20px
+            border-radius: 10px
+            overflow: hidden
+            display: flex
+            justify-content: center
+
+            .thumbnail-preview-wrapper
+              width: 700px
+
+              .thumbnail-preview
+                width: 100%
+                height: 100%
+                object-fit: cover
+
+.hide-scrollbar
+  overflow: auto
+  scrollbar-width: none
+  -ms-overflow-style: none
+  
+  &::-webkit-scrollbar 
+    display: none

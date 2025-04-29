@@ -2,9 +2,9 @@ module Droom
   class Event < Droom::DroomRecord
     include Droom::Concerns::Slugged
     include ActionView::Helpers::SanitizeHelper
+    include Droom::Concerns::PdfThumbnailable
 
     belongs_to :created_by, :class_name => "Droom::User"
-
     belongs_to :calendar
     belongs_to :event_type
 
@@ -29,7 +29,10 @@ module Droom
     after_destroy :destroy_related_folder
     around_update :update_folder_name
 
+    has_one_attached :compiled_file
+
     after_save :set_parent_folder_id
+    after_save :generate_compiled_pdf_cover
 
     validates :start, :presence => true, :date => true
     validates :finish, :date => {:after => :start, :allow_nil => true}
@@ -104,7 +107,7 @@ module Droom
       where('droom_events.name like :f OR droom_events.description like :f', :f => fragment)
     }
 
-    scope :current_and_onwards, -> { where(['(start > :start) OR (start BETWEEN :start AND :end) OR (end_date BETWEEN :start AND :end)', 
+    scope :current_and_onwards, -> { where(['(start > :start) OR (start BETWEEN :start AND :end) OR (end_date BETWEEN :start AND :end)',
       :start => DateTime.now.beginning_of_month, :end => DateTime.now.end_of_month])
       .order(:start)
     }
@@ -382,6 +385,34 @@ module Droom
       "#{name} (#{month_name} #{year})"
     end
 
+    def combined_pdf
+      documents = self.single_documents.order(:position)
+      return false if documents.empty?
+
+      source_paths = documents.map { |doc| doc.file.url }
+      folder_path = Rails.root.join('tmp/applications')
+      Dir.mkdir(folder_path) unless Dir.exist?(folder_path)
+      merged_path = File.join(Dir.tmpdir, "combined_#{SecureRandom.uuid}.pdf")
+
+      if merge_pdfs(source_paths, merged_path)
+        filename = generate_compiled_pdf_filename
+        self.compiled_file.attach(io: File.open(merged_path), filename: filename, content_type: 'application/pdf')
+        self.save
+        return self.compiled_file.attached?
+      end
+      false
+    end
+
+    def transform_cover_text
+      return unless cover_text
+
+      transformed_text = self.cover_text
+                             .gsub('{{date}}', I18n.l(start, :format => :date_with_week_day))
+                             .gsub('{{time}}', I18n.l(start, :format => :just_time))
+                             .gsub('{{video_conference_link}}', "<a href='#{video_conference_link}', target='_blank'>here</a>")
+                             .gsub('{{dataroom_link}}', "<a href='https://data.croucher.org.hk', target='_blank'>here</a>")
+    end
+
   protected
 
     # Set event_type.folder.id to event.folder.parent_id if event.event_type changed
@@ -432,5 +463,69 @@ module Droom
       end
     end
 
+    def generate_compiled_pdf_filename
+      [short_code, meeting_number, 'Agendabook', '.pdf'].compact.join('')
+    end
+
+    def compress_pdf_with_ghostscript(input_path, output_path)
+      command = "gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=#{output_path} #{input_path}"
+      result = `#{command}`
+      unless $?.success?
+        Rails.logger.error("Ghostscript failed: #{result}")
+      end
+      File.exist?(output_path)
+    end
+
+    def merge_pdfs(source_paths, destination_path)
+      return false if source_paths.empty?
+
+      pdf = CombinePDF.new
+      temp_files = []
+
+      source_paths.each do |path|
+        if path.start_with?("http")
+          begin
+            file_name = "pdf_#{SecureRandom.uuid}.pdf"
+            temp_file_path = Rails.root.join('tmp', file_name)
+
+            File.open(temp_file_path, 'wb') do |f|
+              f.write URI.open(path).read
+            end
+            temp_files << temp_file_path
+            pdf << CombinePDF.load(temp_file_path)
+          rescue => e
+            Rails.logger.error("Error processing PDF #{path}: #{e.message}")
+          end
+        else
+          Rails.logger.error("Invalid file path, skipping: #{path}")
+        end
+      end
+
+      # Ensure PDFs were merged
+      return false if pdf.pages.empty?
+
+      # Save the final merged PDF
+      pdf.save(destination_path)
+
+      # Clean up temporary files
+      temp_files.each { |file| File.delete(file) if File.exist?(file) }
+
+      File.exist?(destination_path)
+    end
+
+    def generate_compiled_pdf_cover
+      return unless cover_needs_update?
+
+      generate_pdf_cover
+    end
+
+    def cover_needs_update?
+      saved_change_to_event_type_id? ||
+      saved_change_to_video_conference_link? ||
+      saved_change_to_start? ||
+      saved_change_to_cover_text? ||
+      saved_change_to_short_code? ||
+      saved_change_to_color_code?
+    end
   end
 end

@@ -2,6 +2,7 @@ module Droom
   class EventsController < Droom::DroomController
     require "uri"
     require "icalendar"
+    require "prawn"
 
     respond_to :html, :json, :ics, :js
 
@@ -78,7 +79,7 @@ module Droom
 
     def update
       if @event.update(event_params)
-        
+
         if @event.stream?
           render :partial => "minimal", locals: { show_color_button: true}
         else
@@ -92,6 +93,48 @@ module Droom
     def destroy
       @event.destroy
       head :ok
+    end
+
+    def upload_pdf
+      file = params[:file]
+      if file.content_type == "application/pdf"
+        file_path = URI.open(file.tempfile).path
+        event = Event.find(params[:id])
+        event.generate_thumbnails(file_path)
+        render json: { success: true }
+      else
+        render json: { error: "Invalid file type" }, status: :unprocessable_entity
+      end
+    end
+
+    def compile_pdf
+      @event.generate_pdf_cover if @event.thumbnails.empty? && @event.single_documents.empty?
+
+      @thumbnails = @event.thumbnails.order(:position)
+      @single_documents = @event.single_documents.order(:position)
+
+      render layout: 'no_layout'
+    end
+
+    def generate_pdf
+      if @event.combined_pdf && @event.compiled_file.attached?
+        render json: { success: true }
+      else
+        render json: { error: 'Failed to generate PDF' }, status: :unprocessable_entity
+      end
+    end
+
+    def download_pdf
+      if @event.compiled_file.attached?
+        file = @event.compiled_file
+        data = URI.open(file.url)
+        send_data data.read,
+                  filename: file.filename.to_s,
+                  type: file.content_type,
+                  disposition: 'attachment'
+      else
+        head :not_found
+      end
     end
 
   protected
@@ -157,7 +200,7 @@ module Droom
 
     def event_params
       if params[:event]
-        params.require(:event).permit(:name, :description, :event_set_id, :event_type_id, :calendar_id, :all_day, :master_id, :url, :start, :finish, :end_date, :timezone, :venue_id, :venue_name)
+        params.require(:event).permit(:name, :description, :video_conference_link, :meeting_number, :event_set_id, :event_type_id, :calendar_id, :all_day, :master_id, :url, :start, :finish, :end_date, :timezone, :venue_id, :venue_name, :cover_text, :short_code, :color_code)
       else
         {}
       end
