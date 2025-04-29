@@ -532,7 +532,7 @@ module Droom
       saved_change_to_event_type_id? ||
       saved_change_to_video_conference_link? ||
       saved_change_to_start? ||
-      saved_change_to_covet_text? ||
+      saved_change_to_cover_text? ||
       saved_change_to_short_code? ||
       saved_change_to_color_code?
     end
