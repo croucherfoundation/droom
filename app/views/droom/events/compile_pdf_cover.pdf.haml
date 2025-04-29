@@ -1,0 +1,8 @@
+.content
+  .logo 
+    = image_tag 'https://front.croucherscienceweek.hk/logo/cf_white_logo.png', alt: 'Croucher logo', width: 57, height: 110
+  
+  .text 
+    = @event.transform_cover_text&.html_safe
+
+  

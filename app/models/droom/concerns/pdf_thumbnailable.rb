@@ -10,31 +10,31 @@ module Droom::Concerns::PdfThumbnailable
     has_many :single_documents, dependent: :destroy
   end
 
-  def pdf_cover_generate
-    output_path = Rails.root.join("tmp", "cover_#{id}.pdf")
+  require 'tempfile'
 
+  def generate_pdf_cover
     pdf_html = ::ApplicationController.renderer.new.render_to_string(
       template: 'droom/events/compile_pdf_cover',
       layout:   'compile_pdf',
-      formats:  [:html],
-      locals:   { event: self }
+      assigns:  { event: self }
     )
 
     pdf_file = WickedPdf.new.pdf_from_string(
       pdf_html,
       orientation: 'Portrait',
       page_size:   'A4',
-      margin:      { top: 20, bottom: 20, left: 15, right: 15 }
+      margin:      { top: 0, bottom: 0, left: 0, right: 0 },
+      disable_smart_shrinking: true,
+      zoom: 1,
+      print_media_type: true,
+      background: true
     )
 
-    self.single_documents.create!(
-      is_cover: true,
-      file: {
-        io: StringIO.new(pdf_file),
-        filename: "event_#{self.id}_pdf.pdf",
-        content_type: "application/pdf"
-      }
-    )
+    tempfile = Tempfile.new(["cover_#{id}", ".pdf"], binmode: true)
+    tempfile.write(pdf_file)
+    tempfile.rewind
+
+    generate_thumbnails(tempfile.path, true)
   end
 
   def generate_thumbnails(file_path, is_cover=false)
@@ -47,74 +47,6 @@ module Droom::Concerns::PdfThumbnailable
   end
 
   private
-
-  # def generate_meeting_text
-
-  # end
-
-  # def meeting_texts
-  #   {
-  #     1 => "A Trustees’ Meeting is to be held on",
-  #     2 => "A meeting of the NCF Nomination Committee is to be held on",
-  #     3 => "An Investment Committee Meeting is to be held on",
-  #     4 => "An Audit Committee Meeting is to be held on",
-  #     5 => "A Governors’ Meeting is to be held on",
-  #     6 => "A meeting of the CF Nomination & Remuneration Committee is to be held on",
-  #     7 => "A meeting of the Academic Assessment Working Group is to be held on"
-  #   }
-  # end
-
-  def prepare_prawn(meeting_text)
-    pdf = Prawn::Document.new(page_size: "A4", margin: 0)
-    set_background_color(pdf)
-    add_logo(pdf)
-    add_text(pdf, meeting_text)
-    pdf
-  end
-
-  def set_background_color(pdf)
-    bg_color = self.color_code.presence || "EE3A43"
-    pdf.fill_color = bg_color
-    pdf.fill_rectangle [pdf.bounds.left, pdf.bounds.top], pdf.bounds.width, pdf.bounds.height
-  end
-
-  def add_logo(pdf)
-    logo_path = Rails.root.join("app/assets/images/croucher_white_logo.png")
-    pdf.image(logo_path, at: [45, 790], height: 110) if File.exist?(logo_path)
-  end
-
-  def add_text(pdf, meeting_text)
-    pdf.fill_color "FFFFFF"
-    set_font(pdf)
-
-    sanitized_text = ActionController::Base.helpers.sanitize(meeting_text, tags: %w[b i u strong em ol ul li div p a h2 h3], attributes: %w[href])
-
-    pdf.text_box sanitized_text, at: [40, 630], size: 24, width: 450, align: :left, inline_format: true
-
-    pdf.stroke_color "FFFFFF"
-
-    # add_links(pdf)
-  end
-
-  def set_font(pdf)
-    pdf.font("Helvetica")  # Always use Helvetica
-  end
-
-  def add_links(pdf)
-    pdf.text_box "To join the meeting click <u><link href='https://#{self.video_conference_link}' target='_blank'>here</link></u>",
-                 at: [40, 480], size: 24, width: 450, align: :left, inline_format: true
-
-    pdf.text_box "To go to the dataroom click <u><link href='https://data.croucher.org.hk' target='_blank'>here</link></u>",
-                 at: [40, 430], size: 24, width: 450, align: :left, inline_format: true
-  end
-
-  def create_tempfile(pdf)
-    tempfile = Tempfile.new(["cover_#{self.id}", ".pdf"])
-    tempfile.binmode
-    tempfile.write(pdf.render)
-    tempfile.rewind
-    tempfile
-  end
 
   def get_total_pages(pdf_tempfile)
     CombinePDF.load(pdf_tempfile).pages.count

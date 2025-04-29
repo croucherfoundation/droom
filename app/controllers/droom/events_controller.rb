@@ -108,7 +108,7 @@ module Droom
     end
 
     def compile_pdf
-      @event.pdf_cover_generate if @event.thumbnails.empty? && @event.single_documents.empty?
+      @event.generate_pdf_cover if @event.thumbnails.empty? && @event.single_documents.empty?
 
       @thumbnails = @event.thumbnails.order(:position)
       @single_documents = @event.single_documents.order(:position)

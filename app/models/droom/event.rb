@@ -403,18 +403,14 @@ module Droom
       false
     end
 
-    def render_cover_text
-      transformed_text = Mustache.render(cover_text.html_safe, for_cover)
-      CGI.unescapeHTML(transformed_text)
-    end
+    def transform_cover_text
+      return unless cover_text
 
-    def for_cover
-      {
-        date: I18n.l(start, :format => :date_with_week_day),
-        time: I18n.l(start, :format => :just_time),
-        video_conference_link: "<a href='#{self.video_conference_link}', target='_blank'>here</a>",
-        dataroom_link: "<a href='https://#{Settings.host}', target='_blank'>here</a>"
-      }
+      transformed_text = self.cover_text
+                             .gsub('{{date}}', I18n.l(start, :format => :date_with_week_day))
+                             .gsub('{{time}}', I18n.l(start, :format => :just_time))
+                             .gsub('{{video_conference_link}}', "<a href='#{video_conference_link}', target='_blank'>here</a>")
+                             .gsub('{{dataroom_link}}', "<a href='https://data.croucher.org.hk', target='_blank'>here</a>")
     end
 
   protected
@@ -468,12 +464,7 @@ module Droom
     end
 
     def generate_compiled_pdf_filename
-      acronym = if self.event_type&.name.present?
-                  self.event_type.name.split(' ').map { |word| word[0].upcase }.join
-                else
-                  ''
-                end
-      "#{acronym}#{meeting_number}Agendabook.pdf"
+      [short_code, meeting_number, 'Agendabook', '.pdf'].compact.join('')
     end
 
     def compress_pdf_with_ghostscript(input_path, output_path)
@@ -525,7 +516,7 @@ module Droom
     def generate_compiled_pdf_cover
       return unless cover_needs_update?
 
-      pdf_cover_generate
+      generate_pdf_cover
     end
 
     def cover_needs_update?
