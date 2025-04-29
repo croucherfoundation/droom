@@ -17,9 +17,10 @@
             - @thumbnails.each_with_index do |image, index|
               %li.thumbnail-item.files{ data: { page_number: image.position, doc_id: image.id }, class: ('active' if index == 0)}
                 .thumbnail-wrapper
-                  .delete-section
-                    %button.delete-btn{ type: "button", data: { image_id: image.id, event_id: @event.id}, aria: { label: "Delete thumbnail" }, title: 'Delete PDF' }
-                      .btn-text ×
+                  - unless index == 0
+                    .delete-section 
+                      %button.delete-btn{ type: "button", data: { image_id: image.id, event_id: @event.id}, aria: { label: "Delete thumbnail" }, title: 'Delete PDF' }
+                        .btn-text ×
                   = image_tag image.image.url, class: "thumbnail", width: "100", loading: "lazy"
                 %div.page-number{ data: { page_number: image.position } }
                   = index + 1

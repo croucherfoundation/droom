@@ -79,7 +79,7 @@ module Droom::Concerns::PdfThumbnailable
     output = Tempfile.new(["thumb_#{page_number}", ".jpg"])
     output.close
 
-    MiniMagick::Tool::Magick.new do |magick|
+    MiniMagick::Tool::Convert.new do |magick|
       magick.density '100'
       magick.quality '100'
       magick << "#{pdf_tempfile}[#{page_number}]"
