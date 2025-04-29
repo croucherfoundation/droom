@@ -1,0 +1,42 @@
+- content_for :pagetitle do
+  Compile meeting PDF
+  
+.pdf-container
+  .outer-container
+    .top-header
+      %h3 
+        = @event.name
+      .download-combine-pdf{title: "Download PDF"}
+        %svg.icon
+          %use{href: "#download_symbol"}
+
+    .content-wrapper
+      .left-panel.hide-scrollbar
+        %ul#thumbnail-list.sortable_files{data: {event_id: @event.id}}
+          - @thumbnails.each_with_index do |image, index|
+            %li.thumbnail-item.files{ data: { page_number: image.position, doc_id: image.id }, class: ('active' if index == 0)}
+              .thumbnail-wrapper
+                - unless index == 0
+                  .delete-section 
+                    %button.delete-btn{ type: "button", data: { image_id: image.id, event_id: @event.id}, aria: { label: "Delete thumbnail" }, title: 'Delete PDF' }
+                      .btn-text ×
+                = image_tag image.image.url, class: "thumbnail", width: "100", loading: "lazy"
+              %div.page-number{ data: { page_number: image.position } }
+                = index + 1
+        
+        %ul#uploader
+          %li.thumbnail-item.upload-slot
+            .thumbnail-wrapper.upload-wrapper
+              %input.upload-input{ type: "file", accept: "application/pdf", style: "display: none;" }
+              %div.upload-label 
+                %svg
+                  %use{href: "#add_symbol"}
+
+
+      .right-panel
+        .preview-area
+          %ul#preview-list
+            - @single_documents.each do |pdf|
+              %li.preview-item{ data: { page_number: pdf.position, pdf_url: serve_pdf_single_document_path(pdf) } }
+                %canvas.pdf-canvas{ id: "canvas-#{pdf.id}", width: "100%" }
+
