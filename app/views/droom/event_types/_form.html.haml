@@ -1,16 +1,25 @@
-= form_for @event_type, :html => {:class => 'edit event_type', :remote => true, :data => {:type => :html}} do |f|
-  %p.name
-    = f.text_field :name, :class => 'name', :placeholder => t(:event_type_name)
-    
-  %p.description
-    = f.text_area :description, :class => 'name', :placeholder => t(:event_type_description)
-    %br
-    = f.check_box :private
-    = f.label :private
-    = f.check_box :public
-    = f.label :public
+.standard-modal-overlay.active
+  .standard-modal-container.active
+    %svg.pl-96
+      %use{"xlink:href" => "#croucher_logo"}
 
-  .buttons
-    = f.submit t(:save), class: 'croucher-standard-btn inline'
-    = t :or
-    = link_to t(:cancel), "/", :class => 'cancel'
+    = form_for @event_type, :html => {:class => 'edit event_type', :remote => true, :data => {:type => :html}} do |f|
+      .container
+        %h2
+          = t title
+        .inputs
+          %p.name
+            = f.text_field :name, :class => 'name', :placeholder => t(:event_type_name)
+            
+          %p.description
+            = f.text_area :description, :class => 'name', :placeholder => t(:event_type_description)
+            %br
+            = f.check_box :private
+            = f.label :private
+            = f.check_box :public
+            = f.label :public
+
+      .buttons
+        = f.submit t(:save), class: 'croucher-standard-btn inline'
+        = t :or
+        = link_to t(:cancel), "/", :class => 'cancel submit-button'
