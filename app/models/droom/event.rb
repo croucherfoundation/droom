@@ -403,6 +403,20 @@ module Droom
       false
     end
 
+    def render_cover_text
+      transformed_text = Mustache.render(cover_text.html_safe, for_cover)
+      CGI.unescapeHTML(transformed_text)
+    end
+
+    def for_cover
+      {
+        date: I18n.l(start, :format => :date_with_week_day),
+        time: I18n.l(start, :format => :just_time),
+        video_conference_link: "<a href='#{self.video_conference_link}', target='_blank'>here</a>",
+        dataroom_link: "<a href='https://#{Settings.host}', target='_blank'>here</a>"
+      }
+    end
+
   protected
 
     # Set event_type.folder.id to event.folder.parent_id if event.event_type changed
@@ -509,8 +523,18 @@ module Droom
     end
 
     def generate_compiled_pdf_cover
-      return unless saved_change_to_event_type_id? || saved_change_to_video_conference_link? || saved_change_to_start?
+      return unless cover_needs_update?
+
       pdf_cover_generate
+    end
+
+    def cover_needs_update?
+      saved_change_to_event_type_id? ||
+      saved_change_to_video_conference_link? ||
+      saved_change_to_start? ||
+      saved_change_to_covet_text? ||
+      saved_change_to_short_code? ||
+      saved_change_to_color_code?
     end
   end
 end

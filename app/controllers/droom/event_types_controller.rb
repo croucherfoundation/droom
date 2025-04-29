@@ -36,14 +36,14 @@ module Droom
         respond_with @event_type
       end
     end
-    
+
     def destroy
       @event_type.destroy
       head :ok
     end
 
   protected
-  
+
     def event_type_params
       params.require(:event_type).permit(:name, :description, :public, :private)
     end

@@ -1,0 +1,11 @@
+- color = event.color_code.presence || 'EE3A43'
+- page_styles = "background-color: ##{event.color_code}; color: #fff; font-size: 24px"
+
+#pdf_cover{style: page_styles}
+  .logo 
+    = image_tag url('croucher_white_logo.png'), alt: 'Croucher logo', width: 57, height: 110
+  
+  .text 
+    = event.render_cover_text&.html_safe
+
+  

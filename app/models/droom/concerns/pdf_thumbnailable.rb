@@ -11,11 +11,27 @@ module Droom::Concerns::PdfThumbnailable
   end
 
   def pdf_cover_generate
-    meeting_text = generate_meeting_text
-    pdf = prepare_prawn(meeting_text)
+    cover = WickedPdf.new.pdf_from_string(
+      render_to_string(
+        pdf: 'certificate',
+        template: 'droom/events/compile_pdf_cover',
+        layout: 'certificate',
+        locals: { event: self }
+      ),
+      orientation: 'Portrait',
+      page_size: 'A4',
+      margin: {
+        top: 20,
+        bottom: 20,
+        left: 15,
+        right: 15
+      }
+    )
+    # meeting_text = self.render_cover_text
+    # pdf = prepare_prawn(meeting_text)
 
-    tempfile = create_tempfile(pdf)
-    generate_thumbnails(tempfile.path, true)
+    # tempfile = create_tempfile(pdf)
+    # generate_thumbnails(tempfile.path, true)
   end
 
   def generate_thumbnails(file_path, is_cover=false)
@@ -29,22 +45,21 @@ module Droom::Concerns::PdfThumbnailable
 
   private
 
-  def generate_meeting_text
-    datetime_str = "#{self.start.strftime('%A %d %B %Y')} at #{self.start.strftime('%I:%M%p')}"
-    "#{meeting_texts[self.event_type_id]} #{datetime_str}"
-  end
+  # def generate_meeting_text
 
-  def meeting_texts
-    {
-      1 => "A Trustees’ Meeting is to be held on",
-      2 => "A meeting of the NCF Nomination Committee is to be held on",
-      3 => "An Investment Committee Meeting is to be held on",
-      4 => "An Audit Committee Meeting is to be held on",
-      5 => "A Governors’ Meeting is to be held on",
-      6 => "A meeting of the CF Nomination & Remuneration Committee is to be held on",
-      7 => "A meeting of the Academic Assessment Working Group is to be held on"
-    }
-  end
+  # end
+
+  # def meeting_texts
+  #   {
+  #     1 => "A Trustees’ Meeting is to be held on",
+  #     2 => "A meeting of the NCF Nomination Committee is to be held on",
+  #     3 => "An Investment Committee Meeting is to be held on",
+  #     4 => "An Audit Committee Meeting is to be held on",
+  #     5 => "A Governors’ Meeting is to be held on",
+  #     6 => "A meeting of the CF Nomination & Remuneration Committee is to be held on",
+  #     7 => "A meeting of the Academic Assessment Working Group is to be held on"
+  #   }
+  # end
 
   def prepare_prawn(meeting_text)
     pdf = Prawn::Document.new(page_size: "A4", margin: 0)
@@ -55,7 +70,7 @@ module Droom::Concerns::PdfThumbnailable
   end
 
   def set_background_color(pdf)
-    bg_color = ["1", "2", "3", "6"].include?(self.event_type_id.to_s) ? "EE3A43" : "56C1FF"
+    bg_color = self.color_code.presence || "EE3A43"
     pdf.fill_color = bg_color
     pdf.fill_rectangle [pdf.bounds.left, pdf.bounds.top], pdf.bounds.width, pdf.bounds.height
   end
@@ -69,11 +84,13 @@ module Droom::Concerns::PdfThumbnailable
     pdf.fill_color "FFFFFF"
     set_font(pdf)
 
-    pdf.text_box meeting_text, at: [40, 630], size: 24, width: 450, align: :left
+    sanitized_text = ActionController::Base.helpers.sanitize(meeting_text, tags: %w[b i u strong em ol ul li div p a h2 h3], attributes: %w[href])
+
+    pdf.text_box sanitized_text, at: [40, 630], size: 24, width: 450, align: :left, inline_format: true
 
     pdf.stroke_color "FFFFFF"
 
-    add_links(pdf)
+    # add_links(pdf)
   end
 
   def set_font(pdf)

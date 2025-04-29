@@ -504,6 +504,7 @@ en:
     email:
       email: "Email address"
     event:
+      cover_text: "Please give a meeting PDF cover text"
       datemark: "Click to change date"
       description: "Please give a brief description"
       venue_name: "Venue name"
