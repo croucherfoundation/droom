@@ -13,7 +13,7 @@
 
           %table
             %tr
-              %td{valign: 'top'}
+              %td{valign: 'top', class: 'pt-14'}
                 %table
                   %tr
                     %td
@@ -35,7 +35,7 @@
                       %td
                         - if Droom.use_titles?
                           %span.title>
-                            = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']]
+                            = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']],{},{class: 'std-input-mb'}
                       %td
                         %span.name>
                           = f.text_field :given_name, :required => true, placeholder: t("placeholders.user.given_name")
