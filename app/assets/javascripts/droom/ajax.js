@@ -70,11 +70,7 @@
           $('input[type="submit"]').css("background-color", "#9b9b8e");
         }
         if (xhr.status === 422) {
-          console.log('getting 422');
-          let $form = $(event.currentTarget);
-          let $errorParagraph = $form.find('p.error');
           let responseData = null;
-
           if (xhr?.responseText && typeof xhr?.responseText === 'string') {
             const responseText = xhr.responseText.trim();
             if (responseText.startsWith("{")) {
@@ -85,18 +81,36 @@
               }
             }
           }
-
+        
           const errorMessage = responseData?.errors?.join(', ') || 'An error occurred.';
-
-          if ($errorParagraph.length === 0) {
-            $errorParagraph = $('<p class="error"></p>');
-            $form.prepend($errorParagraph);
+        
+          const flashes = document.getElementById("flashes");
+          if (flashes) {
+            // Clear existing flash messages
+            flashes.innerHTML = '';
+        
+            const flashElement = document.createElement("p");
+            flashElement.className = "alert ready unexpandable";
+            flashElement.style.display = "block";
+            flashElement.style.gridRowEnd = "span 2";
+            flashElement.innerHTML = `
+              <a href="#" class="closer timezone-flash-close" onclick="this.parentElement.remove(); return false;">close</a>
+              ${errorMessage}
+            `;
+        
+            flashes.appendChild(flashElement);
+        
+            // Automatically remove flash after 5 seconds
+            setTimeout(() => {
+              flashElement.remove();
+            }, 5000);
           }
         
-          $errorParagraph.text(errorMessage);
-          $form.find('input[type="submit"]').addClass("waiting");
+          event.stopPropagation();
+          this._control.removeClass('waiting');
+          this._control.trigger('remote:success', null);
           return this._control.trigger('remote:complete', status);
-        }
+        }                     
         
         if (xhr.status === 401) {
           window.location.reload();
