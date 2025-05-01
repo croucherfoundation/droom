@@ -1,17 +1,24 @@
-= form_for [@service, @permission], :html => { :multipart => true, :class => 'edit permission', :remote => true, :data => {:type => :html}} do |f|
+.standard-modal-overlay.active
+  .standard-modal-container.active
+    %svg.pl-96
+      %use{"xlink:href" => "#croucher_logo"}
 
-  %p.name
-    = f.text_field :name, :class => 'name', :placeholder => t("helpers.label.service.name"), :autofocus => true
+    = form_for [@service, @permission], :html => { :multipart => true, :class => 'edit permission', :remote => true, :data => {:type => :html}} do |f|
+      .container
+        %h2
+          = title
+        .inputs
+          %p.name
+            = f.text_field :name, :class => 'name', :placeholder => t("helpers.label.service.name"), :autofocus => true
 
-  %p.description
-    = f.text_area :description, :class => 'description', :placeholder => t("helpers.label.service.description")
+          %p.description
+            = f.text_area :description, :class => 'description', :placeholder => t("helpers.label.service.description")
 
-  %p.service
-    = f.label :service_id
-    %br
-    = f.select :service_id, Droom::Service.for_selection
+          %p.service
+            = f.label :service_id
+            %br
+            = f.select :service_id, Droom::Service.for_selection
 
-  .buttons
-    = f.submit t(:save_permission), class: 'croucher-standard-btn inline'
-    = t :or
-    = link_to t(:cancel), "/", :class => 'cancel'
+      .buttons
+        = link_to t(:cancel), "/", :class => 'cancel submit-button'
+        = f.submit t(:save_permission), class: 'croucher-standard-btn inline'

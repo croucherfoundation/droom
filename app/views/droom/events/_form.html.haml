@@ -41,13 +41,13 @@
               = t :at
             = f.text_field :venue_name, :class => "venuepicker", :placeholder => t("placeholders.event.venue_name"), :autocomplete => "off",  data: {role: "venuepicker", width: 300}
           - if Droom.config.second_time_zone?
-            %span.timezone
+            %span.std-modal-timezone
               = f.check_box :timezone, {id: "event_timezone_UK"}, "London", "Hong Kong"
               %label{for: "event_timezone_UK"}
                 = t :uk_time
 
           %p.video_conference_link
-            = f.text_field :video_conference_link, :class => 'name', :placeholder => "Add video conference link", :autofocus => true
+            = f.text_field :video_conference_link, :class => 'name', :placeholder => "Add video conference link"
 
           .description
             = f.text_area :description, class: "rte", placeholder: t("placeholders.event.description")
@@ -61,12 +61,12 @@
               = f.select :event_type_id, Droom::EventType.for_selection, {}, class: "small"
             - if Droom.config.separate_calendars? && Droom::Calendar.count > 1
               = f.label :calendar_id
-              = f.select :calendar_id, Droom::Calendar.for_selection, {}, class: "small calendar_modelbox"
+              = f.select :calendar_id, Droom::Calendar.for_selection, {}, class: "small calendar_modelbox w-222"
             - else
               = f.hidden_field :calendar_id
 
           .meeting_number
-            = f.text_field :meeting_number, :class => 'name', :placeholder => "Meeting number", :autofocus => true
+            = f.text_field :meeting_number, :class => 'name', :placeholder => "Meeting number"
           
           %br
 
@@ -105,6 +105,5 @@
               %span.link-highlight "here"
 
       .buttons
-        = f.submit t(:save_event), class: 'croucher-standard-btn inline'
-        = t :or
         = link_to t(:cancel), "/", :class => 'cancel submit-button'
+        = f.submit t(:save_event), class: 'croucher-standard-btn inline'

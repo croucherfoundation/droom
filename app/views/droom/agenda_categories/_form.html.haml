@@ -1,22 +1,30 @@
-= form_for [droom, @event, @agenda_category], :html => {:class => 'edit agenda_category'} do |f|
-  %p.category
-    %span#existing_category{:data => {:action => "alternate", :selector => "#new_category"}}
-      = f.select :category_id, Droom::Category.for_selection
-      %br
-      %span.action
-        = link_to t(:add_category), '#', :class => "add"
+.standard-modal-overlay.active
+  .standard-modal-container.active
+    %svg.pl-96
+      %use{"xlink:href" => "#croucher_logo"}
 
-    %span#new_category
-      - @category = Droom::Category.new
-      = f.fields_for :category, @category do |ncf|
-        = ncf.text_field :name
-        %br
-        %span.action
-          = link_to t(:existing_category), '#', :class => "revert"
+    = form_for [droom, @event, @agenda_category], :html => {:class => 'edit agenda_category'} do |f|
+      .container
+        %h2
+          = t title
+        .inputs
+          %p.category
+            %span#existing_category{:data => {:action => "alternate", :selector => "#new_category"}}
+              = f.select :category_id, Droom::Category.for_selection
+              %br
+              %span.action
+                = link_to t(:add_category), '#', :class => "add"
 
-  %p.stretcher
-    
-  .buttons
-    = f.submit t(:save_agenda_category), class: 'croucher-standard-btn inline'
-    = t :or
-    = link_to t(:cancel), '#', :class => 'cancel'
+            %span#new_category
+              - @category = Droom::Category.new
+              = f.fields_for :category, @category do |ncf|
+                = ncf.text_field :name
+                %br
+                %span.action
+                  = link_to t(:existing_category), '#', :class => "revert"
+
+          %p.stretcher
+        
+      .buttons
+        = link_to t(:cancel), '#', :class => 'cancel submit-button'
+        = f.submit t(:save_agenda_category), class: 'croucher-standard-btn inline'
