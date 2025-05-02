@@ -17,7 +17,17 @@
             - else
               = t :admin_account_emails
           .inputs
-            = render "droom/users/edit/emails", f: f, user: user
+            -# = render "droom/users/edit/emails", f: f, user: user
+            - email_count = 0
+            - user.emails.each_with_index do |email, index|
+              = f.fields_for :emails, email, child_index: index do |email_fields|
+                = email_fields.email_field :email, placeholder: t("placeholders.email.email"), required: true, data: {role: "email", check_url: check_email_path, users_path: users_path, user_id: user.id}, class: "required"
+                = email_fields.hidden_field :address_type_id
+              - email_count+=1
+            - if email_count < 2
+              = f.fields_for :emails, user.emails.new, child_index: email_count do |email_fields|
+                = email_fields.email_field :email, placeholder: t("placeholders.email.email")
+                = email_fields.hidden_field :address_type_id, value: 4
             
             - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
               %p
