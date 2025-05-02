@@ -73,11 +73,13 @@ module Droom::Api
       profile_image = user_params[:image] if user_params[:image].present?
       attach_base64_image(@user, :image, profile_image) if profile_image.present?
       @user.show_initial_image = true if params[:user][:remove_image] == true || params[:user][:remove_image] == "true"
-      @user.update(user_params.except(:image))
 
-      @user.class.sync_in_progress = false
-
-      render json: @user.reload
+      if @user.update(user_params.except(:image))
+        @user.class.sync_in_progress = false
+        render json: @user.reload
+      else
+        render json: @user, serializer: Droom::UserSerializer, meta: {error: @user.errors.full_messages}
+      end
     end
 
     def create
