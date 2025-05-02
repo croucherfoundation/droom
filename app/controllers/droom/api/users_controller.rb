@@ -119,6 +119,13 @@ module Droom::Api
       end
     end
 
+    def validate_email
+      @email = Droom::Email.find_by(email: @user.email)
+      return render json: { valid: false } unless @email.present?
+
+      render json:  @user, serializer: Droom::UserMinimalSerializer, meta: { valid: ZerobounceService.new(record: @email).call }
+    end
+
   protected
 
     def find_or_create_user
