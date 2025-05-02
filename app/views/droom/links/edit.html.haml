@@ -1,3 +1,2 @@
 #folder
-  = render 'droom/shared/popup_header', title: t(:edit_link)
-  = render :partial => 'form'
+  = render :partial => 'form', locals: {title: :edit_link}
