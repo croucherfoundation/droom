@@ -26,5 +26,5 @@
             = f.text_field :slug, :class => "slug", :placeholder => t("helpers.label.folder.slug"), data: {role: 'slug'}, readonly: true, style: "background: #eee"
 
       .buttons
-        = link_to t(:cancel), '#', :class => 'cancel submit-button'
+        = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
         = f.submit t(:save_folder), class: 'standard-modal-submit'

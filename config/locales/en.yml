@@ -71,6 +71,7 @@ en:
   can_join_organisations: "Your confirmed email address allows you to join any of the organisations listed below. Please click on one of the buttons to proceed."
   can_still_log_in: 'Your password has not changed until you complete this process, <br />so if you remember the old one you can still <a href="%{url}">log in</a>'
   cancel: "cancel"
+  cancel_edit: "Cancel"
   choose_new_password: "Choose a new password"
   clear_search: "Clear search"
   click_below_to_approve: "Please click below to approve or disapprove."

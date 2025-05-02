@@ -20,5 +20,5 @@
             = f.select :service_id, Droom::Service.for_selection
 
       .buttons
-        = link_to t(:cancel), "/", :class => 'cancel submit-button'
+        = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
         = f.submit t(:save_permission), class: 'croucher-standard-btn inline'

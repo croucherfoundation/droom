@@ -22,7 +22,7 @@
             = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, timezone_id: "profile_timezone"}
 
         .buttons
-          = link_to t(:cancel), '#', :class => 'cancel submit-button'
+          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
           - if user == current_user
             = f.submit t(:save_your_profile), class: 'standard-modal-submit'
           - else

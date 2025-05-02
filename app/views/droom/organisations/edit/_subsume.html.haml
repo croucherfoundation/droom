@@ -24,5 +24,5 @@
               = f.select :other_id, Droom::Organisation.for_selection_with_owner(true)
 
         .buttons
-          = link_to t(:cancel), '#', :class => 'cancel submit-button'
+          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
           = f.submit t(:subsume_organisation), class: 'croucher-standard-btn inline'

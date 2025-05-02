@@ -45,7 +45,7 @@
                 = f.hidden_field :organisation_id
 
         .buttons
-          = link_to t(:cancel), '#', :class => 'cancel submit-button'
+          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
           - if user == current_user
             = f.submit t(:save_your_profile), class: 'standard-modal-submit'
           - elsif user.new_record?
