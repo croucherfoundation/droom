@@ -14,10 +14,10 @@
           %p.description
             = f.text_area :description, :class => 'name', :placeholder => t(:event_type_description)
             %br
-            = f.check_box :private
-            = f.label :private
-            = f.check_box :public
-            = f.label :public
+            = f.check_box :private, class: 'checkbox'
+            = f.label :private, class: 'checkbox_label pr-10'
+            = f.check_box :public, class: 'checkbox'
+            = f.label :public, class: 'checkbox_label'
 
       .buttons
         = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'

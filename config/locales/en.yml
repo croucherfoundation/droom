@@ -504,6 +504,19 @@ en:
       address: "Postal address"
     email:
       email: "Email address"
+    standard_modal:
+      email:
+        zero: "Email address"
+        one: "Alternative email address"
+        other: "Alternative email address"
+      phone:
+        zero: "Phone number"
+        one: "Alternative phone number"
+        other: "Alternative phone number"
+      address:
+        zero: "Postal address"
+        one: "Alternative postal address"
+        other: "Alternative postal address"
     event:
       cover_text: "Add meeting PDF cover details"
       datemark: "Click to change date"

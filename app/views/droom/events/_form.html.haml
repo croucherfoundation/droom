@@ -42,8 +42,8 @@
             = f.text_field :venue_name, :class => "venuepicker", :placeholder => t("placeholders.event.venue_name"), :autocomplete => "off",  data: {role: "venuepicker", width: 300}
           - if Droom.config.second_time_zone?
             %span.std-modal-timezone
-              = f.check_box :timezone, {id: "event_timezone_UK"}, "London", "Hong Kong"
-              %label{for: "event_timezone_UK"}
+              = f.check_box :timezone, {id: "event_timezone_UK", class: "checkbox"}, "London", "Hong Kong"
+              %label{for: "event_timezone_UK", class: 'checkbox_label'}
                 = t :uk_time
 
           %p.video_conference_link

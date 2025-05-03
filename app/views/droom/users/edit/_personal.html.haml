@@ -27,7 +27,7 @@
 
               %td{valign: 'top'}
                 %div
-                  %table.inputs
+                  %table.edit-profile.inputs
                     %tr
                       %td Title
                       %td First name
@@ -76,7 +76,7 @@
                         = f.label :gender, t(:"helpers.label.user.gender_f"), value: "f"
                       %td{valign: 'top'}
                         = f.date_select :dob, {order: [:day, :month, :year], prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }, start_year: 1940, end_year: Date.today.year}
-                    
+                        .std-input-mb
                     %tr
                       %td Place of birth
                       %td Nationality
@@ -103,7 +103,6 @@
                       - if FeatureFlag.enabled?('time-zone-feature', current_user)
                         %td
                           = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
-                          :javascript
-                            $('#user_timezone').selectize();
+
         .buttons
           = render partial: 'droom/users/edit/buttons', locals: {f: f}
