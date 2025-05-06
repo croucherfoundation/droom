@@ -1,8 +1,24 @@
+- event_type = @event.event_type
 .content
   .logo 
     = image_tag 'https://front.croucherscienceweek.hk/logo/cf_white_logo.png', alt: 'Croucher logo', width: 57, height: 110
   
-  .text 
-    = @event.transform_cover_text&.html_safe
+  - if event_type.present?
+    %p.text 
+      = event_type.cover_text_lookup[event_type.id]
+      = I18n.l(@event.start, :format => :date_with_week_day)
+      at 
+      = I18n.l(@event.start, :format => :just_time)
+  
+    - if @event.video_conference_link?
+      %p.link
+        To join the meeting click 
+        = link_to 'here', @event.video_conference_link, target: '_blank'
+    
+    
+    %p.link
+      To join the dataroom click 
+      = link_to 'here', 'https://data.croucher.org.hk', target: '_blank'
+
 
   

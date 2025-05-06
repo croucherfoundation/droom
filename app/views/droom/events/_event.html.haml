@@ -115,6 +115,12 @@
             = link_to ensure_protocol(event.url), target: "_blank", style: "color:black" do
               %svg.icon{style: "height: 28px; padding-bottom: 1px"}
                 %use{href: "#arrow_icon"}
+        - if event.video_conference_link?
+          .inline
+            = t(:conference_call) + ":"
+            = link_to ensure_protocol(event.video_conference_link), target: "_blank", style: "color:black" do
+              %svg.icon{style: "height: 28px; padding-bottom: 1px"}
+                %use{href: "#arrow_icon"}
       
   - if show_folder && full_attachments
     %br
