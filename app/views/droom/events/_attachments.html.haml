@@ -6,4 +6,14 @@
     %h3{style: "font-size: 1.17rem; font-weight: bold;"}
       = t :attachments
   %ul.uploads{id: "queue_to_#{folder.id}"}
+
+  %ul 
+    %li.document
+      - if event.compiled_file.attached?
+        = link_to show_compiled_file_event_url(event), class: 'document pdf no-bg-image', target: "_blank", style: 'white-space: nowrap;' do
+          %svg.icon.medium
+            %use{"xlink:href" => "#pdf_symbol"}
+          %span
+            = event.compiled_filename
+        
   = render :partial => "droom/folders/contents", :locals => {folder: folder, narrow: false, drop_refreshes: "", skip_gdoc: skip_gdoc}

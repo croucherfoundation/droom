@@ -403,6 +403,10 @@ module Droom
       false
     end
 
+    def compiled_filename
+      compiled_file.filename.to_s if compiled_file.attached?
+    end
+
     def transform_cover_text
       return unless cover_text
 

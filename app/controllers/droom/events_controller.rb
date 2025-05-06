@@ -107,6 +107,14 @@ module Droom
       end
     end
 
+    def show_compiled_file
+      if @event.compiled_file.attached?
+        redirect_to @event.compiled_file.url
+      else
+        raise ActiveRecord::RecordNotFound
+      end
+    end
+
     def compile_pdf
       @event.generate_pdf_cover if @event.thumbnails.empty? && @event.single_documents.empty?
 
