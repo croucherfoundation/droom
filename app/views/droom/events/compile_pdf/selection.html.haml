@@ -8,7 +8,7 @@
       = select_tag :compile_type, options_for_select([['Compile all attachments', 'all'], ['Compile selected attachments', 'selected'] ])
     
     .buttons
-      = link_to t(:compile), '#', class: 'croucher-standard-btn inline', id: 'compile-pdf-btn'
+      = submit_tag t(:compile), class: 'croucher-standard-btn inline', id: 'compile-pdf-btn'
       = t :or
       = link_to t(:cancel), "/", :class => 'cancel'
 
