@@ -5,11 +5,9 @@
   .outer-container
     .top-header
       %h3 
-        = @event.name
         = @event.meeting_number
+        = @event.name
       
-      .dropdown 
-        
       .download-combine-pdf{title: "Download PDF"}
         %svg.icon
           %use{href: "#download_symbol"}

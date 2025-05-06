@@ -468,7 +468,17 @@ module Droom
     end
 
     def generate_compiled_pdf_filename
-      [short_code, meeting_number, 'Agendabook', '.pdf'].compact.join('')
+      shor_codes = {
+        2 =>  'IC',
+        3 =>  'AC',
+        6 =>  'NRC',
+        9 =>  'NCF',
+        10 =>  'CF',
+        11 =>  'AAWG',
+        12 =>  'NC'
+      }
+
+      [shor_codes[event_type_id], meeting_number, 'Agendabook', '.pdf'].compact.join('')
     end
 
     def compress_pdf_with_ghostscript(input_path, output_path)
