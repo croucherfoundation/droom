@@ -19,7 +19,7 @@
               - email_count+=1
             - while email_count < 2
               = f.fields_for :emails, user.emails.new, child_index: email_count do |email_fields|
-                = email_fields.email_field :email, placeholder: t("placeholders.standard_modal.email", count: email_count)
+                = email_fields.email_field :email, placeholder: t("placeholders.standard_modal.email", count: email_count), required: email_count<1 ? true : false, data: {role: "email", check_url: check_email_path, users_path: users_path, user_id: user.id}
                 = email_fields.hidden_field :address_type_id, value: email_count < 2 ? 1 : 4
               - email_count += 1
 
@@ -46,7 +46,7 @@
             - while address_count < 2
               = f.fields_for :addresses, user.addresses.new, child_index: address_count do |address_fields|
                 = address_fields.text_area :address, placeholder: t("placeholders.standard_modal.address", count: address_count)
-                = address_fields.hidden_field :address_type_id, value: phone_count < 2 ? 1 : 4
+                = address_fields.hidden_field :address_type_id, value: address_count < 2 ? 1 : 4
               - address_count+=1
 
         .buttons

@@ -24,14 +24,15 @@
                 = email_fields.email_field :email, placeholder: t("placeholders.standard_modal.email", count: index), required: index<1 ? true : false, data: {role: "email", check_url: check_email_path, users_path: users_path, user_id: user.id}
                 = email_fields.hidden_field :address_type_id
               - email_count+=1
-            - if email_count < 2
+            - while email_count < 2
               = f.fields_for :emails, user.emails.new, child_index: email_count do |email_fields|
-                = email_fields.email_field :email, placeholder: t("placeholders.standard_modal.email", count: 2)
-                = email_fields.hidden_field :address_type_id, value: 4
+                = email_fields.email_field :email, placeholder: t("placeholders.standard_modal.email", count: email_count), required: email_count<1 ? true : false, data: {role: "email", check_url: check_email_path, users_path: users_path, user_id: user.id}
+                = email_fields.hidden_field :address_type_id, value: email_count < 2 ? 1 : 4
+              - email_count += 1
             
             - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
               %p.inputs.mt-8
-                = f.check_box :send_confirmation, class: "checkbox"
+                = f.check_box :send_confirmation, class: "radio"
                 = f.label :send_confirmation, class: "radio_label mb-10"
 
             %p
@@ -45,14 +46,14 @@
               - if admin?
                 = f.select :organisation_id, Droom::Organisation.for_selection, {}, :class => 'preferences mb-10'
                 %br
-                = f.check_box :organisation_admin, class: "checkbox"
+                = f.check_box :organisation_admin, class: "radio"
                 = f.label :organisation_admin, class: "radio_label mb-10"
                 %br
-                = f.check_box :admin, class: "checkbox"
+                = f.check_box :admin, class: "radio"
                 = f.label :admin, class: "radio_label mb-10"
                 %br
                 %span.subordinate{data: {dependent: "#user_admin"}}
-                  = f.check_box :gatekeeper, class: "checkbox"
+                  = f.check_box :gatekeeper, class: "radio"
                   = f.label :gatekeeper, class: "radio_label mb-10"
 
         .buttons

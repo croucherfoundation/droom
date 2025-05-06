@@ -70,10 +70,10 @@
                       %td Date of birth
                     %tr
                       %td{valign: 'top'}
-                        = f.radio_button :gender, "m"
-                        = f.label :gender, t(:"helpers.label.user.gender_m"), value: "m"
-                        = f.radio_button :gender, "f"
-                        = f.label :gender, t(:"helpers.label.user.gender_f"), value: "f"
+                        = f.radio_button :gender, "m", class: 'radio'
+                        = f.label :gender, t(:"helpers.label.user.gender_m"), value: "m", class: 'radio_label pr-10'
+                        = f.radio_button :gender, "f", class: 'radio'
+                        = f.label :gender, t(:"helpers.label.user.gender_f"), value: "f", class: 'radio_label'
                       %td{valign: 'top'}
                         = f.date_select :dob, {order: [:day, :month, :year], prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }, start_year: 1940, end_year: Date.today.year}
                         .std-input-mb

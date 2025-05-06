@@ -1,6 +1,6 @@
 .standard-modal-overlay.active
   .standard-modal-container.active
-    %svg.pl-96
+    %svg.logo.ml-56
       %use{"xlink:href" => "#croucher_logo"}
 
     = form_for [@event, @group_invitation], :html => {:class => "invitation", :remote => true, :data => {:type => :html}} do |f|
@@ -11,8 +11,8 @@
           %ul.groups
             - Droom::Group.all.each do |group|
               %li.empty-content.group
-                = f.radio_button :group_id, group.id
-                = f.label :"group_id_#{group.id}", group.name
+                = f.radio_button :group_id, group.id, class: 'radio'
+                = f.label :"group_id_#{group.id}", group.name, class: 'radio_label mb'
                 - if group.invited_to?(@event)
                   %br
                   %span.formnote

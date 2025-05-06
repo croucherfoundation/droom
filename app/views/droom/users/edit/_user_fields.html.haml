@@ -12,36 +12,40 @@
   - email_count = 0
   - user.emails.each_with_index do |email, index|
     = f.fields_for :emails, email, child_index: index do |email_fields|
-      = email_fields.email_field :email, placeholder: t("placeholders.email.email"), data: {role: "email", check_url: check_email_path, users_path: users_path, user_id: user.id}
+      = email_fields.email_field :email, placeholder: t("placeholders.standard_modal.email", count: index), required: index<1 ? true : false, data: {role: "email", check_url: check_email_path, users_path: users_path, user_id: user.id}
       = email_fields.hidden_field :address_type_id
     - email_count+=1
-  - if email_count < 2
+  - while email_count < 2
     = f.fields_for :emails, user.emails.new, child_index: email_count do |email_fields|
-      = email_fields.email_field :email, placeholder: t("placeholders.email.email"), data: {role: "email", check_url: check_email_path, users_path: users_path, user_id: user.id}
-      = email_fields.hidden_field :address_type_id, value: 4
+      = email_fields.email_field :email, placeholder: t("placeholders.standard_modal.email", count: email_count), required: email_count<1 ? true : false, data: {role: "email", check_url: check_email_path, users_path: users_path, user_id: user.id}
+      = email_fields.hidden_field :address_type_id, value: email_count < 2 ? 1 : 4
+    - email_count += 1
   - unless minimal
     -# = render "droom/users/edit/phones", f: f, user: user
     - phone_count = 0
     - user.phones.each_with_index do |phone, index|
       = f.fields_for :phones, phone, child_index: index do |phone_fields|
-        = phone_fields.phone_field :phone, placeholder: t("placeholders.phone.phone")
+        = phone_fields.phone_field :phone, placeholder: t("placeholders.standard_modal.phone", count: index)
         = phone_fields.hidden_field :address_type_id
       - phone_count+=1
-    - if phone_count < 2
+    - while phone_count < 2
       = f.fields_for :phones, user.phones.new, child_index: phone_count do |phone_fields|
-        = phone_fields.phone_field :phone, placeholder: t("placeholders.phone.phone")
-        = phone_fields.hidden_field :address_type_id, value: 4
+        = phone_fields.phone_field :phone, placeholder: t("placeholders.standard_modal.phone", count: phone_count)
+        = phone_fields.hidden_field :address_type_id, value: phone_count < 2 ? 1 : 4
+      - phone_count+=1
+
     -# = render "droom/users/edit/addresses", f: f, user: user
     - address_count = 0
     - user.addresses.each_with_index do |address, index|
       = f.fields_for :addresses, address, child_index: index do |address_fields|
-        = address_fields.text_area :address, placeholder: t("placeholders.address.address")
+        = address_fields.text_area :address, placeholder: t("placeholders.standard_modal.address", count: index)
         = address_fields.hidden_field :address_type_id
       - address_count+=1
-    - if address_count < 2
+    - while address_count < 2
       = f.fields_for :addresses, user.addresses.new, child_index: address_count do |address_fields|
-        = address_fields.text_area :address, placeholder: t("placeholders.address.address")
-        = address_fields.hidden_field :address_type_id, value: 4
+        = address_fields.text_area :address, placeholder: t("placeholders.standard_modal.address", count: address_count)
+        = address_fields.hidden_field :address_type_id, value: address_count < 2 ? 1 : 4
+      - address_count+=1
 
 - if Droom.use_biogs?
   .image-upload{:data => {:role => "imagepicker"}}
