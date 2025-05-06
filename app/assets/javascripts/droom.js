@@ -80,25 +80,27 @@
     });
   });
 
-  $(document).on('click', '#compile-pdf-btn', function(e) {
+  $(document).on('submit', 'form.compile-pdf', function(e) {
     e.preventDefault();
-    e.stopPropagation();
-  
-    const $form = $('form.compile-pdf');
-    let url = $form.attr('action'); // Use let (mutable)
+    const $form = $(this);
     const selectedType = $form.find('select').val();
+    const url = $form.attr('action');
   
-    url = `${url}?type=${selectedType}`;
+    $('body').addClass('overlay-active');
   
     $.ajax({
       url: url,
       method: 'POST',
       dataType: 'json',
+      data: { type: selectedType },
       headers: {
         'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
       },
-      success: function() {
-        console.log('Compilingggggg ....');
+      success: function(response) {
+        $('body').removeClass('overlay-active');
+        if (response.redirect_url) {
+          window.location.href = response.redirect_url;
+        }
       },
       error: function(xhr, status, error) {
         console.error('Compile failed:', status, error);
