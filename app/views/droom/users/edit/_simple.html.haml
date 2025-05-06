@@ -29,8 +29,8 @@
               %div{style: 'width: 100%;'}
                 = f.label(:group_ids, class: "important") + ":"
                 - groups.each do |group|
-                  %label.inline{for: "user_group_ids_#{group.id}"}
-                    = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}"
+                  = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}", class: "checkbox"
+                  %label.checkbox_label.mb.pr-10{for: "user_group_ids_#{group.id}"}
                     = group.name
 
             - unless @user.confirmed?

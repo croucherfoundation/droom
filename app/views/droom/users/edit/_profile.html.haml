@@ -29,6 +29,6 @@
             = f.submit t(:save_profile), class: 'standard-modal-submit'
 
           - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
-            %p
-              = f.check_box :send_confirmation, class: "fancy"
-              = f.label :send_confirmation
+            %p.inputs.mt-8
+              = f.check_box :send_confirmation, class: "checkbox"
+              = f.label :send_confirmation, class: "radio_label"
