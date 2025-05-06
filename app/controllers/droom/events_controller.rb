@@ -121,7 +121,11 @@ module Droom
       @thumbnails = @event.thumbnails.order(:position)
       @single_documents = @event.single_documents.order(:position)
 
-      render layout: 'no_layout'
+      render layout: 'no_layout', template: 'droom/events/compile_pdf/show'
+    end
+
+    def compile_pdf_selection
+      render template: 'droom/events/compile_pdf/selection'
     end
 
     def generate_pdf

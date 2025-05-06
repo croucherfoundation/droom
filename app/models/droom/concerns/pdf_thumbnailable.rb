@@ -14,7 +14,7 @@ module Droom::Concerns::PdfThumbnailable
 
   def generate_pdf_cover
     pdf_html = ::ApplicationController.renderer.new.render_to_string(
-      template: 'droom/events/compile_pdf_cover',
+      template: 'droom/events/compile_pdf/cover',
       layout:   'compile_pdf',
       assigns:  { event: self }
     )

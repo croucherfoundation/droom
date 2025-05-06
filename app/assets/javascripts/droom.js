@@ -80,6 +80,32 @@
     });
   });
 
+  $(document).on('click', '#compile-pdf-btn', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  
+    const $form = $('form.compile-pdf');
+    let url = $form.attr('action'); // Use let (mutable)
+    const selectedType = $form.find('select').val();
+  
+    url = `${url}?type=${selectedType}`;
+  
+    $.ajax({
+      url: url,
+      method: 'POST',
+      dataType: 'json',
+      headers: {
+        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function() {
+        console.log('Compilingggggg ....');
+      },
+      error: function(xhr, status, error) {
+        console.error('Compile failed:', status, error);
+      }
+    });
+  });  
+
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   jQuery(function($) {

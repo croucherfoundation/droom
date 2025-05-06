@@ -81,6 +81,7 @@ en:
   click_to_upload: "Click here to choose an image file"
   close: "Close"
   close_symbol: "✕"
+  compile: "Compile"
   compile_pdf: "Compile PDF"
   conference_call: "Conference call"
   confirm_delete_document: "Are you sure you want to delete the document '%{name}'? This cannot be undone."
