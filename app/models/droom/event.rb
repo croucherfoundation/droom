@@ -405,10 +405,10 @@ module Droom
                    when '.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif', '.webp', '.avif'
                     convert_image_to_pdf(filepath)
                    else
-                     filepath
+                     nil
                    end
 
-        generate_thumbnails(pdf_path, document_id: doc.id)
+        generate_thumbnails(pdf_path, document_id: doc.id) if pdf_path
       end
     end
 
