@@ -388,9 +388,9 @@ module Droom
     end
 
     # prepare existing documents to compile pdf
-    def process_attached_documents(type = 'all', document_ids = [])
-      documents = self.documents if type == 'all'
-      documents = self.documents.where(id: document_ids) if type == 'selected'
+    def process_attached_documents
+      documents = self.documents if compile_type == 'all'
+      documents = self.documents.where(id: selected_document_ids) if compile_type == 'selected'
       documents = documents.order(:position)
 
       documents.each do |doc|
@@ -408,7 +408,7 @@ module Droom
                      filepath
                    end
 
-        generate_thumbnails(pdf_path)
+        generate_thumbnails(pdf_path, document_id: doc.id)
       end
     end
 
