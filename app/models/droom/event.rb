@@ -389,7 +389,6 @@ module Droom
 
     # prepare existing documents to compile pdf
     def process_attached_documents
-
       self.single_documents.where.not(document_id: nil).destroy_all
       self.thumbnails.where.not(document_id: nil).destroy_all
 
