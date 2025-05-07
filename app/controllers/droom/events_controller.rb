@@ -125,16 +125,21 @@ module Droom
     end
 
     def compile_pdf_selection
-      if request.get?
+      case request.method_symbol
+
+      when :get
         render template: 'droom/events/compile_pdf/selection'
-      elsif request.post?
-        # Handle the form submission and PDF combination
-        # if params[:compile_type] == 'all'
-        #   @event.combine_all
-        # elsif params[:compile_type] == 'selection'
-        #   @event.combine_selected
-        # end
+
+      when :post
+        compile_type = params[:compile_type]
+        selected_ids = params[:selected_document_ids]
+
+        @event.update_columns(compile_type: compile_type)
+
+        @event.process_attached_documents(compile_type, selected_ids)
         render json: { redirect_url: compile_pdf_event_path(@event) }, status: :ok
+      else
+        head :method_not_allowed
       end
     end
 
