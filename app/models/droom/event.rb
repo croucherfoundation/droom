@@ -1,3 +1,5 @@
+require 'docsplit'
+
 module Droom
   class Event < Droom::DroomRecord
     include Droom::Concerns::Slugged
@@ -383,6 +385,31 @@ module Droom
 
     def folder_name
       "#{name} (#{month_name} #{year})"
+    end
+
+    # prepare existing documents to compile pdf
+    def process_attached_documents(type = 'all', document_ids = [])
+      documents = self.documents if type == 'all'
+      documents = self.documents.where(id: document_ids) if type == 'selected'
+      documents = documents.order(:position)
+
+      documents.each do |doc|
+        next unless doc.file.attached?
+
+        filepath = download_to_tempfile(doc)
+        ext = File.extname(filepath).downcase
+
+        pdf_path = case ext
+                   when '.docx', '.doc'
+                    convert_docx_to_pdf(filepath)
+                   when '.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif', '.webp', '.avif'
+                    convert_image_to_pdf(filepath)
+                   else
+                     filepath
+                   end
+
+        generate_thumbnails(pdf_path)
+      end
     end
 
     def combined_pdf

@@ -280,5 +280,9 @@ module Droom
       end
     end
 
+    def self.for_selection
+      order(:position).map{|d| [d.name, d.id] }
+    end
+
   end
 end

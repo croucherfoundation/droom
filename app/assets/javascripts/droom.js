@@ -80,11 +80,27 @@
     });
   });
 
+  $(document).on('change', '#compile-type', function(e) {
+    e.preventDefault();
+    console.log('this', e.target);  
+    
+    const $this = e.target;
+    const selectedType = $this.value;
+    
+    if (selectedType == 'selected') {
+      $('#selected-document-ids').show();
+    } else {
+      $('#selected-document-ids').val('');
+      $('#selected-document-ids').hide();
+    }
+  });
+
   $(document).on('click', '#compile-pdf-btn', function(e) {
     e.preventDefault();
   
     const $form = $('form.compile-pdf');
-    const selectedType = $form.find('select').val();
+    const selectedType = $form.find('select#compile-type').val();
+    const selectedIds = $form.find('select#selected-document-ids').val();
     const url = $form.attr('action');
   
     $('body').addClass('overlay-active');
@@ -93,14 +109,14 @@
       url: url,
       method: 'POST',
       dataType: 'json',
-      data: { type: selectedType },
+      data: { compile_type: selectedType, selected_ids: selectedIds },
       headers: {
         'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
       },
       success: function(response) {
         $('body').removeClass('overlay-active');
         if (response.redirect_url) {
-          window.location.href = response.redirect_url;
+          // window.location.href = response.redirect_url;
         }
       },
       error: function(xhr, status, error) {
