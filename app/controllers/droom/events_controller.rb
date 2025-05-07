@@ -134,9 +134,9 @@ module Droom
         compile_type = params[:compile_type]
         selected_ids = params[:selected_document_ids]
 
-        @event.update_columns(compile_type: compile_type)
+        @event.update_columns(compile_type: compile_type, selected_document_ids: selected_ids)
+        @event.process_attached_documents
 
-        @event.process_attached_documents(compile_type, selected_ids)
         render json: { redirect_url: compile_pdf_event_path(@event) }, status: :ok
       else
         head :method_not_allowed

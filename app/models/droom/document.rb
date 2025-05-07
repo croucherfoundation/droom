@@ -9,12 +9,17 @@ module Droom
     belongs_to :scrap, :dependent => :destroy
     belongs_to :event, optional: true
 
+    has_many :thumbnails, dependent: :destroy
+    has_many :single_documents, dependent: :destroy
+
     has_one_attached :file
 
     acts_as_list scope: :folder_id
 
     before_create :inherit_confidentiality
     before_save :set_file_path_and_event
+
+    after_commit :compile_meeting_pdf
 
     # validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
@@ -282,6 +287,12 @@ module Droom
 
     def self.for_selection
       order(:position).map{|d| [d.name, d.id] }
+    end
+
+    private
+
+    def compile_meeting_pdf
+      CompileMeetingPdfJob.perform_later(event_id) if event_id.present?
     end
 
   end

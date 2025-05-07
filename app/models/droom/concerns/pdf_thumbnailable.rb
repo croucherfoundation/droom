@@ -34,13 +34,14 @@ module Droom::Concerns::PdfThumbnailable
     tempfile.write(pdf_file)
     tempfile.rewind
 
-    generate_thumbnails(tempfile.path, true)
+    generate_thumbnails(tempfile.path, is_cover: true)
   end
 
-  def generate_thumbnails(file_path, is_cover=false)
+  def generate_thumbnails(file_path, options={is_cover: false})
     return unless file_path.present?
 
-    @is_cover = is_cover
+    @is_cover = options[:is_cover]
+    @document_id = options[:document_id]
 
     total_pages = get_total_pages(file_path)
     process_pdf_pages(file_path, total_pages)
@@ -115,6 +116,7 @@ module Droom::Concerns::PdfThumbnailable
 
     self.thumbnails.create!(
       is_cover: @is_cover,
+      document_id: @document_id,
       image: {
         io: File.open(thumbnail_path),
         filename: "event_#{self.id}_thumbnail_#{page_number + 1}.jpg",
@@ -137,6 +139,7 @@ module Droom::Concerns::PdfThumbnailable
 
     self.single_documents.create!(
       is_cover: @is_cover,
+      document_id: @document_id,
       file: {
         io: File.open(pdf_path),
         filename: "event_#{self.id}_pdf_page_#{page_number + 1}.pdf",
