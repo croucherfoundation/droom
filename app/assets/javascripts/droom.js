@@ -80,9 +80,10 @@
     });
   });
 
-  $(document).on('submit', 'form.compile-pdf', function(e) {
+  $(document).on('click', '#compile-pdf-btn', function(e) {
     e.preventDefault();
-    const $form = $(this);
+  
+    const $form = $('form.compile-pdf');
     const selectedType = $form.find('select').val();
     const url = $form.attr('action');
   
@@ -104,9 +105,10 @@
       },
       error: function(xhr, status, error) {
         console.error('Compile failed:', status, error);
+        $('body').removeClass('overlay-active');
       }
     });
-  });  
+  });   
 
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
