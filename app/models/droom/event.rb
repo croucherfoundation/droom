@@ -404,6 +404,8 @@ module Droom
                     convert_docx_to_pdf(filepath)
                    when '.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.gif', '.webp', '.avif'
                     convert_image_to_pdf(filepath)
+                   when '.pdf'
+                    filepath
                    else
                      nil
                    end

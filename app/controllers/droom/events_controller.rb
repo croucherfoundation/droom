@@ -132,12 +132,14 @@ module Droom
 
       when :post
         compile_type = params[:compile_type]
-        selected_ids = params[:selected_document_ids]
+        selected_ids = params[:selected_ids]
 
         @event.update_columns(compile_type: compile_type, selected_document_ids: selected_ids)
-        @event.process_attached_documents
-
-        render json: { redirect_url: compile_pdf_event_path(@event) }, status: :ok
+        if @event.process_attached_documents
+          render json: { redirect_url: compile_pdf_event_path(@event) }, status: :ok
+        else
+          render json: { error: 'Failed to generate PDF' }, status: :unprocessable_entity
+        end
       else
         head :method_not_allowed
       end
