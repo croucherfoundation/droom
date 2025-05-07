@@ -5,7 +5,7 @@
 #edit_user
   .standard-modal-overlay.active
     .standard-modal-container.active
-      %svg.pl-96
+      %svg.logo.ml-56
         %use{"xlink:href" => "#croucher_logo"}
       = form_for [droom, user], url: merge_user_url(user), method: 'put', :html => {:class => 'edit user', :autocomplete => false} do |f|
         .container

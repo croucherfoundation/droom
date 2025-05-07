@@ -4,7 +4,7 @@
 #edit_organisation
   .standard-modal-overlay.active
     .standard-modal-container.active
-      %svg.pl-96
+      %svg.logo.ml-56
         %use{"xlink:href" => "#croucher_logo"}
       = form_for [droom, organisation], url: merge_organisation_url(organisation), method: 'put', html: {:class => 'edit organisation'} do |f|
         .container
