@@ -13,7 +13,7 @@ atom_feed :language => 'en-US' do |feed|
       end
       
       if scrap.scraptype == "image"
-        entry.icon request.host + scrap.image.url(:thumb)
+        entry.icon request.host + scrap.image_url(:thumb)
       end
       
       entry.content [scrap.body, scrap.note].compact.join('<br />'), :type => 'html'
