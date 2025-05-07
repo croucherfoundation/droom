@@ -124,7 +124,19 @@
         $('body').removeClass('overlay-active');
       }
     });
-  });   
+  });
+
+  // Toggle input visibility when selection changes
+  $(document).on('change', '#compile-type', function() {
+    const value = $(this).val();
+    const $selectizeInput = $('.selectize-input.items.not-full.has-options');
+
+    if (value === 'all') {
+      $selectizeInput.hide();
+    } else {
+      $selectizeInput.show();
+    }
+  });
 
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 

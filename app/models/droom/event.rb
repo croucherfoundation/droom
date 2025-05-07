@@ -389,9 +389,18 @@ module Droom
 
     # prepare existing documents to compile pdf
     def process_attached_documents
-      documents = self.documents if compile_type == 'all'
-      documents = self.documents.where(id: selected_document_ids) if compile_type == 'selected'
-      documents = documents.order(:position)
+
+      excluded_ids = self.single_documents.pluck(:document_id).compact.uniq
+
+      excluded_ids ||= []
+      
+      documents = self.documents.where.not(id: excluded_ids)
+      
+      if compile_type == 'selected'
+        documents = documents.where(id: selected_document_ids)
+      end
+
+      documents = documents.order(:position)      
 
       documents.each do |doc|
         next unless doc.file.attached?
