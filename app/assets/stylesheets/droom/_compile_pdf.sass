@@ -14,16 +14,28 @@
   .top-header
     padding: 20px
     box-shadow: 0 1px 1px $coolgrey4
-    font-size: 18px
-    font-weight: 600
-    color: $dark
     display: flex
     justify-content: space-between
+    color: $dark
     h3 
       margin-left: 28px
-      
-    .download-combine-pdf
-      cursor: pointer
+      font-size: 18px
+      font-weight: 600
+    .action-buttons
+      display: flex
+      gap: 20px
+      .compile-attchements, .download-combine-pdf
+        cursor: pointer
+        color: #9b9a97
+        .btn
+          display: flex
+          align-items: center
+          gap: 8px
+          font-size: 20px
+          color: #9b9a97
+        svg
+          width: 20px
+          height: 20px
 
   .content-wrapper
     display: flex

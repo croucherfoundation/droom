@@ -116,7 +116,7 @@
       success: function(response) {
         $('body').removeClass('overlay-active');
         if (response.redirect_url) {
-          // window.location.href = response.redirect_url;
+          window.location.href = response.redirect_url;
         }
       },
       error: function(xhr, status, error) {

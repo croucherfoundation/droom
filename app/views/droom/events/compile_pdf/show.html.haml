@@ -7,10 +7,17 @@
       %h3 
         = @event.meeting_number
         = @event.name
-      
-      .download-combine-pdf{title: "Download PDF"}
-        %svg.icon
-          %use{href: "#download_symbol"}
+      .action-buttons
+        .compile-attchements{title: "Compile PDF"}
+          = link_to droom.compile_pdf_selection_event_url(@event), class: "add btn", data: {action: "popup", affected: "#event_#{@event.id}"} do
+            %svg
+              %use{href: "#gear_symbol"}
+            = t(:compile_attachements)
+        .download-combine-pdf{title: "Download PDF"}
+          %span.btn
+            %svg
+              %use{href: "#download_symbol"}
+            = t(:download_compile_pdf)
 
     .content-wrapper
       .left-panel.hide-scrollbar
