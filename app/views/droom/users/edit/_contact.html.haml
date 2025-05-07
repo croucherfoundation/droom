@@ -33,7 +33,7 @@
             - while phone_count < 2
               = f.fields_for :phones, user.phones.new, child_index: phone_count do |phone_fields|
                 = phone_fields.phone_field :phone, placeholder: t("placeholders.standard_modal.phone", count: phone_count)
-                = phone_fields.hidden_field :address_type_id, value: phone_count < 2 ? 1 : 4
+                = phone_fields.hidden_field :address_type_id, value: phone_count < 1 ? 1 : 4
               - phone_count+=1
 
             -# = render "droom/users/edit/addresses", f: f, user: user
@@ -46,7 +46,7 @@
             - while address_count < 2
               = f.fields_for :addresses, user.addresses.new, child_index: address_count do |address_fields|
                 = address_fields.text_area :address, placeholder: t("placeholders.standard_modal.address", count: address_count)
-                = address_fields.hidden_field :address_type_id, value: address_count < 2 ? 1 : 4
+                = address_fields.hidden_field :address_type_id, value: address_count < 1 ? 1 : 4
               - address_count+=1
 
         .buttons
