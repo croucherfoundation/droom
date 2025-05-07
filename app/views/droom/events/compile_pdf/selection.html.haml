@@ -1,19 +1,19 @@
 #compile_pdf
   = render 'droom/shared/popup_header', title: t(:compile_pdf)
 
-  = form_with url: compile_pdf_selection_event_url(@event), method: :post, class: 'compile-pdf' do
+  = form_for @event, url: compile_pdf_selection_event_url(@event), method: :post, html: { class: 'compile-pdf' } do |f|
     %p.type
-      = select_tag :compile_type, options_for_select([['Compile all attachments', 'all'], ['Compile selected attachments', 'selected'] ]), id: 'compile-type'
-    
+      = f.select :compile_type, [['Compile all attachments', 'all'], ['Compile selected attachments', 'selected']], {}, { id: 'compile-type' }
+
     %br
 
-    %p.documents 
-      = select_tag :selected_document_ids, options_for_select(@event.documents.for_selection), multiple: true, id: 'selected-document-ids', style: 'display: none'
-    
+    %p.documents
+      = f.select :selected_document_ids, @event.documents.for_selection, {}, { multiple: true, id: 'selected-document-ids', style: 'display: none' }
+
     .buttons
       = button_tag t(:compile), type: 'button', class: 'croucher-standard-btn inline', id: 'compile-pdf-btn'
       = t :or
-      = link_to t(:cancel), "/", :class => 'cancel'
+      = link_to t(:cancel), "/", class: 'cancel'
 
 :javascript
   $('#selected-document-ids').selectize();
