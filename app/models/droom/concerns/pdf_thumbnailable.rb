@@ -180,13 +180,13 @@ module Droom::Concerns::PdfThumbnailable
     output_path = File.join(File.dirname(image_path), "#{File.basename(image_path, '.*')}.pdf")
 
     MiniMagick::Tool::Convert.new do |convert|
-      convert.size '595x842'
-      convert << image_path
-      convert.gravity 'center'
-      convert.background 'white'
-      convert.extent '595x842'
+      convert.density '150'
       convert.units 'PixelsPerInch'
-      convert.density '72'
+      convert << image_path
+      convert.resize '1240x1754>'
+      convert.background 'white'
+      convert.gravity 'center'
+      convert.extent '1240x1754'
       convert << output_path
     end
 
@@ -194,5 +194,6 @@ module Droom::Concerns::PdfThumbnailable
 
     output_path
   end
+
 
 end
