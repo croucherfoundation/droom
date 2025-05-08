@@ -82,6 +82,7 @@ en:
   close: "Close"
   close_symbol: "✕"
   compile: "Compile"
+  compile_meeting_pdf: "Compile meeting PDF"
   compile_pdf: "Compile PDF"
   compile_attachements: "Compile attachments"
   conference_call: "Conference call"
