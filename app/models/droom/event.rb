@@ -5,6 +5,7 @@ module Droom
     include Droom::Concerns::Slugged
     include ActionView::Helpers::SanitizeHelper
     include Droom::Concerns::PdfThumbnailable
+    include Droom::Concerns::Key
 
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :calendar
@@ -421,15 +422,13 @@ module Droom
       documents = self.single_documents.order(:position)
       return false if documents.empty?
 
-      source_paths = documents.map { |doc| doc.file.url }
-      folder_path = Rails.root.join('tmp/applications')
-      Dir.mkdir(folder_path) unless Dir.exist?(folder_path)
-      merged_path = File.join(Dir.tmpdir, "combined_#{SecureRandom.uuid}.pdf")
+      merged_path = Tempfile.new(['merged', '.pdf'])
 
-      if merge_pdfs(source_paths, merged_path)
+      if merge_pdfs(documents, merged_path)
         filename = generate_compiled_pdf_filename
         self.compiled_file.attach(io: File.open(merged_path), filename: filename, content_type: 'application/pdf')
         self.save
+        cleanup_file(merged_path)
         return self.compiled_file.attached?
       end
       false
@@ -522,41 +521,73 @@ module Droom
       File.exist?(output_path)
     end
 
-    def merge_pdfs(source_paths, destination_path)
-      return false if source_paths.empty?
+    # merge event attachments and custom upload documents to a single pdf with page numbers
+    def merge_pdfs(source_documents, destination_path)
+      return false if source_documents.empty?
 
-      pdf = CombinePDF.new
-      temp_files = []
+      font_path = Rails.root.join('app', 'assets', 'stylesheets', 'ui-library', 'fonts', 'MarrSans-Regular.otf')
 
-      source_paths.each do |path|
-        if path.start_with?("http")
-          begin
-            file_name = "pdf_#{SecureRandom.uuid}.pdf"
-            temp_file_path = Rails.root.join('tmp', file_name)
+      begin
+        resulted_pdf = CombinePDF.new
 
-            File.open(temp_file_path, 'wb') do |f|
-              f.write URI.open(path).read
-            end
-            temp_files << temp_file_path
-            pdf << CombinePDF.load(temp_file_path)
-          rescue => e
-            Rails.logger.error("Error processing PDF #{path}: #{e.message}")
-          end
-        else
-          Rails.logger.error("Invalid file path, skipping: #{path}")
+        cover_doc = source_documents.first
+        remaining_docs = source_documents[1..]
+
+        if cover_doc.file.attached?
+          cover_path = download_to_tempfile(cover_doc)
+          cover_pdf = CombinePDF.load(cover_path)
+          resulted_pdf << cover_pdf
+          cleanup_file(cover_path)
         end
+
+        numbered_pdf = CombinePDF.new
+        remaining_docs.each do |doc|
+          next unless doc.file.attached?
+
+          file_path = download_to_tempfile(doc)
+          numbered_pdf << CombinePDF.load(file_path)
+          cleanup_file(file_path)
+        end
+
+        # Apply custom font page numbers using dynamic page size
+        numbered_with_overlay = CombinePDF.new
+        numbered_pdf.pages.each_with_index do |page, index|
+          media_box = page[:MediaBox].map(&:to_f)
+          width  = media_box[2] - media_box[0]
+          height = media_box[3] - media_box[1]
+
+          temp_overlay = Tempfile.new(['overlay', '.pdf'])
+
+          # Generate a single-page overlay
+          Prawn::Document.generate(temp_overlay.path, page_size: [width, height], margin: 0) do
+            font_families.update("MarrSans" => { normal: font_path })
+            font "MarrSans"
+
+            fill_color '101820'
+
+            text = "#{index + 1}"
+            text_width = width_of(text)
+            x = (width - text_width) / 2
+            y = 15
+            draw_text text, at: [x, y], size: 16
+          end
+
+          overlay = CombinePDF.load(temp_overlay.path)
+          page << overlay.pages[0]
+          numbered_with_overlay << page
+
+          temp_overlay.close
+          temp_overlay.unlink
+        end
+
+        resulted_pdf << numbered_with_overlay
+        resulted_pdf.save(destination_path)
+
+        File.exist?(destination_path)
+      rescue => e
+        Rails.logger.error("Error processing PDF #{destination_path}: #{e.message}")
+        false
       end
-
-      # Ensure PDFs were merged
-      return false if pdf.pages.empty?
-
-      # Save the final merged PDF
-      pdf.save(destination_path)
-
-      # Clean up temporary files
-      temp_files.each { |file| File.delete(file) if File.exist?(file) }
-
-      File.exist?(destination_path)
     end
 
     def generate_compiled_pdf_cover
