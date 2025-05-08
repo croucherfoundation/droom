@@ -60,21 +60,6 @@
     });
   });
 
-  $(document).on('change', '#compile-type', function(e) {
-    e.preventDefault();
-    console.log('this', e.target);  
-    
-    const $this = e.target;
-    const selectedType = $this.value;
-    
-    if (selectedType == 'selected') {
-      $('#selected-document-ids').show();
-    } else {
-      $('#selected-document-ids').val('');
-      $('#selected-document-ids').hide();
-    }
-  });
-
   $(document).on('click', '#compile-pdf-btn', function(e) {
     e.preventDefault();
   

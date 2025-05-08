@@ -1,19 +1,42 @@
 #compile_pdf
-  = render 'droom/shared/popup_header', title: t(:compile_pdf)
+  .standard-modal-overlay.active
+    .standard-modal-container.active
+      %svg.logo.ml-56
+        %use{"xlink:href" => "#croucher_logo"}
 
-  = form_for @event, url: compile_pdf_selection_event_url(@event), method: :post, html: { class: 'compile-pdf' } do |f|
-    %p.type
-      = f.select :compile_type, [['Compile all attachments', 'all'], ['Compile selected attachments', 'selected']], {}, { id: 'compile-type' }
+      = form_for @event, url: compile_pdf_selection_event_url(@event), method: :post, html: { class: 'compile-pdf' } do |f|
+        .container
+          %h2
+            Compile meeting PDF
 
-    %br
+          .inputs 
+            %p.type
+              = f.select :compile_type, [['Compile all attachments', 'all'], ['Compile selected attachments', 'selected']], {}, { id: 'compile-type' }
+            %br
+            %p.compile-documents
+              = f.select :selected_document_ids, @event.documents.for_selection, {}, { multiple: true, id: 'selected-document-ids', style: 'display: none' }
 
-    %p.documents
-      = f.select :selected_document_ids, @event.documents.for_selection, {}, { multiple: true, id: 'selected-document-ids', style: 'display: none' }
-
-    .buttons
-      = button_tag t(:compile), type: 'button', class: 'croucher-standard-btn inline', id: 'compile-pdf-btn'
-      = t :or
-      = link_to t(:cancel), "/", class: 'cancel'
+        .buttons
+          = link_to t(:cancel_edit), "/", class: 'cancel submit-button'
+          = button_tag t(:save), type: 'button', class: 'submit croucher-standard-btn inline', id: 'compile-pdf-btn'
 
 :javascript
-  $('#selected-document-ids').selectize();
+  $(document).ready(function() {
+    $('#selected-document-ids').selectize();
+
+    var compileType = "#{@event.compile_type}";
+
+    if (compileType === 'selected') {
+      $('.compile-documents .selectize-control').show();
+    } else {
+      $('.compile-documents .selectize-control').hide();
+    }
+
+    $('#compile-type').on('change', function() {
+      if ($(this).val() === 'selected') {
+        $('.compile-documents .selectize-control').show();
+      } else {
+        $('.compile-documents .selectize-control').hide();
+      }
+    });
+  });
