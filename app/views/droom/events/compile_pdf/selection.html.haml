@@ -12,9 +12,13 @@
           .inputs 
             %p.type
               = f.select :compile_type, [['Compile all attachments', 'all'], ['Compile selected attachments', 'selected']], {prompt: 'Select'}, { id: 'compile-type' }
+            
             %br
+            
             %p.compile-documents
               = f.select :selected_document_ids, @event.documents.for_selection, {}, { multiple: true, id: 'selected-document-ids', style: 'display: none' }
+        
+        %br
 
         .buttons
           = link_to t(:cancel_edit), "/", class: 'cancel submit-button'
