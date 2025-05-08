@@ -65,44 +65,8 @@
             - else
               = f.hidden_field :calendar_id
 
-    .meeting_number
-      = f.text_field :meeting_number, :class => 'name', :placeholder => "Meeting number", :autofocus => true
-    
-    -# %br
-
-    -# %p Provide the necessary data to generate the meeting PDF cover.
-
-    -# %p.twocol
-    -#   %span.col>
-    -#     = f.select :short_code, ['AAWG', 'AC', 'CF', 'IC', 'NC', 'NCF', 'NRC']
-    -#   %span.col.last>
-    -#     = f.select :color_code, [['Blue', '56C1FF'], ['Red', 'EE3A43']]
-    
-    -# .cover_text
-    -#   = f.text_area :cover_text, class: "rte", placeholder: t("placeholders.event.cover_text")
-    
-    -# %br
-    
-    -# %ul 
-    -#   %li 
-    -#     %strong {{date}}
-    -#     %span date of the event, and the format of the date is 
-    -#     %span.link-highlight "day of week month day year"
-
-    -#   %li 
-    -#     %strong {{time}}
-    -#     %span time of the event date, and the format of the time is 
-    -#     %span.link-highlight "h:mm am/pm"
-           
-    -#   %li 
-    -#     %strong {{video_conference_link}} 
-    -#     %span take to the video conference, and the name of the link is 
-    -#     %span.link-highlight "here"
-
-    -#   %li 
-    -#     %strong {{dataroom_link}} 
-    -#     %span take to the dataroom system, and the name of the link is 
-    -#     %span.link-highlight "here"
+          .meeting_number
+            = f.text_field :meeting_number, :class => 'name', :placeholder => "Meeting number", :autofocus => true
 
       .buttons
         = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
