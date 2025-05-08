@@ -103,6 +103,8 @@
                       - if FeatureFlag.enabled?('time-zone-feature', current_user)
                         %td
                           = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
+                          :javascript
+                            $('#user_timezone').selectize();
 
         .buttons
           = render partial: 'droom/users/edit/buttons', locals: {f: f}
