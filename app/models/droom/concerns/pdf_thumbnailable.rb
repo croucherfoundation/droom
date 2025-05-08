@@ -14,7 +14,7 @@ module Droom::Concerns::PdfThumbnailable
 
   def generate_pdf_cover
     pdf_html = ::ApplicationController.renderer.new.render_to_string(
-      template: 'droom/events/compile_pdf_cover',
+      template: 'droom/events/compile_pdf/cover',
       layout:   'compile_pdf',
       assigns:  { event: self }
     )
@@ -34,13 +34,14 @@ module Droom::Concerns::PdfThumbnailable
     tempfile.write(pdf_file)
     tempfile.rewind
 
-    generate_thumbnails(tempfile.path, true)
+    generate_thumbnails(tempfile.path, is_cover: true)
   end
 
-  def generate_thumbnails(file_path, is_cover=false)
+  def generate_thumbnails(file_path, options={is_cover: false})
     return unless file_path.present?
 
-    @is_cover = is_cover
+    @is_cover = options[:is_cover]
+    @document_id = options[:document_id]
 
     total_pages = get_total_pages(file_path)
     process_pdf_pages(file_path, total_pages)
@@ -115,6 +116,7 @@ module Droom::Concerns::PdfThumbnailable
 
     self.thumbnails.create!(
       is_cover: @is_cover,
+      document_id: @document_id,
       image: {
         io: File.open(thumbnail_path),
         filename: "event_#{self.id}_thumbnail_#{page_number + 1}.jpg",
@@ -137,6 +139,7 @@ module Droom::Concerns::PdfThumbnailable
 
     self.single_documents.create!(
       is_cover: @is_cover,
+      document_id: @document_id,
       file: {
         io: File.open(pdf_path),
         filename: "event_#{self.id}_pdf_page_#{page_number + 1}.pdf",
@@ -150,4 +153,47 @@ module Droom::Concerns::PdfThumbnailable
   rescue => e
     Rails.logger.warn("Cleanup failed for #{path}: #{e.message}")
   end
+
+  def download_to_tempfile(document)
+    attachment = document.file
+    blob = attachment.blob
+
+    tempfile = Tempfile.new(["attachment", File.extname(blob.filename.to_s)])
+    tempfile.binmode
+    tempfile.write(blob.download)
+    tempfile.rewind
+    tempfile.path
+  end
+
+  def convert_docx_to_pdf(input_path)
+    output_dir = File.dirname(input_path)
+
+    Docsplit.extract_pdf(input_path, output: output_dir)
+
+    pdf_path = File.join(output_dir, "#{File.basename(input_path, '.*')}.pdf")
+    raise "PDF not generated" unless File.exist?(pdf_path)
+
+    pdf_path
+  end
+
+  def convert_image_to_pdf(image_path)
+    output_path = File.join(File.dirname(image_path), "#{File.basename(image_path, '.*')}.pdf")
+
+    MiniMagick::Tool::Convert.new do |convert|
+      convert.density '150'
+      convert.units 'PixelsPerInch'
+      convert << image_path
+      convert.resize '1240x1754>'
+      convert.background 'white'
+      convert.gravity 'center'
+      convert.extent '1240x1754'
+      convert << output_path
+    end
+
+    raise "A4 PDF not generated" unless File.exist?(output_path)
+
+    output_path
+  end
+
+
 end

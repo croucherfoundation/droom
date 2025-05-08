@@ -32,26 +32,6 @@
 
 
 (function() {
-  $('#thumbnail-list .thumbnail').on('click', function() {
-    console.log('clicking')
-    const $li = $($(this).closest('.thumbnail-item'));
-    const pageNumber = $li.data('page-number'); 
-
-    $li.addClass('active').siblings().removeClass('active');
-    scrollToPDF(pageNumber);
-  });
-  
-  function scrollToPDF(pageNumber) {
-    const $container = $('.preview-area'); 
-    const $targetPDF = $container.find('.preview-item[data-page-number="' + pageNumber + '"]');
-
-    if ($targetPDF.length > 0) {
-      const scrollTop = $targetPDF.position().top + $container.scrollTop() - 70;
-      $container.animate({ scrollTop: scrollTop }, 500);
-    } else {
-      console.warn("PDF not found for page:", pageNumber);
-    }
-  }
 
   // Handle thumbnail delete event
   $('.delete-btn').on('click', function(e) {
@@ -78,6 +58,49 @@
             console.error('Delete failed:', status, error);
         }
     });
+  });
+
+  $(document).on('click', '#compile-pdf-btn', function(e) {
+    e.preventDefault();
+  
+    const $form = $('form.compile-pdf');
+    const selectedType = $form.find('select#compile-type').val();
+    const selectedIds = $form.find('select#selected-document-ids').val();
+    const url = $form.attr('action');
+  
+    $('body').addClass('overlay-active');
+  
+    $.ajax({
+      url: url,
+      method: 'POST',
+      dataType: 'json',
+      data: { compile_type: selectedType, selected_ids: selectedIds },
+      headers: {
+        'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function(response) {
+        $('body').removeClass('overlay-active');
+        if (response.redirect_url) {
+          window.location.href = response.redirect_url;
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error('Compile failed:', status, error);
+        $('body').removeClass('overlay-active');
+      }
+    });
+  });
+
+  // Toggle input visibility when selection changes
+  $(document).on('change', '#compile-type', function() {
+    const value = $(this).val();
+    const $selectizeInput = $('.selectize-input.items.not-full.has-options');
+
+    if (value === 'all') {
+      $selectizeInput.hide();
+    } else {
+      $selectizeInput.show();
+    }
   });
 
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };

@@ -121,7 +121,28 @@ module Droom
       @thumbnails = @event.thumbnails.order(:position)
       @single_documents = @event.single_documents.order(:position)
 
-      render layout: 'no_layout'
+      render layout: 'no_layout', template: 'droom/events/compile_pdf/show'
+    end
+
+    def compile_pdf_selection
+      case request.method_symbol
+
+      when :get
+        render template: 'droom/events/compile_pdf/selection'
+
+      when :post
+        compile_type = params[:compile_type]
+        selected_ids = params[:selected_ids]
+
+        @event.update_columns(compile_type: compile_type, selected_document_ids: selected_ids)
+        if @event.process_attached_documents
+          render json: { redirect_url: compile_pdf_event_path(@event) }, status: :ok
+        else
+          render json: { error: 'Failed to generate PDF' }, status: :unprocessable_entity
+        end
+      else
+        head :method_not_allowed
+      end
     end
 
     def generate_pdf

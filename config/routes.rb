@@ -119,6 +119,7 @@ Droom::Engine.routes.draw do
     end
     member do
       get :show_compiled_file, path: "show-compiled-file"
+      match :compile_pdf_selection, to: "events#compile_pdf_selection", via: [:get, :post], path: "compile-pdf-selection"
       get :compile_pdf, path: "compile-pdf"
       post :upload_pdf, path: "upload-pdf"
       post :generate_pdf, path: "generate-pdf"

@@ -5,14 +5,24 @@
   .outer-container
     .top-header
       %h3 
-        = @event.name
         = @event.meeting_number
-      
-      .dropdown 
-        
-      .download-combine-pdf{title: "Download PDF"}
-        %svg.icon
-          %use{href: "#download_symbol"}
+        = @event.name
+      .action-buttons
+        .compile-attchements{title: "Compile PDF"}
+          = link_to droom.compile_pdf_selection_event_url(@event), class: "add btn", data: {action: "popup", affected: "#event_#{@event.id}"} do
+            %svg
+              %use{href: "#gear_symbol"}
+            = t(:compile_attachements)
+        .save-combine-pdf{title: "Save PDF"}
+          %span.btn
+            %svg
+              %use{href: "#save_symbol"}
+            = t(:save_document)
+        .download-combine-pdf{title: "Download PDF"}
+          %span.btn
+            %svg
+              %use{href: "#download_symbol"}
+            = t(:download_compile_pdf)
 
     .content-wrapper
       .left-panel.hide-scrollbar

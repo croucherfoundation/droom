@@ -9,12 +9,18 @@ module Droom
     belongs_to :scrap, :dependent => :destroy
     belongs_to :event, optional: true
 
+    has_many :thumbnails, dependent: :destroy
+    has_many :single_documents, dependent: :destroy
+
     has_one_attached :file
 
     acts_as_list scope: :folder_id
 
     before_create :inherit_confidentiality
     before_save :set_file_path_and_event
+
+    before_save :track_file_change
+    after_commit :file_changed_callback, if: -> { @file_changed }
 
     # validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
@@ -278,6 +284,28 @@ module Droom
       else
         file.instance_write :file_name, name
       end
+    end
+
+    def self.for_selection
+      order(:position).map{|d| [d.name, d.id] }
+    end
+
+    private
+
+    def track_file_change
+      return unless file.attached? && persisted?
+  
+      current_blob_id = file.blob_id
+      previous_blob_id = ActiveStorage::Attachment
+                            .find_by(record_type: self.class.name, record_id: id, name: 'file')
+                            &.blob_id
+  
+      @file_changed = previous_blob_id.present? && previous_blob_id != current_blob_id
+    end
+    
+    def file_changed_callback
+      return unless event_id.present?
+      CompileMeetingPdfJob.perform_later(id, event_id)
     end
 
   end
