@@ -1,3 +1,1 @@
-#event
-  = render 'droom/shared/popup_header', title: t(:add_event)
-  = render :partial => 'form'
+= render :partial => 'form', locals: { is_new: true }

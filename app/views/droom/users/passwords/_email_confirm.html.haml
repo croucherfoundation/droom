@@ -2,13 +2,17 @@
 #passwordConfirmModal.modal
   .modal-wrapper{role: "document"}
     .modal-content
-      .croucher_container.my-custom-modal-content
-        %h1 Password reset instructions sent
-        .form-fields
-          %section
-            %p
-              = t :password_reset_sent
+      .standard-modal-overlay.active
+        .standard-modal-container.active
+          %svg.logo.ml-56
+            %use{"xlink:href" => "#croucher_logo"}
+          .container
+            %h2 Password reset instructions sent
+            .form-fields
+              %section
+                %p
+                  = t :password_reset_sent
 
-          %section.actions
+          %section.actions.buttons
             %button.croucher-standard-btn.modal-btn.cancel{type: "button"}
               Close

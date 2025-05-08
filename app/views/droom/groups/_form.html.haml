@@ -1,16 +1,28 @@
-= form_for @group, :html => {:class => 'edit group', :remote => true, :data => {:type => :html}} do |f|
-  %p.name
-    = f.text_field :name, :class => 'name', :placeholder => t(:group_name)
-    
-  %p.description
-    = f.text_area :description, :class => 'name', :placeholder => t(:group_description)
-    %br
-    = f.check_box :privileged
-    = f.label :privileged
-    = f.check_box :directory
-    = f.label :directory
+- modal_title = is_new ? t(:add_group) : t(:edit_group)
 
-  .buttons
-    = f.submit t(:save), class: 'croucher-standard-btn inline'
-    = t :or
-    = link_to t(:cancel), "/", :class => 'cancel'
+.standard-modal-overlay.active
+  .standard-modal-container.active
+    %svg.logo.ml-56
+      %use{"xlink:href" => "#croucher_logo"}
+      
+    = form_for @group, :html => {:class => 'edit group', :remote => true, :data => {:type => :html}} do |f|
+      .container
+        %h2
+          = modal_title
+        .inputs
+          %p.name
+            = f.text_field :name, :class => 'name', :placeholder => t(:group_name)
+            
+          %p.description
+            = f.text_area :description, :class => 'name', :placeholder => t(:group_description)
+            %br
+            %span
+              = f.check_box :privileged, class: 'checkbox'
+              = f.label :privileged, class: 'checkbox_label pr-10'
+            %span
+              = f.check_box :directory, class: 'checkbox'
+              = f.label :directory, class: 'checkbox_label'
+
+      .buttons
+        = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
+        = f.submit t(:save), class: 'standard-modal-submit'

@@ -10,40 +10,45 @@
   - title = t(:edit_profile_of, name: user.name)
 
 #edit_user
-  = render 'droom/shared/popup_header', title: title
+  .standard-modal-overlay.active
+    .standard-modal-container.active
+      %svg.logo.ml-56
+        %use{"xlink:href" => "#croucher_logo"}
+      = form_for user, :html => {:class => 'edit user', :autocomplete => false} do |f|
+        .container
+          %h2
+            = title
 
-  = form_for user, :html => {:class => 'edit user', :autocomplete => false} do |f|
+          .inputs
+            = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, minimal: true, timezone_id: "simple_timezone"}
+            -# = render partial: 'droom/users/edit/groups', locals: {f: f, user: user, minimal: true}
+            = hidden_field_tag "user[group_ids][]", nil
 
-    = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, minimal: true, timezone_id: "simple_timezone"}
-    -# = render partial: 'droom/users/edit/groups', locals: {f: f, user: user, minimal: true}
-    = hidden_field_tag "user[group_ids][]", nil
+            - groups = Droom::Group.all
+            - if groups.any?
+              %div{style: 'width: 100%;'}
+                = f.label(:group_ids, class: "important") + ":"
+                - groups.each do |group|
+                  = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}", class: "checkbox"
+                  %label.checkbox_label.mb.pr-10{for: "user_group_ids_#{group.id}"}
+                    = group.name
 
-    - groups = Droom::Group.all
-    - if groups.any?
-      %div{style: 'width: 100%;'}
-        = f.label(:group_ids, class: "important") + ":"
-        - groups.each do |group|
-          %label.inline{for: "user_group_ids_#{group.id}"}
-            = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}"
-            = group.name
+            - unless @user.confirmed?
+              = f.hidden_field :send_confirmation, value: true
 
-    - unless @user.confirmed?
-      = f.hidden_field :send_confirmation, value: true
+            - if Droom.use_organisations?
+              - if admin?
+                %p.organisation.admin
+                  = f.label :organisation_id
+                  = f.select :organisation_id, Droom::Organisation.for_selection, :class => 'preferences'
+              - else
+                = f.hidden_field :organisation_id
 
-    - if Droom.use_organisations?
-      - if admin?
-        %p.organisation.admin
-          = f.label :organisation_id
-          = f.select :organisation_id, Droom::Organisation.for_selection, :class => 'preferences'
-      - else
-        = f.hidden_field :organisation_id
-
-    .buttons
-      - if user == current_user
-        = f.submit t(:save_your_profile), class: 'croucher-standard-btn inline'
-      - elsif user.new_record?
-        = f.submit t(:invite), class: 'croucher-standard-btn inline'
-      - else
-        = f.submit t(:save_profile), class: 'croucher-standard-btn inline'
-      = t :or
-      = link_to t(:cancel), '#', :class => 'cancel'
+        .buttons
+          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+          - if user == current_user
+            = f.submit t(:save_your_profile), class: 'standard-modal-submit'
+          - elsif user.new_record?
+            = f.submit t(:invite), class: 'standard-modal-submit'
+          - else
+            = f.submit t(:save_profile), class: 'standard-modal-submit'

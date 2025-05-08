@@ -1,47 +1,64 @@
 - user ||= @user
 - me = user == current_user
+- title = me ? t(:edit_your_account) : t(:edit_account_of, name: user.name)
 
 #edit_user
-  = render 'droom/shared/popup_header', title: me ? t(:edit_your_account) : t(:edit_account_of, name: user.name)
+  .standard-modal-overlay.active
+    .standard-modal-container.active
+      %svg.logo.ml-56
+        %use{"xlink:href" => "#croucher_logo"}
+      = form_for @user, :html => {:class => 'edit user password', :autocomplete => false} do |f|
+        .container
+          %h2
+            = title
+          %p
+            - if me
+              = t :account_emails
+            - else
+              = t :admin_account_emails
+          .inputs
+            -# = render "droom/users/edit/emails", f: f, user: user
+            - email_count = 0
+            - user.emails.each_with_index do |email, index|
+              = f.fields_for :emails, email, child_index: index do |email_fields|
+                = email_fields.email_field :email, placeholder: t("placeholders.standard_modal.email", count: index), required: index<1 ? true : false, data: {role: "email", check_url: check_email_path, users_path: users_path, user_id: user.id}
+                = email_fields.hidden_field :address_type_id
+              - email_count+=1
+            - while email_count < 2
+              = f.fields_for :emails, user.emails.new, child_index: email_count do |email_fields|
+                = email_fields.email_field :email, placeholder: t("placeholders.standard_modal.email", count: email_count), required: email_count<1 ? true : false, data: {role: "email", check_url: check_email_path, users_path: users_path, user_id: user.id}
+                = email_fields.hidden_field :address_type_id, value: email_count < 1 ? 1 : 4
+              - email_count += 1
+            
+            - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
+              %p.inputs.mt-8
+                = f.check_box :send_confirmation, class: "radio"
+                = f.label :send_confirmation, class: "radio_label mb-10"
 
-  = form_for @user, :html => {:class => 'edit user password', :autocomplete => false} do |f|
-    %p
-      - if me
-        = t :account_emails
-      - else
-        = t :admin_account_emails
-    = render "droom/users/edit/emails", f: f, user: user
-    
-    - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
-      %p
-        = f.check_box :send_confirmation, class: "fancy"
-        = f.label :send_confirmation
+            %p
+              - if me
+                = t :account_password
+              - else
+                = t :admin_account_password
+            = render "droom/users/edit/admin_password_fields", f: f, user: user
 
-    %p
-      - if me
-        = t :account_password
-      - else
-        = t :admin_account_password
-    = render "droom/users/edit/admin_password_fields", f: f, user: user
+            %p.admin
+              - if admin?
+                = f.select :organisation_id, Droom::Organisation.for_selection, {}, :class => 'preferences mb-10'
+                %br
+                = f.check_box :organisation_admin, class: "radio"
+                = f.label :organisation_admin, class: "radio_label mb-10"
+                %br
+                = f.check_box :admin, class: "radio"
+                = f.label :admin, class: "radio_label mb-10"
+                %br
+                %span.subordinate{data: {dependent: "#user_admin"}}
+                  = f.check_box :gatekeeper, class: "radio"
+                  = f.label :gatekeeper, class: "radio_label mb-10"
 
-    %p.admin
-      - if admin?
-        = f.select :organisation_id, Droom::Organisation.for_selection, :class => 'preferences'
-        %br
-        = f.check_box :organisation_admin, class: "fancy"
-        = f.label :organisation_admin
-        %br
-        = f.check_box :admin, class: "fancy"
-        = f.label :admin
-        %br
-        %span.subordinate{data: {dependent: "#user_admin"}}
-          = f.check_box :gatekeeper, class: "fancy"
-          = f.label :gatekeeper
-
-    .buttons
-      - if @user == current_user
-        = f.submit t(:save_your_preferences), class: 'croucher-standard-btn inline'
-      - else
-        = f.submit t(:save_preferences), class: 'croucher-standard-btn inline'
-      = t :or
-      = link_to t(:cancel), '#', :class => 'cancel'
+        .buttons
+          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+          - if @user == current_user
+            = f.submit t(:save_your_preferences), class: 'croucher-standard-btn inline'
+          - else
+            = f.submit t(:save_preferences), class: 'croucher-standard-btn inline'

@@ -1,103 +1,110 @@
 - user ||= @user
+- title = user == current_user ? t(:edit_your_profile) : t(:edit_profile_of, name: user.name)
 #note
-  = render 'droom/shared/popup_header', title: user == current_user ? t(:edit_your_profile) : t(:edit_profile_of, name: user.name)
+  .standard-modal-overlay.active
+    .standard-modal-container.active
+      %svg.logo.ml-56
+        %use{"xlink:href" => "#croucher_logo"}
+      = form_for user, :html => { class: 'poppedup'}, data: {remote: true, type: :html} do |f|
+        = hidden_field_tag :view, @view
+        .container
+          %h2
+            = title
 
-  = form_for user, :html => { class: 'poppedup'}, data: {remote: true, type: :html} do |f|
-    = hidden_field_tag :view, @view
-
-    %table
-      %tr
-        %td{valign: 'top'}
           %table
             %tr
-              %td
+              %td{valign: 'top', class: 'pt-14'}
+                %table
+                  %tr
+                    %td
+                      %div
+                        - if user.image.attached?
+                          - img = user.image_url(:thumb)
+
+                        .image-upload{:data => {:role => "imagepicker"}}
+                          %a.box{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
+                          = f.file_field :image
+
+              %td{valign: 'top'}
                 %div
-                  - if user.image.attached?
-                    - img = user.image_url(:thumb)
+                  %table.edit-profile.inputs
+                    %tr
+                      %td Title
+                      %td First name
+                    %tr
+                      %td
+                        - if Droom.use_titles?
+                          %span.title>
+                            = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']],{},{class: 'std-input-mb'}
+                      %td
+                        %span.name>
+                          = f.text_field :given_name, :required => true, placeholder: t("placeholders.user.given_name")
+                          
+                    %tr
+                      %td Last name
+                      %td Chinese name
+                    %tr
+                      %td
+                        %span.name>
+                          = f.text_field :family_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.family_name")
 
-                  .image-upload{:data => {:role => "imagepicker"}}
-                    %a.box{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
-                    = f.file_field :image
+                      %td
+                        - if Droom.use_chinese_names?
+                          %span.chinese_name>
+                            = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")
 
-        %td{valign: 'top'}
-          %div
-            %table
-              %tr
-                %td Title
-                %td First name
-              %tr
-                %td
-                  - if Droom.use_titles?
-                    %span.title>
-                      = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']]
-                %td
-                  %span.name>
-                    = f.text_field :given_name, :required => true, placeholder: t("placeholders.user.given_name")
-                    
-              %tr
-                %td Last name
-                %td Chinese name
-              %tr
-                %td
-                  %span.name>
-                    = f.text_field :family_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.family_name")
+                    %tr
+                      %td HKID name
+                      %td HKID
+                    %tr
+                      %td
+                        %span.pro_name>
+                          = f.text_field :preferred_name, placeholder: t("placeholders.user.preferred_name")
 
-                %td
-                  - if Droom.use_chinese_names?
-                    %span.chinese_name>
-                      = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")
+                      %td
+                        %span.hkid>
+                          = f.text_field :hkid, placeholder: t("placeholders.user.hkid"), class: "hkid", data: {role: "hkid"}
 
-              %tr
-                %td HKID name
-                %td HKID
-              %tr
-                %td
-                  %span.pro_name>
-                    = f.text_field :preferred_name, placeholder: t("placeholders.user.preferred_name")
+                    %tr
+                      %td Gender
+                      %td Date of birth
+                    %tr
+                      %td{valign: 'top'}
+                        = f.radio_button :gender, "m", class: 'radio'
+                        = f.label :gender, t(:"helpers.label.user.gender_m"), value: "m", class: 'radio_label pr-10'
+                        = f.radio_button :gender, "f", class: 'radio'
+                        = f.label :gender, t(:"helpers.label.user.gender_f"), value: "f", class: 'radio_label'
+                      %td{valign: 'top'}
+                        = f.date_select :dob, {order: [:day, :month, :year], prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }, start_year: 1940, end_year: Date.today.year}
+                        .std-input-mb
+                    %tr
+                      %td Place of birth
+                      %td Nationality
+                    %tr
+                      %td
+                        %span.pro_name>
+                          = f.text_field :pob, placeholder: t("placeholders.user.pob")
 
-                %td
-                  %span.hkid>
-                    = f.text_field :hkid, placeholder: t("placeholders.user.hkid"), class: "hkid", data: {role: "hkid"}
+                      %td
+                        %span.hkid>
+                          = f.text_field :nationality, placeholder: t("placeholders.user.nationality")
 
-              %tr
-                %td Gender
-                %td Date of birth
-              %tr
-                %td{valign: 'top'}
-                  = f.radio_button :gender, "m"
-                  = f.label :gender, t(:"helpers.label.user.gender_m"), value: "m"
-                  = f.radio_button :gender, "f"
-                  = f.label :gender, t(:"helpers.label.user.gender_f"), value: "f"
-                %td{valign: 'top'}
-                  = f.date_select :dob, {order: [:day, :month, :year], prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }, start_year: 1940, end_year: Date.today.year}
-              
-              %tr
-                %td Place of birth
-                %td Nationality
-              %tr
-                %td
-                  %span.pro_name>
-                    = f.text_field :pob, placeholder: t("placeholders.user.pob")
+                    %tr
+                      %td 
+                        Pronoun 
+                      - if FeatureFlag.enabled?('time-zone-feature', current_user)
+                        %td
+                          Timezone
+                    %tr
+                      %td
+                        %span.pronoun>
+                          = f.select :preferred_pronoun, [['He', 'He'], ['She', 'She'], ['They', 'They']]
+                      
+                      - if FeatureFlag.enabled?('time-zone-feature', current_user)
+                        %td
+                          = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
+                          :javascript
+                            $('#user_timezone').selectize();
 
-                %td
-                  %span.hkid>
-                    = f.text_field :nationality, placeholder: t("placeholders.user.nationality")
-
-              %tr
-                %td 
-                  Pronoun 
-                - if FeatureFlag.enabled?('time-zone-feature', current_user)
-                  %td
-                    Timezone
-              %tr
-                %td
-                  %span.pronoun>
-                    = f.select :preferred_pronoun, [['He', 'He'], ['She', 'She'], ['They', 'They']]
-                
-                - if FeatureFlag.enabled?('time-zone-feature', current_user)
-                  %td
-                    = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
-                    :javascript
-                      $('#user_timezone').selectize();
-
-    = render partial: 'droom/users/edit/buttons', locals: {f: f}
+        .buttons
+          = render partial: 'droom/users/edit/buttons', locals: {f: f}

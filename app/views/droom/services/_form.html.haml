@@ -1,18 +1,22 @@
-= form_for [@service], :html => { :multipart => true, :class => 'edit service', :remote => true, :data => {:type => :html}} do |f|
+.standard-modal-overlay.active
+  .standard-modal-container.active
+    %svg.logo.ml-56
+      %use{"xlink:href" => "#croucher_logo"}
 
-  %p.name
-    = f.label :name
-    = f.text_field :name, :class => 'name'
+    = form_for [@service], :html => { :multipart => true, :class => 'edit service', :remote => true, :data => {:type => :html}} do |f|
+      .container
+        %h2
+          = t title
+        .inputs
+          %p.name
+            = f.text_field :name, :class => 'name', :placeholder => 'Name'
 
-  %p.slug
-    = f.label :slug
-    = f.text_field :slug, :class => 'slug'
+          %p.slug
+            = f.text_field :slug, :class => 'slug', :placeholder => 'Key'
 
-  %p.description
-    = f.label :description
-    = f.text_area :description, :class => 'description'
+          %p.description
+            = f.text_area :description, :class => 'description', :placeholder => 'Notes'
 
-  .buttons
-    = f.submit t(:save_service), class: 'croucher-standard-btn inline'
-    = t :or
-    = link_to t(:cancel), "/", :class => 'cancel'
+      .buttons
+        = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
+        = f.submit t(:save_service), class: 'croucher-standard-btn inline'

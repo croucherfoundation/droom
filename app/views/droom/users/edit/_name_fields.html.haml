@@ -3,14 +3,14 @@
 - with_label ||= false
 
 %fieldset{data: {role: 'names'}}
+  - if Droom.use_titles?
+    %span.title>
+      = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']], {}, class: 'std-input-mb'
   %p.names
-    - if Droom.use_titles?
-      %span.title>
-        = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']]
     %span.name>
       = f.text_field :given_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.given_name")
     %span.name>
       = f.text_field :family_name, :required => true, placeholder: t("placeholders.user.family_name")
     - if Droom.use_chinese_names?
-      %span.chinese_name>
+      %span.chinese_name.w-36p>
         = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")

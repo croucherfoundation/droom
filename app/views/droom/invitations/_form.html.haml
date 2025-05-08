@@ -1,9 +1,17 @@
-= form_for [@event, @invitation], :html => { :class => "invitation", :remote => true, :data => {:type => :html}} do |f|
-  %p
-    %input.person_selector.name{:type => "text", :placeholder => t(:type_name), :autocomplete => "off"}
-    = f.hidden_field :user_id, :class => "person_picker_target"
+.standard-modal-overlay.active
+  .standard-modal-container.active
+    %svg.logo.ml-56
+      %use{"xlink:href" => "#croucher_logo"}
 
-  .buttons
-    = f.submit t(:invite), :class => "croucher-standard-btn inline"
-    = t :or
-    = link_to t(:cancel), '#', :class => "cancel"
+    = form_for [@event, @invitation], :html => { :class => "invitation", :remote => true, :data => {:type => :html}} do |f|
+      .container
+        %h2
+          = title
+        .inputs
+          %p
+            %input.person_selector.name{:type => "text", :placeholder => t(:type_name), :autocomplete => "off"}
+            = f.hidden_field :user_id, :class => "person_picker_target"
+
+      .buttons
+        = link_to t(:cancel_edit), '#', :class => "cancel submit-button"
+        = f.submit t(:invite), :class => "croucher-standard-btn inline"

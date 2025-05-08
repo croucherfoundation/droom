@@ -1,22 +1,30 @@
-= form_for @folder, :html => {:class => 'edit folder'} do |f|
-  = f.hidden_field :parent_id
+.standard-modal-overlay.active
+  .standard-modal-container.active
+    %svg.logo.ml-56
+      %use{"xlink:href" => "#croucher_logo"}
+      
+    = form_for @folder, :html => {:class => 'edit folder'} do |f|
+      .container
+        %h2
+          = t title
+        .inputs
+          = f.hidden_field :parent_id
 
-  %p.error{style: 'color: red'}
-  %p.name
-    = f.label :name
-    %br
-    = f.text_field :name, required: true, class: "name", placeholder: t("helpers.label.folder.name"), autofocus: true, data: {role: 'name'}
+          %p.error{style: 'color: red'}
+          %p.name
+            = f.label :name
+            %br
+            = f.text_field :name, required: true, class: "name", placeholder: t("helpers.label.folder.name"), autofocus: true, data: {role: 'name'}
 
-  %p.slug
-    %strong<
-    - if @folder.parent
-      = @folder.parent.path + "/"
-    - else
-      \/
-    %br
-    = f.text_field :slug, :class => "slug", :placeholder => t("helpers.label.folder.slug"), data: {role: 'slug'}, readonly: true, style: "background: #eee"
+          %p.slug
+            %strong<
+            - if @folder.parent
+              = @folder.parent.path + "/"
+            - else
+              \/
+            %br
+            = f.text_field :slug, :class => "slug", :placeholder => t("helpers.label.folder.slug"), data: {role: 'slug'}, readonly: true, style: "background: #eee"
 
-  .buttons
-    = f.submit t(:save_folder), class: 'croucher-standard-btn inline'
-    = t :or
-    = link_to t(:cancel), '#', :class => 'cancel'
+      .buttons
+        = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+        = f.submit t(:save_folder), class: 'standard-modal-submit'

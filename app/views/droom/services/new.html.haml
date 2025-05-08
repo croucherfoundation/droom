@@ -1,3 +1,2 @@
 #service
-  = render 'droom/shared/popup_header', title: t(:add_service)
-  = render :partial => 'form'
+  = render :partial => 'form', locals: {title: :add_service}
