@@ -177,8 +177,11 @@ $(document).ready(function () {
   // Select the left and right panels
   const $leftPanel = $('.left-panel');
   const $rightPanel = $('.preview-area');
+  let isScrollingProgrammatically = false;
+  let suppressLeftPanelScroll = false;
 
   function syncPanelsOnScroll() {
+    if (isScrollingProgrammatically) return;
     const $previewList = $('#preview-list');
     const rightPanelHeight = $previewList.outerHeight();
     const rightPanelScrollTop = $previewList.scrollTop();
@@ -222,12 +225,14 @@ $(document).ready(function () {
               leftItemTop + $correspondingLeftItem.outerHeight();
 
             // Scroll left panel if the active item is not in view
-            if (leftItemTop < leftPanelScrollTop) {
-              $leftPanel.scrollTop(leftItemTop); // Scroll up to the active item
-            } else if (leftItemBottom > leftPanelScrollTop + leftPanelHeight) {
-              $leftPanel.scrollTop(
-                leftPanelScrollTop + leftItemBottom - leftPanelHeight
-              ); // Scroll down to the active item
+            if (!suppressLeftPanelScroll) {
+              if (leftItemTop < leftPanelScrollTop) {
+                $leftPanel.scrollTop(leftItemTop);
+              } else if (leftItemBottom > leftPanelScrollTop + leftPanelHeight) {
+                $leftPanel.scrollTop(
+                  leftPanelScrollTop + leftItemBottom - leftPanelHeight
+                );
+              }
             }
 
             activeItemFound = true; // Set the flag to true to stop further activation
@@ -285,4 +290,40 @@ $(document).ready(function () {
 
   // Add a scroll event listener to the right panel
   $rightPanel.on('scroll', syncPanelsOnScroll);
+
+  $('#thumbnail-list .thumbnail').on('click', function() {
+    suppressLeftPanelScroll = true;
+  
+    const $li = $($(this).closest('.thumbnail-item'));
+    const pageNumber = $li.data('page-number');
+  
+    $li.addClass('active').siblings().removeClass('active');
+    scrollToPDF(pageNumber);
+
+    setTimeout(() => {
+      suppressLeftPanelScroll = false;
+    }, 600);
+  });  
+  
+  function scrollToPDF(pageNumber) {
+    const $container = $('.preview-area');
+    const $targetPDF = $container.find('.preview-item[data-page-number="' + pageNumber + '"]');
+  
+    if ($targetPDF.length > 0) {
+      const scrollTop = $targetPDF.position().top + $container.scrollTop() - 70;
+  
+      isScrollingProgrammatically = true;
+  
+      $container.animate(
+        { scrollTop: scrollTop },
+        500,
+        function () {
+          // Re-enable scroll sync after animation completes
+          isScrollingProgrammatically = false;
+        }
+      );
+    } else {
+      console.warn("PDF not found for page:", pageNumber);
+    }
+  }  
 });

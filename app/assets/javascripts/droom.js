@@ -32,26 +32,6 @@
 
 
 (function() {
-  $('#thumbnail-list .thumbnail').on('click', function() {
-    console.log('clicking')
-    const $li = $($(this).closest('.thumbnail-item'));
-    const pageNumber = $li.data('page-number'); 
-
-    $li.addClass('active').siblings().removeClass('active');
-    scrollToPDF(pageNumber);
-  });
-  
-  function scrollToPDF(pageNumber) {
-    const $container = $('.preview-area'); 
-    const $targetPDF = $container.find('.preview-item[data-page-number="' + pageNumber + '"]');
-
-    if ($targetPDF.length > 0) {
-      const scrollTop = $targetPDF.position().top + $container.scrollTop() - 70;
-      $container.animate({ scrollTop: scrollTop }, 500);
-    } else {
-      console.warn("PDF not found for page:", pageNumber);
-    }
-  }
 
   // Handle thumbnail delete event
   $('.delete-btn').on('click', function(e) {
