@@ -162,7 +162,7 @@ module Droom::Concerns::PdfThumbnailable
     tempfile.binmode
     tempfile.write(blob.download)
     tempfile.rewind
-    tempfile.path
+    tempfile
   end
 
   def convert_docx_to_pdf(input_path)

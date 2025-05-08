@@ -405,7 +405,7 @@ module Droom
       documents.each do |doc|
         next unless doc.file.attached?
 
-        filepath = download_to_tempfile(doc)
+        filepath = download_to_tempfile(doc).path
         ext = File.extname(filepath).downcase
 
         pdf_path = case ext
@@ -539,7 +539,7 @@ module Droom
         remaining_docs = source_documents[1..]
 
         if cover_doc.file.attached?
-          cover_path = download_to_tempfile(cover_doc)
+          cover_path = download_to_tempfile(cover_doc).path
           cover_pdf = CombinePDF.load(cover_path)
           resulted_pdf << cover_pdf
           cleanup_file(cover_path)
@@ -549,7 +549,7 @@ module Droom
         remaining_docs.each do |doc|
           next unless doc.file.attached?
 
-          file_path = download_to_tempfile(doc)
+          file_path = download_to_tempfile(doc).path
           numbered_pdf << CombinePDF.load(file_path)
           cleanup_file(file_path)
         end
