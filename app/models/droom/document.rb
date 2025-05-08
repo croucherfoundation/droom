@@ -19,7 +19,8 @@ module Droom
     before_create :inherit_confidentiality
     before_save :set_file_path_and_event
 
-    after_commit :compile_meeting_pdf
+    before_save :track_file_change
+    after_commit :file_changed_callback, if: -> { @file_changed }
 
     # validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
@@ -291,8 +292,20 @@ module Droom
 
     private
 
-    def compile_meeting_pdf
-      CompileMeetingPdfJob.perform_later(event_id) if event_id.present?
+    def track_file_change
+      return unless file.attached? && persisted?
+  
+      current_blob_id = file.blob_id
+      previous_blob_id = ActiveStorage::Attachment
+                            .find_by(record_type: self.class.name, record_id: id, name: 'file')
+                            &.blob_id
+  
+      @file_changed = previous_blob_id.present? && previous_blob_id != current_blob_id
+    end
+    
+    def file_changed_callback
+      return unless event_id.present?
+      CompileMeetingPdfJob.perform_later(id, event_id)
     end
 
   end

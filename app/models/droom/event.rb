@@ -389,13 +389,18 @@ module Droom
     end
 
     # prepare existing documents to compile pdf
-    def process_attached_documents
-      self.single_documents.where.not(document_id: nil).destroy_all
-      self.thumbnails.where.not(document_id: nil).destroy_all
+    def process_attached_documents(doc_id: nil)
 
-      documents = self.documents if compile_type == 'all'
-      documents = self.documents.where(id: selected_document_ids) if compile_type == 'selected'
-      documents = documents.order(:position)
+      unless doc_id
+        self.single_documents.where.not(document_id: nil).destroy_all
+        self.thumbnails.where.not(document_id: nil).destroy_all
+
+        documents = self.documents if compile_type == 'all'
+        documents = self.documents.where(id: selected_document_ids) if compile_type == 'selected'
+        documents = documents.order(:position)
+      else
+        documents = Droom::Document.where(id: doc_id)
+      end
 
       documents.each do |doc|
         next unless doc.file.attached?
