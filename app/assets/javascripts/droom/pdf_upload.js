@@ -80,7 +80,7 @@ $(document).ready(function () {
 
   $(document).on('click', '.download-combine-pdf, .save-combine-pdf', function (e) {
     e.preventDefault();
-
+    const currentElement = $(this);
     const eventId = $('#thumbnail-list').data('event-id');
     $('body').addClass('overlay-active');
   
@@ -91,7 +91,7 @@ $(document).ready(function () {
       success: function (response) {
         $('body').removeClass('overlay-active');
         if (response.success) {
-          if ($(e.currentTarget).hasClass('download-combine-pdf')) {
+          if (currentElement.hasClass('download-combine-pdf')) {
             window.location.href = `/events/${eventId}/download-pdf`;
           } else {
             const $flashes = $('#flashes');
