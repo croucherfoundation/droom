@@ -179,151 +179,107 @@ $(document).ready(function () {
   const $rightPanel = $('.preview-area');
   let isScrollingProgrammatically = false;
   let suppressLeftPanelScroll = false;
-
-  function syncPanelsOnScroll() {
-    if (isScrollingProgrammatically) return;
-    const $previewList = $('#preview-list');
-    const rightPanelHeight = $previewList.outerHeight();
-    const rightPanelScrollTop = $previewList.scrollTop();
-
-    let activeItemFound = false; // Flag to track if an active item is found
-
+  let currentActivePage = null;
+  
+  // Debounce utility
+  function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  }
+  
+  // Get the first visible preview item based on scroll
+  function getVisiblePreviewPageNumber() {
+    const panelTop = $rightPanel.offset().top;
+    let closestItem = null;
+    let minDistance = Infinity;
+  
     $rightPanel.find('.preview-item').each(function () {
       const $item = $(this);
-      const itemHeight = $item.outerHeight();
-      const itemTop = $item.position().top;
-      const itemBottom = itemTop + itemHeight;
-
-      // Check if the item is in the viewport (visible in the right panel)
-      if (
-        rightPanelScrollTop + rightPanelHeight >= itemTop + 70 &&
-        rightPanelScrollTop <= itemBottom - 70
-      ) {
-        const pageNumber = $item.data('page-number');
-
-        // Only activate the first item that is visible in the viewport
-        if (!activeItemFound) {
-          console.log('atciedd');
-          // Find the corresponding left panel item
-          const $correspondingLeftItem = $leftPanel.find(
-            `.thumbnail-item[data-page-number="${pageNumber}"]`
-          );
-
-          // If the corresponding item is found, activate it
-          if ($correspondingLeftItem.length) {
-            // Deactivate all other items in the left panel
-            $leftPanel.find('.thumbnail-item').removeClass('active');
-
-            // Activate the current item in the left panel
-            $correspondingLeftItem.addClass('active');
-
-            // Scroll the left panel if needed
-            const leftPanelHeight = $leftPanel.outerHeight();
-            const leftPanelScrollTop = $leftPanel.scrollTop();
-            const leftItemTop = $correspondingLeftItem.position().top;
-            const leftItemBottom =
-              leftItemTop + $correspondingLeftItem.outerHeight();
-
-            // Scroll left panel if the active item is not in view
-            if (!suppressLeftPanelScroll) {
-              if (leftItemTop < leftPanelScrollTop) {
-                $leftPanel.scrollTop(leftItemTop);
-              } else if (leftItemBottom > leftPanelScrollTop + leftPanelHeight) {
-                $leftPanel.scrollTop(
-                  leftPanelScrollTop + leftItemBottom - leftPanelHeight
-                );
-              }
-            }
-
-            activeItemFound = true; // Set the flag to true to stop further activation
-          }
-        }
-      } else {
-        // If the item is fully out of view, we should switch to the next one
-        const pageNumber = $item.data('page-number');
-        console.log(pageNumber);
-        const $correspondingLeftItem = $leftPanel.find(
-          `.thumbnail-item[data-page-number="${pageNumber}"]`
-        );
-
-        if (
-          $correspondingLeftItem.length &&
-          $item.position().top + $item.outerHeight() < 0
-        ) {
-          // If current item is fully out of view, activate the next one
-          const nextItem = $rightPanel.find(
-            `.preview-item[data-page-number="${pageNumber + 1}"]`
-          );
-          if (nextItem.length) {
-            const nextPageNumber = nextItem.data('page-number');
-            const $correspondingNextLeftItem = $leftPanel.find(
-              `.thumbnail-item[data-page-number="${nextPageNumber}"]`
-            );
-
-            // Deactivate all other items in the left panel
-            $leftPanel.find('.thumbnail-item').removeClass('active');
-
-            // Activate the next item
-            if ($correspondingNextLeftItem.length) {
-              $correspondingNextLeftItem.addClass('active');
-            }
-          }
-        }
+      const offsetTop = $item.offset().top;
+      const distance = Math.abs(offsetTop - panelTop - 70); // buffer
+  
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestItem = $item;
       }
     });
-
-    // If no active item is found, we might need to ensure the last item is marked active when scroll completes
-    if (!activeItemFound) {
-      const lastPreviewItem = $rightPanel.find('.preview-item').last();
-      const pageNumber = lastPreviewItem.data('page-number');
-      const $correspondingLeftItem = $leftPanel.find(
-        `.thumbnail-item[data-page-number="${pageNumber}"]`
+  
+    return closestItem ? closestItem.data('page-number') : null;
+  }
+  
+  function syncPanelsOnScroll() {
+    if (isScrollingProgrammatically) return;
+  
+    const visiblePage = getVisiblePreviewPageNumber();
+    if (visiblePage && visiblePage !== currentActivePage) {
+      currentActivePage = visiblePage;
+  
+      const $newActive = $leftPanel.find(
+        `.thumbnail-item[data-page-number="${visiblePage}"]`
       );
-
-      // If the corresponding left item is found, activate it
-      if ($correspondingLeftItem.length) {
-        $leftPanel.find('.thumbnail-item').removeClass('active');
-        $correspondingLeftItem.addClass('active');
+  
+      if ($newActive.length) {
+        $leftPanel.find('.thumbnail-item.active').removeClass('active');
+        $newActive.addClass('active');
+  
+        if (!suppressLeftPanelScroll) {
+          const scrollTop = $newActive.position().top + $leftPanel.scrollTop();
+          const itemHeight = $newActive.outerHeight();
+          const panelHeight = $leftPanel.outerHeight();
+  
+          // Only scroll if not fully visible
+          if (
+            $newActive.position().top < 0 ||
+            $newActive.position().top + itemHeight > panelHeight
+          ) {
+            $leftPanel.scrollTop(scrollTop - panelHeight / 2 + itemHeight / 2);
+          }
+        }
       }
     }
   }
-
-  // Add a scroll event listener to the right panel
-  $rightPanel.on('scroll', syncPanelsOnScroll);
-
-  $('#thumbnail-list .thumbnail').on('click', function() {
+  
+  // Debounced scroll listener
+  $rightPanel.on('scroll', debounce(syncPanelsOnScroll, 100));
+  
+  // Click handler on thumbnails
+  $('#thumbnail-list .thumbnail').on('click', function () {
     suppressLeftPanelScroll = true;
   
-    const $li = $($(this).closest('.thumbnail-item'));
+    const $li = $(this).closest('.thumbnail-item');
     const pageNumber = $li.data('page-number');
   
+    currentActivePage = pageNumber;
     $li.addClass('active').siblings().removeClass('active');
     scrollToPDF(pageNumber);
-
+  
     setTimeout(() => {
       suppressLeftPanelScroll = false;
     }, 600);
-  });  
+  });
   
   function scrollToPDF(pageNumber) {
     const $container = $('.preview-area');
-    const $targetPDF = $container.find('.preview-item[data-page-number="' + pageNumber + '"]');
+    const $targetPDF = $container.find(
+      `.preview-item[data-page-number="${pageNumber}"]`
+    );
   
-    if ($targetPDF.length > 0) {
-      const scrollTop = $targetPDF.position().top + $container.scrollTop() - 70;
+    if ($targetPDF.length) {
+      const scrollTop =
+        $targetPDF.position().top + $container.scrollTop() - 70;
   
       isScrollingProgrammatically = true;
   
-      $container.animate(
-        { scrollTop: scrollTop },
-        500,
-        function () {
-          // Re-enable scroll sync after animation completes
-          isScrollingProgrammatically = false;
-        }
-      );
+      $container.animate({ scrollTop }, 500, () => {
+        isScrollingProgrammatically = false;
+      });
     } else {
-      console.warn("PDF not found for page:", pageNumber);
+      console.warn('PDF not found for page:', pageNumber);
     }
-  }  
+  }
+  
+
 });
