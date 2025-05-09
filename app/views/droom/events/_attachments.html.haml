@@ -4,14 +4,15 @@
 .col.attachments{data: {droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}", refreshes: "#event_#{event.id}"}, style: "margin-bottom: 20px"}
   - if event.compiled_file.attached?
     %h3{style: "font-size: 1.17rem; font-weight: bold;"}
-      = t :compile_meeting_pdf
+      Compiled document
     %ul 
       %li.document
         = link_to show_compiled_file_event_url(event), class: 'document pdf no-bg-image', target: "_blank", style: 'white-space: nowrap;' do
           %svg.icon.medium
             %use{"xlink:href" => "#pdf_symbol"}
           %span
-            = event.compiled_filename
+            = event.generate_compiled_pdf_filename
+    %br
 
   - if folder.documents.count > 0 || folder.children.count > 0
     %h3{style: "font-size: 1.17rem; font-weight: bold;"}

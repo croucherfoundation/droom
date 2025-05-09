@@ -452,6 +452,20 @@ module Droom
                              .gsub('{{dataroom_link}}', "<a href='https://data.croucher.org.hk', target='_blank'>here</a>")
     end
 
+    def generate_compiled_pdf_filename
+      shor_codes = {
+        2 =>  'IC',
+        3 =>  'AC',
+        6 =>  'NRC',
+        9 =>  'NCF',
+        10 =>  'CF',
+        11 =>  'AAWG',
+        12 =>  'NC'
+      }
+
+      [shor_codes[event_type_id], meeting_number, 'Agendabook', '.pdf'].compact.join('')
+    end
+
   protected
 
     # Set event_type.folder.id to event.folder.parent_id if event.event_type changed
@@ -500,20 +514,6 @@ module Droom
           event_folder.save
         end
       end
-    end
-
-    def generate_compiled_pdf_filename
-      shor_codes = {
-        2 =>  'IC',
-        3 =>  'AC',
-        6 =>  'NRC',
-        9 =>  'NCF',
-        10 =>  'CF',
-        11 =>  'AAWG',
-        12 =>  'NC'
-      }
-
-      [shor_codes[event_type_id], meeting_number, 'Agendabook', '.pdf'].compact.join('')
     end
 
     def compress_pdf_with_ghostscript(input_path, output_path)
