@@ -157,12 +157,25 @@ module Droom::Concerns::PdfThumbnailable
   def download_to_tempfile(document)
     attachment = document.file
     blob = attachment.blob
+    filename = "attachment#{File.extname(blob.filename.to_s)}"
 
-    tempfile = Tempfile.new(["attachment", File.extname(blob.filename.to_s)])
-    tempfile.binmode
-    tempfile.write(blob.download)
-    tempfile.rewind
-    tempfile
+    if Rails.env.development?
+      tempfile = Tempfile.new([File.basename(filename, ".*"), File.extname(filename)])
+      tempfile.binmode
+      tempfile.write(blob.download)
+      tempfile.rewind
+      tempfile.path
+    else
+      env_dir = Rails.env.staging? ? "staging" : "production"
+      directory = Rails.root.join("../../../mount/efs/cdr/#{env_dir}/compile_files")
+      FileUtils.mkdir_p(directory) unless File.directory?(directory)
+
+      filepath = File.join(directory, filename)
+      File.open(filepath, 'wb') do |file|
+        file.write(blob.download)
+      end
+      filepath
+    end
   end
 
   def convert_docx_to_pdf(input_path)
