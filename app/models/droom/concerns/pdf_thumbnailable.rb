@@ -82,6 +82,8 @@ module Droom::Concerns::PdfThumbnailable
 
     MiniMagick::Tool::Convert.new do |magick|
       magick.density '100'
+      magick.colorspace 'sRGB'
+      magick.flatten
       magick.quality '100'
       magick << "#{pdf_tempfile}[#{page_number}]"
       magick << output.path
