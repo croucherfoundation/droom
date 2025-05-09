@@ -210,6 +210,7 @@ module Droom::Concerns::ControllerHelpers
 
   def handle_internal_server_error(exception)
     if exception
+      Honeybadger.notify(exception)
       Rails.logger.error "Error #500: #{exception.message}\n#{exception.backtrace.join("\n")}"
     end
     Rails.logger.warn "⚠️ internal_server_error"
@@ -244,7 +245,6 @@ module Droom::Concerns::ControllerHelpers
   def not_found(exception)
     Rails.logger.warn "⚠️ not_found"
     @error = exception.message
-    Honeybadger.notify(exception)
     respond_to do |format|
       format.html { render template: "errors/not_found", :status => 404 }
       format.js { head :not_found }
