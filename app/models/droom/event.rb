@@ -1,5 +1,3 @@
-require 'docsplit'
-
 module Droom
   class Event < Droom::DroomRecord
     include Droom::Concerns::Slugged

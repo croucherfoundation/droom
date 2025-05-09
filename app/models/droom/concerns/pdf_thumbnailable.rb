@@ -157,7 +157,7 @@ module Droom::Concerns::PdfThumbnailable
   def download_to_tempfile(document)
     attachment = document.file
     blob = attachment.blob
-    filename = "attachment#{File.extname(blob.filename.to_s)}"
+    filename = "attachment_#{SecureRandom.uuid}#{File.extname(blob.filename.to_s)}"
 
     if Rails.env.development?
       tempfile = Tempfile.new([File.basename(filename, ".*"), File.extname(filename)])
@@ -180,11 +180,12 @@ module Droom::Concerns::PdfThumbnailable
 
   def convert_docx_to_pdf(input_path)
     output_dir = File.dirname(input_path)
+    filename = File.basename(input_path, '.*')
+    pdf_path = File.join(output_dir, "#{filename}.pdf")
 
-    Docsplit.extract_pdf(input_path, output: output_dir)
+    success = system("libreoffice --headless --convert-to pdf --outdir #{Shellwords.escape(output_dir)} #{Shellwords.escape(input_path)}")
 
-    pdf_path = File.join(output_dir, "#{File.basename(input_path, '.*')}.pdf")
-    raise "PDF not generated" unless File.exist?(pdf_path)
+    raise "PDF not generated" unless success && File.exist?(pdf_path)
 
     pdf_path
   end
