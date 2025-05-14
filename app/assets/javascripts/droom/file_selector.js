@@ -7,6 +7,7 @@ $.fn.file_selector = function () {
 class FileSelector {
   constructor(containerSelector) {
     this.$container = $(containerSelector);
+    this.$rightContainer = $('#preview-list');
     this.$items = this.$container.children('li');
     this.lastSelectedIndex = null;
 
@@ -28,13 +29,14 @@ class FileSelector {
     const isWindows = /Windows/.test(navigator.userAgent);
 
     new Sortable(this.$container[0], {
-      multiDrag: true,                
+      multiDrag: true,
       selectedClass: 'selected',
       animation: 150,
       fallbackTolerance: 3,
       multiDragKey: isWindows ? 'ctrl' : 'meta',
-      onStart: (evt) => this.handleSortingStart(evt),
-      onEnd: (evt) => this.handleSortingEnd(evt)
+      onChoose: (e) => this.handleChoose(e),
+      onStart: (e) => this.handleSortingStart(e),
+      onEnd: (e) => this.handleSortingEnd(e),
     });
   }
 
@@ -58,7 +60,7 @@ class FileSelector {
     const selected = $this.$items.filter('.selected');
 
     if (selected.length === 0) {
-    $this.showAlert('error', 'Select files to delete!');
+      $this.showAlert('error', 'Select files to delete!');
       return;
     }
 
@@ -72,7 +74,7 @@ class FileSelector {
     const url = '/thumbnails/batch_destroy';
 
     $this.showAlert('notice', 'Deleting files...');
-    $('body').addClass('overlay-active');
+    $this.toggleOverlay();
 
     $.ajax({
       url: url,
@@ -84,34 +86,77 @@ class FileSelector {
         $this.$items = $this.$container.children('li');
         $this.lastSelectedIndex = null;
         $this.showAlert('notice', 'Files deleted successfully.');
-        $('body').removeClass('overlay-active');
+        $this.toggleOverlay();
       },
       error: function (xhr, status, error) {
-        $('body').removeClass('overlay-active');
+        $this.toggleOverlay();
         $this.showAlert('error', 'Failed to delete files!');
         console.error('Delete failed:', status, error);
       },
     });
   }
 
-  handleSortingStart(evt) {
+  handleChoose(e) {
+    const $item = $(e.item);
+    const originalIndex = $item.index() + 1;
+    $item.data('original-index', originalIndex);
+  }
+
+  handleSortingStart(e) {
     const selectedItems = this.$items.filter('.selected');
     selectedItems.each(function () {
-      const itemIndex = $(this).index();
+      const itemIndex = $(this).index() + 1;
       $(this).data('original-index', itemIndex);
     });
   }
- 
-  handleSortingEnd(evt) {
-    // Refresh cached items
+
+  handleSortingEnd(e) {
     this.$items = this.$container.children('li');
-    const newOrder = [];
- 
+    const movedItems = [];
+
     this.$items.each((index, item) => {
-      newOrder.push($(item).data('imageId'));
+      const newIndex = index + 1;
+      const $item = $(item);
+      const originalIndex = $item.data('original-index');
+
+      if (originalIndex !== undefined && originalIndex !== newIndex) {
+        movedItems.push({
+          id: $item.data('imageId'),
+          position: newIndex,
+        });
+      }
+
+      $item.removeData('original-index');
     });
-    console.log('New order after sorting:', newOrder);
-    // You can POST this order to the server if needed
+
+    if (movedItems.length === 0) return;
+
+    const eventId = this.$container.data('eventId');
+    const url = '/thumbnails/reposition';
+
+    const $this = this;
+    $this.showAlert('notice', 'Sorting files...');
+    this.toggleOverlay();
+
+    $.ajax({
+      url,
+      type: 'PUT',
+      data: JSON.stringify({
+        event_id: eventId,
+        reordered_items: movedItems,
+      }),
+      contentType: 'application/json',
+      success: () => {
+        $this.reorderRightPanel();
+        $this.setPageNumbers();
+        $this.showAlert('notice', 'Files sorted successfully.');
+        $this.toggleOverlay();
+      },
+      error: () => {
+        $this.toggleOverlay();
+        $this.showAlert('alert', 'Failed to sort files!');
+      },
+    });
   }
 
   removePages(pageNumbers) {
@@ -119,6 +164,38 @@ class FileSelector {
       $(`li.preview-item[data-page-number="${pageNumber}"]`).remove();
     });
   }
+
+  reorderRightPanel() {
+    const orderedPageNumbers = this.$container
+      .children('li')
+      .map(function () {
+        return $(this).data('page-number');
+      })
+      .get();
+
+    const $previewMap = {};
+    this.$rightContainer.children().each(function () {
+      const $el = $(this);
+      $previewMap[$el.data('page-number')] = $el;
+    });
+
+    const $fragment = $(document.createDocumentFragment());
+    orderedPageNumbers.forEach((pageNumber) => {
+      const $preview = $previewMap[pageNumber];
+      if ($preview) $fragment.append($preview);
+    });
+
+    this.$rightContainer.append($fragment);
+  }
+
+  setPageNumbers() {
+    var items = this.$container.children('li');
+    for (var i = 0; i < items.length; i++) {
+      $(items[i])
+        .find('.page-number')
+        .html(i + 1);
+    }
+  };
 
   showAlert(alertType, message) {
     const $flashes = $('#flashes');
@@ -131,6 +208,10 @@ class FileSelector {
       $alert.fadeOut(400, function () {
         $(this).remove();
       });
-    }, 3000);
+    }, 5000);
+  }
+
+  toggleOverlay() {
+    $('body').toggleClass('overlay-active');
   }
 }

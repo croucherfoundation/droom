@@ -38,16 +38,11 @@
       function SortableFiling(element) {
         this.setParent = bind(this.setParent, this);
         this.setPosition = bind(this.setPosition, this);
-        this.setThumbPosition = bind(this.setThumbPosition, this);
-        this.sortPDFPreviews = bind(this.sortPDFPreviews, this);
-        this.resetPageNumber = bind(this.resetPageNumber, this);
         this.beginDrag = bind(this.beginDrag, this);
         this._container = $(element);
         this._event_id = this._container.data('eventId');
         this._folder_id = this._container.data('folderId');
         this._droppables = this._container.parents('[data-droppable]');
-
-        var _caller = this._event_id ? this.setThumbPosition : this.setPosition;
 
         this._sortable = new Sortable(element, {
           group: 'files',
@@ -56,8 +51,8 @@
           put: true,
           revertClone: true,
           onStart: this.beginDrag,
-          onUpdate: _caller,
-          onAdd: _caller,
+          onUpdate: this.setPosition,
+          onAdd: this.setPosition,
         });
       }
 
@@ -86,57 +81,6 @@
               return $el.signal_confirmation();
             },
           }));
-        }
-      };
-
-      SortableFiling.prototype.setThumbPosition = function (e) {
-        var $el, $this, doc_id, params, update, url, oldIndex, newIndex;
-        $el = $(e.item || e.dragged);
-
-        $this = this;
-        oldIndex = e.oldIndex;
-        newIndex = e.newIndex;
-
-        if ((doc_id = $el.data('docId'))) {
-          url = '/thumbnails/' + doc_id + '/reposition';
-          params = {
-            thumbnail: {
-              position: newIndex + 1,
-              event_id: this._event_id,
-            },
-            event_id: this._event_id,
-          };
-          return (update = $.ajax({
-            method: 'PUT',
-            url: url,
-            data: params,
-            success: function () {
-              $this.sortPDFPreviews(oldIndex, newIndex);
-              $this.resetPageNumber();
-              return $el.signal_confirmation();
-            },
-          }));
-        }
-      };
-
-      SortableFiling.prototype.sortPDFPreviews = function (oldIndex, newIndex) {
-        var container = $('.right-panel');
-        var items = container.find('li.preview-item');
-
-        var itemToMove = items.eq(oldIndex);
-
-        if (oldIndex > newIndex) {
-          itemToMove.insertBefore(items.eq(newIndex));
-        } else {
-          itemToMove.insertAfter(items.eq(newIndex));
-        }
-      };
-
-      SortableFiling.prototype.resetPageNumber = function () {
-        var container = $('.left-panel');
-        var items = container.find('li.thumbnail-item.files');
-        for (var i = 0; i < items.length; i++) {
-          $(items[i]).find('.page-number').html(i + 1);
         }
       };
 

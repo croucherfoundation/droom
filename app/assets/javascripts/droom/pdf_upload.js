@@ -223,9 +223,9 @@ $(document).ready(function () {
       );
   
       if ($newActive.length) {
-        // $leftPanel.find('.thumbnail-item.active').removeClass('active');
-        // $newActive.addClass('active');
-  
+        $leftPanel.find('.thumbnail-item').removeClass('active selected');
+        $newActive.addClass('active');
+        
         if (!suppressLeftPanelScroll) {
           const scrollTop = $newActive.position().top + $leftPanel.scrollTop();
           const itemHeight = $newActive.outerHeight();

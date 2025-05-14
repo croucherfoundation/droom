@@ -6,10 +6,26 @@ module Droom
     load_and_authorize_resource :thumbnail, class: 'Droom::Thumbnail', through: :event, :shallow => true
 
     def reposition
-      @single_document = @event.single_documents.find_by(position: @thumbnail.position)
-      @single_document.update(reposition_params) if @single_document
-      @thumbnail.update(reposition_params)
+      reordered_items = reposition_params
+      return head :bad_request if reordered_items.blank?
+
+      ActiveRecord::Base.transaction do
+        reordered_items.each do |item|
+          id = item[:id]
+          position = item[:position]
+
+          thumb = @event.thumbnails.find(id)
+
+          thumb.single_document&.update!(position: position)
+          thumb.update!(position: position)
+        end
+      end
+
       head :ok
+
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
+      Rails.logger.error "Reposition failed: #{e.message}"
+      head :unprocessable_entity
     end
 
     def batch_destroy
@@ -33,13 +49,11 @@ module Droom
       head :ok
     end
 
-  protected
+    private
 
     def reposition_params
-      if params[:thumbnail]
-        params.require(:thumbnail).permit(:position, :event_id)
-      else
-        {}
+      params[:reordered_items].map do |item|
+        item.permit(:id, :position)
       end
     end
   end
