@@ -25,16 +25,12 @@
 
     .content-wrapper
       .left-panel.hide-scrollbar
-        %ul#thumbnail-list.sortable_files{data: {event_id: @event.id}}
+        %ul#thumbnail-list{data: {role: 'fileselector', event_id: @event.id}}
           - @thumbnails.each_with_index do |image, index|
-            %li.thumbnail-item.files{ data: { page_number: image.position, doc_id: image.id }, class: ('active' if index == 0)}
+            %li.thumbnail-item{data: {page_number: image.position, image_id: image.id}, class: ('active' if index == 0)}
               .thumbnail-wrapper
-                - unless index == 0
-                  .delete-section 
-                    %button.delete-btn{ type: "button", data: { image_id: image.id, event_id: @event.id}, aria: { label: "Delete thumbnail" }, title: 'Delete PDF' }
-                      .btn-text ×
                 = image_tag image.image.url, class: "thumbnail", width: "100", loading: "lazy"
-              %div.page-number{ data: { page_number: image.position } }
+              %div.page-number
                 = index + 1
         
         %ul#uploader
@@ -44,7 +40,6 @@
               %div.upload-label 
                 %svg
                   %use{href: "#add_symbol"}
-
 
       .right-panel
         .preview-area

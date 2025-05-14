@@ -6,4 +6,8 @@ class Droom::Thumbnail < Droom::DroomRecord
   has_one_attached :image
 
   acts_as_list scope: :event
+
+  def single_document
+    event.single_documents.find_by(position: position)
+  end
 end

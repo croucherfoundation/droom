@@ -6,4 +6,8 @@ class Droom::SingleDocument < Droom::DroomRecord
   has_one_attached :file
 
   acts_as_list scope: :event
+
+  def thumbnail
+    event.thumbnails.find_by(position: position)
+  end
 end

@@ -143,6 +143,7 @@ Droom::Engine.routes.draw do
   end
 
   resources :thumbnails do
+    delete 'batch_destroy', on: :collection
     put "reposition", on: :member
   end
 
