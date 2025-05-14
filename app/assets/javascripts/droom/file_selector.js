@@ -11,6 +11,7 @@ class FileSelector {
     this.lastSelectedIndex = null;
 
     this.initEvents();
+    this.initSortable();
   }
 
   initEvents() {
@@ -23,6 +24,20 @@ class FileSelector {
     });
   }
 
+  initSortable() {
+    const isWindows = /Windows/.test(navigator.userAgent);
+
+    new Sortable(this.$container[0], {
+      multiDrag: true,                
+      selectedClass: 'selected',
+      animation: 150,
+      fallbackTolerance: 3,
+      multiDragKey: isWindows ? 'ctrl' : 'meta',
+      onStart: (evt) => this.handleSortingStart(evt),
+      onEnd: (evt) => this.handleSortingEnd(evt)
+    });
+  }
+
   handleClick(event) {
     const $clickedItem = $(event.currentTarget);
     const index = this.$items.index($clickedItem);
@@ -32,13 +47,8 @@ class FileSelector {
         (a, b) => a - b
       );
       this.$items.slice(start, end + 1).addClass('selected');
-    } else if (event.metaKey || event.ctrlKey) {
-      this.$items.removeClass('active');
-      $clickedItem.toggleClass('selected');
-      this.lastSelectedIndex = index;
     } else {
-      this.$items.removeClass('selected');
-      $clickedItem.addClass('selected');
+      this.$items.removeClass('active');
       this.lastSelectedIndex = index;
     }
   }
@@ -82,6 +92,26 @@ class FileSelector {
         console.error('Delete failed:', status, error);
       },
     });
+  }
+
+  handleSortingStart(evt) {
+    const selectedItems = this.$items.filter('.selected');
+    selectedItems.each(function () {
+      const itemIndex = $(this).index();
+      $(this).data('original-index', itemIndex);
+    });
+  }
+ 
+  handleSortingEnd(evt) {
+    // Refresh cached items
+    this.$items = this.$container.children('li');
+    const newOrder = [];
+ 
+    this.$items.each((index, item) => {
+      newOrder.push($(item).data('imageId'));
+    });
+    console.log('New order after sorting:', newOrder);
+    // You can POST this order to the server if needed
   }
 
   removePages(pageNumbers) {

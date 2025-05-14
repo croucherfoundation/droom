@@ -211,6 +211,7 @@ $(document).ready(function () {
   }
   
   function syncPanelsOnScroll() {
+    if(!shouldScroll()) return;
     if (isScrollingProgrammatically) return;
   
     const visiblePage = getVisiblePreviewPageNumber();
@@ -222,8 +223,8 @@ $(document).ready(function () {
       );
   
       if ($newActive.length) {
-        $leftPanel.find('.thumbnail-item.active').removeClass('active');
-        $newActive.addClass('active');
+        // $leftPanel.find('.thumbnail-item.active').removeClass('active');
+        // $newActive.addClass('active');
   
         if (!suppressLeftPanelScroll) {
           const scrollTop = $newActive.position().top + $leftPanel.scrollTop();
@@ -247,6 +248,8 @@ $(document).ready(function () {
   
   // Click handler on thumbnails
   $('#thumbnail-list .thumbnail').on('click', function () {
+    if(!shouldScroll()) return;
+
     suppressLeftPanelScroll = true;
   
     const $li = $(this).closest('.thumbnail-item');
@@ -279,6 +282,16 @@ $(document).ready(function () {
     } else {
       console.warn('PDF not found for page:', pageNumber);
     }
+  } 
+
+  function shouldScroll() {
+    const selected = $leftPanel.find('.thumbnail-item.selected');
+
+    if (selected.length > 1) {
+      return false;
+    } 
+
+    return true;
   }
   
 

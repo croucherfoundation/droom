@@ -22,7 +22,7 @@
     "medium-editor": "^5.23.2",
     "moment": "^2.18.1",
     "smartquotes": "^2.1.2",
-    "sortablejs": "^1.7.0",
+    "sortablejs": "^1.15.6",
     "tinycolor2": "^1.4.1",
     "tooltipster": "^4.2.5",
     "underscore": "^1.8.3",
