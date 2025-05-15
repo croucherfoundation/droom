@@ -434,7 +434,8 @@ module Droom
     # Address book data is simple and always nested.
     #
     has_many :emails, :dependent => :destroy
-    accepts_nested_attributes_for :emails, :allow_destroy => true
+    accepts_nested_attributes_for :emails, :allow_destroy => true, :reject_if => proc { |attributes| attributes[:email].blank? }
+
     has_many :phones
     accepts_nested_attributes_for :phones, :allow_destroy => true
     has_many :addresses
