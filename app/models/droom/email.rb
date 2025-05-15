@@ -21,8 +21,10 @@ module Droom
     end
 
     def email_must_be_valid
-      status = ZerobounceService.new(record: self, save_immediate: false).call if email_changed?
-      self.user.errors.add(:base, 'Email address provided is invalid') unless status
+      if email_changed? && self.email.present?
+        status = ZerobounceService.new(record: self, save_immediate: false).call
+        errors.add(:base, 'Email address provided is invalid') unless status 
+      end
     end
 
   end
