@@ -47,8 +47,11 @@ module Droom::Api
       @user.assign_nested_addresses(account_params[:addresses]) if account_params[:addresses].present?
       @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
       @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
-      @user.save
-      @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
+      
+      if @user.save
+        @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
+      end
+
       render json: @user, serializer: Droom::UserMinimalSerializer
     end
 
@@ -70,11 +73,13 @@ module Droom::Api
       profile_image = user_params[:image] if user_params[:image].present?
       attach_base64_image(@user, :image, profile_image) if profile_image.present?
       @user.show_initial_image = true if params[:user][:remove_image] == true || params[:user][:remove_image] == "true"
-      @user.update(user_params.except(:image))
 
-      @user.class.sync_in_progress = false
-
-      render json: @user.reload
+      if @user.update(user_params.except(:image))
+        @user.class.sync_in_progress = false
+        render json: @user.reload
+      else
+        render json: @user, serializer: Droom::UserSerializer, meta: {error: @user.errors.full_messages}
+      end
     end
 
     def create
@@ -114,6 +119,13 @@ module Droom::Api
           format.json { render json: { notice: "The timezone of your profile has been updated to #{params[:timezone]}." }, status: :ok }
         end
       end
+    end
+
+    def validate_email
+      @email = Droom::Email.find_by(email: @user.email)
+      return render json: { valid: false } unless @email.present?
+
+      render json:  @user, serializer: Droom::UserMinimalSerializer, meta: { valid: ZerobounceService.new(record: @email).call }
     end
 
   protected

@@ -56,6 +56,18 @@ module Droom
 
       if @user.save
         respond_with @user
+      else
+        email_error = @user.errors.full_messages.find do |msg|
+          msg.end_with?("Email address provided is invalid")
+        end
+        if email_error
+          if request.xhr?
+            render json: { errors: ["Email address provided is invalid"] }, status: :unprocessable_entity
+          else
+            flash[:alert] = "Email address provided is invalid"
+            redirect_to request.referer
+          end
+        end
       end
     end
 
@@ -86,6 +98,18 @@ module Droom
         else
           respond_with @user, location: user_url(view: @view) do |format|
             format.js { head :no_content }
+          end
+        end
+      else
+        email_error = @user.errors.full_messages.find do |msg|
+          msg.end_with?("Email address provided is invalid")
+        end
+        if email_error
+          if request.xhr?
+            render json: { errors: ["Email address provided is invalid"] }, status: :unprocessable_entity
+          else
+            flash[:alert] = "Email address provided is invalid"
+            redirect_to request.referer
           end
         end
       end
