@@ -24,7 +24,9 @@ class FileSelector {
     this.$container.on('click', 'li', (e) => this.handleClick(e));
 
     $(document).on('click', '.save-combine-pdf', (e) => this.saveDocument(e));
-    $(document).on('click', '.download-combine-pdf', (e) => this.downloadDocument(e));
+    $(document).on('click', '.download-combine-pdf', (e) =>
+      this.downloadDocument(e)
+    );
 
     $(document).on('keydown', (e) => {
       const isSuperKey = this.superKey === 'ctrl' ? e.ctrlKey : e.metaKey;
@@ -207,7 +209,10 @@ class FileSelector {
 
   undoDelete(deletedItems) {
     deletedItems.forEach(({ pageNumber }) => {
-      this.$container.children(`li[data-page-number="${pageNumber}"]`).show();
+      this.$container
+        .children(`li[data-page-number="${pageNumber}"]`)
+        .removeClass('deleted')
+        .show();
       this.$rightContainer
         .children(`li[data-page-number="${pageNumber}"]`)
         .removeClass('deleted');
