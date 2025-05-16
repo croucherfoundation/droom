@@ -78,43 +78,6 @@ $(document).ready(function () {
     });
   }
 
-  $(document).on('click', '.download-combine-pdf, .save-combine-pdf', function (e) {
-    e.preventDefault();
-    const currentElement = $(this);
-    const eventId = $('#thumbnail-list').data('event-id');
-    $('body').addClass('overlay-active');
-  
-    $.ajax({
-      type: 'POST',
-      url: `/events/${eventId}/generate-pdf`,
-      dataType: 'json',
-      success: function (response) {
-        $('body').removeClass('overlay-active');
-        if (response.success) {
-          if (currentElement.hasClass('download-combine-pdf')) {
-            window.location.href = `/events/${eventId}/download-pdf`;
-          } else {
-            const $flashes = $('#flashes');
-            const $notice = $('<p class="notice">PDF saved successfully.</p>').css('display', 'block');
-            $flashes.empty().append($notice);
-            setTimeout(function () {
-              $notice.fadeOut(400, function () {
-                $(this).remove();
-              });
-            }, 5000);
-          }
-        } else {
-          alert('PDF generation failed.');
-        }
-      },
-      error: function (xhr, status, error) {
-        $('body').removeClass('overlay-active');
-        console.error('PDF generation error:', error);
-        alert('Something went wrong while generating the PDF.');
-      },
-    });
-  });
-
   $('.preview-item').each(function () {
     const $item = $(this);
     const pdfUrl = $item.data('pdf-url');

@@ -145,6 +145,24 @@ module Droom
       end
     end
 
+    def build_compile_pdf
+      ActiveRecord::Base.transaction do
+        @deleted_thumbnail_ids = compile_pdf_params[:deleted_items]
+        @remaining_thumbnails = compile_pdf_params[:remaining_items]
+        delete_thumbnails_documents if @deleted_thumbnail_ids.present?
+        reposition_thumbnails_documents if @remaining_thumbnails.present?
+
+        if @event.combined_pdf && @event.compiled_file.attached?
+          head :ok
+        else
+          head :unprocessable_entity
+        end
+      rescue => e
+        Rails.logger.error "Compile PDF failed: #{e.message}"
+        head :unprocessable_entity
+      end
+    end
+
     def generate_pdf
       if @event.combined_pdf && @event.compiled_file.attached?
         render json: { success: true }
@@ -248,5 +266,29 @@ module Droom
       end
     end
 
+    def compile_pdf_params
+      params.permit(deleted_items: [], remaining_items: [:id, :position])
+    end
+
+    def delete_thumbnails_documents
+      thumbnails = @event.thumbnails.where(id: @deleted_thumbnail_ids)
+
+      return if thumbnails.empty?
+
+      positions = thumbnails.pluck(:position)
+      @event.single_documents.where(position: positions).destroy_all
+      thumbnails.destroy_all
+    end
+
+    def reposition_thumbnails_documents
+      @remaining_thumbnails.each do |item|
+        thumbnail = @event.thumbnails.find(item[:id])
+
+        next if thumbnail.nil?
+
+        thumbnail.single_document.update_column(:position, item[:position])
+        thumbnail.update_column(:position, item[:position])
+      end
+    end
   end
 end

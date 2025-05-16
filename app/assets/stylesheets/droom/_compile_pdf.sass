@@ -105,6 +105,9 @@
           &.active, &.selected
             .thumbnail
               border: 2px solid $blue
+
+          &.deleted
+            display: none
       
       ul#uploader
         list-style: none
@@ -162,6 +165,9 @@
                 width: 100%
                 height: 100%
                 object-fit: cover
+            
+            &.deleted
+              display: none
 
 .hide-scrollbar
   overflow: auto
