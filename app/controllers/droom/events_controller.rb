@@ -152,11 +152,8 @@ module Droom
         delete_thumbnails_documents if @deleted_thumbnail_ids.present?
         reposition_thumbnails_documents if @remaining_thumbnails.present?
 
-        if @event.combined_pdf && @event.compiled_file.attached?
-          head :ok
-        else
-          head :unprocessable_entity
-        end
+        @event.combined_pdf
+        head :ok
       rescue => e
         Rails.logger.error "Compile PDF failed: #{e.message}"
         head :unprocessable_entity
@@ -291,7 +288,7 @@ module Droom
       @remaining_thumbnails.each do |item|
         thumbnail = @event.thumbnails.find(item[:id])
 
-        next if thumbnail.nil?
+        next if thumbnail.nil? || thumbnail.position == item[:position]
 
         thumbnail.single_document.update_column(:position, item[:position])
         thumbnail.update_column(:position, item[:position])

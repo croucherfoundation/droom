@@ -17,6 +17,7 @@ class FileSelector {
 
     this.initEvents();
     this.initSortable();
+    this.initUnloadWarning();
   }
 
   initEvents() {
@@ -47,6 +48,15 @@ class FileSelector {
       onChoose: (e) => this.handleChoose(e),
       onStart: (e) => this.handleSortingStart(e),
       onEnd: (e) => this.handleSortingEnd(e),
+    });
+  }
+
+  initUnloadWarning() {
+    window.addEventListener('beforeunload', (e) => {
+      if (this.historyStack.length > 0) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
     });
   }
 
@@ -92,6 +102,7 @@ class FileSelector {
       .get();
 
     this.historyStack.push({ type: 'delete', items: deletedData });
+    this.toggleUploadWrapper();
 
     deletedData.forEach(({ pageNumber }) => {
       this.$container
@@ -122,6 +133,7 @@ class FileSelector {
       .get();
 
     this.historyStack.push({ type: 'sort', order: currentOrder });
+    this.toggleUploadWrapper();
 
     const selectedItems = this.$items.filter('.selected');
     selectedItems.each(function () {
@@ -162,6 +174,7 @@ class FileSelector {
     }
 
     const lastAction = this.historyStack.pop();
+    this.toggleUploadWrapper();
 
     if (lastAction.type === 'sort') {
       this.undoSort(lastAction.order);
@@ -251,6 +264,8 @@ class FileSelector {
       }),
       contentType: 'application/json',
       success: () => {
+        $this.historyStack = [];
+        this.toggleUploadWrapper();
         $this.showAlert('notice', 'Document saved successfully.');
         $this.toggleOverlay();
         location.reload();
@@ -264,13 +279,13 @@ class FileSelector {
 
   downloadDocument(e) {
     e.preventDefault();
-    
+
     const eventId = this.$container.data('eventId');
     const url = `/events/${eventId}/generate-pdf`;
     const $this = this;
 
     $this.showAlert('notice', 'Downloading document...');
-    
+
     $.ajax({
       url: url,
       type: 'POST',
@@ -319,8 +334,13 @@ class FileSelector {
 
   showAlert(alertType, message) {
     const $flashes = $('#flashes');
-    const $alert = $(`<p class="${alertType}" style="margin-bottom: 5px">${message}</p>`).css('display', 'block');
-    $flashes.append($alert); 
+    const $alert = $(`<p class="${alertType}">${message}</p>`).css(
+      'display',
+      'block'
+    );
+
+    $flashes.empty().append($alert);
+
     setTimeout(() => {
       $alert.fadeOut(400, function () {
         $(this).remove();
@@ -330,5 +350,13 @@ class FileSelector {
 
   toggleOverlay() {
     $('body').toggleClass('overlay-active');
+  }
+
+  toggleUploadWrapper() {
+    if (this.historyStack.length > 0) {
+      $('.upload-wrapper').addClass('disabled');
+    } else {
+      $('.upload-wrapper').removeClass('disabled');
+    }
   }
 }
