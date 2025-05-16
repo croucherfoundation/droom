@@ -66,7 +66,8 @@ Droom::Engine.routes.draw do
                confirmations: 'droom/users/confirmations',
                sessions: 'droom/users/sessions',
                passwords: 'droom/users/passwords',
-               registrations: 'droom/users/registrations'
+               registrations: 'droom/users/registrations',
+               unlocks: 'droom/users/unlocks'
              }
 
 

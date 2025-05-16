@@ -365,6 +365,7 @@ en:
   loading_documents: "Loading documents"
   loading_people: "Loading people"
   loading_stream: "Loading stream: please wait."
+  unlock_sent: "If the email exists, unlock instructions have been sent."
   list_info_one_page:
     zero: "No items found"
     one: "Displaying <b>1</b> item"

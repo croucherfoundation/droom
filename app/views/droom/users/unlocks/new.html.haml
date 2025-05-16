@@ -1,0 +1,21 @@
+#account
+  %h1.pagetitle
+    =t :forgot_password_title
+
+  = form_for(resource, :as => resource_name, :url => unlock_path(resource_name), :html => { :method => :post, id: 'password-reset-form' }) do |f|
+
+    %p
+      = t :password_reset_instructions
+
+    %p
+      = f.email_field :email, class: 'login', autofocus: true, placeholder: t('placeholders.session.email')
+
+    %p.unlock_sent
+      = t :unlock_sent  
+
+    .controls
+      .save.button
+        %p.password_reset_actions
+          %button.unlock-reset-btn.croucher-standard-btn{type: 'button'}= t(:send_reset_instructions)
+          = t :or
+          = link_to t(:cancel), '/users/sign_in', class: 'cancel'

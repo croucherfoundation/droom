@@ -35,6 +35,10 @@
       -if @not_confirmed_message
         %p.error_message 
           = @not_confirmed_message
+      
+      -if @unlock_message
+        %p.error_message 
+          = @unlock_message
           
       .forgot_password
         %p.mb-2

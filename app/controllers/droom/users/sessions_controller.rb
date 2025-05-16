@@ -9,6 +9,7 @@ module Droom::Users
     def new
       cookie = Droom::AuthCookie.new(cookies)
       @not_confirmed_message = "We haven't received your confirmation. Please check your email." if params[:not_confirmed]
+      @unlock_message = "Your account is unlocked. Please sign in." if params[:locked]
       if cookie.valid? && cookie.fresh? && session['warden.user.user.key'].present?
         @user = Droom::User.find_by(unique_session_id: cookie.token)
         sign_in(@user)

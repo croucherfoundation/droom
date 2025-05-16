@@ -468,6 +468,18 @@ module Droom
       user
     end
 
+    def self.send_unlock_instructions(attributes={})
+      if user = from_email(attributes[:email]).first
+        if email_still_valid?(attributes[:email])
+          user.send_unlock_instructions
+        end
+      else
+        user = new(email: attributes[:email])
+        user.errors.add(:email, :not_found)
+      end
+      user
+    end
+
     def self.email_still_valid?(attr_email)
       user_email = Droom::Email.find_by(email: attr_email)
       return false unless user_email
