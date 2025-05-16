@@ -6,12 +6,7 @@
     %h3{style: "font-size: 1.17rem; font-weight: bold;"}
       Compiled document
     %ul 
-      %li.document
-        = link_to show_compiled_file_event_url(event), class: 'document pdf no-bg-image', target: "_blank", style: 'white-space: nowrap;' do
-          %svg.icon.medium
-            %use{"xlink:href" => "#pdf_symbol"}
-          %span
-            = event.generate_compiled_pdf_filename
+      = render :partial => "droom/events/compile_pdf/compile_document", :locals => {event: event}
     %br
 
   - if folder.documents.count > 0 || folder.children.count > 0

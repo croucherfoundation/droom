@@ -113,7 +113,6 @@ Droom::Engine.routes.draw do
   resources :calendars, only: [:show]
   resources :events do
     collection do
-      delete :delete_pdf
       get :calendar
       get :past
       get "subscribe/:tok", action: "subscribe", as: :subscribe
@@ -126,6 +125,7 @@ Droom::Engine.routes.draw do
       post :generate_pdf, path: "generate-pdf"
       get :download_pdf, path: "download-pdf"
       post :build_compile_pdf, path: "build-compile-pdf"
+      delete :delete_pdf, path: "delete-pdf"
     end
     resources :invitations do
       member do

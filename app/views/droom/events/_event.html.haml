@@ -104,13 +104,8 @@
             .attachments.no_float.ml
               - if can?(:edit, event.folder)
                 - if event.compiled_file.attached?
-                  %ul{style: "padding-left: 18px;"}
-                    %li.document
-                      = link_to show_compiled_file_event_url(event), class: 'document pdf no-bg-image', target: "_blank", style: 'white-space: nowrap;' do
-                        %svg.icon.medium
-                          %use{"xlink:href" => "#pdf_symbol"}
-                        %span
-                          = event.generate_compiled_pdf_filename
+                  %ul.filing
+                    = render :partial => "droom/events/compile_pdf/compile_document", :locals => {event: event}
                 %ul.uploads{id: "queue_to_#{event.folder.id}"}
               = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => event_url(event), skip_gdoc: skip_gdoc}
         .detail

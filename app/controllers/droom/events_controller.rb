@@ -184,6 +184,13 @@ module Droom
       end
     end
 
+    def delete_pdf
+      if @event.compiled_file.attached?
+        @event.delete_compiled_file
+        render json: { success: true }
+      end
+    end
+
   protected
 
     def set_timezone_feature

@@ -466,6 +466,12 @@ module Droom
       [shor_codes[event_type_id], meeting_number, 'Agendabook', '.pdf'].compact.join('')
     end
 
+    def delete_compiled_file
+      self.compiled_file.purge
+      self.thumbnails.destroy_all
+      self.single_documents.destroy_all
+    end
+
   protected
 
     # Set event_type.folder.id to event.folder.parent_id if event.event_type changed
