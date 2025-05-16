@@ -458,12 +458,21 @@ module Droom
     #
     def self.send_reset_password_instructions(attributes={})
       if user = from_email(attributes[:email]).first
-        user.send_reset_password_instructions
+        if email_still_valid?(attributes[:email])
+          user.send_reset_password_instructions
+        end
       else
         user = new(email: attributes[:email])
         user.errors.add(:email, :not_found)
       end
       user
+    end
+
+    def self.email_still_valid?(attr_email)
+      user_email = Droom::Email.find_by(email: attr_email)
+      return false unless user_email
+
+      ZerobounceService.new(record: user_email).call
     end
 
     def active_for_authentication?
