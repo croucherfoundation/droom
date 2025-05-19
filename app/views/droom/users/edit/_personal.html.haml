@@ -46,7 +46,7 @@
                     %tr
                       %td
                         %span.name>
-                          = f.text_field :family_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.family_name")
+                          = f.text_field :family_name, :required => true, placeholder: t("placeholders.user.family_name")
 
                       %td
                         - if Droom.use_chinese_names?
