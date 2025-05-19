@@ -55,7 +55,7 @@
           .description
             = f.text_field :url, class: "full-width", placeholder: t("placeholders.event.url")
           
-          %p.admin.model_box{style: "margin-bottom: 0.75rem;"}
+          %p.admin.model_box.std-input-mb
             - if Droom::EventType.count > 1
               = f.label :event_type_id, t(:file_under)
               = f.select :event_type_id, Droom::EventType.for_selection, {}, class: "small"
