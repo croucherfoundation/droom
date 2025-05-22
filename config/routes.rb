@@ -34,9 +34,6 @@ Droom::Engine.routes.draw do
     resources :organisations do
       post :register, on: :collection
     end
-    namespace :ex do
-      resources :images
-    end
     resources :documents, only: [:show]
     resources :folders, only: [:show] do
       member do
@@ -54,6 +51,12 @@ Droom::Engine.routes.draw do
 
       get '/users/passwords/confirm' => 'users/passwords#confirm', as: :confirm_password
       put '/users/passwords/update' => 'users/passwords#update_password', as: :update_password
+    end
+
+    namespace :ex do
+      resources :images
+      resources :groups, only: [:index]
+      get '/users/suggest/', to: 'users#suggest', as: :suggest_user
     end
 
   end
