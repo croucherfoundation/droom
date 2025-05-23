@@ -3,7 +3,7 @@ module Droom::Api
     before_action :authenticate_user, unless: :local_request?, only: [:update, :remove_profile]
 
     before_action :get_users, only: [:index]
-    before_action :search_users, only: [:group_users]
+    before_action :search_users, only: [:accounts]
     before_action :find_or_create_user, only: [:create]
     skip_before_action :assert_local_request!, only: [:update_timezone, :update, :remove_profile]
     load_resource find_by: :uid, class: "Droom::User"
@@ -13,8 +13,8 @@ module Droom::Api
       render json: @users
     end
 
-    def group_users
-      render json: @users
+    def accounts
+      render json: @users, each_serializer: Droom::UserMinimalSerializer
     end
 
     def show
@@ -170,12 +170,15 @@ module Droom::Api
     end
 
     def search_users
-      return unless params[:group_ids].present?
-
-      group_slugs = Droom::Group.shown_in_directory.where(id: params[:group_ids])&.pluck(:slug)
+      group_slugs = if params[:group_ids].present?
+        Droom::Group.shown_in_directory.where(id: params[:group_ids]).pluck(:slug)
+      else
+        []
+      end
 
       filters = {}
-      filters[:groups] = group_slugs
+      filters[:groups] = group_slugs if group_slugs.present?
+      filters[:uid] = params[:user_uids] if params[:user_uids].present?
 
       query = params[:q].presence || '*'
       arguments = {

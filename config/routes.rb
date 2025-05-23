@@ -23,7 +23,7 @@ Droom::Engine.routes.draw do
       get  'remove_profile', on: :member, as: :remove_profile
       get 'sync_profile_image', on: :member, as: :sync_profile_image
       get 'validate_email', on: :member, as: :validate_email
-      get :group_users, on: :collection
+      get :accounts, on: :collection
     end
     put "update_timezone" => 'users#update_timezone', as: 'update_timezone'
     resources :events
