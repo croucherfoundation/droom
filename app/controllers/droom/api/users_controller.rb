@@ -3,6 +3,7 @@ module Droom::Api
     before_action :authenticate_user, unless: :local_request?, only: [:update, :remove_profile]
 
     before_action :get_users, only: [:index]
+    before_action :search_users, only: [:group_users]
     before_action :find_or_create_user, only: [:create]
     skip_before_action :assert_local_request!, only: [:update_timezone, :update, :remove_profile]
     load_resource find_by: :uid, class: "Droom::User"
@@ -10,6 +11,10 @@ module Droom::Api
 
     def index
       render json: @users
+    end
+
+    def group_users
+      render json: @users, each_serializer: Droom::UserMinimalSerializer
     end
 
     def show
@@ -47,7 +52,7 @@ module Droom::Api
       @user.assign_nested_addresses(account_params[:addresses]) if account_params[:addresses].present?
       @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
       @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
-      
+
       if @user.save
         @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
       end
@@ -161,6 +166,25 @@ module Droom::Api
       @users = @users.matching(params[:q]) if params[:q].present?
       @users = @users.limit(params[:limit]) if params[:limit].present?
       @users
+    end
+
+    def search_users
+      return unless params[:group_ids].present?
+
+      group_slugs = Droom::Group.shown_in_directory.where(id: params[:group_ids])&.pluck(:slug)
+
+      filters = {}
+      filters[:groups] = group_slugs
+
+      query = params[:q].presence || '*'
+      arguments = {
+        where: filters,
+        order: {name: :asc},
+        page: 1,
+        per_page: 1000
+      }
+
+      @users = Droom::User.search query, arguments
     end
 
     def user_params
