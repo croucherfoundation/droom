@@ -16,7 +16,7 @@ module Droom::Api::Ex
       @users = Droom::User.search params[:q],
                                   page: 1,
                                   per_page: 10,
-                                  order: {_score: :desc}, load: false
+                                  order: {_score: :desc}
     end
 
   end
