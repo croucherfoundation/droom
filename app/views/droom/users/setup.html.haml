@@ -1,5 +1,6 @@
 - user ||= current_user
-- destination ||= '/'
+- destination ||= params[:destination] || "/"
+- send_invitation_memo = params[:send_invitation_memo] || false
 
 - content_for :pagetitle do
   Set up your account
@@ -14,6 +15,7 @@
 
 = form_for user, url: droom.setup_users_path, method: "PUT", html: {class: "user"} do |f|
   = hidden_field_tag :destination, destination
+  = hidden_field_tag :send_invitation_memo, send_invitation_memo
 
   %h3
     - if user.names?

@@ -196,7 +196,7 @@ module Droom::Api
           :email, :phone, :mobile, :description, :address, :post_code, :correspondence_address, :country_code, :organisation_id,
           :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data, :image,
           :image_name, :last_request_at, :preferred_pronoun, :preferred_professional_name, :preferred_name, :hkid, :dob, :pob, :nationality, :gender,
-          :timezone, :organisation_admin, :admin, :gatekeeper, :user_group,
+          :timezone, :organisation_admin, :admin, :gatekeeper, :user_group, :confirmation_token,
           emails_attributes: [:id, :_destroy, :email, :address_type_id, :default], addresses_attributes: [:id, :_destroy, :address, :address_type_id, :default])
     end
 

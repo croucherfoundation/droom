@@ -16,7 +16,11 @@ module Droom::Users
       @resource = self.resource = resource_class.confirm_by_token(params[:confirmation_token])
       if @resource
         sign_in(resource_name, @resource)
-         redirect_to droom.dashboard_url
+        if params[:destination].present?
+          redirect_to droom.dashboard_url(destination: params[:destination], send_invitation_memo: params[:send_invitation_memo])
+        else
+          redirect_to droom.dashboard_url
+        end
       else
         render :template => "droom/users/confirmations/failure"
       end

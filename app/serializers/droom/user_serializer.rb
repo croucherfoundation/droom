@@ -45,7 +45,9 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :admin,
              :gatekeeper,
              :profile_image,
-             :show_initial_image
+             :show_initial_image,
+             :confirmation_token,
+             :authentication_token
 
 
     has_many :emails
