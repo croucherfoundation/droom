@@ -77,7 +77,7 @@ $(document).ready(function () {
   }
 
   // start of PDFjs
-  window.pdfjsReady.then(() => {
+  window.pdfjsReady?.then(() => {
     $('.preview-item').each(function () {
       const $item = $(this);
       const pdfUrl = $item.data('pdf-url');
