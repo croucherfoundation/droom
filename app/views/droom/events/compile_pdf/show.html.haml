@@ -48,3 +48,17 @@
               %li.preview-item{ data: { page_number: pdf.position, pdf_url: serve_pdf_single_document_path(pdf) } }
                 %canvas.pdf-canvas{ id: "canvas-#{pdf.id}", width: "100%" }
 
+- content_for :js do
+  :javascript
+    window.pdfjsReady = new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.type = "module";
+      script.textContent = `
+        import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.0.375/pdf.min.mjs";
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/5.0.375/pdf.worker.min.mjs";
+        window.pdfjsLib = pdfjsLib;
+        window._pdfjsResolve();
+      `;
+      window._pdfjsResolve = resolve;
+      document.head.appendChild(script);
+    });
