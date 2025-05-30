@@ -35,11 +35,14 @@ module Droom
       if @data.exists?
         render json: 'File with this name already exists!', status: 409
       else
-        @document.save!
-        if %w{listing simple}.include?(params[:view])
-          render :partial => params[:view]
+        if @document.save
+          if %w{listing simple}.include?(params[:view])
+            render :partial => params[:view]
+          else
+            render :partial => 'listing'
+          end
         else
-          render :partial => 'listing'
+          render json: @document.errors.full_messages.join(', '), status: 422
         end
       end
     end

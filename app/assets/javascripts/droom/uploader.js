@@ -96,16 +96,57 @@
         }
       };
 
+      // Droploader.prototype.readFiles = function(files) {
+      //   var file, i, len, results;
+      //   if (files) {
+      //     results = [];
+      //     for (i = 0, len = files.length; i < len; i++) {
+      //       file = files[i];
+      //       // Block script and program files
+      //       if (!/^(application\/(x-javascript|javascript|x-msdownload|x-sh|x-exe|x-dosexec|x-bat|x-csh|x-python|x-perl|x-php|x-ruby|x-shellscript)|text\/(javascript|x-python|x-perl|x-php|x-ruby|x-shellscript)|application\/octet-stream)$/i.test(file.type) &&
+      //           !/\.(js|exe|sh|bat|py|pl|php|rb|c|cpp|h|java|class|jar|msi|vb|vbs|cmd|scr|ps1)$/i.test(file.name)) {
+      //         results.push(this.uploadFile(file));
+      //       } else {
+      //         // Optionally, show an error or skip silently
+      //         alert('Blocked file type: ' + file.name);
+      //         console.warn('Blocked file type:', file.name);
+      //       }
+      //       results.push(this.uploadFile(file));
+      //     }
+      //     return results;
+      //   }
+      // };
       Droploader.prototype.readFiles = function(files) {
-        var file, i, len, results;
-        if (files) {
-          results = [];
-          for (i = 0, len = files.length; i < len; i++) {
-            file = files[i];
-            results.push(this.uploadFile(file));
+        if (!files || !files.length) return;
+
+        const blockedMimeTypes = [
+          /^application\/(x-javascript|javascript|x-msdownload|x-sh|x-exe|x-dosexec|x-bat|x-csh|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
+          /^text\/(javascript|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
+          /^application\/octet-stream$/i
+        ];
+
+        const blockedExtensions = /\.(js|exe|sh|bat|py|pl|php|rb|c|cpp|h|java|class|jar|msi|vb|vbs|cmd|scr|ps1)$/i;
+
+        const isBlockedFile = (file) => {
+          return blockedMimeTypes.some(regex => regex.test(file.type)) ||
+                blockedExtensions.test(file.name);
+        };
+
+        const results = [];
+
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+
+          if (isBlockedFile(file)) {
+            alert('Blocked file type: ' + file.name);
+            console.warn('Blocked file type:', file.name);
+            continue;
           }
-          return results;
+
+          results.push(this.uploadFile(file));
         }
+
+        return results;
       };
 
       Droploader.prototype.uploadFile = function(file) {

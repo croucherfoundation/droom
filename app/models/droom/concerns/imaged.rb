@@ -3,6 +3,7 @@ module Droom::Concerns::Imaged
 
   included do
     has_one_attached :image
+    validate :image_type, if: -> { image.attached? }
   end
 
   ## Images
@@ -62,4 +63,11 @@ module Droom::Concerns::Imaged
     image_url(:icon)
   end
 
+  private
+  def image_type
+    return unless image.attached?
+    if !image.content_type.in?(%w[image/png image/jpg image/jpeg image/gif, image/svg+xml, image/webp, image/heic])
+      errors.add(:image, 'must be a PNG, JPG, or GIF')
+    end
+  end
 end

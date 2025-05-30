@@ -21,6 +21,14 @@ module Droom
 
     before_save :track_file_change
     after_commit :file_changed_callback, if: -> { @file_changed }
+    validate :file_type_and_extension_not_blocked
+
+    BLOCKED_MIME_TYPES = [
+      %r{\Aapplication/(x-javascript|javascript|x-msdownload|x-sh|x-exe|x-dosexec|x-bat|x-csh|x-python|x-perl|x-php|x-ruby|x-shellscript)\z}i,
+      %r{\Atext/(javascript|x-python|x-perl|x-php|x-ruby|x-shellscript)\z}i,
+      %r{\Aapplication/octet-stream\z}i
+    ]
+    BLOCKED_EXTENSIONS = /\.(js|exe|sh|bat|py|pl|php|rb|c|cpp|h|java|class|jar|msi|vb|vbs|cmd|scr|ps1)\z/i
 
     # validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
@@ -306,6 +314,18 @@ module Droom
     def file_changed_callback
       return unless event_id.present?
       CompileMeetingPdfJob.perform_later(id, event_id)
+    end
+
+    def file_type_and_extension_not_blocked
+      return unless file.attached?
+      mime_type = file.blob.content_type
+      filename = file.blob.filename.to_s
+      if BLOCKED_MIME_TYPES.any? { |regex| mime_type =~ regex }
+        errors.add(:file, "type is not allowed")
+      end
+      if filename =~ BLOCKED_EXTENSIONS
+        errors.add(:file, "extension is not allowed")
+      end
     end
 
   end
