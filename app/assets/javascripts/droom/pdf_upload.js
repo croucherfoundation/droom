@@ -77,7 +77,7 @@ $(document).ready(function () {
   }
 
   // start of PDFjs
-  window.pdfjsReady?.then(() => {
+  document.addEventListener("pdfjs-ready", function () {
     $('.preview-item').each(function () {
       const $item = $(this);
       const pdfUrl = $item.data('pdf-url');
@@ -99,7 +99,7 @@ $(document).ready(function () {
       observer.observe($item[0]);
 
       function renderPDF(target, pdfUrl) {
-        pdfjsLib
+        window.pdfjsLib
           .getDocument(pdfUrl)
           .promise.then(function (pdf) {
             return pdf.getPage(1);
@@ -130,6 +130,7 @@ $(document).ready(function () {
       }
     });
   });
+
   // end of PDFjs
 
   const $leftPanel = $('.left-panel');
