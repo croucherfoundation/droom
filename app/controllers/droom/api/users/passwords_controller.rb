@@ -8,11 +8,7 @@ module Droom::Api
     def create
       self.resource = resource_class.send_reset_password_instructions(resource_params)
       yield resource if block_given?    
-        if successfully_sent?(resource)
-          render json: { success: true }
-        else
-          render json: { success: false, errors: resource.errors.full_messages }
-        end
+      render json: { success: true, message: "If the email exists, a password reset email has been sent." }
     end
 
     def confirm

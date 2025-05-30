@@ -76,57 +76,62 @@ $(document).ready(function () {
     });
   }
 
-  $('.preview-item').each(function () {
-    const $item = $(this);
-    const pdfUrl = $item.data('pdf-url');
-    const $canvas = $item.find('canvas')[0];
-    const ctx = $canvas.getContext('2d');
+  // start of PDFjs
+  document.addEventListener("pdfjs-ready", function () {
+    $('.preview-item').each(function () {
+      const $item = $(this);
+      const pdfUrl = $item.data('pdf-url');
+      const $canvas = $item.find('canvas')[0];
+      const ctx = $canvas.getContext('2d');
 
-    const boost = 1.5;
-    const baseScale = 1.5;
+      const boost = 1.5;
+      const baseScale = 1.5;
 
-    const observer = new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          observer.unobserve(entry.target);
-          renderPDF(entry.target, pdfUrl);
-        }
-      });
-    });
-
-    observer.observe($item[0]);
-
-    function renderPDF(target, pdfUrl) {
-      pdfjsLib
-        .getDocument(pdfUrl)
-        .promise.then(function (pdf) {
-          return pdf.getPage(1);
-        })
-        .then(function (page) {
-          const viewport = page.getViewport({ scale: baseScale });
-
-          const outputScale = (window.devicePixelRatio || 1) * boost;
-
-          $canvas.width = viewport.width * outputScale;
-          $canvas.height = viewport.height * outputScale;
-
-          $canvas.style.width = viewport.width + 'px';
-          $canvas.style.height = viewport.height + 'px';
-
-          ctx.setTransform(outputScale, 0, 0, outputScale, 0, 0);
-
-          const renderContext = {
-            canvasContext: ctx,
-            viewport: viewport,
-          };
-
-          page.render(renderContext);
-        })
-        .catch(function (error) {
-          console.error('PDF rendering error:', error);
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            observer.unobserve(entry.target);
+            renderPDF(entry.target, pdfUrl);
+          }
         });
-    }
+      });
+
+      observer.observe($item[0]);
+
+      function renderPDF(target, pdfUrl) {
+        window.pdfjsLib
+          .getDocument(pdfUrl)
+          .promise.then(function (pdf) {
+            return pdf.getPage(1);
+          })
+          .then(function (page) {
+            const viewport = page.getViewport({ scale: baseScale });
+
+            const outputScale = (window.devicePixelRatio || 1) * boost;
+
+            $canvas.width = viewport.width * outputScale;
+            $canvas.height = viewport.height * outputScale;
+
+            $canvas.style.width = viewport.width + 'px';
+            $canvas.style.height = viewport.height + 'px';
+
+            ctx.setTransform(outputScale, 0, 0, outputScale, 0, 0);
+
+            const renderContext = {
+              canvasContext: ctx,
+              viewport: viewport,
+            };
+
+            page.render(renderContext);
+          })
+          .catch(function (error) {
+            console.error('PDF rendering error:', error);
+          });
+      }
+    });
   });
+
+  // end of PDFjs
 
   const $leftPanel = $('.left-panel');
   const $rightPanel = $('.preview-area');

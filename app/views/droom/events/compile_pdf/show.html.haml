@@ -48,3 +48,18 @@
               %li.preview-item{ data: { page_number: pdf.position, pdf_url: serve_pdf_single_document_path(pdf) } }
                 %canvas.pdf-canvas{ id: "canvas-#{pdf.id}", width: "100%" }
 
+- content_for :js do
+  :javascript
+    const script = document.createElement("script");
+    script.type = "module";
+    script.textContent = `
+      import { GlobalWorkerOptions, getDocument } from "/assets/pdf.min.mjs";
+
+      GlobalWorkerOptions.workerSrc = "/assets/pdf.worker.min.mjs";
+
+      window.pdfjsLib = { getDocument };
+
+      document.dispatchEvent(new Event("pdfjs-ready"));
+    `;
+    document.head.appendChild(script);
+
