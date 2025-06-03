@@ -488,12 +488,6 @@ module Droom
       token
     end
 
-    def send_unlock_instructions
-      token = set_unlock_token
-      send_devise_notification(:unlock_instructions, token: token)
-      token
-    end
-
     def self.email_still_valid?(attr_email)
       user_email = Droom::Email.find_by(email: attr_email)
       return false unless user_email
