@@ -482,12 +482,6 @@ module Droom
       user
     end
 
-    def send_reset_password_instructions
-      token = set_reset_password_token
-      send_devise_notification(:reset_password_instructions, token: token)
-      token
-    end
-
     def self.email_still_valid?(attr_email)
       user_email = Droom::Email.find_by(email: attr_email)
       return false unless user_email
