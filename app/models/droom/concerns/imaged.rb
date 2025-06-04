@@ -66,8 +66,8 @@ module Droom::Concerns::Imaged
   private
   def image_type
     return unless image.attached?
-    if !image.content_type.in?(%w[image/png image/jpg image/jpeg image/gif, image/svg+xml, image/webp, image/heic])
-      errors.add(:image, 'must be a PNG, JPG, or GIF')
+    unless FileSecurityService.allowed_image?(image.content_type)
+      errors.add(:image, "must be a valid image file (JPEG, PNG, GIF, etc.)")
     end
   end
 end

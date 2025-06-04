@@ -26,7 +26,7 @@
 
             .image-upload{:data => {:role => "imagepicker"}}
               %a.box{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
-              = f.file_field :image
+              = f.file_field :image, :accept => 'image/*'
 
           .specifics.event
             - event = @scrap.event ||= @scrap.build_event(:start => Time.now.floor(30.minutes))

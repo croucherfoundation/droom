@@ -284,8 +284,34 @@
 
       function DroomImagePicker() {
         this.display = bind(this.display, this);
+        this.isValidImageType = bind(this.isValidImageType, this);
         return DroomImagePicker.__super__.constructor.apply(this, arguments);
       }
+
+      DroomImagePicker.prototype.extensions = function() {
+        return this._extensions != null ? this._extensions : this._extensions = ['jpg', 'jpeg', 'png', 'gif', 'avif', 'webp', 'svg', 'bmp', 'tiff', 'tif', 'ico', 'heic', 'heif'];
+      };
+      DroomImagePicker.prototype.isValidImageType = function(file) {
+        return file.type.startsWith('image/');
+      };
+
+      DroomImagePicker.prototype.picked = function(e) {
+        var files, ref;
+        this._link.removeClass(this.extensions().join(' '));
+        if (files = this._filefield[0].files) {
+          if (this._file = files.item(0)) {
+            if (!this.isValidImageType(this._file)) {
+              alert('Only image files are allowed!');
+              this._filefield.val('');
+              return;
+            }
+            this._previous_filename = (ref = this._filename) != null ? ref : "";
+            this._filename = this._file.name.split(/[\/\\]/).pop();
+            this._ext = this._filename.split('.').pop().toLowerCase();
+            return this.display();
+          }
+        }
+      };
 
       DroomImagePicker.prototype.display = function() {
         var reader;
