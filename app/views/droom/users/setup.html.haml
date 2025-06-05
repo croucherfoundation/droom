@@ -1,12 +1,13 @@
 - user ||= current_user
-- destination ||= '/'
+- destination ||= params[:destination] || "/"
+- send_invitation_memo = params[:send_invitation_memo] || false
 
 - content_for :pagetitle do
   Set up your account
 
 - content_for :title do
   =t :hello
-  = current_user.formal_name.strip
+  = current_user.formal_name.strip.presence || ", valued user"
 
 - content_for :standfirst do
   %p
@@ -14,24 +15,26 @@
 
 = form_for user, url: droom.setup_users_path, method: "PUT", html: {class: "user"} do |f|
   = hidden_field_tag :destination, destination
+  = hidden_field_tag :send_invitation_memo, send_invitation_memo
 
   %h3
     - if user.names?
       = t "user_setup.check_name"
     - else
       = t "user_setup.give_name"
-  = render "droom/users/edit/name_fields", f: f, user: user, with_label: false
+  .user-setup
+    = render "droom/users/edit/name_fields", f: f, user: user, with_label: false
 
-  %h3
-    = t "user_setup.set_password"
-  = render "droom/users/edit/password_fields", f: f, user: user, with_label: false, with_submit: false
-
-  - if FeatureFlag.enabled?('time-zone-feature', current_user)
     %h3
-      = t "user_setup.time_zone"
-    .note
-      = t(:timezone_note)
-    = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
+      = t "user_setup.set_password"
+    = render "droom/users/edit/password_fields", f: f, user: user, with_label: false, with_submit: false
 
-  %p.buttons{:data => {:role => "confirmation"}}>
-    = f.submit t(:continue), class: 'croucher-standard-btn'
+    - if FeatureFlag.enabled?('time-zone-feature', current_user)
+      %h3
+        = t "user_setup.time_zone"
+      .note
+        = t(:timezone_note)
+      = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
+
+    %p.buttons{:data => {:role => "confirmation"}}>
+      = f.submit t(:continue), class: 'croucher-standard-btn'

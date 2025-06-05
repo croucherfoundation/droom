@@ -23,6 +23,7 @@ Droom::Engine.routes.draw do
       get  'remove_profile', on: :member, as: :remove_profile
       get 'sync_profile_image', on: :member, as: :sync_profile_image
       get 'validate_email', on: :member, as: :validate_email
+      get :accounts, on: :collection
     end
     put "update_timezone" => 'users#update_timezone', as: 'update_timezone'
     resources :events
@@ -33,9 +34,6 @@ Droom::Engine.routes.draw do
     resources :tags
     resources :organisations do
       post :register, on: :collection
-    end
-    namespace :ex do
-      resources :images
     end
     resources :documents, only: [:show]
     resources :folders, only: [:show] do
@@ -54,6 +52,12 @@ Droom::Engine.routes.draw do
 
       get '/users/passwords/confirm' => 'users/passwords#confirm', as: :confirm_password
       put '/users/passwords/update' => 'users/passwords#update_password', as: :update_password
+    end
+
+    namespace :ex do
+      resources :images
+      resources :groups, only: [:index]
+      get '/users/suggest/', to: 'users#suggest', as: :suggest_user
     end
 
   end
