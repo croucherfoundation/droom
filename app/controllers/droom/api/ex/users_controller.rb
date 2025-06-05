@@ -1,5 +1,6 @@
 module Droom::Api::Ex
   class UsersController < Droom::Api::Ex::ApiController
+    skip_before_action :assert_local_request!
     load_and_authorize_resource class: "Droom::User"
 
     before_action :search_users, only: [:suggest]
