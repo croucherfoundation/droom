@@ -2,6 +2,7 @@ module Droom
   class Email < Droom::DroomRecord
     include Droom::Concerns::AddressBookProperty
 
+    before_validation :mark_for_destruction_if_blank
     validate :email_must_be_valid
 
     scope :populated, -> {
@@ -24,6 +25,13 @@ module Droom
       if email_changed? && self.email.present?
         status = ZerobounceService.new(record: self, save_immediate: false).call
         self.user.errors.add(:base, 'Email address provided is invalid') unless status
+      end
+    end
+
+    def mark_for_destruction_if_blank
+      # Only for existing records (not new ones), and only if email is now blank
+      if persisted? && email.blank?
+        mark_for_destruction
       end
     end
 

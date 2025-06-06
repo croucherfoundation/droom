@@ -97,6 +97,11 @@ module Droom
                 can :manage, Droom::Enquiry
               end
 
+              if user.permitted?('pub.memo_admin')
+                can :suggest, Droom::User
+                can :read, Droom::User
+              end
+
               # Some models are purely administrative.
               #
               can :create, Droom::MailingListMembership

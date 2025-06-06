@@ -1,4 +1,4 @@
-//= require jquery
+//= require jquery3
 //= require droom/lib/jquery_ujs
 //= require droom/lib/assets
 
@@ -33,6 +33,7 @@
 
 
 (function() {
+  console.log('loading droom 11')
   $(document).on('click', '#compile-pdf-btn', function(e) {
     e.preventDefault();
   
@@ -81,7 +82,6 @@
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   jQuery(function($) {
-    console.log("loading droom");
 
     $('.password-reset-btn').on('click', function() {
       var $form = $(this).closest('form');

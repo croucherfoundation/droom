@@ -3,6 +3,7 @@ module Droom::Api
     before_action :authenticate_user, unless: :local_request?, only: [:update, :remove_profile]
 
     before_action :get_users, only: [:index]
+    before_action :search_users, only: [:accounts]
     before_action :find_or_create_user, only: [:create]
     skip_before_action :assert_local_request!, only: [:update_timezone, :update, :remove_profile]
     load_resource find_by: :uid, class: "Droom::User"
@@ -10,6 +11,10 @@ module Droom::Api
 
     def index
       render json: @users
+    end
+
+    def accounts
+      render json: @users, each_serializer: Droom::UserMinimalSerializer
     end
 
     def show
@@ -47,7 +52,7 @@ module Droom::Api
       @user.assign_nested_addresses(account_params[:addresses]) if account_params[:addresses].present?
       @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
       @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
-      
+
       if @user.save
         @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
       end
@@ -155,6 +160,7 @@ module Droom::Api
     def get_users
       @users = Droom::User.in_name_order
       @users = @users.where(person_uid: params[:person_uid]) if params[:person_uid].present?
+      @users = @users.where(uid: user_uids) if params[:user_uids].present?
       @users = @users.matching_name(params[:name_q]) if params[:name_q].present?
       @users = @users.matching_email(params[:email_q]) if params[:email_q].present?
       @users = @users.from_email(params[:email]) unless params[:email].blank?
@@ -163,12 +169,34 @@ module Droom::Api
       @users
     end
 
+    def search_users
+      group_slugs = if params[:group_ids].present?
+        Droom::Group.shown_in_directory.where(id: params[:group_ids]).pluck(:slug)
+      else
+        []
+      end
+
+      filters = {}
+      filters[:groups] = group_slugs if group_slugs.present?
+      filters[:uid] = params[:user_uids] if params[:user_uids].present?
+
+      query = params[:q].presence || '*'
+      arguments = {
+        where: filters,
+        order: {name: :asc},
+        page: 1,
+        per_page: 1000
+      }
+
+      @users = Droom::User.search query, arguments
+    end
+
     def user_params
       params.require(:user).permit(:uid, :person_uid, :title, :family_name, :given_name, :chinese_name, :honours, :affiliation,
           :email, :phone, :mobile, :description, :address, :post_code, :correspondence_address, :country_code, :organisation_id,
           :female, :defer_confirmation, :send_confirmation, :password, :password_confirmation, :confirmed, :confirmed_at, :image_data, :image,
           :image_name, :last_request_at, :preferred_pronoun, :preferred_professional_name, :preferred_name, :hkid, :dob, :pob, :nationality, :gender,
-          :timezone, :organisation_admin, :admin, :gatekeeper, :user_group,
+          :timezone, :organisation_admin, :admin, :gatekeeper, :user_group, :confirmation_token,
           emails_attributes: [:id, :_destroy, :email, :address_type_id, :default], addresses_attributes: [:id, :_destroy, :address, :address_type_id, :default])
     end
 

@@ -434,7 +434,7 @@ module Droom
     # Address book data is simple and always nested.
     #
     has_many :emails, :dependent => :destroy
-    accepts_nested_attributes_for :emails, :allow_destroy => true, :reject_if => proc { |attributes| attributes[:email].blank? }
+    accepts_nested_attributes_for :emails, allow_destroy: true, reject_if: proc { |attributes| attributes[:email].blank? && attributes[:id].blank?}
 
     has_many :phones
     accepts_nested_attributes_for :phones, :allow_destroy => true
@@ -459,6 +459,7 @@ module Droom
     def self.send_reset_password_instructions(attributes={})
       if user = from_email(attributes[:email]).first
         if email_still_valid?(attributes[:email])
+          user.instance_variable_set(:@reset_password_target_email, attributes[:email])
           user.send_reset_password_instructions
         end
       else
@@ -471,6 +472,7 @@ module Droom
     def self.send_unlock_instructions(attributes={})
       if user = from_email(attributes[:email]).first
         if email_still_valid?(attributes[:email])
+          user.instance_variable_set(:@unlock_target_email, attributes[:email])
           user.send_unlock_instructions
         end
       else
