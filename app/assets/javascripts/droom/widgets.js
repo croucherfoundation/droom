@@ -301,7 +301,7 @@
         if (files = this._filefield[0].files) {
           if (this._file = files.item(0)) {
             if (!this.isValidImageType(this._file)) {
-              alert('Only image files are allowed!');
+              alert('Please select an image file only.');
               this._filefield.val('');
               return;
             }

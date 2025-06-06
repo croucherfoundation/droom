@@ -138,7 +138,7 @@
           const file = files[i];
 
           if (isBlockedFile(file)) {
-            alert('Blocked file type: ' + file.name);
+            alert('Upload blocked: "' + file.name + '" contains an unsupported file type. Please select a different file.');
             console.warn('Blocked file type:', file.name);
             continue;
           }
