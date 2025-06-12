@@ -9,6 +9,8 @@ module Droom
 
     has_one_attached :image
 
+    validate :image_must_be_valid
+    
     before_save :get_youtube_thumbnail
     before_validation :name_associates
 
@@ -132,6 +134,13 @@ module Droom
     def name_associates
       event.name = name if event
       document.name = name if document
+    end
+
+    def image_must_be_valid
+      return unless image.attached?
+      unless FileSecurityService.allowed_image?(image.content_type)
+        errors.add(:image, "must be a valid image file (JPEG, PNG, GIF, etc.)")
+      end
     end
 
   end

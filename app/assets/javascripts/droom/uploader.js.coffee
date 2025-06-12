@@ -57,10 +57,36 @@ jQuery ($) ->
       else
         console.log "unreadable drop", e
 
+    # readFiles: (files) =>
+    #   if files
+    #     for file in files
+    #       @uploadFile file
+
     readFiles: (files) =>
-      if files
-        for file in files
-          @uploadFile file
+      return unless files? and files.length
+
+      blockedMimeTypes = [
+        /^application\/(x-javascript|javascript|x-msdownload|x-sh|x-exe|x-dosexec|x-bat|x-csh|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i
+        /^text\/(javascript|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i
+        /^application\/octet-stream$/i
+      ]
+
+      blockedExtensions = /\.(js|exe|sh|bat|py|pl|php|rb|c|cpp|h|java|class|jar|msi|vb|vbs|cmd|scr|ps1)$/i
+
+      isBlockedFile = (file) ->
+        blockedMimeTypes.some((regex) -> regex.test(file.type)) or blockedExtensions.test(file.name)
+
+      results = []
+
+      for file in files
+        if isBlockedFile(file)
+          alert "Blocked file type: #{file.name}"
+          console.warn "Blocked file type:", file.name
+          continue
+
+        results.push @uploadFile(file)
+
+      results
 
     uploadFile: (file) =>
       new Upload

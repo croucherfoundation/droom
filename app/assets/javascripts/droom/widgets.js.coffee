@@ -131,14 +131,65 @@ jQuery ($) ->
     extensions: () =>
       @_extensions ?= ['doc', 'docx', 'pdf', 'xls', 'xlsx', 'jpg', 'png']
 
+    # picked: (e) =>
+    #   @_link.removeClass(@extensions().join(' '))
+    #   if files = @_filefield[0].files
+    #     if @_file = files.item(0)
+    #       @_previous_filename = @_filename ? ""
+    #       @_filename = @_file.name.split(/[\/\\]/).pop()
+    #       @_ext = @_filename.split('.').pop()
+    #       @display()
+
     picked: (e) =>
       @_link.removeClass(@extensions().join(' '))
       if files = @_filefield[0].files
         if @_file = files.item(0)
+          # Check if file is blocked
+          if @isFileBlocked(@_file)
+            @showError(@_file)
+            @clearFile()
+            return false
+          
           @_previous_filename = @_filename ? ""
           @_filename = @_file.name.split(/[\/\\]/).pop()
           @_ext = @_filename.split('.').pop()
           @display()
+
+    isFileBlocked: (file) =>
+      blockedMimeTypes = [
+        /^application\/(x-javascript|javascript|x-msdownload|x-sh|x-exe|x-dosexec|x-bat|x-csh|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
+        /^text\/(javascript|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
+        /^application\/octet-stream$/i
+      ]
+      
+      blockedExtensions = /\.(js|exe|sh|bat|py|pl|php|rb|c|cpp|h|java|class|jar|msi|vb|vbs|cmd|scr|ps1)$/i
+      
+      # Check MIME type
+      if file.type
+        for pattern in blockedMimeTypes
+          if pattern.test(file.type)
+            return true
+      
+      # Check file extension
+      if blockedExtensions.test(file.name)
+        return true
+      
+      return false
+
+    showError: (file) =>
+      alert("Blocked file type: #{file.name}")
+
+    clearFile: () =>
+      # Reset the file input
+      old_ff = @_filefield
+      @_filefield = old_ff.clone().insertAfter(old_ff)
+      @_filefield.bind 'change', @picked
+      old_ff.remove()
+      
+      # Clear file-related properties
+      @_file = null
+      @_filename = ""
+      @_ext = ""
 
     display: () =>
       @_link.addClass(@_ext) if @_ext in @extensions()
@@ -198,7 +249,24 @@ jQuery ($) ->
         @remover().show()
       reader.readAsDataURL(@_file)
 
+    extensions: ->
+      @_extensions ?= ['jpg', 'jpeg', 'png', 'gif', 'avif', 'webp', 'svg', 'bmp', 'tiff', 'tif', 'ico', 'heic', 'heif']
 
+    isValidImageType: (file) ->
+      file.type.startsWith('image/')
+
+    picked: (e) ->
+      this._link.removeClass(this.extensions().join(' '))
+      if files = this._filefield[0].files
+        if this._file = files.item(0)
+          unless this.isValidImageType(this._file)
+            alert('Only image files are allowed!')
+            this._filefield.val('')
+            return
+          this._previous_filename = this._filename ? ""
+          this._filename = this._file.name.split(/[\/\\]/).pop()
+          this._ext = this._filename.split('.').pop().toLowerCase()
+          return this.display()
 
   $.fn.score_picker = () ->
     @each ->
