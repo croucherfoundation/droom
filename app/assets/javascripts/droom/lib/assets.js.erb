@@ -1,0 +1,15 @@
+(function() {
+  jQuery(function($) {
+    return $.withZxcbvn = function(fn) {
+      var asset_path, based_url;
+      based_url = 'https://data.croucher.org.hk/';
+      asset_path = based_url + "<%=asset_path('droom/zxcvbn.js')%>";
+      return $.getScript(asset_path).done((function(_this) {
+        return function(response) {
+          return typeof fn === "function" ? fn(response) : void 0;
+        };
+      })(this));
+    };
+  });
+
+}).call(this);
