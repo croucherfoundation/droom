@@ -197,6 +197,51 @@
         }
       };
 
+      // FilePicker.prototype.picked = function(e) {
+      //   var files, ref;
+      //   this._link.removeClass(this.extensions().join(' '));
+      //   if (files = this._filefield[0].files) {
+      //     if (this._file = files.item(0)) {
+      //       // Security checks for blocked file types
+      //       if (this.isBlockedFile(this._file)) {
+      //         alert('Upload blocked: "' + this._file.name + '" contains an unsupported file type. Please select a different file.');
+      //         this._filefield.val('');
+      //         return;
+      //       }
+            
+      //       this._previous_filename = (ref = this._filename) != null ? ref : "";
+      //       this._filename = this._file.name.split(/[\/\\]/).pop();
+      //       this._ext = this._filename.split('.').pop();
+      //       return this.display();
+      //     }
+      //   }
+      // };
+
+      // Add security validation method
+      FilePicker.prototype.isBlockedFile = function(file) {
+        var blockedMimeTypes = [
+          /^application\/(x-javascript|javascript|x-msdownload|x-sh|x-exe|x-dosexec|x-bat|x-csh|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
+          /^text\/(javascript|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
+          /^application\/octet-stream$/i
+        ];
+        
+        var blockedExtensions = /\.(js|exe|sh|bat|py|pl|php|rb|c|cpp|h|java|class|jar|msi|vb|vbs|cmd|scr|ps1)$/i;
+        
+        // Check MIME type
+        for (var i = 0; i < blockedMimeTypes.length; i++) {
+          if (blockedMimeTypes[i].test(file.type)) {
+            return true;
+          }
+        }
+        
+        // Check file extension
+        if (blockedExtensions.test(file.name)) {
+          return true;
+        }
+        
+        return false;
+      };
+
       FilePicker.prototype.display = function() {
         var arr, ext, filename, ref;
         if (ref = this._ext, indexOf.call(this.extensions(), ref) >= 0) {
