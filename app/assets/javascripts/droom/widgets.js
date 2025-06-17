@@ -197,25 +197,25 @@
         }
       };
 
-      // FilePicker.prototype.picked = function(e) {
-      //   var files, ref;
-      //   this._link.removeClass(this.extensions().join(' '));
-      //   if (files = this._filefield[0].files) {
-      //     if (this._file = files.item(0)) {
-      //       // Security checks for blocked file types
-      //       if (this.isBlockedFile(this._file)) {
-      //         alert('Upload blocked: "' + this._file.name + '" contains an unsupported file type. Please select a different file.');
-      //         this._filefield.val('');
-      //         return;
-      //       }
+      FilePicker.prototype.picked = function(e) {
+        var files, ref;
+        this._link.removeClass(this.extensions().join(' '));
+        if (files = this._filefield[0].files) {
+          if (this._file = files.item(0)) {
+            // Security checks for blocked file types
+            if (this.isBlockedFile(this._file)) {
+              alert('Upload blocked: "' + this._file.name + '" contains an unsupported file type. Please select a different file.');
+              this._filefield.val('');
+              return;
+            }
             
-      //       this._previous_filename = (ref = this._filename) != null ? ref : "";
-      //       this._filename = this._file.name.split(/[\/\\]/).pop();
-      //       this._ext = this._filename.split('.').pop();
-      //       return this.display();
-      //     }
-      //   }
-      // };
+            this._previous_filename = (ref = this._filename) != null ? ref : "";
+            this._filename = this._file.name.split(/[\/\\]/).pop();
+            this._ext = this._filename.split('.').pop();
+            return this.display();
+          }
+        }
+      };
 
       // Add security validation method
       FilePicker.prototype.isBlockedFile = function(file) {
