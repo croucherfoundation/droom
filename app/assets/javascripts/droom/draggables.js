@@ -43,6 +43,8 @@
         this._event_id = this._container.data('eventId');
         this._folder_id = this._container.data('folderId');
         this._droppables = this._container.parents('[data-droppable]');
+        this._model = this._container.data('model') || 'document';
+        this._controller_path = this._model.replace(/_/g, '-') + 's';
 
         this._sortable = new Sortable(element, {
           group: 'files',
@@ -62,13 +64,14 @@
       };
 
       SortableFiling.prototype.setPosition = function (e) {
-        var $el, doc_id, params, update, url;
+        var $el, item_id, params, update, url;
         $('[data-droppable]').trigger('not_sorting');
         $el = $(e.item || e.dragged);
-        if ((doc_id = $el.data('docId'))) {
-          url = '/documents/' + doc_id + '/reposition';
+        item_id = $el.data('docId') || $el.data('termId') || $el.data('allowanceId');
+        if (item_id) {
+          url = `/${this._controller_path}/${item_id}/reposition`;
           params = {
-            document: {
+            [this._model]: {
               position: e.newIndex + 1,
               folder_id: this._folder_id,
             },
