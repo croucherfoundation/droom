@@ -17,7 +17,7 @@
 
 (function() {
   jQuery(function($) {
-    Document.execCommand('defaultParagraphSeparator', false, 'p');
+    document.execCommand('defaultParagraphSeparator', false, 'p');
     $.fn.edify = function(options) {
       if (options == null) {
         options = {};
