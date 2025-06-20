@@ -9,6 +9,7 @@ module Droom
     attr_accessor :remote_url
 
     has_one_base64_attached :file
+    validate :file_must_be_valid
 
     before_validation :get_organisation
     before_validation :read_remote_url
@@ -59,6 +60,13 @@ module Droom
       if remote_url
         self.file = open(remote_url)
         self.file_name = File.basename(remote_url)
+      end
+    end
+
+    def file_must_be_valid
+      return unless file.attached?
+      unless FileSecurityService.allowed_image?(file.content_type)
+        errors.add(:file, "must be a valid image file (JPEG, PNG, GIF, etc.)")
       end
     end
 

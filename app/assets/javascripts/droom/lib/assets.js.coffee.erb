@@ -1,7 +1,0 @@
-jQuery ($) ->
-
-  $.withZxcbvn = (fn) ->
-    based_url = 'https://data.croucher.org.hk/'
-    asset_path = based_url + "<%=asset_path('droom/zxcvbn.js')%>"
-
-    $.getScript(asset_path).done (response) => fn?(response)

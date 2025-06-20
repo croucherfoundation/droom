@@ -6,6 +6,8 @@ module Droom
 
     has_one_attached :file
 
+    validate :file_must_be_valid
+
     acts_as_list scope: :folder_id
 
     before_create :inherit_confidentiality
@@ -208,6 +210,18 @@ module Droom
           Rails.logger.warn "File read failure: #{e.message}"
         end
         tempfile_path
+      end
+    end
+
+    protected
+
+    def file_must_be_valid
+      return unless file.attached?
+      content_type = file.content_type
+      file_name = file.filename.to_s
+      unless FileSecurityService.allowed_file?(file_name, content_type)
+        error_message = FileSecurityService.security_error_message(file_name, content_type)
+        errors.add(:file, error_message)
       end
     end
 

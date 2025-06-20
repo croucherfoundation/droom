@@ -3,6 +3,7 @@ module Droom::Concerns::Imaged
 
   included do
     has_one_attached :image
+    validate :image_must_be_valid
   end
 
   ## Images
@@ -56,6 +57,15 @@ module Droom::Concerns::Imaged
 
   def icon
     image_url(:icon)
+  end
+
+  private
+
+  def image_must_be_valid
+    return unless image.attached?
+    unless FileSecurityService.allowed_image?(image.content_type)
+      errors.add(:image, "must be a valid image file (JPEG, PNG, GIF, etc.)")
+    end
   end
 
 end
