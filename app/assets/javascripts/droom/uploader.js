@@ -107,8 +107,7 @@
         for (i = 0, len = files.length; i < len; i++) {
           file = files[i];
           if (isBlockedFile(file)) {
-            alert("Blocked file type: " + file.name);
-            console.warn("Blocked file type:", file.name);
+            alert('Upload blocked: "' + file.name + '" contains an unsupported file type. Please select a different file.');
             continue;
           }
           results.push(this.uploadFile(file));
