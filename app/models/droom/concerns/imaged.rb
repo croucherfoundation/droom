@@ -3,6 +3,7 @@ module Droom::Concerns::Imaged
 
   included do
     has_one_attached :image
+    validate :image_type, if: -> { image.attached? }
   end
 
   ## Images
@@ -62,4 +63,11 @@ module Droom::Concerns::Imaged
     image_url(:icon)
   end
 
+  private
+  def image_type
+    return unless image.attached?
+    unless FileSecurityService.allowed_image?(image.content_type)
+      errors.add(:image, "must be a valid image file (JPEG, PNG, GIF, etc.)")
+    end
+  end
 end

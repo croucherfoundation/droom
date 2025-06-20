@@ -21,6 +21,7 @@ module Droom
 
     before_save :track_file_change
     after_commit :file_changed_callback, if: -> { @file_changed }
+    validate :file_must_be_allowed
 
     # validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
@@ -306,6 +307,16 @@ module Droom
     def file_changed_callback
       return unless event_id.present?
       CompileMeetingPdfJob.perform_later(id, event_id)
+    end
+
+    def file_must_be_allowed
+      return unless file.attached?
+      content_type = file.content_type
+      file_name = file.filename.to_s
+      unless FileSecurityService.allowed_file?(file_name, content_type)
+        error_message = FileSecurityService.security_error_message(file_name, content_type)
+        errors.add(:file, error_message)
+      end
     end
 
   end
