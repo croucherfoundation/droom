@@ -18,6 +18,7 @@
         this.blockEvent = bind(this.blockEvent, this);
         this.uploadFile = bind(this.uploadFile, this);
         this.readFiles = bind(this.readFiles, this);
+        this.readPdfFiles = bind(this.readPdfFiles, this);
         this.catchFiles = bind(this.catchFiles, this);
         this.readFilefield = bind(this.readFilefield, this);
         this.triggerFilefield = bind(this.triggerFilefield, this);
@@ -76,7 +77,11 @@
       };
 
       Droploader.prototype.readFilefield = function() {
-        this.readFiles(this._filefield[0].files);
+        if (this._catcher.find('[data-event="pdf-only"]')) {
+          this.readPdfFiles(this._filefield[0].files);
+        } else {
+          this.readFiles(this._filefield[0].files);
+        }
         return this.resetFilefield();
       };
 
@@ -90,6 +95,30 @@
           return console.log("unreadable drop", e);
         }
       };
+
+      Droploader.prototype.readPdfFiles = function(files) {
+        var file, i, len, results, maxSize;
+        if (!((files != null) && files.length)) {
+          return;
+        }
+
+        maxSize = 10 * 1024 * 1024; // 10MB
+
+        results = [];
+        for (i = 0, len = files.length; i < len; i++) {
+          file = files[i];
+          if (file.type !== 'application/pdf') {
+            alert('Upload blocked: "' + file.name + '" is not a PDF file. Please select a different file.');
+            continue;
+          }
+          if (file.size > maxSize) {
+            alert('Upload blocked: "' + file.name + '" exceeds the 10MB size limit. Please select a smaller file.');
+            continue;
+          }
+          results.push(this.uploadFile(file));
+        }
+        return results;
+      }
 
       Droploader.prototype.readFiles = function(files) {
         var allowedExtensions, allowedMimeTypes, file, i, isAllowedFile, len, results;
