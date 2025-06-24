@@ -157,7 +157,7 @@
         this.display = bind(this.display, this);
         this.clearFile = bind(this.clearFile, this);
         this.showError = bind(this.showError, this);
-        this.isFileBlocked = bind(this.isFileBlocked, this);
+        this.isFileAllowed = bind(this.isFileAllowed, this);
         this.picked = bind(this.picked, this);
         this.extensions = bind(this.extensions, this);
         this.picker = bind(this.picker, this);
@@ -191,7 +191,7 @@
         this._link.removeClass(this.extensions().join(' '));
         if (files = this._filefield[0].files) {
           if (this._file = files.item(0)) {
-            if (this.isFileBlocked(this._file)) {
+            if (!this.isFileAllowed(this._file)) {
               this.showError(this._file);
               this.clearFile();
               return false;
@@ -204,49 +204,62 @@
         }
       };
 
-      FilePicker.prototype.isFileBlocked = function(file) {
-        var blockedExtensions, blockedMimeTypes, j, len, pattern;
-        blockedMimeTypes = [
-
-          // JavaScript and scripting languages
-          /^application\/(x-javascript|javascript|x-msdownload|x-sh|x-exe|x-dosexec|x-bat|x-csh|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
-          /^text\/(javascript|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
+      FilePicker.prototype.isFileAllowed = function(file) {
+        console.log("hla hla")
+        var allowedExtensions, allowedMimeTypes, j, len, pattern;
+        allowedMimeTypes = [
+          // PDF
+          'application/pdf',
           
-          // Generic binary/executable types
-          /^application\/octet-stream$/i,
+          // Word documents
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
           
-          // Windows executables and installers
-          /^application\/(x-msdos-program|x-msdownload|x-winexe|x-msi|vnd\.microsoft\.portable-executable)$/i,
+          // PowerPoint presentations
+          'application/vnd.ms-powerpoint',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation',
           
-          // Unix/Linux executables and scripts
-          /^application\/(x-executable|x-sharedlib|x-object|x-archive)$/i,
+          // Excel spreadsheets
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'text/csv',
           
-          // Shell scripts and command files
-          /^text\/(x-sh|x-shellscript|x-script\.sh|x-script\.csh|x-script\.ksh|x-script\.zsh)$/i,
+          // Text files
+          'text/plain',
+          'text/rtf',
           
-          // Mac executables
-          /^application\/(x-mach-binary|x-apple-diskimage)$/i,
+          // Email messages
+          'message/rfc822',
+          'application/vnd.ms-outlook',
+          'application/x-msg',
+          'text/x-eml',
           
-          // Java executables
-          /^application\/(java|x-java-archive|x-java-jnlp-file)$/i,
-          
-          // Other potentially dangerous formats
-          /^application\/(x-deb|x-rpm|x-tar|x-gtar|x-compress|x-gzip)$/i,
-          
-          // Script engines
-          /^text\/(x-python|x-python3|x-script\.python)$/i,
-          /^application\/(x-powershell|x-ps1)$/i
+          // Images
+          'image/jpeg',
+          'image/jpg',
+          'image/png',
+          'image/gif',
+          'image/avif',
+          'image/webp',
+          'image/svg+xml',
+          'image/bmp',
+          'image/tiff',
+          'image/x-icon',
+          'image/heic',
+          'image/heif'
         ];
-        blockedExtensions = /\.(js|exe|sh|bat|py|pl|php|rb|c|cpp|h|java|class|jar|msi|vb|vbs|cmd|scr|ps1|ps2|psc1|psc2|msh|msh1|msh2|mshxml|msh1xml|msh2xml|scf|lnk|inf|reg|app|deb|rpm|dmg|pkg|run|bin|bash|zsh|fish|csh|ksh|com|pif|vbe|jse|wsf|wsh|war|lua)$/i;
+
+        allowedExtensions = /\.(pdf|doc|docx|ppt|pptx|xls|xlsx|csv|txt|rtf|eml|msg|jpg|jpeg|png|gif|avif|webp|svg|bmp|tiff|ico|heic|heif)$/i;
+
         if (file.type) {
-          for (j = 0, len = blockedMimeTypes.length; j < len; j++) {
-            pattern = blockedMimeTypes[j];
+          for (j = 0, len = allowedMimeTypes.length; j < len; j++) {
+            pattern = allowedMimeTypes[j];
             if (pattern.test(file.type)) {
               return true;
             }
           }
         }
-        if (blockedExtensions.test(file.name)) {
+        if (allowedExtensions.test(file.name)) {
           return true;
         }
         return false;
