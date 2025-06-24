@@ -252,12 +252,7 @@
         allowedExtensions = /\.(pdf|doc|docx|ppt|pptx|xls|xlsx|csv|txt|rtf|eml|msg|jpg|jpeg|png|gif|avif|webp|svg|bmp|tiff|ico|heic|heif)$/i;
 
         if (file.type) {
-          for (j = 0, len = allowedMimeTypes.length; j < len; j++) {
-            pattern = allowedMimeTypes[j];
-            if (pattern.test(file.type)) {
-              return true;
-            }
-          }
+          return allowedMimeTypes.includes(file.type);
         }
         if (allowedExtensions.test(file.name)) {
           return true;

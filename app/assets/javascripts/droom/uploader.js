@@ -142,8 +142,8 @@
         allowedExtensions = /\.(pdf|doc|docx|ppt|pptx|xls|xlsx|csv|txt|rtf|eml|msg|jpg|jpeg|png|gif|avif|webp|svg|bmp|tiff|ico|heic|heif)$/i;
         
         isAllowedFile = function(file) {
-          return allowedMimeTypes.some(function(regex) {
-            return regex.test(file.type);
+          return allowedMimeTypes.some(function(mime_type) {
+            return mime_type === file.type;
           }) || allowedExtensions.test(file.name);
         };
         results = [];
