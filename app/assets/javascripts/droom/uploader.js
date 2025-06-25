@@ -118,43 +118,90 @@
       // };
       Droploader.prototype.readFiles = function(files) {
         if (!files || !files.length) return;
-
-        const blockedMimeTypes = [
-          // JavaScript and scripting languages
-          /^application\/(x-javascript|javascript|x-msdownload|x-sh|x-exe|x-dosexec|x-bat|x-csh|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
-          /^text\/(javascript|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
+        const allowedMimeTypes = [
+          // PDF
+          'application/pdf',
           
-          // Generic binary/executable types
-          /^application\/octet-stream$/i,
+          // Word documents
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/x-tika-ooxml',
+          'application/vnd.oasis.opendocument.text',
+          'application/vnd.oasis.opendocument.text-template',
+          'application/vnd.oasis.opendocument.text-web',
+          'application/vnd.oasis.opendocument.text-master',
+          'text/html',
+          'application/xml',
+          'application/vnd.jgraph.mxfile',
+          'application/vnd.jgraph.drawio',
+          'application/octet-stream',
+          'application/x-xmind',
           
-          // Windows executables and installers
-          /^application\/(x-msdos-program|x-msdownload|x-winexe|x-msi|vnd\.microsoft\.portable-executable)$/i,
+          // PowerPoint presentations
+          'application/vnd.ms-powerpoint',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation',
           
-          // Unix/Linux executables and scripts
-          /^application\/(x-executable|x-sharedlib|x-object|x-archive)$/i,
+          // Excel spreadsheets
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'text/csv',
           
-          // Shell scripts and command files
-          /^text\/(x-sh|x-shellscript|x-script\.sh|x-script\.csh|x-script\.ksh|x-script\.zsh)$/i,
+          // Text files
+          'text/plain',
+          'text/rtf',
           
-          // Mac executables
-          /^application\/(x-mach-binary|x-apple-diskimage)$/i,
-          
-          // Java executables
-          /^application\/(java|x-java-archive|x-java-jnlp-file)$/i,
-          
-          // Other potentially dangerous formats
-          /^application\/(x-deb|x-rpm|x-tar|x-gtar|x-compress|x-gzip)$/i,
-          
-          // Script engines
-          /^text\/(x-python|x-python3|x-script\.python)$/i,
-          /^application\/(x-powershell|x-ps1)$/i
+          // Email messages
+          'message/rfc822',
+          'application/vnd.ms-outlook',
+          'application/x-msg',
+          'text/x-eml',
+        
+          // Apple files
+          'application/vnd.apple.pages',
+          'application/vnd.apple.numbers',
+          'application/vnd.apple.keynote',
+        
+          // Video files
+          'video/mp4',
+          'video/quicktime',
+          'video/webm',
+        
+          // Archive & Storage Files
+          'application/zip',
+          'application/x-zip-compressed',
+          'application/x-rar-compressed',
+          'application/x-tar',
+          'application/x-7z-compressed',
+          'application/x-gzip',
+          'application/x-ole-storage',
+        
+          // Font Files
+          'font/ttf',
+          'font/otf',
+          'font/woff',
+          'font/woff2',
+        
+          // Images
+          'image/jpeg',
+          'image/jpg',
+          'image/png',
+          'image/gif',
+          'image/avif',
+          'image/webp',
+          'image/svg+xml',
+          'image/bmp',
+          'image/tiff',
+          'image/x-icon',
+          'image/heic',
+          'image/heif',
+          'image/vnd.adobe.photoshop'
         ];
-
-        const blockedExtensions = /\.(js|exe|sh|bat|py|pl|php|rb|c|cpp|h|java|class|jar|msi|vb|vbs|cmd|scr|ps1|ps2|psc1|psc2|msh|msh1|msh2|mshxml|msh1xml|msh2xml|scf|lnk|inf|reg|app|deb|rpm|dmg|pkg|run|bin|bash|zsh|fish|csh|ksh|com|pif|vbe|jse|wsf|wsh|war|lua)$/i;
-
-        const isBlockedFile = (file) => {
-          return blockedMimeTypes.some(regex => regex.test(file.type)) ||
-                blockedExtensions.test(file.name);
+        
+        const allowedExtensions = /\.(pdf|doc|docx|odt|ott|docm|dot|dotx|dotm|html|htm|xml|mxfile|drawio|xmind|ppt|pptx|xls|xlsx|csv|txt|rtf|eml|msg|pages|numbers|key|mp4|mov|webm|zip|rar|tar|7z|gz|tar\.gz|tgz|ttf|otf|woff|woff2|jpg|jpeg|png|gif|avif|webp|svg|bmp|tiff|ico|heic|heif|psd)$/i;
+        
+        const isFileSecure = (file) => {
+          return allowedMimeTypes.includes(file.type) ||
+                allowedExtensions.test(file.name);
         };
 
         const results = [];
@@ -162,7 +209,7 @@
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
 
-          if (isBlockedFile(file)) {
+          if (!isFileSecure(file)) {
             alert('Upload blocked: "' + file.name + '" contains an unsupported file type. Please select a different file.');
             console.warn('Blocked file type:', file.name);
             continue;

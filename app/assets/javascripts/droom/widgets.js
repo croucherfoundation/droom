@@ -156,6 +156,7 @@
         this.initProgress = bind(this.initProgress, this);
         this.display = bind(this.display, this);
         this.picked = bind(this.picked, this);
+        // this.isFileSecure = bind(this.isFileSecure, this);
         this.extensions = bind(this.extensions, this);
         this.picker = bind(this.picker, this);
         var ref;
@@ -199,16 +200,25 @@
 
       FilePicker.prototype.picked = function(e) {
         var files, ref;
+        var xls_file = this._container.find('a[data-participant="xls_file"]');
         this._link.removeClass(this.extensions().join(' '));
         if (files = this._filefield[0].files) {
           if (this._file = files.item(0)) {
-            // Security checks for blocked file types
-            if (this.isBlockedFile(this._file)) {
-              alert('Upload blocked: "' + this._file.name + '" contains an unsupported file type. Please select a different file.');
-              this._filefield.val('');
-              return;
+            // Check for xls file only
+            if (xls_file && xls_file.length > 0  ) {
+              if (!this.isXLS(this._file)) {
+                alert('Upload blocked: "' + this._file.name + '" is not a valid XLS file. Please select a different file.');
+                this._filefield.val('');
+                return;
+              }
+            }else { 
+              // Security checks for blocked file types
+              if (!this.isFileSecure(this._file)) {
+                alert('Upload blocked: "' + this._file.name + '" contains an unsupported file type. Please select a different file.');
+                this._filefield.val('');
+                return;
+              }
             }
-            
             this._previous_filename = (ref = this._filename) != null ? ref : "";
             this._filename = this._file.name.split(/[\/\\]/).pop();
             this._ext = this._filename.split('.').pop();
@@ -216,55 +226,106 @@
           }
         }
       };
+       // CSV and XLS file security check
+       FilePicker.prototype.isXLS = function(file) {
+        const fileName = this._file.name.toLowerCase();
+        const isExcelOrCsv = fileName.endsWith('.xls') || 
+                       fileName.endsWith('.xlsx') || 
+                       fileName.endsWith('.csv') ||
+                       this._file.type === 'application/vnd.ms-excel' ||
+                       this._file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                       this._file.type === 'text/csv';
+
+        return isExcelOrCsv;
+       }
+
 
       // Add security validation method
-      FilePicker.prototype.isBlockedFile = function(file) {
-        var blockedMimeTypes = [
-          // JavaScript and scripting languages
-          /^application\/(x-javascript|javascript|x-msdownload|x-sh|x-exe|x-dosexec|x-bat|x-csh|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
-          /^text\/(javascript|x-python|x-perl|x-php|x-ruby|x-shellscript)$/i,
+      FilePicker.prototype.isFileSecure = function(file) {
+        // alert('Checking file security for: widgest' + file.name);
+        const allowedMimeTypes = [
+          // PDF
+          'application/pdf',
           
-          // Generic binary/executable types
-          /^application\/octet-stream$/i,
+          // Word documents
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/x-tika-ooxml',
+          'application/vnd.oasis.opendocument.text',
+          'application/vnd.oasis.opendocument.text-template',
+          'application/vnd.oasis.opendocument.text-web',
+          'application/vnd.oasis.opendocument.text-master',
+          'text/html',
+          'application/xml',
+          'application/vnd.jgraph.mxfile',
+          'application/vnd.jgraph.drawio',
+          'application/octet-stream',
+          'application/x-xmind',
           
-          // Windows executables and installers
-          /^application\/(x-msdos-program|x-msdownload|x-winexe|x-msi|vnd\.microsoft\.portable-executable)$/i,
+          // PowerPoint presentations
+          'application/vnd.ms-powerpoint',
+          'application/vnd.openxmlformats-officedocument.presentationml.presentation',
           
-          // Unix/Linux executables and scripts
-          /^application\/(x-executable|x-sharedlib|x-object|x-archive)$/i,
+          // Excel spreadsheets
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'text/csv',
           
-          // Shell scripts and command files
-          /^text\/(x-sh|x-shellscript|x-script\.sh|x-script\.csh|x-script\.ksh|x-script\.zsh)$/i,
+          // Text files
+          'text/plain',
+          'text/rtf',
           
-          // Mac executables
-          /^application\/(x-mach-binary|x-apple-diskimage)$/i,
-          
-          // Java executables
-          /^application\/(java|x-java-archive|x-java-jnlp-file)$/i,
-          
-          // Other potentially dangerous formats
-          /^application\/(x-deb|x-rpm|x-tar|x-gtar|x-compress|x-gzip)$/i,
-          
-          // Script engines
-          /^text\/(x-python|x-python3|x-script\.python)$/i,
-          /^application\/(x-powershell|x-ps1)$/i
+          // Email messages
+          'message/rfc822',
+          'application/vnd.ms-outlook',
+          'application/x-msg',
+          'text/x-eml',
+        
+          // Apple files
+          'application/vnd.apple.pages',
+          'application/vnd.apple.numbers',
+          'application/vnd.apple.keynote',
+        
+          // Video files
+          'video/mp4',
+          'video/quicktime',
+          'video/webm',
+        
+          // Archive & Storage Files
+          'application/zip',
+          'application/x-zip-compressed',
+          'application/x-rar-compressed',
+          'application/x-tar',
+          'application/x-7z-compressed',
+          'application/x-gzip',
+          'application/x-ole-storage',
+        
+          // Font Files
+          'font/ttf',
+          'font/otf',
+          'font/woff',
+          'font/woff2',
+        
+          // Images
+          'image/jpeg',
+          'image/jpg',
+          'image/png',
+          'image/gif',
+          'image/avif',
+          'image/webp',
+          'image/svg+xml',
+          'image/bmp',
+          'image/tiff',
+          'image/x-icon',
+          'image/heic',
+          'image/heif',
+          'image/vnd.adobe.photoshop'
         ];
         
-        var blockedExtensions = /\.(js|exe|sh|bat|py|pl|php|rb|c|cpp|h|java|class|jar|msi|vb|vbs|cmd|scr|ps1|ps2|psc1|psc2|msh|msh1|msh2|mshxml|msh1xml|msh2xml|scf|lnk|inf|reg|app|deb|rpm|dmg|pkg|run|bin|bash|zsh|fish|csh|ksh|com|pif|vbe|jse|wsf|wsh|war|lua)$/i;
+        const allowedExtensions = /\.(pdf|doc|docx|odt|ott|docm|dot|dotx|dotm|html|htm|xml|mxfile|drawio|xmind|ppt|pptx|xls|xlsx|csv|txt|rtf|eml|msg|pages|numbers|key|mp4|mov|webm|zip|rar|tar|7z|gz|tar\.gz|tgz|ttf|otf|woff|woff2|jpg|jpeg|png|gif|avif|webp|svg|bmp|tiff|ico|heic|heif|psd)$/i;
         
-        // Check MIME type
-        for (var i = 0; i < blockedMimeTypes.length; i++) {
-          if (blockedMimeTypes[i].test(file.type)) {
-            return true;
-          }
-        }
-        
-        // Check file extension
-        if (blockedExtensions.test(file.name)) {
-          return true;
-        }
-        
-        return false;
+        // If MIME type is generic or empty, fall back to extension check
+        return allowedMimeTypes.includes(file.type) || allowedExtensions.test(file.name);
       };
 
       FilePicker.prototype.display = function() {
