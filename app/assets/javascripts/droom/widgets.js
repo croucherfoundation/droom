@@ -205,7 +205,6 @@
       };
 
       FilePicker.prototype.isFileAllowed = function(file) {
-        console.log("hla hla")
         var allowedExtensions, allowedMimeTypes, j, len, pattern;
         allowedMimeTypes = [
           // PDF

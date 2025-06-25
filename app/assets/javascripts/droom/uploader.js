@@ -29,6 +29,7 @@
         this._catcher = $(element);
         this._active = true;
         this._url = this._catcher.data('droppable');
+        this._pdf_only = this._catcher.find('[data-event="pdf-only"]').length > 0;
         this._form = $('<form method="POST" class="droploader" />').addClass('uploader').insertAfter(this._catcher);
         this.resetFilefield();
         if (queue_selector = this._catcher.data('queue')) {
@@ -65,7 +66,13 @@
         if ((ref = this._filefield) != null) {
           ref.remove();
         }
-        this._filefield = $('<input type="file" multiple="multiple" />').appendTo(this._form);
+        // Create a new file input field
+        if (this._pdf_only) {
+          this._filefield = $('<input type="file" multiple="multiple" accept="application/pdf" />').appendTo(this._form);
+        } else {
+          this._filefield = $('<input type="file" multiple="multiple" />').appendTo(this._form);
+        }
+
         return this._filefield.on("change", this.readFilefield);
       };
 
@@ -77,7 +84,7 @@
       };
 
       Droploader.prototype.readFilefield = function() {
-        if (this._catcher.find('[data-event="pdf-only"]')) {
+        if (this._pdf_only) {
           this.readPdfFiles(this._filefield[0].files);
         } else {
           this.readFiles(this._filefield[0].files);
@@ -108,7 +115,7 @@
         for (i = 0, len = files.length; i < len; i++) {
           file = files[i];
           if (file.type !== 'application/pdf') {
-            alert('Upload blocked: "' + file.name + '" is not a PDF file. Please select a different file.');
+            alert('Upload blocked: "' + file.name + '" is not a PDF file. Please select a pdf file.');
             continue;
           }
           if (file.size > maxSize) {
