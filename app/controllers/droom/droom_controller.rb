@@ -2,6 +2,7 @@ module Droom
   class DroomController < ActionController::Base
     include Droom::Concerns::ControllerHelpers
     include Droom::Concerns::PaperTrailWhodunnit
+    include Droom::Concerns::ClamavScannable
     helper Droom::DroomHelper
     helper ApplicationHelper
 

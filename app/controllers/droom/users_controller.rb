@@ -7,6 +7,7 @@ module Droom
     before_action :search_users, only: [:admin]
     # before_action :self_unless_admin, only: [:edit, :update]
     load_and_authorize_resource except: [:setup, :set_organisation]
+    clamav_scan_file_for 'user.image', if: -> { params[:user].present? && params[:user][:image].present? }
 
     # :index is the old user-list view, preserved for historical compatibility but now v. clunky.
     # :admin is the new elasticsearch index. The actual search work is done in `search_users`.
