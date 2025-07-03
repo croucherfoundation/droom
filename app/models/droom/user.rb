@@ -5,6 +5,7 @@ module Droom
     include Droom::Concerns::Key
     include Droom::Concerns::Imaged
     include Droom::Concerns::PngConvert
+    include Droom::Concerns::ScanAttachment
 
     has_paper_trail ignore: [:unique_session_id, :last_request_at, :sign_in_count]
 
@@ -59,6 +60,8 @@ module Droom
     after_destroy :remove_from_mailchimp_list
 
     after_commit :attach_default_image
+
+    scan_attachment :image
 
     scope :admins, -> { where(admin: true) }
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }

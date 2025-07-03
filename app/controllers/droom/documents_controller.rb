@@ -6,7 +6,6 @@ module Droom
     before_action :select_documents, only: [:index, :suggest]
     load_and_authorize_resource :document, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest]
     before_action :find_by_name, only: [:create]
-    clamav_scan_file_for 'document.file', if: -> { params[:document].present? && params[:document][:file].present? }
 
 
     def index
