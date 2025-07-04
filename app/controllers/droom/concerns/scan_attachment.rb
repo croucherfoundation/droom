@@ -1,4 +1,4 @@
-module Droom::Concerns::ClamavScannable
+module Droom::Concerns::ScanAttachment
   extend ActiveSupport::Concern
 
   class_methods do
@@ -30,7 +30,7 @@ module Droom::Concerns::ClamavScannable
         if scan_failed
           if request.xhr? # AJAX request
             Rails.logger.debug "ClamAV scan failed for AJAX request"
-            render json: "#{flash[:alert]}", status: 422
+            render json: { message: flash[:alert] }, status: 422
           elsif @object_name == 'document' # Special case for document uploads
              Rails.logger.debug "ClamAV scan failed for document upload"
             # Render JSON response for document uploads
