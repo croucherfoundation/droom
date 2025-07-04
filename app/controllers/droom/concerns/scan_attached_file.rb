@@ -1,4 +1,4 @@
-module Droom::Concerns::ScanAttachment
+module Droom::Concerns::ScanAttachedFile
   extend ActiveSupport::Concern
 
   class_methods do
