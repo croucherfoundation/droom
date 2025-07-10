@@ -47,7 +47,8 @@ module Droom::Api
         false
       else
         # Log the rejected account details
-        RejectedAccountLog.create(@hashed_params)
+        allowed_attrs = %i[given_name family_name email password ip_address browser_agent]
+        RejectedAccountLog.create(@hashed_params.slice(*allowed_attrs))
         true
       end
     end

@@ -14,7 +14,7 @@ module Droom::Users
     #
     def show
       @resource = self.resource = resource_class.confirm_by_token(params[:confirmation_token])
-      if @resource
+      if @resource.errors.empty?
         sign_in(resource_name, @resource)
         if params[:destination].present?
           redirect_to droom.dashboard_url(destination: params[:destination], send_invitation_memo: params[:send_invitation_memo])
