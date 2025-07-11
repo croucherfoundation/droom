@@ -2,6 +2,7 @@ require "open-uri"
 
 module Droom
   class Image < Droom::DroomRecord
+    include Droom::Concerns::ScanAttachment
     include ActiveStorageSupport::SupportForBase64
 
     belongs_to :user
@@ -10,6 +11,7 @@ module Droom
 
     has_one_base64_attached :file
     validate :file_must_be_valid
+    scan_attachment :file
 
     before_validation :get_organisation
     before_validation :read_remote_url

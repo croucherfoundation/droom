@@ -1,9 +1,11 @@
 module Droom::Concerns::Imaged
   extend ActiveSupport::Concern
+  include Droom::Concerns::ScanAttachment
 
   included do
     has_one_attached :image
     validate :image_must_be_valid
+    scan_attachment :image
   end
 
   ## Images

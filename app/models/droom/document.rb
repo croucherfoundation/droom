@@ -1,5 +1,6 @@
 module Droom
   class Document < Droom::DroomRecord
+    include Droom::Concerns::ScanAttachment
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :folder
     belongs_to :scrap, :dependent => :destroy
@@ -7,6 +8,7 @@ module Droom
     has_one_attached :file
 
     validate :file_must_be_valid
+    scan_attachment :file
 
     acts_as_list scope: :folder_id
 

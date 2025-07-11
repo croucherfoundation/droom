@@ -1,5 +1,6 @@
 module Droom
   class Scrap < Droom::DroomRecord
+    include Droom::Concerns::ScanAttachment
     belongs_to :created_by, :class_name => "Droom::User"
 
     belongs_to :event, :class_name => "Droom::Event", :dependent => :destroy
@@ -10,6 +11,7 @@ module Droom
     has_one_attached :image
 
     validate :image_must_be_valid
+    scan_attachment :image
     
     before_save :get_youtube_thumbnail
     before_validation :name_associates

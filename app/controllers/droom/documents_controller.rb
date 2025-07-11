@@ -29,11 +29,14 @@ module Droom
     end
 
     def create
-      @document.save!
-      if %w{listing simple}.include?(params[:view])
-        render :partial => params[:view]
+      if @document.save
+        if %w{listing simple}.include?(params[:view])
+          render :partial => params[:view]
+        else
+          render :partial => 'listing'
+        end
       else
-        render :partial => 'listing'
+        render json: @document.errors.full_messages.join(', '), status: 422
       end
     end
 

@@ -2,7 +2,7 @@ require 'vcard'
 
 module Droom
   class User < Droom::DroomRecord
-      include Droom::Concerns::Imaged
+    include Droom::Concerns::Imaged
 
     # validates :family_name, :presence => true
     # validates :given_name, :presence => true
