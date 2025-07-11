@@ -1,6 +1,6 @@
 require 'tempfile'
 
-module ScanAttachment
+module Droom::Concerns::ScanAttachment
   extend ActiveSupport::Concern
 
   class_methods do
