@@ -12,7 +12,7 @@
 
   .specifics.image
     - if @scrap.image.attached?
-      - img = @scrap.image_url(:thumb)
+      - img = @scrap.image_url(:thumb) rescue ""
     - else
       - img = ""
 

@@ -36,7 +36,12 @@ module Droom
           render :partial => 'listing'
         end
       else
-        render json: @document.errors.full_messages.join(', '), status: 422
+        if request.xhr?
+          render json: @document.errors.full_messages.join(', '), status: 422
+        else
+          flash[:alert] = @document.errors.full_messages.to_sentence
+          redirect_to request.referer
+        end
       end
     end
 
@@ -45,8 +50,16 @@ module Droom
     end
 
     def update
-      @document.update(document_params)
-      render :partial => 'listing', :object => @document
+      if @document.update(document_params)
+        render :partial => 'listing', :object => @document
+      else
+        if request.xhr?
+          render json: @document.errors.full_messages.join(', '), status: 422
+        else
+          flash[:alert] = @document.errors.full_messages.to_sentence
+          redirect_to request.referer
+        end
+      end
     end
 
     def reposition

@@ -25,13 +25,21 @@ module Droom
     end
 
     def update
-      @scrap.update(scrap_params(@scraptype))
-      respond_with(@scrap)
+      if @scrap.update(scrap_params(@scraptype))
+        respond_with(@scrap)
+      else
+        flash[:alert] = @scrap.errors.full_messages.to_sentence
+        respond_with(@scrap)
+      end
     end
 
     def create
-      @scrap.update(scrap_params(@scraptype))
-      respond_with(@scrap)
+      if @scrap.update(scrap_params(@scraptype))
+        respond_with(@scrap)
+      else
+        flash[:error] = @scrap.errors.full_messages.to_sentence
+        redirect_to droom_scraps_path
+      end
     end
   
     def destroy

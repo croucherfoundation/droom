@@ -54,6 +54,9 @@ module Droom
 
       if @user.save
         respond_with @user
+      else
+        flash[:alert] = @user.errors.full_messages.to_sentence
+        redirect_to request.referer
       end
     end
 
@@ -71,6 +74,9 @@ module Droom
         respond_with @user, location: user_url(view: @view) do |format|
           format.js { head :no_content }
         end
+      else
+        flash[:alert] = @user.errors.full_messages.to_sentence
+        redirect_to request.referer
       end
     end
 
