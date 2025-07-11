@@ -6,12 +6,12 @@ module Droom
     include Droom::Concerns::Imaged
     include Droom::Concerns::PngConvert
 
-    has_paper_trail ignore: [:unique_session_id, :last_request_at, :sign_in_count]
+    # has_paper_trail ignore: [:unique_session_id, :last_request_at, :sign_in_count]
 
     # validates :family_name, :presence => true
     # validates :given_name, :presence => true
     validates :uid, :uniqueness => true, :presence => true
-    
+
     validates :family_name, length: { maximum: 30, too_long: "%{count} characters is the maximum allowed" }, allow_blank: true
     validates :given_name, length: { maximum: 30, too_long: "%{count} characters is the maximum allowed" }, allow_blank: true
 

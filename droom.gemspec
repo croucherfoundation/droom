@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.test_files = Dir["spec/**/*"]
 
-  s.add_dependency "rails", "~> 6.1"
+  s.add_dependency "rails"
   s.add_dependency "responders"
   s.add_dependency "acts_as_tree"
   s.add_dependency "acts_as_list"
@@ -28,8 +28,8 @@ Gem::Specification.new do |s|
   s.add_dependency "settingslogic"
   s.add_dependency "request_store"
 
-  s.add_dependency "devise", "4.7.3"
-  s.add_dependency "devise-security", "0.15.0"
+  s.add_dependency "devise", '4.9.4'
+  s.add_dependency "devise-security", '0.18.0'
   s.add_dependency "devise_zxcvbn"
   s.add_dependency "cancancan"
 
@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   s.add_dependency "geocoder"
   s.add_dependency "icalendar"
   s.add_dependency "chronic"
-  s.add_dependency "tod", "3.1"
+  s.add_dependency "tod", '3.1.2'
   s.add_dependency "date_validator"
   s.add_dependency "uuidtools"
   s.add_dependency "signed_json"
