@@ -1,5 +1,5 @@
-- content_for :title do
-  = link_to t(:calendar), droom.events_url
+- content_for :pagetitle do
+  = @event.name
 
 - content_for :margin do
   %h3
