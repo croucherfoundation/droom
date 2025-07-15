@@ -1,5 +1,7 @@
 module Droom
   class EventsController < Droom::DroomController
+    include Droom::Concerns::ScanAttachment
+
     require "uri"
     require "icalendar"
     require "prawn"
@@ -98,7 +100,7 @@ module Droom
     def upload_pdf
       file = params[:file]
       if file.content_type == "application/pdf"
-        if error = scan_attachment('file', file.tempfile.path)
+        if error = scan_attachment('File', file.tempfile.path)
           render json: { error: error }, status: :unprocessable_entity
         else
           file_path = URI.open(file.tempfile).path
