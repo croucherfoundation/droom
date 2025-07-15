@@ -28,7 +28,6 @@ module Droom
 
     def new
       @view = params[:view]
-      render
     end
 
     def create
@@ -49,7 +48,6 @@ module Droom
 
     def edit
       @view = params[:view]
-      render
     end
 
     def update
