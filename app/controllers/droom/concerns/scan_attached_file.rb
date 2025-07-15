@@ -42,5 +42,15 @@ module Droom::Concerns::ScanAttachedFile
         end
       end
     end
+
+    def scan_attachment(name, file_path)
+      result = ClamavServices.scan_file(file_path)
+      case result[:status]
+      when :infected
+        return "#{name} contains malware: #{result[:message]}"
+      when :error
+        return "#{name} could not be scanned: #{result[:message]}"
+      end
+    end
   end
 end

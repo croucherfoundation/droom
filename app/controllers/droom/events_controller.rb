@@ -1,6 +1,6 @@
 module Droom
   class EventsController < Droom::DroomController
-    include Droom::Concerns::ScanAttachment
+    include Droom::Concerns::ScanAttachedFile
 
     require "uri"
     require "icalendar"
