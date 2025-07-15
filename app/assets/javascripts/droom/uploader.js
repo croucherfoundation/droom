@@ -362,7 +362,7 @@
         base.on_error();
       }
       this._li.addClass('erratic');
-      this._li.append($('<span class="error" />').text(msg));
+      this._li.append($('<span class="error" style="font-size: 16px;" />').text(msg));
       this._li.append($('<span class="delete" style="background-color: inherit;" />').text('x'));
       $('.delete').on('click', function() {
         return $('.uploading').css('display', 'none');

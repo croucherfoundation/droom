@@ -36,7 +36,8 @@ module Droom
           render :partial => 'listing'
         end
       else
-        if request.xhr?
+        last_segment = URI(request.referer || "").path.split("/").last
+        if %w[folders vacancies files].include?(last_segment)
           render json: @document.errors.full_messages.join(', '), status: 422
         else
           flash[:alert] = @document.errors.full_messages.to_sentence
@@ -53,7 +54,7 @@ module Droom
       if @document.update(document_params)
         render :partial => 'listing', :object => @document
       else
-        if request.xhr?
+        if URI(request.referer || "").path == "/folders"
           render json: @document.errors.full_messages.join(', '), status: 422
         else
           flash[:alert] = @document.errors.full_messages.to_sentence
