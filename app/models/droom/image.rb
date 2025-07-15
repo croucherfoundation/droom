@@ -58,7 +58,7 @@ module Droom
 
     def read_remote_url
       if remote_url
-        self.file = open(remote_url)
+        self.file = URI.open(remote_url)
         self.file_name = File.basename(remote_url)
       end
     end
