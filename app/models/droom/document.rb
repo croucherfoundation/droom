@@ -3,6 +3,7 @@ require 'uri'
 module Droom
   class Document < Droom::DroomRecord
     include Droom::Concerns::Key
+    include Droom::Concerns::ScanAttachment
 
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :folder
@@ -13,6 +14,7 @@ module Droom
     has_many :single_documents, dependent: :destroy
 
     has_one_attached :file
+    scan_attachment :file
 
     acts_as_list scope: :folder_id
 
