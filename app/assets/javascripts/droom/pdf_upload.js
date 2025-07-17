@@ -46,7 +46,7 @@ $(document).ready(function () {
       if (file && file.type === 'application/pdf') {
         uploadPDF(file);
       } else {
-        alert('Please upload a valid PDF file.');
+        showAlert('error', 'Please upload a valid PDF file.');
       }
     });
   });
@@ -69,9 +69,9 @@ $(document).ready(function () {
         $('body').removeClass('overlay-active');
         location.reload();
       },
-      error: function () {
+      error: function (e) {
         $('body').removeClass('overlay-active');
-        alert('PDF upload failed.');
+        showAlert('error', e.responseJSON?.error);
       },
     });
   }
