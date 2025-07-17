@@ -247,7 +247,7 @@ module Droom
     end
 
     def confirmed=(value)
-      self.confirmed_at = Time.now if value.present? and value != "false"
+      self.confirmed_at = Time.now if value.present? and value != "false" and self.confirmed_at.nil?
     end
 
     def user_group=(value)
