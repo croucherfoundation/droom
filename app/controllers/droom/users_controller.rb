@@ -4,7 +4,7 @@ module Droom
     respond_to :html, :js
     skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation]
     before_action :set_view, only: [:show, :new, :edit, :update]
-    before_action :search_users, only: [:admin]
+    # before_action :search_users, only: [:admin]
     # before_action :self_unless_admin, only: [:edit, :update]
     load_and_authorize_resource except: [:setup, :set_organisation]
 
@@ -234,7 +234,7 @@ module Droom
         arguments[:page] = (params[:page].presence || 1).to_i
       end
 
-      @users = Droom::User.search query, arguments
+      @users = Droom::User.search query, **arguments
     end
 
     def user_params

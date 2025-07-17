@@ -188,7 +188,7 @@ module Droom::Api
         per_page: 1000
       }
 
-      @users = Droom::User.search query, arguments
+      @users = Droom::User.search query, **arguments
     end
 
     def user_params

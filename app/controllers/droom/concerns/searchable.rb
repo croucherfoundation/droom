@@ -54,7 +54,7 @@ module Droom::Concerns::Searchable
     options.deep_merge!(preset_options)
 
     klass = controller_path.classify.constantize
-    search_results = klass.search @q, options
+    search_results = klass.search @q, **options
     instance_variable_set("@#{controller_name}", search_results)
 
     if paginated?

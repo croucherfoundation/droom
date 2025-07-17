@@ -39,7 +39,7 @@ module Droom::Api
         arguments[:page] = (params[:page].presence || 1).to_i
       end
 
-      @tags = Droom::Tag.search terms, arguments
+      @tags = Droom::Tag.search terms, **arguments
     end
 
   end
