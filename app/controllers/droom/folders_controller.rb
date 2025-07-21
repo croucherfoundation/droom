@@ -95,7 +95,18 @@ module Droom
   protected
 
     def find_by_name
-      @data = Folder.where(name: folder_params[:name], parent_id: folder_params[:parent_id].present? ? folder_params[:parent_id] : nil) 
+      if folder_params[:parent_id].present?
+        parent = Folder.find_by(id: folder_params[:parent_id])
+
+        @data = if parent
+          parent.children.where(name: folder_params[:name])
+        else
+          Folder.none
+        end
+      else
+        # Top-level folders (ancestry == nil)
+        @data = Folder.where(name: folder_params[:name], ancestry: nil)
+      end
     end
 
     def get_links

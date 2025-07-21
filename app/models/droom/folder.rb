@@ -1,17 +1,16 @@
 module Droom
   class Folder < Droom::DroomRecord
-    include ActsAsTree
+    has_ancestry
     # don't use Slugged: we need to apply a dynamic parent scope.
 
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :holder, :polymorphic => true
     has_many :documents, -> {order(position: :asc, file_file_name: :asc)}, :dependent => :destroy
     has_many :personal_folders, :dependent => :destroy
-    acts_as_tree :order => "droom_folders.name ASC"
 
     before_validation :set_properties
     after_save :set_file_path
-    validates :slug, :presence => true, :uniqueness => { :scope => :parent_id }
+    validates :slug, presence: true, uniqueness: { scope: :ancestry }
 
     default_scope -> { includes(:documents) }
 
@@ -34,11 +33,11 @@ module Droom
         all_public
       end
     }
-    
+
     def automatic?
       holder || !parent && (name == "Events" || name == "Groups")
     end
-    
+
     def visible_to?(user)
       return true if self.public?
       return false unless user
@@ -50,15 +49,23 @@ module Droom
 
     # A root folder is created automatically for each class that has_folders,
     # the first time something in that class asks for its folder.
-    # scope :roots, where('droom_folders.holder_type IS NULL AND droom_folders.parent_id IS NULL')
+    # scope :roots, where('droom_folders.holder_type IS NULL AND droom_folders.ancestry IS NULL')
     #
-    scope :loose, -> { where('parent_id IS NULL') }
+    scope :loose, -> { where('ancestry IS NULL') }
     scope :latest, -> limit { order("updated_at DESC, created_at DESC").limit(limit) }
     scope :populated, -> {
       select('droom_folders.*')
-        .joins('LEFT OUTER JOIN droom_documents AS dd ON droom_folders.id = dd.folder_id LEFT OUTER JOIN droom_folders AS df ON droom_folders.id = df.parent_id')
-        .having('count(dd.id) > 0 OR count(df.id) > 0')
+        .joins(<<~SQL)
+          LEFT OUTER JOIN droom_documents AS dd
+            ON droom_folders.id = dd.folder_id
+          LEFT OUTER JOIN droom_folders AS df
+            ON df.ancestry = CASE
+                WHEN droom_folders.ancestry IS NULL THEN CAST(droom_folders.id AS CHAR)
+                ELSE CONCAT(droom_folders.ancestry, '/', droom_folders.id)
+              END
+        SQL
         .group('droom_folders.id')
+        .having('COUNT(dd.id) > 0 OR COUNT(df.id) > 0')
     }
 
     def path
@@ -95,20 +102,20 @@ module Droom
     def is_event?
       holder_type == "Droom::Event" && holder_id.present?
     end
-    
+
     def simple?
       children.empty? && documents.count <= 3
     end
-    
+
     # If we start to get deep folder trees we'll have to use ancestry instead of acts_as_tree.
     def family
       self_and_children
     end
-    
+
     def loose?
       !parent
     end
-    
+
     def ancestor_of?(folder)
       folder && folder.ancestors.include?(self)
     end
