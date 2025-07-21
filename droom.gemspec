@@ -24,7 +24,6 @@ Gem::Specification.new do |s|
   s.add_dependency "active_model_serializers"
   s.add_dependency "api-pagination"
 
-  s.add_dependency "settingslogic"
   s.add_dependency "request_store"
 
   s.add_dependency "devise", '4.9.4'
