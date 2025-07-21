@@ -262,33 +262,6 @@ module Droom
       end
     end
 
-    # this method is for Paperclip
-    def synchronize_with_s3
-      url = file.url
-
-      begin
-        attachment = URI.open(url)
-      rescue
-        attachment = ""
-      end
-
-      if attachment.present?
-        # delete file with old name
-        file.clear(:original, file.styles.keys)
-        file.save
-
-        # upload file with new name
-        attach = Paperclip::Attachment.new('file', self, self.class.attachment_definitions[:file])
-        attach.assign attachment
-        attach.instance_write :file_name, name
-        attach.save
-
-        attachment.close
-      else
-        file.instance_write :file_name, name
-      end
-    end
-
     def self.for_selection
       order(:position).map{|d| [d.name, d.id] }
     end
@@ -297,15 +270,15 @@ module Droom
 
     def track_file_change
       return unless file.attached? && persisted?
-  
+
       current_blob_id = file.blob_id
       previous_blob_id = ActiveStorage::Attachment
                             .find_by(record_type: self.class.name, record_id: id, name: 'file')
                             &.blob_id
-  
+
       @file_changed = previous_blob_id.present? && previous_blob_id != current_blob_id
     end
-    
+
     def file_changed_callback
       return unless event_id.present?
       CompileMeetingPdfJob.perform_later(id, event_id)
