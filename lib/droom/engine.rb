@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'active_model_serializers'
 require 'acts_as_list'
-require 'acts_as_tree'
 require 'cancan'
 require 'chronic'
 require 'date_validator'
