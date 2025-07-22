@@ -207,7 +207,7 @@ module Droom
 
     def update_index!
       with_local_file do |path|
-        @file_content = Yomu.new(path).text
+        @file_content = Henkei.new(path).text
         self.reindex
         self.secondary_reindex
       end
