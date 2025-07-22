@@ -347,7 +347,7 @@ module Droom
       event.dtstart = (all_day? ? start_date : start) if start?
       event.dtend = (all_day? ? finish_date : finish) if finish?
       event.url = url_with_protocol if url?
-      event.attendees = invitations.accepted.map{|inv| "mailto:#{inv.user.email}"} if invitations.accepted.any?
+      event.attendee = invitations.accepted.map{|inv| "mailto:#{inv.user.email}"} if invitations.accepted.any?
       event.location = venue.name if venue
       event
     end
