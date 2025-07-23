@@ -8,11 +8,15 @@ module Droom::Concerns::ScanAttachment
       validate do
         attachment_change = attachment_changes[name.to_s]
         # Exit if there are no changes to the attachment
-        next unless attachment_change&.attachable
+        next unless attachment_change
+
+        # Only scan if it's a CreateOne change (new attachment), not DeleteOne
+        next unless attachment_change.is_a?(ActiveStorage::Attached::Changes::CreateOne)
 
         attachable = attachment_change.attachable
+        next unless attachable
         file_to_scan = nil
-       
+
         case attachable
         when ActionDispatch::Http::UploadedFile
           # Standard form uploads - tempfile has a path
