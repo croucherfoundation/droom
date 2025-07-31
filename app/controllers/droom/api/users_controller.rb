@@ -133,6 +133,11 @@ module Droom::Api
       render json:  @user, serializer: Droom::UserMinimalSerializer, meta: { valid: ZerobounceService.new(record: @email).call }
     end
 
+    def remove_reviewer_group
+      @group_id = Droom::Group.find_by(name: 'Reviewer')&.id
+      @user.memberships.find_by(group_id: @group_id)&.destroy if @group_id.present?
+    end
+
   protected
 
     def find_or_create_user
