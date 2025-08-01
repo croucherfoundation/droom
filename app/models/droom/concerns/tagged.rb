@@ -28,7 +28,7 @@ module Droom::Concerns::Tagged
       }}
       args[:limit] = options[:limit] if options[:limit]
       args[:offset] = options[:offset] if options[:offset]
-      self.search args
+      self.search **args
     end
 
     def with_any_tag(tags, options={})
