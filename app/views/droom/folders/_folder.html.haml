@@ -18,7 +18,7 @@
 
   - defer_contents ||= !open
   - cssclass = "folder"
-  - cssclass << " open" if open
+  - cssclass << " open" if open && !folder.loose?
   - cssclass << " root" if folder.loose?
   - cssclass << " empty" unless folder.populated?
   - cssclass << " standalone" if standalone
