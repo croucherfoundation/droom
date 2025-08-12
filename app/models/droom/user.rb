@@ -143,15 +143,13 @@ module Droom
     def attend_conference_or_not
       return if person.nil?
 
-      events = ["Symposium 2023", "Symposium 2024"]
-      events.each do |event|
-        group_names = groups.map(&:name)
-        event_name  = event.split(" ")
-        name        = event_name.first
-        slug        = event_name.last
-        conference  = Conference.find_by(short_name: name, slug: slug)
+      conferences = Conference.all
+      return if conferences.blank?
 
-        next if conference.nil?
+      group_names = groups.map(&:name)
+
+      conferences.each do |conference|
+        event = "#{conference.short_name} #{conference.slug}"
 
         if group_names.include?(event)
           ConferencePerson.find_or_create_by(conference: conference, person_uid: person.id) do |cp|
@@ -162,7 +160,6 @@ module Droom
         end
       end
     end
-
 
     # Our old user accounts store passwords as salted sha512 digests. Current standard uses BCrypt
     # so we migrate user accounts across in this rescue block whenever we hear BCrypt grumbling about the old hash.
