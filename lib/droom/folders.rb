@@ -85,7 +85,7 @@ module Droom
           folder_holder.folder
         else
           slug = parent_folder_option || self.class.to_s.titlecase.split('/').last.pluralize
-          Droom::Folder.where(:slug => slug, :parent_id => nil).first_or_create
+          Droom::Folder.roots.where(:slug => slug).first_or_create
         end
       end
 
