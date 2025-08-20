@@ -110,7 +110,7 @@ module Droom
 
     def send_welcome_message
       if owner
-        owner.generate_confirmation_token unless owner.confirmation_token?
+        owner.send(:generate_confirmation_token) unless owner.confirmation_token?
         Droom.mailer.send(:org_welcome, self, owner.confirmation_token).deliver_later
       end
     end
