@@ -137,7 +137,7 @@
         color = "#f7f283";
       }
       $el = $(this);
-      fade_to = $el.css('backgroundColor') || '#ffffff';
+      fade_to = '#ffffff';
       if (fade_to === "rgba(0, 0, 0, 0)") {
         fade_to = "rgba(255, 255, 255, 0)";
       }
