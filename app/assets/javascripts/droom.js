@@ -1,4 +1,4 @@
-//= require jquery
+//= require jquery3
 //= require droom/lib/jquery_ujs
 //= require droom/lib/assets
 
