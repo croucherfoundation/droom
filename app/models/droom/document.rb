@@ -1,3 +1,5 @@
+require 'henkei'
+
 module Droom
   class Document < Droom::DroomRecord
     include Droom::Concerns::ScanAttachment
@@ -15,7 +17,6 @@ module Droom
     before_create :inherit_confidentiality
 
     validates :file, :presence => true
-    do_not_validate_attachment_file_type :file
 
     scope :all_private, -> { where("private = 1") }
     scope :not_private, -> { where("private <> 1 OR private IS NULL") }
