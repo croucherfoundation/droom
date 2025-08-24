@@ -1,4 +1,5 @@
 require 'uri'
+require 'henkei'
 
 module Droom
   class Document < Droom::DroomRecord
