@@ -919,6 +919,19 @@ module Droom
       Gibbon::Request.new(api_key: Droom.mc_api_key, symbolize_keys: true)
     end
 
+    def needs_setup?
+      # not confirmed yet
+      return true if confirmed_at.blank?
+
+      # no password set
+      return true if encrypted_password.blank?
+
+      # no name filled
+      return true if given_name.blank? && family_name.blank?
+
+      false
+    end
+
 
     ## Search
     #

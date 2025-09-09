@@ -13,14 +13,11 @@ module Droom::Users
     # possibly also an organisation-joining form.
     #
     def show
-      @resource = self.resource = resource_class.confirm_by_token(params[:confirmation_token])
-      if @resource.errors.empty?
+      @resource = self.resource = resource_class.find_by(confirmation_token: params[:confirmation_token])
+      if @resource.present?
+        resource_class.confirm_by_token(params[:confirmation_token]) unless @resource.confirmed?
         sign_in(resource_name, @resource)
-        if params[:destination].present?
-          redirect_to droom.dashboard_url(destination: params[:destination], send_invitation_memo: params[:send_invitation_memo])
-        else
-          redirect_to droom.dashboard_url
-        end
+        redirect_to droom.dashboard_url(destination: params[:destination], send_invitation_memo: params[:send_invitation_memo])
       else
         render :template => "droom/users/confirmations/failure"
       end

@@ -47,7 +47,8 @@ class Droom::UserSerializer < ActiveModel::Serializer
              :profile_image,
              :show_initial_image,
              :confirmation_token,
-             :authentication_token
+             :authentication_token,
+             :needs_setup
 
 
     has_many :emails
@@ -112,4 +113,8 @@ class Droom::UserSerializer < ActiveModel::Serializer
     object.image.attached? ? object.image.url : ""
   end
   
+  def needs_setup
+    object.needs_setup?
+  end
+
 end
