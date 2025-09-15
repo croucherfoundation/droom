@@ -4,7 +4,7 @@
   jQuery(function($) {
     return $.fn.html_editable = function() {
       var editor;
-      return editor = new MediumEditor(this, {
+      editor = new MediumEditor(this, {
         placeholder: false,
         autoLink: true,
         imageDragging: false,
@@ -15,13 +15,12 @@
           placeholderText: 'URL must start with https:// or http://',
           targetCheckbox: false
         },
-        anchorPreview: false,
+        anchorPreview: true,
         paste: {
           forcePlainText: false,
-          cleanPastedHTML: true,
-          cleanReplacements: [],
-          cleanAttrs: ['class', 'style', 'dir'],
-          cleanTags: ['meta']
+        },
+        extensions: {
+          plainTextPaste: new PlainTextPaste()
         },
         toolbar: {
           updateOnEmptySelection: true,
@@ -79,3 +78,50 @@
   });
 
 }).call(this);
+
+(function () {
+  const PlainTextPaste = MediumEditor.Extension.extend({
+    name: 'plainTextPaste',
+
+    init: function () {
+      this.subscribe('editablePaste', this.handlePaste.bind(this));
+    },
+
+    handlePaste: function (event, editable) {
+      // Get clipboard text
+      const clipboard = (event.clipboardData || window.clipboardData);
+      let text = clipboard ? clipboard.getData('text/plain') : '';
+
+      if (!text) return;
+
+      // Normalize whitespace
+      text = text.replace(/\s+/g, ' ').trim();
+
+      // Split into lines and wrap in <p>
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+      const fragment = document.createDocumentFragment();
+      lines.forEach(line => {
+        const p = document.createElement('p');
+        p.textContent = line;
+        fragment.appendChild(p);
+      });
+
+      // Insert at caret using Range API
+      const sel = window.getSelection();
+      if (!sel.rangeCount) return;
+      const range = sel.getRangeAt(0);
+      range.deleteContents();
+      range.insertNode(fragment);
+
+      // Move caret after inserted content
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+
+      // Stop MediumEditor from inserting its own content
+      if (event.preventDefault) event.preventDefault();
+    }
+  });
+
+  window.PlainTextPaste = PlainTextPaste;
+})();
