@@ -15,6 +15,7 @@
     
       = form_for(resource, as: resource_name, url: session_path(resource_name), method: 'post', html: { class: 'sign_in_form' }) do |f|
         = hidden_field_tag :destination, params[:destination]
+        = hidden_field_tag :backto, params[:backto]
         
         .input_group
           %label{for: "email"} Email

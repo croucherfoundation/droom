@@ -40,7 +40,11 @@ module Droom::Users
           redirect_to session[:return_to]
           session[:return_to] = nil
         else
-          respond_with resource, :location => after_sign_in_path_for(resource)
+          if params[:backto].present?
+            redirect_to CGI.unescape(params[:backto])
+          else
+            respond_with resource, :location => after_sign_in_path_for(resource)
+          end
         end
 
       else
