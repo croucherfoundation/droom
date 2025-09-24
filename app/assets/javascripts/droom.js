@@ -83,26 +83,26 @@
 
   jQuery(function($) {
 
-    $('.password-reset-btn').on('click', function() {
-      var $form = $(this).closest('form');
-      var url = $form.attr('action');
-      var formData = $form.serialize();
+    $(document).on('click', '.password-reset-btn', function (e) {
+      e.preventDefault();
 
-      $.ajax({
-        url: url,
-        type: 'POST',
-        data: formData,
-        complete: function(xhr) {
-          if (xhr.status === 302 || xhr.status === 200) {
-            if ($('.password_reset_sent').length) {
-              $('.password_reset_sent').addClass('show');
-            }
+      const $form = $(this).closest('form');
+      const url = $form.attr('action');
+
+      $.post(url, $form.serialize())
+        .done(() => {
+          $('.password_reset_sent').addClass('show');
+          $('#passwordModal').removeClass('modal-open');
+          $('#passwordConfirmModal').addClass('modal-open');
+        })
+        .fail(xhr => {
+          if (xhr.status === 400) {
             $('#passwordModal').removeClass('modal-open');
-            $("#passwordConfirmModal").addClass('modal-open');
+            $('#passwordResetFailureModal').addClass('modal-open'); 
           }
-        }
-      });
+        });
     });
+
 
     $('.unlock-reset-btn').on('click', function() {
       var $form = $(this).closest('form');

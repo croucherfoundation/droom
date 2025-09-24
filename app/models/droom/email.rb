@@ -35,5 +35,8 @@ module Droom
       end
     end
 
+    def can_receive_email?
+      email.present? && (ses_status.nil? || ses_status == "delivered")
+    end
   end
 end

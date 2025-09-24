@@ -533,6 +533,13 @@ module Droom
       end
     end
 
+    def can_receive_email?(email_address=nil)
+      email_record = emails.where(email: email_address).first
+      email_record ||= get_email
+
+      email_record && email_record.can_receive_email?
+    end
+
     ## Addresses
     # Internally, a flexible list
     # Externally, address and correspondence_address
