@@ -27,10 +27,11 @@ module Droom::Users
     end
 
     def create
-      unless RecaptchaService.verify(token: params[:recaptcha_token], action: 'LOGIN')
-        flash[:alert] = "reCAPTCHA verification failed."
-        redirect_to new_session_path and return
-      end
+      return unless verify_recaptcha_or_redirect(
+        token: params[:recaptcha_token],
+        action: "LOGIN",
+        redirect_url: new_session_path(resource_name)
+      )
       if self.resource = warden.authenticate(auth_options)
         if resource.respond_to?(:confirmed?) && !resource.confirmed?
           Rails.logger.info "User #{resource.email} not confirmed"

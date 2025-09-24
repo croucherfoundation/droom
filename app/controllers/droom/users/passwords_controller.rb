@@ -15,6 +15,11 @@ module Droom::Users
     end
 
     def create
+      return unless verify_recaptcha_or_redirect(
+        token: params[:recaptcha_token],
+        action: "RESET",
+        redirect_url: new_session_path(resource_name)
+      )
       self.resource = resource_class.send_reset_password_instructions(resource_params)
       yield resource if block_given?
       head :ok

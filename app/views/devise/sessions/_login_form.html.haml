@@ -13,7 +13,7 @@
     .croucher_container
       %h2.text-subtitle Sign in
     
-      = form_for(resource, as: resource_name, url: session_path(resource_name), method: 'post', html: { id: 'sign-in-form', class: 'sign_in_form', data: { recaptcha: true, action: 'LOGIN' } }) do |f|
+      = form_for(resource, as: resource_name, url: session_path(resource_name), method: 'post', html: { class: 'sign_in_form', data: { recaptcha: true, action: 'LOGIN' } }) do |f|
         = hidden_field_tag :destination, params[:destination]
         = hidden_field_tag :backto, params[:backto]
 
@@ -47,13 +47,3 @@
         %p.mb-2
           %button.underline{data: {'toggle': 'modal', 'target': 'passwordModal', turbo: false}} 
             Forgot password?
-
--# :javascript
--#   document.getElementById("sign-in-form").addEventListener("submit", function(e) {
--#     e.preventDefault();
--#     grecaptcha.enterprise.ready(async function() {
--#       const token = await grecaptcha.enterprise.execute("6LdnPswrAAAAAMpoRp4Pj1RMbt8oXU9Z1QxYqF3T", {action: 'LOGIN'});
--#       document.getElementById('recaptcha-token').value = token;
--#       e.target.submit();
--#     });
--#   });

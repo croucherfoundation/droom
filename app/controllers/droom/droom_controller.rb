@@ -64,5 +64,21 @@ module Droom
       end
     end
 
+    def verify_recaptcha_or_redirect(token:, action:, redirect_url:)
+      return true if Rails.env.development?
+
+      unless RecaptchaService.verify(token: token, action: action)
+        msg = "reCAPTCHA verification failed."
+        if request.xhr? || request.format.json?
+          render json: { error: msg }, status: :unprocessable_entity
+        else
+          flash[:alert] = msg
+          redirect_to redirect_url
+        end
+        return false
+      end
+      true
+    end
+
   end
 end

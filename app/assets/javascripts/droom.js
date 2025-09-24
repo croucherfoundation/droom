@@ -82,27 +82,66 @@
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   jQuery(function($) {
-
-    $('.password-reset-btn').on('click', function() {
+  
+    // Function to get reCAPTCHA site key set key before password reset
+    $('.password-reset-btn').on('click', function () {
       var $form = $(this).closest('form');
-      var url = $form.attr('action');
-      var formData = $form.serialize();
+      var url   = $form.attr('action');
 
-      $.ajax({
-        url: url,
-        type: 'POST',
-        data: formData,
-        complete: function(xhr) {
-          if (xhr.status === 302 || xhr.status === 200) {
-            if ($('.password_reset_sent').length) {
-              $('.password_reset_sent').addClass('show');
+      grecaptcha.enterprise.ready(async function () {
+        try {
+          const siteKey = window.RECAPTCHA_SITE_KEY || getRecaptchaSiteKey();
+          const token   = await grecaptcha.enterprise.execute(siteKey, { action: 'RESET' });
+
+          $form.find('#recaptcha-token').val(token);
+          var formData = $form.serialize();
+
+          $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            success: function (data, status, xhr) {
+              if ($('.password_reset_sent').length) {
+                $('.password_reset_sent').addClass('show');
+              }
+              $('#passwordModal').removeClass('modal-open');
+              $('#passwordConfirmModal').addClass('modal-open');
+            },
+            error: function (xhr) {
+              // Parse JSON error if available, fallback to generic message
+              let message = "Something went wrong.";
+              try {
+                const json = JSON.parse(xhr.responseText);
+                if (json.error) message = json.error;
+              } catch (_) {}
+
+              // showAlert must be globally available
+              showAlert('alert', message);
             }
-            $('#passwordModal').removeClass('modal-open');
-            $("#passwordConfirmModal").addClass('modal-open');
-          }
+          });
+        } catch (err) {
+          console.error('reCAPTCHA error', err);
+          showAlert('alert', 'reCAPTCHA error: ' + err.message);
         }
       });
     });
+
+    function showAlert(alertType, message) {
+      const $flashes = $('#flashes');
+      const $alert = $(`<p class="${alertType}">${message}</p>`).css(
+        'display',
+        'block'
+      );
+
+      $flashes.empty().append($alert);
+
+      setTimeout(() => {
+        $alert.fadeOut(400, function () {
+          $(this).remove();
+        });
+      }, 5000);
+    }
+
 
     $('.unlock-reset-btn').on('click', function() {
       var $form = $(this).closest('form');
