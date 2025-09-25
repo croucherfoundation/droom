@@ -458,6 +458,9 @@ module Droom
     #
     def self.send_reset_password_instructions(attributes={})
       if user = from_email(attributes[:email]).first
+        # no need to send email if user is not confirmed
+        return unless user.confirmed?
+
         if email_still_valid?(attributes[:email])
           user.instance_variable_set(:@reset_password_target_email, attributes[:email])
           user.send_reset_password_instructions
@@ -471,6 +474,9 @@ module Droom
 
     def self.send_unlock_instructions(attributes={})
       if user = from_email(attributes[:email]).first
+        # no need to send email if user is not confirmed
+        return unless user.confirmed?
+
         if email_still_valid?(attributes[:email])
           user.instance_variable_set(:@unlock_target_email, attributes[:email])
           user.send_unlock_instructions
