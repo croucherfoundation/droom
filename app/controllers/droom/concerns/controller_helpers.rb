@@ -43,6 +43,10 @@ module Droom::Concerns::ControllerHelpers
       true
     else
       alert = "Something went wrong. Please try again."
+
+      current_user&.clear_session_ids!
+      Droom::AuthCookie.new(warden&.cookies).unset
+
       redirect_url ? (flash[:alert] = alert; redirect_to redirect_url) : render(json: { error: alert }, status: :bad_request)
       false
     end
