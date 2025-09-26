@@ -34,6 +34,19 @@ module Droom::Concerns::ControllerHelpers
     layout :no_layout_if_pjax
   end
 
+  # Check user actions are human
+  #
+  def is_human?(token:, action:, redirect_url: nil)
+    # return true if Rails.env.development?
+
+    if RecaptchaService.verify(token: token, action: action)
+      true
+    else
+      alert = "Something went wrong. Please try again."
+      redirect_url ? (flash[:alert] = alert; redirect_to redirect_url) : render(json: { error: alert }, status: :bad_request)
+      false
+    end
+  end
 
   # Usually overridden in a base ApiController
   #

@@ -27,11 +27,8 @@ module Droom::Users
     end
 
     def create
-      return unless verify_recaptcha_or_redirect(
-        token: params[:recaptcha_token],
-        action: "LOGIN",
-        redirect_url: new_session_path(resource_name)
-      )
+      return unless is_human?(token: params[:recaptcha_token], action: "LOGIN", redirect_url: new_user_session_url)
+
       if self.resource = warden.authenticate(auth_options)
         if resource.respond_to?(:confirmed?) && !resource.confirmed?
           Rails.logger.info "User #{resource.email} not confirmed"

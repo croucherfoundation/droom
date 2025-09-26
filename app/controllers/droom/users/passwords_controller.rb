@@ -15,11 +15,8 @@ module Droom::Users
     end
 
     def create
-      return unless verify_recaptcha_or_redirect(
-        token: params[:recaptcha_token],
-        action: "RESET",
-        redirect_url: new_session_path(resource_name)
-      )
+      return unless is_human?(token: params[:recaptcha_token], action: "RESET")
+
       self.resource = resource_class.send_reset_password_instructions(resource_params)
       yield resource if block_given?
       head :ok
@@ -51,7 +48,7 @@ module Droom::Users
     end
 
 
-    # Bypass the usual store_location_for because we need to keep the full URI. 
+    # Bypass the usual store_location_for because we need to keep the full URI.
     #
     def store_full_location_for(resource_or_scope, location)
       session_key = stored_location_key_for(resource_or_scope)
@@ -59,6 +56,6 @@ module Droom::Users
         session[session_key] = location
       end
     end
-    
+
   end
 end
