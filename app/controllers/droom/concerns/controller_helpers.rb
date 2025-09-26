@@ -37,7 +37,7 @@ module Droom::Concerns::ControllerHelpers
   # Check user actions are human
   #
   def is_human?(token:, action:, redirect_url: nil)
-    # return true if Rails.env.development?
+    return true if Rails.env.development?
 
     if RecaptchaService.verify(token: token, action: action)
       true
