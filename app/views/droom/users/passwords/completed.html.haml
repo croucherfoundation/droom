@@ -4,7 +4,7 @@
 
   %p
     %strong
-      = t :hello_name, name: current_user.name
+      = t :hello_name, name: current_user&.name
     = t :password_reset_complete
 
     - if url = controller.stored_location_for(:user)
