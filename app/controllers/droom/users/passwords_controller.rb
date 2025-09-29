@@ -5,6 +5,7 @@ module Droom::Users
     skip_before_action :require_no_authentication, only: [:completed, :edit]
     before_action :remember_original_destination, only: [:new]
     before_action :clear_session, only: [:edit]
+    before_action :set_email, only: [:create]
 
     def show
       render
@@ -16,6 +17,8 @@ module Droom::Users
 
     def create
       return unless is_human?(token: params[:recaptcha_token], action: "RESET")
+      return render json: { success: false, error: I18n.t(:password_reset_not_delivered) },
+                    status: :bad_request unless @email_record&.can_receive_email?
 
       self.resource = resource_class.send_reset_password_instructions(resource_params)
       yield resource if block_given?
@@ -55,6 +58,13 @@ module Droom::Users
       if location
         session[session_key] = location
       end
+    end
+
+    private
+
+    def set_email
+      email_address = resource_params[:email]
+      @email_record = Droom::Email.where(email: email_address).first
     end
 
   end

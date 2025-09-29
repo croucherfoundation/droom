@@ -3,6 +3,7 @@ module Droom
     layout Droom.email_layout
     default from: %{'Croucher Foundation' <#{Droom.email_from}>}
 
+    before_action :set_ses_configuration_set
     after_action :prevent_delivery_in_nonproduction
 
     def org_confirmation(organisation)
@@ -72,6 +73,10 @@ module Droom
     end
 
     private
+
+    def set_ses_configuration_set
+      headers["X-SES-CONFIGURATION-SET"] = "cdr-mailer-events-#{Rails.env}"
+    end
 
     def prevent_delivery_in_nonproduction
       unless Rails.env.production?

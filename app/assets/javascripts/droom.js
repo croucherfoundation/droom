@@ -115,13 +115,13 @@
                 if (json.error) message = json.error;
               } catch (_) {}
 
-              // showAlert must be globally available
-              showAlert('alert', message);
+              $('#passwordModal').removeClass('modal-open');
+              $('#passwordResetFailureModal').find('.alert-message').text(message);
+              $('#passwordResetFailureModal').addClass('modal-open'); 
             }
           });
         } catch (err) {
           console.error('reCAPTCHA error', err);
-          showAlert('alert', 'reCAPTCHA error: ' + err.message);
         }
       });
     });
@@ -141,7 +141,6 @@
         });
       }, 5000);
     }
-
 
     $('.unlock-reset-btn').on('click', function() {
       var $form = $(this).closest('form');

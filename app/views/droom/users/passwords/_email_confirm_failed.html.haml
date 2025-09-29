@@ -1,0 +1,17 @@
+
+#passwordResetFailureModal.modal
+  .modal-wrapper{role: "document"}
+    .modal-content
+      .standard-modal-overlay.active
+        .standard-modal-container.active
+          %svg.logo.ml-56
+            %use{"xlink:href" => "#croucher_logo"}
+          .container
+            %h2 Password reset instructions not delivered
+            .form-fields
+              %section
+                %p.alert-message
+
+          %section.actions.buttons
+            %button.croucher-standard-btn.modal-btn.cancel{type: "button"}
+              Close
