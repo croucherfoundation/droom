@@ -35,6 +35,8 @@ module Droom
       end
     end
 
+    # Check if email can receive email based on latest SES webhook status
+    #
     def can_receive_email?
       email.present? && (ses_status.nil? || ses_status == "delivered")
     end

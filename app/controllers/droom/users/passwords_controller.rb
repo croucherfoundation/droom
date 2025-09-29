@@ -16,7 +16,7 @@ module Droom::Users
     end
 
     def create
-      return head :bad_request unless @email_record && @email_record.can_receive_email?
+      return head :bad_request unless @email_record&.can_receive_email?
 
       self.resource = resource_class.send_reset_password_instructions(resource_params)
       yield resource if block_given?
