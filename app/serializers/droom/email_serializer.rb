@@ -1,10 +1,11 @@
 class Droom::EmailSerializer < ActiveModel::Serializer
-  attributes :id, 
-             :user_id, 
-             :email, 
-             :default, 
+  attributes :id,
+             :user_id,
+             :email,
+             :default,
              :address_type_id,
-             :address_type
+             :address_type,
+             :ses_status
 
   belongs_to :user
 
