@@ -461,7 +461,7 @@ module Droom
         # no need to send email if user is not confirmed
         return unless user.confirmed?
 
-        if email_still_valid?(attributes[:email])
+        if valid_for_delivery?(attributes[:email])
           user.instance_variable_set(:@reset_password_target_email, attributes[:email])
           user.send_reset_password_instructions
         end
@@ -477,7 +477,7 @@ module Droom
         # no need to send email if user is not confirmed
         return unless user.confirmed?
 
-        if email_still_valid?(attributes[:email])
+        if valid_for_delivery?(attributes[:email])
           user.instance_variable_set(:@unlock_target_email, attributes[:email])
           user.send_unlock_instructions
         end
@@ -488,11 +488,11 @@ module Droom
       user
     end
 
-    def self.email_still_valid?(attr_email)
-      user_email = Droom::Email.find_by(email: attr_email)
-      return false unless user_email
+    def self.valid_for_delivery?(email)
+      email_record = Droom::Email.find_by(email: email)
+      return false unless email_record&.can_receive_email?
 
-      ZerobounceService.new(record: user_email).call
+      ZerobounceService.new(record: email_record).call
     end
 
     def active_for_authentication?
@@ -537,6 +537,13 @@ module Droom
           emails.build(email: email, address_type: address_type, default: true)
         end
       end
+    end
+
+    def can_receive_email?(email_address=nil)
+      email_record = emails.where(email: email_address).first
+      email_record ||= get_email
+
+      email_record && email_record.can_receive_email?
     end
 
     ## Addresses

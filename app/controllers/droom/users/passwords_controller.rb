@@ -5,6 +5,7 @@ module Droom::Users
     skip_before_action :require_no_authentication, only: [:completed, :edit]
     before_action :remember_original_destination, only: [:new]
     before_action :clear_session, only: [:edit]
+    before_action :set_email, only: [:create]
 
     def show
       render
@@ -15,6 +16,8 @@ module Droom::Users
     end
 
     def create
+      return head :bad_request unless @email_record&.can_receive_email?
+
       self.resource = resource_class.send_reset_password_instructions(resource_params)
       yield resource if block_given?
       head :ok
@@ -46,7 +49,7 @@ module Droom::Users
     end
 
 
-    # Bypass the usual store_location_for because we need to keep the full URI. 
+    # Bypass the usual store_location_for because we need to keep the full URI.
     #
     def store_full_location_for(resource_or_scope, location)
       session_key = stored_location_key_for(resource_or_scope)
@@ -54,6 +57,13 @@ module Droom::Users
         session[session_key] = location
       end
     end
-    
+
+    private
+
+    def set_email
+      email_address = resource_params[:email]
+      @email_record = Droom::Email.where(email: email_address).first
+    end
+
   end
 end
