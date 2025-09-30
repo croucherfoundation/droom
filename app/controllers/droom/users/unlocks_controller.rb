@@ -1,8 +1,14 @@
 module Droom::Users
   class UnlocksController < Devise::UnlocksController
+    layout 'droom/sign_in'
+
     respond_to :html, :json
-    before_action :set_access_control_headers
+
     skip_before_action :require_no_authentication
+
+    before_action :set_access_control_headers
+    before_action :set_email, only: [:create]
+
     def show
       self.resource = resource_class.unlock_access_by_token(params[:unlock_token])
       if resource.errors.empty?
@@ -14,9 +20,21 @@ module Droom::Users
 
     def create
       self.resource = resource_class.send_unlock_instructions(resource_params)
-      yield resource if block_given?
-      head :ok
+      if resource.errors.empty?
+        yield resource if block_given?
+        redirect_to new_user_session_url, notice: I18n.t(:unlock_sent)
+      else
+        flash[:alert] = I18n.t(:unlock_account_insturctions_not_delivered)
+        redirect_to new_user_unlock_url
+      end
     end
-    
+
+    private
+
+    def set_email
+      email_address = resource_params[:email]
+      @email_record = Droom::Email.where(email: email_address).first
+    end
+
   end
 end

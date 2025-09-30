@@ -8,7 +8,7 @@ module Droom::Api
 
     def create
       unless @email_record&.can_receive_email?
-        return render json: { success: false, errors: [I18n.t(:password_reset_not_delivered)] }
+        return render json: { success: false, errors: [I18n.t(:password_reset_instructions_not_delivered)] }
       end
 
       self.resource = resource_class.send_reset_password_instructions(resource_params)
