@@ -33,16 +33,22 @@
     %script(async src="https://www.google.com/recaptcha/enterprise.js?render=#{ENV.fetch('RECAPTCHA_SITE_KEY')}")
   %body
     = hidden_field_tag :user_status, nil, data: {sign_in: "#{user_signed_in?}", tz_enabled: "#{FeatureFlag.enabled?('time-zone-feature', current_user)}"}
+    
     .main_sub_navbar_container
       = render :partial => "fragments/navbar"
+    
     = render :partial => "droom/users/passwords/password_reset_box"
+    
     = yield
-    - if @show_footer
-      = render :partial => "fragments/footer"
 
     #flashes
       %p.notice= notice
-      %p.alert= alert
+      - if alert.present?
+        - unless alert.include?('Please sign in to continue')
+          %p.alert= alert
+
+    - if @show_footer
+      = render :partial => "fragments/footer"
 
     = javascript_include_tag "cdr"
     = content_for :js

@@ -456,35 +456,51 @@ module Droom
     # Instead we just override the reset-sender.
     # NB. for useful-failure purposes we have to return a new user object with errors set.
     #
-    def self.send_reset_password_instructions(attributes={})
-      if user = from_email(attributes[:email]).first
-        # no need to send email if user is not confirmed
-        return unless user.confirmed?
+    def self.send_reset_password_instructions(attributes = {})
+      email = attributes[:email]
+      user  = from_email(email).first
 
-        if valid_for_delivery?(attributes[:email])
-          user.instance_variable_set(:@reset_password_target_email, attributes[:email])
+      if user
+        unless user.confirmed?
+          user.errors.add(:email, :unconfirmed, message: "must be confirmed before resetting password.")
+          return user
+        end
+
+        if valid_for_delivery?(email)
+          user.instance_variable_set(:@reset_password_target_email, email)
           user.send_reset_password_instructions
+        else
+          user.errors.add(:email, :invalid_delivery, message: "is not valid for delivery.")
         end
       else
-        user = new(email: attributes[:email])
-        user.errors.add(:email, :not_found)
+        user = new(email: email)
+        user.errors.add(:email, :not_found, message: "not found.")
       end
+
       user
     end
 
-    def self.send_unlock_instructions(attributes={})
-      if user = from_email(attributes[:email]).first
-        # no need to send email if user is not confirmed
-        return unless user.confirmed?
+    def self.send_unlock_instructions(attributes = {})
+      email = attributes[:email]
+      user = from_email(email).first
 
-        if valid_for_delivery?(attributes[:email])
-          user.instance_variable_set(:@unlock_target_email, attributes[:email])
+      if user
+        unless user.confirmed?
+          user.errors.add(:email, :unconfirmed, message: "must be confirmed before unlocking.")
+          return user
+        end
+
+        if valid_for_delivery?(email)
+          user.instance_variable_set(:@unlock_target_email, email)
           user.send_unlock_instructions
+        else
+          user.errors.add(:email, :invalid_delivery, message: "is not valid for delivery.")
         end
       else
-        user = new(email: attributes[:email])
-        user.errors.add(:email, :not_found)
+        user = new(email: email)
+        user.errors.add(:email, :not_found, message: "not found.")
       end
+
       user
     end
 
