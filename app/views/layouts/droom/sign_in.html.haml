@@ -42,7 +42,9 @@
 
     #flashes
       %p.notice= notice
-      %p.alert= alert
+      - if alert.present?
+        - unless alert.include?('Please sign in to continue')
+          %p.alert= alert
 
     - if @show_footer
       = render :partial => "fragments/footer"
