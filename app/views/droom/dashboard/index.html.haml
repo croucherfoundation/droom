@@ -14,8 +14,8 @@
       - Droom.margin_dashboard_modules.each do |mod|
         = render :partial => "droom/dashboard/#{mod}", :locals => {:centered => true}
     - if screeners.any?
-      - open_screeners = screeners.select { |screener| screener.round.open? }.sort_by { |screener| screener.round.screening_end }
-      - closed_screeners = screeners.select { |screener| !screener.round.open? }.sort_by { |screener| screener.round.screening_end }.reverse
+      - open_screeners = screeners.select { |screener| screener.round&.open? }.sort_by { |screener| screener.round&.screening_end || Time.current }
+      - closed_screeners = screeners.select { |screener| !screener.round&.open? }.sort_by { |screener| screener.round&.screening_end || Time.zone.at(0) }.reverse
       - sorted_screeners = open_screeners + closed_screeners
       .screeners.redline_section_divider
         %h3.text-subtitle.mb_subtitle
