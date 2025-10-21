@@ -53,7 +53,8 @@ module Droom
           end
         end
       end
-      data = facet.select{|f| f[:key].present?}.map { |f| ["#{f[:name] || f[:key]} (#{f[:doc_count]})", f[:key]] }.sort_by {|o| o[0].to_s }
+      data = facet.select{|f| f[:key].present?}.map { |f| ["#{f[:name] || f[:key]} (#{f[:doc_count]})", f[:key]] }
+      data = data.sort_by {|o| o[0].to_s } unless options[:no_sorting]
       data.reverse! if options[:desc]
       options_for_select(data, options[:selected])
     end
