@@ -21,7 +21,8 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
              :preferred_pronoun,
              :user_groups,
              :profile_image,
-             :show_initial_image
+             :show_initial_image,
+             :needs_setup
 
   def name
     object.colloquial_name
@@ -58,6 +59,10 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
 
   def profile_image
     object.image.attached? ? object.image.url : ""
+  end
+
+  def needs_setup
+    object.needs_setup?
   end
 
 end
