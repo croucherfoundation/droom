@@ -37,6 +37,7 @@ module Droom::Api
     #
     def authenticable
       @user.ensure_unique_session_id!
+      @user.reload
       render json: @user, serializer: Droom::UserAuthSerializer
     end
 
