@@ -9,6 +9,10 @@ module Droom::Api::Ex
       render json: @users, each_serializer: Droom::Api::Ex::UserSerializer
     end
 
+    def profile
+      render json: current_user, serializer: Droom::Api::Ex::UserSerializer
+    end
+
     private
 
     def search_users

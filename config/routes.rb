@@ -59,6 +59,7 @@ Droom::Engine.routes.draw do
       resources :images
       resources :groups, only: [:index]
       get '/users/suggest/', to: 'users#suggest', as: :suggest_user
+      get '/users/profile/', to: 'users#profile', as: :user_profile
     end
 
   end
