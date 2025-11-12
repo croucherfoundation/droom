@@ -790,6 +790,8 @@ module Droom
           gibbon.lists(Droom.mc_news_list).members(hashed).delete
         rescue Gibbon::MailChimpError => e
           Rails.logger.warn "🙈 Ignoring Mailchimp error on subscriber deletion: #{e.message}"
+        rescue => e
+          Rails.logger.error "⚠️ Unexpected error deleting Mailchimp subscriber: #{e.class} #{e.message}"
         end
       end
     end
