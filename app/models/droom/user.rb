@@ -25,7 +25,7 @@ module Droom
 
     has_many :preferences, :foreign_key => "created_by_id"
     accepts_nested_attributes_for :preferences, :allow_destroy => true
-
+    belongs_to :contact, class_name: '::Contact', optional: true
     ## Authentication
     #
     devise :database_authenticatable,
@@ -59,7 +59,44 @@ module Droom
     after_save :attend_conference_or_not
     after_destroy :remove_from_mailchimp_list
 
-    after_commit :attach_default_image
+    # after_commit :attach_default_image
+    # after_commit :sync_to_contacts, if: :relevant_fields_changed?, on: :update
+    # after_commit -> { SyncJob.perform_later(self) unless SyncGuard.active? }, on: :update
+    # after_commit -> { SyncJob.perform_later(self, last_tracked_changes) }, on: :update    
+    # after_commit -> { SyncJob.perform_later(self.class.name, id, last_tracked_changes) }, on: :update
+
+    TRACKED_ATTRIBUTES = %w[email given_name family_name title affiliation position].freeze
+
+    # 1. Use an instance variable to store all changes during the transaction
+    before_update :capture_sync_changes
+
+    def capture_sync_changes
+      # Initialize the hash if not present (only within the current object instance)
+      @sync_updates ||= {}
+      
+      # Merge current changes into the accumulator
+      tracked_changes = changes_to_save.slice(*TRACKED_ATTRIBUTES) # Use changes_to_save
+      
+      # Merge new values, preserving the last value for each key
+      new_values = tracked_changes.transform_values(&:last)
+      @sync_updates.merge!(new_values) 
+    end
+
+    # 2. Use the accumulated changes in after_commit
+    after_commit :enqueue_sync_job, on: [:update]
+
+    def enqueue_sync_job
+      # Use the accumulated changes, or fall back to saved_changes if capture didn't run
+      updates_to_sync = @sync_updates || saved_changes.slice(*TRACKED_ATTRIBUTES).transform_values(&:last)
+      
+      return if updates_to_sync.empty?
+      
+      SyncJob.perform_later(self.class.name, id, updates_to_sync)
+      # Clear the instance variable after enqueuing
+      @sync_updates = nil 
+    end
+
+    attr_accessor :last_tracked_changes_snapshot
 
     scan_attachment :image
 
@@ -68,7 +105,10 @@ module Droom
     scope :external, -> { joins(:organisation).where(droom_organisations: {external: true}) }
     scope :internal, -> { joins(:organisation).where(droom_organisations: {external: false}) }
 
-
+    def last_tracked_changes
+      tracked = %w[email given_name family_name title affiliation position]
+      previous_changes.slice(*tracked)
+    end
     # People are often invited into the system in batches or after offline contact.
     # set user.defer_confirmation to a true or call user.defer_confirmation! +before saving+
     # if you want to create a user account without sending out any messages yet.
@@ -1227,6 +1267,38 @@ module Droom
         title: title,
         email: email
       }
+    end
+
+    def relevant_fields_changed?
+      (previous_changes.keys & %w[
+        given_name
+        family_name
+        title
+        email
+        email_alternate
+        affiliation
+        position
+        status
+      ]).any?
+    end
+
+    def sync_to_contacts
+      return if ::SyncGuard.active?
+      Rails.logger.info "🔄 Syncing droom user #{self.id} (#{self.email}) to contact..."
+      Rails.logger.info "Contact #{::Contact.find(self.contact_id).id}"
+
+      return unless contact.present?
+      contact.instance_variable_set(:@skip_sync, true)
+      ::SyncGuard.with_sync_guard do
+        contact.update(
+          given_name: given_name,
+          family_name: family_name,
+          title: title,
+          email: email,
+          affiliation: affiliation,
+          position: position
+        )
+      end
     end
 
   protected
