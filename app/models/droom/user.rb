@@ -6,6 +6,7 @@ module Droom
     include Droom::Concerns::Imaged
     include Droom::Concerns::PngConvert
     include Droom::Concerns::ScanAttachment
+    include Syncable
 
     # has_paper_trail ignore: [:unique_session_id, :last_request_at, :sign_in_count]
 
@@ -59,7 +60,6 @@ module Droom
     after_save :attend_conference_or_not
     after_destroy :remove_from_mailchimp_list
     after_commit :attach_default_image
-    after_commit :enqueue_sync_job, on: [:update]
 
     scan_attachment :image
 
@@ -1291,11 +1291,6 @@ module Droom
 
     def confirmed_if_password_set
       self.update_column(:confirmed_at, Time.now) if password_set? && !confirmed?
-    end
-
-    def enqueue_sync_job
-      return if SyncGuard.active_for?(self.class.name, id)
-      SyncJob.perform_later(self.class.name, id)
     end
   end
 end
