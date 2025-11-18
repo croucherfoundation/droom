@@ -8,9 +8,10 @@ module Droom::Concerns::PngConvert
 
   def attach_initials_image(user)
     return if user.given_name.blank? && user.family_name.blank?
-    g_name = user.given_name.split(' ').first
-    f_name = user.family_name.split(' ').first
-    png_name = [g_name, f_name].join(' ')
+    g_name = user.given_name.to_s.split(' ').first
+    f_name = user.family_name.to_s.split(' ').first
+
+    png_name = [g_name, f_name].compact_blank.join(' ')
 
     begin
       initials_image_path = convert_to_png(png_name)

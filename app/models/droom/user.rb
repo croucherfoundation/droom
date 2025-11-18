@@ -1033,6 +1033,10 @@ module Droom
       end
     end
 
+    def active?
+      !deleted? && liveliness != 'unreachable' && liveliness != 'unresponsive'
+    end
+
     def privileged?
       admin? || groups.privileged.any?
     end
