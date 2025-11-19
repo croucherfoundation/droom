@@ -810,6 +810,8 @@
         this.keyed = bind(this.keyed, this);
         this.bindInputs = bind(this.bindInputs, this);
         this.bindLinks = bind(this.bindLinks, this);
+        this.bindFacets = bind(this.bindFacets, this);
+        this.setParam = bind(this.setParam, this);
         this._form = $(element);
         this._options = $.extend(this.constructor.default_options, opts);
         this._historical = this._options.history || this._form.attr('data-historical');
@@ -849,7 +851,8 @@
 
       CaptiveForm.prototype.bindLinks = function() {
         this._container.find('a.cancel').click(this.revert);
-        return this._container.find('.pagination a').click(this.page);
+        this._container.find('.pagination a').click(this.page);
+        return this._container.find('a.param').click(this.setParam);
       };
 
       CaptiveForm.prototype.bindInputs = function(selector) {
@@ -863,6 +866,23 @@
           this._form.find('select').bind('change', this.changed);
           this._form.find('input[type="radio"]').bind('click', this.clicked);
           return this._form.find('input[type="checkbox"]').bind('click', this.clicked);
+        }
+      };
+
+      CaptiveForm.prototype.bindFacets = function() {
+        return this._form.find('select.facet').bind('change', this.changed);
+      };
+
+      CaptiveForm.prototype.setParam = function(e) {
+        var $a, p, v;
+        if (e != null) {
+          e.preventDefault();
+        }
+        if ($a = $(e.target)) {
+          p = $a.data('param');
+          v = $a.data('value');
+          this._form.find('input[name="' + p + '"]').val(v);
+          return this.submit();
         }
       };
 
