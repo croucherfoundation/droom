@@ -36,7 +36,7 @@ en:
   add_subfolder: Add sub-folder
   move_folder: "Move folder"
   add_to_stream: "add to stream"
-  add_user: "Add User"
+  add_user: "Add user"
   added_to: "has been added to '%{group}'."
   admin: "Admin"
   advanced_search: "Search terms"

@@ -15,22 +15,33 @@
   = form_for user, :html => {:class => 'edit user', :autocomplete => false} do |f|
 
     = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, minimal: true}
+    = hidden_field_tag "user[group_ids][]", nil
+    
+    - groups = Droom::Group.all
+    - if groups.any?
+      %div{style: 'width: 100%;'}
+        = f.label(:group_ids, class: "important") + ":"
+        - groups.each do |group|
+          = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}", class: "checkbox"
+          %label.checkbox_label.mb.pr-10{for: "user_group_ids_#{group.id}"}
+            = group.name
 
     - unless @user.confirmed?
       = f.hidden_field :send_confirmation, value: true
 
     - if Droom.use_organisations?
-      - if admin?
-        %p.organisation.admin{style: 'margin-top: -6px !important;'}
-          = f.label :organisation_id
-          = f.select :organisation_id, Droom::Organisation.for_selection, :class => 'preferences'
-      - else
-        = f.hidden_field :organisation_id
+      .organisation-select
+        - if admin?
+          %p.organisation.admin{style: 'margin-top: -6px !important;'}
+            = f.label :organisation_id
+            = f.select :organisation_id, Droom::Organisation.for_selection, :class => 'preferences'
+        - else
+          = f.hidden_field :organisation_id
 
-      - if admin? || organisation_admin?
-        %br
-        = f.check_box :organisation_admin, checked: true, class: "fancy"
-        = f.label :organisation_admin
+        - if admin? || organisation_admin?
+          %br
+          = f.check_box :organisation_admin, checked: true, class: "fancy"
+          = f.label :organisation_admin, class: "organisation_admin_label"
 
     .buttons
       - if user == current_user

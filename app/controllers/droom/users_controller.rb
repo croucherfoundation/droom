@@ -53,7 +53,7 @@ module Droom
       @user.send_confirmation!
 
       if @user.save
-        respond_with @user
+        head :ok
       else
         flash[:alert] = @user.errors.full_messages.to_sentence
         redirect_to request.referer
