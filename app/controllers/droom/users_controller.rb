@@ -176,6 +176,7 @@ module Droom
         emails = emails.where.not(user_id: params[:user_id]) if params[:user_id].present?
         user_ids = emails.map(&:check_user_exist)
       end
+      user_ids = user_ids.select{|id| id[1] == true }
       unless user_ids.empty?
         message = 'oops'
       end
