@@ -1,3 +1,5 @@
+- emergency ||= false
+
 - if params[:day]
   - date = Time.zone.local(params[:year].to_i, params[:month].to_i, params[:mday].to_i)
 - elsif params[:month]
@@ -5,4 +7,4 @@
 - else
   - date ||= Time.zone.now
 
-= render "calendar", date: date
+= render "calendar", date: date, emergency: emergency

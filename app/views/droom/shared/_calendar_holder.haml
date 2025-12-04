@@ -1,3 +1,4 @@
+- emergency ||= false 
 #minicalendar
   .scroller
-    = render :partial => 'droom/events/calendar'
+    = render :partial => 'droom/events/calendar', locals: { emergency: emergency }

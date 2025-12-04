@@ -36,6 +36,12 @@
     .description
       = f.text_area :description, class: "rte", placeholder: t("placeholders.event.description")
     
+    %ul.taglist{data: {role: 'chooser'}}
+      - Droom::Tag.of_type("Calendar").each do |tag|
+        %li.checkbox
+          = f.check_box :tag_ids, {multiple: true, class: 'fancy'}, tag.id, nil
+          = f.label :tag_ids, tag.name.capitalize, value: tag.id
+  
     %p.admin
       - if Droom::EventType.count > 1
         = f.label :event_type_id, t(:file_under)

@@ -1,6 +1,5 @@
 - pending ||= nil
 - organisation ||= pending || @organisation
--# - byebug
 
 .organisation.holder{:id => "organisation_#{organisation.id}", :data => {:refreshing => true, :url => droom.organisation_path(organisation, view: "pending")} }
   - if admin?

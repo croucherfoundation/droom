@@ -15,14 +15,14 @@
 - cssclasses << 'full' if here
 - cssclasses << 'invited' if event.attended_by?(current_user)
 
-- div_data = {refreshing: event_path(event, format: :js)}
+- div_data = {refreshing: droom.event_path(event, format: :js)}
 - if show_folder
   - div_data[:droppable] = droom.folder_documents_path(event.folder)
   - div_data[:queue] = "#queue_to_#{event.folder.id}"
   - div_data[:refreshes] = "#event_#{event.id}"
 
 %div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
-  = link_to event_url(event) do
+  = link_to droom.event_url(event) do
     .datemark
       %span.mon= event.start.strftime('%b')
       %span.dom= event.start.strftime('%d')
@@ -32,7 +32,7 @@
   .summary
     .heading
       %h2.name<
-        = link_to event.name, event_url(event), :class => "name"
+        = link_to event.name, droom.event_url(event), :class => "name"
         = action_menulink(event)
       = action_menu(event)
 
@@ -63,7 +63,7 @@
             .attachments
               - if can?(:edit, event.folder)
                 %ul.uploads{id: "queue_to_#{event.folder.id}"}
-              = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => event_url(event)}
+              = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => droom.event_url(event)}
 
         - if event.description?
           = sanitize(event.description)

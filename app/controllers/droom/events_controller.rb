@@ -34,7 +34,7 @@ module Droom
       def to_ics
         to_icalendar.to_ical
       end
-  
+
       def to_icalendar
         cal = Icalendar::Calendar.new
         self.flatten.each do |item|
@@ -63,7 +63,7 @@ module Droom
     end
 
     def create
-      if @event.save
+      if @event.save!
         render :partial => "event"
       else
         respond_with @event
@@ -84,7 +84,7 @@ module Droom
     end
 
   protected
-  
+
     def get_my_events
       @events = Droom::Event.accessible_by(current_ability)
       if Droom.config.separate_calendars?
@@ -105,12 +105,12 @@ module Droom
         @events = paginated(@events.future_and_current.order('start ASC'))
       end
     end
-    
+
     def build_event
       @event = Droom::Event.new(event_params)
       @event.created_by = current_user
     end
-    
+
     # NB. the stored timezone parameter is just an interface convenience: we use it to display a consistent form.
     # The event start and finish dates are stored as datetimes with zones.
     #
@@ -135,10 +135,10 @@ module Droom
         end
       end
     end
-    
+
     def event_params
       if params[:event]
-        params.require(:event).permit(:name, :description, :event_set_id, :event_type_id, :calendar_id, :all_day, :master_id, :url, :start, :finish, :timezone, :venue_id, :venue_name)
+        params.require(:event).permit(:name, :description, :event_set_id, :event_type_id, :calendar_id, :all_day, :master_id, :url, :start, :finish, :timezone, :venue_id, :venue_name, tag_ids: [])
       else
         {}
       end
