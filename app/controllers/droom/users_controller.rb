@@ -93,7 +93,7 @@ module Droom
     def setup
       current_user.assign_attributes(setup_params.merge(confirmed: true))
       if current_user.save
-        sign_in current_user, :bypass => true
+        sign_in current_user
         if current_user.data_room_user?
           flash[:notice] = t(:password_set)
           redirect_to params[:destination].presence || droom.dashboard_url

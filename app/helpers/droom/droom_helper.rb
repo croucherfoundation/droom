@@ -86,7 +86,7 @@ module Droom
         link_to t(:edit), "#", html_options if can?(:edit, thing)
       end
     end
-    
+
     def action_menu(thing, locals={})
       if can?(:edit, thing)
         type = thing.class.to_s.underscore
@@ -95,7 +95,7 @@ module Droom
         render :partial => "#{type.pluralize}/action_menu", :locals => locals
       end
     end
-    
+
     def help_link(slug, category=nil, title="")
       render 'droom/helps/show/link', slug: slug, category: category, title: title
     end
@@ -106,12 +106,16 @@ module Droom
 
     def organisation_admin?(organisation=nil)
       user_signed_in? &&
-        current_user.admin? || 
+        current_user.admin? ||
         (current_user.organisation_admin? && !organisation || current_user.organisation == organisation)
     end
 
     def external_user?
       Droom.require_internal_organisation? && current_user.external?
+    end
+
+    def guest_user?
+      current_user.guest?
     end
 
     def pageclass
@@ -151,7 +155,7 @@ module Droom
     def month_header_for(date)
       content_tag('h3', l(date, :format => :month_header))
     end
-    
+
     def pagination_summary(collection, options = {})
       entry_name = options[:entry_name] || (collection.empty?? 'entry' : collection.first.class.name.underscore.sub('_', ' '))
       summary = if collection.num_pages < 2
@@ -221,7 +225,7 @@ module Droom
 
     def recaptcha_execute(action)
       id = "recaptcha_token_#{SecureRandom.hex(10)}"
-  
+
       raw %Q{
         <input name="recaptcha_token" type="hidden" id="#{id}"/>
         <script>

@@ -207,6 +207,7 @@ module Droom::Concerns::ControllerHelpers
 
   def check_user_has_organisation
     if user_signed_in? && Droom.use_organisations? && Droom.require_organisation?
+      return if current_user.skip_organisation_setup?
       if !current_user.organisation
         @destination = request.fullpath
         raise Droom::OrganisationRequired

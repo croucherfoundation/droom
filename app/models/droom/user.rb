@@ -234,6 +234,10 @@ module Droom
       organisation && organisation_admin?
     end
 
+    def guest?
+      skip_organisation_setup?
+    end
+
     def external?
       !organisation || organisation.external?
     end
@@ -865,6 +869,10 @@ module Droom
       else
         'external'
       end
+    end
+
+    def skip_organisation_setup?
+      self.groups.any? { |g| g.slug == 'guest-funder' || g.slug == 'intermediaries' }
     end
 
     def privileged?
