@@ -118,6 +118,10 @@ module Droom
       current_user.guest?
     end
 
+    def intermediary_user?
+      current_user.intermediary?
+    end
+
     def pageclass
       controller.controller_name
     end
