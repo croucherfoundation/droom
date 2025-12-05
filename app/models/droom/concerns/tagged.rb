@@ -24,7 +24,7 @@ module Droom::Concerns::Tagged
       end
       args = { body: {
         query: { bool: bool_query },
-        sort: "_score"
+        sort: options[:recent] ? [{ updated_at: { order: "desc" }}] : "_score"
       }}
       args[:limit] = options[:limit] if options[:limit]
       args[:offset] = options[:offset] if options[:offset]
