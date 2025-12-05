@@ -40,7 +40,7 @@
       - Droom::Tag.of_type("Emergency").each do |tag|
         %li.checkbox
           = f.check_box :tag_ids, {multiple: true, class: 'fancy'}, tag.id, nil
-          = f.label :tag_ids, tag.name.capitalize, value: tag.id
+          = f.label :tag_ids, tag.name, value: tag.id
   
     %p.admin
       - if Droom::EventType.count > 1
