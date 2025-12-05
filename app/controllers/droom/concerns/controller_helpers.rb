@@ -8,6 +8,7 @@ module Droom::Concerns::ControllerHelpers
     rescue_from Droom::AccessDenied, :with => :not_authorized
     rescue_from CanCan::AccessDenied, :with => :not_allowed
     rescue_from Droom::PermissionDenied, :with => :not_allowed
+    rescue_from ActiveRecord::RecordNotFound, :with => :not_found
     rescue_from Droom::ConfirmationRequired, :with => :prompt_for_confirmation
     rescue_from Droom::SetupRequired, :with => :prompt_for_setup
     rescue_from Droom::OrganisationRequired, :with => :prompt_for_organisation
@@ -171,7 +172,7 @@ module Droom::Concerns::ControllerHelpers
     @error = exception.message
     Honeybadger.notify(exception)
     respond_to do |format|
-      format.html { render template: "errors/not_found", :status => 404 }
+      format.html { render :file => "#{Rails.root}/public/404.html", :status => :forbidden, :layout => false }
       format.js { head :not_found }
       format.json { head :not_found }
     end
