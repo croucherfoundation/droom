@@ -38,6 +38,7 @@ module Droom::Concerns::Searchable
       h[p] = false if h[p] == "false"
     end
 
+    criteria[:created_at] = 1.year.ago..Time.current if posted_within_one_year?
     criteria.merge!(non_admin_filter) unless admin?
 
     options = {
@@ -117,6 +118,10 @@ module Droom::Concerns::Searchable
 
   def default_per_page
     Settings.defaults.per_page
+  end
+
+  def posted_within_one_year?
+    false
   end
 
   def paginated?
