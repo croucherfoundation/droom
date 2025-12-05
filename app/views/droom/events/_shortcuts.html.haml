@@ -1,13 +1,12 @@
-- emergency ||= false 
-- if emergency
+- if emergency_mode?
   - years = Droom::Event.emergencies.pluck(:start).compact.map(&:year).uniq.sort.reverse
 - else
   - years = Droom::Event.pluck(:start).compact.map(&:year).uniq.sort.reverse
 
 %p.navigation
-  = link_to_unless_current "Future events", emergency ? main_app.calendar_emergency_responses_url : droom.events_url 
+  = link_to_unless_current "Future events", emergency_mode? ? main_app.calendar_emergency_responses_url : droom.events_url 
   \|
-  = link_to_unless_current "Past events", emergency ? main_app.calendar_year_emergency_responses_url('past') : droom.past_events_url
+  = link_to_unless_current "Past events", emergency_mode? ? main_app.calendar_year_emergency_responses_url('past') : droom.past_events_url
   - years.each do |y|
     \|
-    = link_to_unless_current y, emergency ? main_app.calendar_year_emergency_responses_url(y) : droom.events_url(year: y)
+    = link_to_unless_current y, emergency_mode? ? main_app.calendar_year_emergency_responses_url(y) : droom.events_url(year: y)

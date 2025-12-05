@@ -1,8 +1,7 @@
 - date ||= Time.zone.now
-- emergency ||= false
 - month = date.month
 - month_events = Droom::Event.coincident_with(date.beginning_of_month, date.end_of_month)
-- month_events = month_events.emergencies if emergency
+- month_events = month_events.emergencies if emergency_mode?
 
 - first_shown = date.beginning_of_month.beginning_of_week.to_date
 - last_shown = date.end_of_month.end_of_week.to_date

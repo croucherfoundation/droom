@@ -122,6 +122,10 @@ module Droom
       current_user.intermediary?
     end
 
+    def emergency_mode?
+      controller_name == 'emergency_responses'
+    end
+
     def pageclass
       controller.controller_name
     end

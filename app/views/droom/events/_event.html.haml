@@ -22,7 +22,8 @@
   - div_data[:refreshes] = "#event_#{event.id}"
 
 %div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
-  = link_to droom.event_url(event) do
+  - url = emergency_mode? ? calendar_event_emergency_responses_url(event) : droom.event_url(event)
+  = link_to url do
     .datemark
       %span.mon= event.start.strftime('%b')
       %span.dom= event.start.strftime('%d')
@@ -32,7 +33,7 @@
   .summary
     .heading
       %h2.name<
-        = link_to event.name, droom.event_url(event), :class => "name"
+        = link_to event.name, url, :class => "name"
         = action_menulink(event)
       = action_menu(event)
 

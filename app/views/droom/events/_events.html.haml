@@ -7,4 +7,4 @@
     %p.nothing
       = t :no_events
 
-= paginate @events
+= paginate @events if @events.any?
