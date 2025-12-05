@@ -1,5 +1,6 @@
 module Droom
   class Scrap < Droom::DroomRecord
+    include Droom::Concerns::Tagged
     include Droom::Concerns::ScanAttachment
     belongs_to :created_by, :class_name => "Droom::User"
 
@@ -12,7 +13,7 @@ module Droom
 
     validate :image_must_be_valid
     scan_attachment :image
-    
+
     before_save :get_youtube_thumbnail
     before_validation :name_associates
 

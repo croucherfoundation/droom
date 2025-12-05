@@ -56,6 +56,9 @@
               = link_to event.venue.definite_name + ".", venues_url(:id => event.venue.id)
             - else
               = event.venue.definite_name + "."
+        - if event.tags.any?
+          %br
+          = render "droom/tags/summary", tags: event.tags
 
       .detail
         - if show_folder && !full_attachments

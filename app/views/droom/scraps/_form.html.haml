@@ -56,6 +56,12 @@
     %p.caption
       = f.text_field :note, :class => 'note', placeholder: t("placeholders.scrap.caption")
 
+    %ul.taglist{data: {role: 'chooser'}}
+      - Droom::Tag.of_type("Emergency").each do |tag|
+        %li.checkbox
+          = f.check_box :tag_ids, {multiple: true, class: 'fancy'}, tag.id, nil
+          = f.label :tag_ids, tag.name.capitalize, value: tag.id
+
     .buttons
       = f.submit t(:save)
       = t :or

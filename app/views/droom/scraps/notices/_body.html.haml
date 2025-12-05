@@ -34,6 +34,10 @@
         %a.reveal
           =t (:notice_contract)
 
+  - if notice.tags.any?
+    %p.practicalities
+      = render "droom/tags/summary", tags: notice.tags
+
   .footnote
     %p
       - if notice.created_by
