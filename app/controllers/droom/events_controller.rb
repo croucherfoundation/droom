@@ -86,7 +86,11 @@ module Droom
   protected
 
     def get_my_events
-      @events = Droom::Event.accessible_by(current_ability)
+      if params[:source] == 'emergency_hub'
+        @events = Droom::Event.emergencies
+      else
+        @events = Droom::Event.accessible_by(current_ability)
+      end
       if Droom.config.separate_calendars?
         @events = @events.in_calendar(Droom::Calendar.default_calendar)
       end

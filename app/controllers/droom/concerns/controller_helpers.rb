@@ -278,6 +278,7 @@ module Droom::Concerns::ControllerHelpers
 
   def set_section
     @section = controller_name.to_sym
+    @action = action_name.to_sym
   end
 
   def no_layout_if_pjax
