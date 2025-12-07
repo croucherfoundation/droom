@@ -62,7 +62,7 @@
           = render "droom/tags/summary", tags: event.tags
 
       .detail
-        - if show_folder && !full_attachments
+        - if (show_folder && !full_attachments) || emergency_mode?
           - if event.folder.populated? || can?(:read, event.folder)
             .attachments
               - if can?(:edit, event.folder)

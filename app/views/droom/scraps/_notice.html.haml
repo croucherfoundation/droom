@@ -2,10 +2,10 @@
 - first = notice_counter == 0
 - size = first ? 2 : 1
 
-.notice.gridbox{id: "notice_#{notice.id}", class: notice.scraptype, data: {refreshing: scrap_path(notice)}}
+.notice.gridbox{id: "notice_#{notice.id}", class: notice.scraptype, data: {refreshing: droom.scrap_path(notice)}}
   = render "droom/scraps/notices/#{notice.scraptype}", notice: notice, first: first
   
   - if can? :edit, notice
     .controls
-      = link_to t(:edit_symbol), edit_scrap_url(notice), class: "edit", data: {action: "popup", affected: "#notice_#{notice.id}"}
-      = link_to t(:delete_symbol), scrap_url(notice), class: "delete", method: "delete", data: {action: "remove", removed: "#notice_#{notice.id}", confirm: "Delete this notice?"}
+      = link_to t(:edit_symbol), droom.edit_scrap_url(notice), class: "edit", data: {action: "popup", affected: "#notice_#{notice.id}"}
+      = link_to t(:delete_symbol), droom.scrap_url(notice), class: "delete", method: "delete", data: {action: "remove", removed: "#notice_#{notice.id}", confirm: "Delete this notice?"}

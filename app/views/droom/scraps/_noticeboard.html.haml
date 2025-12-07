@@ -1,7 +1,7 @@
-#noticeboard.autogrid{:data => {:refreshing => scraps_path(:format => :js)}}
-
+- refresh_url ||= droom.scraps_path(format: :js)
+#noticeboard.autogrid{:data => {:refreshing => refresh_url}}
   - if @scraps.any?
-    = render :partial => "notice", :collection => @scraps
+    = render :partial => "droom/scraps/notice", :collection => @scraps
 
   - else
     = t :no_notices
