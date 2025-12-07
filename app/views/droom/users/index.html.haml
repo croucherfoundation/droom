@@ -3,13 +3,14 @@
   %p.standfirst
     = t(:users_introduction)
 
-  %form.filter{:action => droom.users_url(:format => :html), :autocomplete => 'off', :data => {:action => "table_filter"}}
+  %form.filter{:action => droom.users_url(:format => :js), :autocomplete => 'off', :data => {:action => "table_filter", target: '#people'}}
     %p
       = text_field_tag :q, params[:q], :id => 'people_filter'
       %a.reset{href: '/users'}
         Reset
 
-  = render :partial => "droom/users/users"
+  #people
+    = render :partial => "droom/users/users"
 
 - content_for :title do 
   = t :people

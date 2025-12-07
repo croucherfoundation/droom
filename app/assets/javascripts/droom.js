@@ -34,11 +34,6 @@
 
   jQuery(function($) {
     console.log("loading droom");
-    $('#people_filter').on('keypress', function(e) {
-      if (e.which === 13) {
-        return window.location.reload();
-      }
-    });
     if (window.matchMedia('(max-width: 700px)').matches) {
       $('body').addClass('mobile');
       if (window.matchMedia('(orientation: portrait)').matches) {
