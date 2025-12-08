@@ -37,6 +37,13 @@
         = action_menulink(event)
       = action_menu(event)
 
+      - if (show_folder && !full_attachments) || emergency_mode?
+        - if event.folder.populated? || can?(:read, event.folder)
+          .attachments
+            - if can?(:edit, event.folder)
+              %ul.uploads{id: "queue_to_#{event.folder.id}"}
+            = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => droom.event_url(event)}
+
       %p.practicalities
         %time
           = l(event.start_time, :format => :natural)
@@ -62,13 +69,6 @@
           = render "droom/tags/summary", tags: event.tags
 
       .detail
-        - if (show_folder && !full_attachments) || emergency_mode?
-          - if event.folder.populated? || can?(:read, event.folder)
-            .attachments
-              - if can?(:edit, event.folder)
-                %ul.uploads{id: "queue_to_#{event.folder.id}"}
-              = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => droom.event_url(event)}
-
         - if event.description?
           = sanitize(event.description)
 

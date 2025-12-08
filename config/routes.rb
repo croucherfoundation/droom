@@ -80,7 +80,7 @@ Droom::Engine.routes.draw do
     collection do
       get :calendar
       get :past
-      get "subscribe/:tok", action: "subscribe", as: :subscribe
+      get "subscribe(/:source)/:tok", action: "subscribe", as: :subscribe
     end
     resources :invitations do
       member do
