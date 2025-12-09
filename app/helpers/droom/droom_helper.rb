@@ -220,7 +220,7 @@ module Droom
     end
 
     def day_names
-      ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+      ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     end
 
     def check_recaptcha?
