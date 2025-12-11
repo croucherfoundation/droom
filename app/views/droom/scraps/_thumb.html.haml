@@ -1,5 +1,8 @@
 - scrap ||= thumb
-- url = droom.noticeboard_url + "#notice_#{scrap.id}"
+- if emergency_mode? 
+  - url = main_app.noticeboard_emergency_responses_url + "#notice_#{scrap.id}"
+- else 
+  - url = droom.noticeboard_url + "#notice_#{scrap.id}"
 
 - if Droom.scrap_types.include? scrap.scraptype
   %div{:class => "scrap #{scrap.scraptype}", :id => "scrap_#{scrap.id}"}

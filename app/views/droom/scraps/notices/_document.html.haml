@@ -2,7 +2,8 @@
 
 .content
   - if document = notice.document
+    - url = emergency_mode? ? document.file.url : droom.folder_document_url(document.folder, document)
     %p
-      = link_to document.name, droom.folder_document_url(document.folder, document), :class => "dl #{document.file_extension}"
+      = link_to document.name, url, :class => "dl #{document.file_extension}", :target => '_blank'
 
   = render "droom/scraps/notices/body", notice: notice, body_limit: first ? 700 : 300

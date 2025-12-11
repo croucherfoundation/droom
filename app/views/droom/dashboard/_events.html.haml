@@ -3,12 +3,14 @@
 - events   = events.emergencies if emergency_mode?
 - events   = events.future_and_current.order('start ASC').limit(5)
 
+- url = emergency_mode? ? main_app.calendar_emergency_responses_url : main_app.calendar_url
+
 .divider
 %section
   #events{:data => {:refreshing => true, :url => droom.events_url(:limit => 5)}}
 
     %h2.section
-      = link_to t(:calendar), main_app.calendar_url
+      = link_to t(:calendar), url
       - if calendar.events.future_and_current.count > 5
         %span.addendum
           =t(:click_for_more, count: calendar.events.future_and_current.count - 5)
@@ -21,6 +23,7 @@
 
     - else
       - past_events ||= calendar.events.past.limit(5)
+      - past_events = [] if emergency_mode? # ER landing shows Past events as separate section
       - if past_events.any?
         = render :partial => "droom/events/event", :collection => past_events, :locals => {:brief => true}
 

@@ -3,16 +3,18 @@
 - events = events.emergencies if emergency_mode?
 - events = events.past.limit(5)
 
+- url = emergency_mode? ? main_app.calendar_year_emergency_responses_url('past') : droom.past_events_url
+
 - if events.any?
   .divider
   %section
     #past_events
       %h2.section
-        = link_to droom.past_events_url do
+        = link_to url do
           = t(:recent_events)
-          - if calendar.events.past.count > 5
+          - if events.past.count > 5
             %span.addendum
-              =t(:click_for_more, count: calendar.events.past.count - 5)
+              =t(:click_for_more, count: events.past.count - 5)
 
       - if events.any?
         = render :partial => "droom/events/event", :collection => events, :locals => {:brief => true}
