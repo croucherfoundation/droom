@@ -1,2 +1,5 @@
 %p
-  = t :noticeboard_introduction
+  - if emergency_mode?
+    = t :noticeboard_introduction_er
+  - else
+    = t :noticeboard_introduction

@@ -107,7 +107,7 @@ module Droom
     def organisation_admin?(organisation=nil)
       user_signed_in? &&
         current_user.admin? ||
-        (current_user.organisation_admin? && !organisation || current_user.organisation == organisation)
+        (current_user.organisation_admin? && !organisation || (current_user.organisation.present? && current_user.organisation == organisation))
     end
 
     def external_user?
