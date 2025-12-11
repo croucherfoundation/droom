@@ -1,5 +1,7 @@
 - calendar = Droom::Calendar.where(name: 'main').first_or_create
-- events = calendar.events.future_and_current.order('start ASC').limit(5)
+- events   = calendar.events
+- events   = events.emergencies if emergency_mode?
+- events   = events.future_and_current.order('start ASC').limit(5)
 
 .divider
 %section
