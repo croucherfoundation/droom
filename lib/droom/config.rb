@@ -317,7 +317,7 @@ module Droom
     end
 
     def mailchimp_configured?
-      mc_api_key.present? && mc_news_list.present? && mc_news_list.present?
+      mc_api_key.present? && mc_news_list.present? && mc_news_template.present?
     end
 
 
