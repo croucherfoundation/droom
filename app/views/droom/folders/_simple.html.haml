@@ -1,11 +1,19 @@
 - omit_buttons ||= false
+- small ||= false 
+- ulclass = ''
+- ulclass << 'large' unless small 
+
 - if can?(:edit, folder)
   - uldata = {folder_id: folder.id, droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}", refreshes: "#folder_#{folder.id}"}
-  - ulclass = 'filing large sortable_files'
+  - ulclass << ' filing sortable_files'
 - else
   - uldata = {}
-  - ulclass = 'filing large'
+  - ulclass << ' filing'
 
 %ul{class: ulclass, data: uldata}<
-  = render :partial => 'droom/documents/simple', :collection => folder.documents, locals: {omit_buttons: omit_buttons}
+  - if folder.documents.present?
+    = render :partial => 'droom/documents/simple', :collection => folder.documents, locals: {omit_buttons: omit_buttons}
+  - else 
+    %p.nothing
+      = t(:no_attachments)
 
