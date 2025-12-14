@@ -246,8 +246,12 @@ module Droom
       self.groups.any? { |g| g.slug == 'intermediary' }
     end
 
+    def non_member?
+      guest? || intermediary?
+    end
+
     def external?
-      !organisation || organisation.external?
+      (!organisation || organisation.external?) && !non_member?
     end
 
     def internal?

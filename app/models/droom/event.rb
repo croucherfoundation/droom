@@ -60,7 +60,7 @@ module Droom
 
     scope :finished, -> { where(['(finish < :now) OR (finish IS NULL AND start < :now)', :now => Time.zone.now]) }
 
-    scope :emergencies, -> { joins(:tags).where(tags: { name: ['Tai Po recovery'] }).distinct }
+    scope :emergencies, -> { joins(:tags).where(tags: { name: ['Emergency Response - Tai Po'] }).distinct }
 
     scope :unbegun, -> { where(['start > :now', :now => Time.zone.now])}
 
