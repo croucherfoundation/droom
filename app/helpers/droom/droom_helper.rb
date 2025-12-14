@@ -114,6 +114,10 @@ module Droom
       Droom.require_internal_organisation? && current_user.external?
     end
 
+    def non_member?
+      current_user.non_member?
+    end
+
     def guest_user?
       current_user.guest?
     end
