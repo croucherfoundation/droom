@@ -29,7 +29,11 @@ module Droom::Concerns::Searchable
     end
 
     @sort = search_default_sort unless search_permitted_sorts.include?(@sort)
-    @order = params[:order].presence || search_descending_sort_defaults.include?(@sort) ? :desc : :asc
+    if params[:direction].present?
+      @order = params[:direction]
+    else
+      @order = params[:order].presence || search_descending_sort_defaults.include?(@sort) ? :desc : :asc
+    end
     sort_order = [{@sort => {order: @order}}]
 
     criteria = search_criterion_params.each_with_object({}) do |p, h|

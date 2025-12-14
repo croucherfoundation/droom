@@ -737,6 +737,7 @@
         this.prepare = bind(this.prepare, this);
         this.submit = bind(this.submit, this);
         this.page = bind(this.page, this);
+        this.setParam = bind(this.setParam, this);
         this.serialize = bind(this.serialize, this);
         this.clicked = bind(this.clicked, this);
         this.changed = bind(this.changed, this);
@@ -782,6 +783,7 @@
 
       CaptiveForm.prototype.bindLinks = function() {
         this._container.find('a.cancel').click(this.revert);
+        this._container.find('a.param').click(this.setParam);
         return this._container.find('.pagination a').click(this.page);
       };
 
@@ -847,6 +849,22 @@
         p = $.urlParam('page', href);
         this._form.find('input[name="page"]').val(p);
         return this.submit();
+      };
+
+      CaptiveForm.prototype.setParam = function(e) {
+        var $a, p, v, dir;
+        if (e != null) {
+          e.preventDefault();
+        }
+        if ($a = $(e.target)) {
+          p = $a.data('param');
+          v = $a.data('value');
+          dir = $a.data('dir');
+          console.group("setParam", p, v, dir);
+          this._form.find('input[name="' + p + '"]').val(v);
+          this._form.find('input[name="direction"]').val(dir);
+          return this.submit();
+        }
       };
 
       CaptiveForm.prototype.submit = function(e, nocache) {
