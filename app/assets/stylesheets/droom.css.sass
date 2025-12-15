@@ -736,25 +736,22 @@ a.document
   padding: 6px 0 0 28px
   min-height: 20px
   line-height: 22px
-  color: $mid
+  color: $text
   background:
     repeat: no-repeat
     position: 0 0
     image: image-url('droom/icons.png')
   &.pdf
     background-position: 0 -48px
-    color: red
+    +hover
   &.doc, &.docx
     background-position: 0 -96px
-    color: #1683ab
     +hover
   &.xls, &.xlsx
     background-position: 0 -144px
-    color: #369620
     +hover
   &.mp4, &.mov, &.ogg
     background-position: 0 -192px
-    color: #642195
     +hover
   &.waiting
     color: $pale
