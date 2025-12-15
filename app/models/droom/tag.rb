@@ -29,7 +29,7 @@ module Droom
     scope :by_names, ->(names) { where(name: names) }
 
     FUNDING_THEME_LOOKUP = {
-      "Community & Society" => [
+      "Community and Society" => [
         "civil society capacity building",
         "culture and heritage",
         "carers",
@@ -39,7 +39,7 @@ module Droom
         "trade"
       ],
 
-      "Health & Wellbeing" => [
+      "Health and Wellbeing" => [
         "elderly",
         "disabilities",
         "family support",
@@ -47,7 +47,7 @@ module Droom
         "mental health and wellbeing"
       ],
 
-      "Environment & Sustainability" => [
+      "Environment and Sustainability" => [
         "environment",
         "disaster recovery and reconstruction",
         "emergency supplies and services",
@@ -57,20 +57,20 @@ module Droom
         "pets"
       ],
 
-      "Education & Human Development" => [
+      "Education and Human Development" => [
         "education",
         "science and technology",
         "human resources / overhead",
         "human rights"
       ],
 
-      "Gender & Age Groups" => [
+      "Gender and Age Groups" => [
         "women and girls",
         "young children (0-12 years)",
         "youth / teenagers (13-18 years)"
       ],
 
-      "Arts & Culture" => [
+      "Arts and Culture" => [
         "arts"
       ]
     }.freeze
