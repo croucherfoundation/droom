@@ -195,39 +195,54 @@ div.popup
       width: calc(100% + 40px)
       height: 40px
       padding: 0 0 0 20px
+    
       li
         position: relative
         display: inline-block
-        overflow: hidden
-        margin-right: 0
         height: 40px
-        font-size: 80%
+    
         label
           position: relative
           display: inline-block
           padding: 4px 6px 0 40px
           height: 36px
           line-height: 36px
-          overflow: hidden
           font-size: 0.9em
           cursor: pointer
           color: white
-          background:
-            repeat: no-repeat
-            position: 4px 8px
-            image: image-url('droom/scrap_icons.png')
-          &.text
-            background-position: 4px -40px
-          &.quote
-            background-position: 4px -88px
-          &.video
-            background-position: 4px -136px
-          &.image
-            background-position: 4px -184px
-          &.document
-            background-position: 4px -232px
-          &.event
-            background-position: 4px -280px
+          overflow: hidden
+    
+    
+        label::before
+          content: ""
+          position: absolute
+          left: 4px
+          top: 8px
+          width: 32px
+          height: 32px
+          background-image: image-url('droom/scrap_icons.png')
+          background-repeat: no-repeat
+          pointer-events: none        
+
+        label.text::before     
+          background-position: 0 -40px 
+          top: 0
+        label.quote::before    
+          background-position: 0 -88px 
+          top: 0
+        label.video::before    
+          background-position: 0 -136px 
+          top: 0
+        label.image::before    
+          background-position: 0 -184px 
+          top: 0
+        label.document::before 
+          background-position: 0 -232px 
+          top: 0
+        label.event::before    
+          background-position: 0 -280px 
+          top: 0
+    
         input[type="radio"]
           position: absolute
           visibility: hidden
@@ -240,6 +255,9 @@ div.popup
         input[type="radio"]:checked + label
           background-color: $coolgrey00
           color: $dark
+        
+        input[type="radio"]:checked + label::before
+          filter: invert(1)
 
 
     // form components are flowed so that widths and floats can change as needed.
