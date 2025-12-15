@@ -26,6 +26,63 @@ module Droom
       order(name: :asc)
     }
 
+    scope :by_names, ->(names) { where(name: names) }
+
+    FUNDING_THEME_LOOKUP = {
+      "Community & Society" => [
+        "civil society capacity building",
+        "culture and heritage",
+        "carers",
+        "domestic workers",
+        "poverty reduction",
+        "social innovation",
+        "trade"
+      ],
+
+      "Health & Wellbeing" => [
+        "elderly",
+        "disabilities",
+        "family support",
+        "healthcare",
+        "mental health and wellbeing"
+      ],
+
+      "Environment & Sustainability" => [
+        "environment",
+        "disaster recovery and reconstruction",
+        "emergency supplies and services",
+        "sustainable capital management",
+        "Tai Po recovery",
+        "animals",
+        "pets"
+      ],
+
+      "Education & Human Development" => [
+        "education",
+        "science and technology",
+        "human resources / overhead",
+        "human rights"
+      ],
+
+      "Gender & Age Groups" => [
+        "women and girls",
+        "young children (0-12 years)",
+        "youth / teenagers (13-18 years)"
+      ],
+
+      "Arts & Culture" => [
+        "arts"
+      ]
+    }.freeze
+
+    def self.funding_theme_groups
+      funding_tags = of_type(["Funding area"])
+
+      FUNDING_THEME_LOOKUP.transform_values do |names|
+        funding_tags.where(name: names).order(:name)
+      end
+    end
+
     def self.find_or_create(term)
       if term.present?
         where(name: term.strip.downcase).first_or_create
