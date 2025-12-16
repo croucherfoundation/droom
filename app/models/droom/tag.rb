@@ -30,7 +30,7 @@ module Droom
 
     FUNDING_THEME_LOOKUP = {
       "Community and Society" => [
-        "civil society capacity building",
+        "capacity building",
         "culture and heritage",
         "carers",
         "domestic workers",
@@ -175,7 +175,7 @@ module Droom
       fragment = "%#{fragment}%"
       where('tags.name like ?', fragment)
     }
-  
+
     # The public-facing search engine is faceted and relies on a similar but broader suggestion mechanism
     # that offers both tags and institutions. In that situation we only want to display tags that will give
     # give results, so we limit the suggestions to only those tags that have been applied to a user.
@@ -187,7 +187,7 @@ module Droom
     }
 
     # This returns a list of all the tags attached to any of a given set of objects.
-    # In future it will support cloud-weighting. 
+    # In future it will support cloud-weighting.
     #
     scope :attached_to_any_of, -> these {
       these = [these].flatten
@@ -198,7 +198,7 @@ module Droom
         .where(["droom_taggings.taggee_type = ? and droom_taggings.taggee_id IN (#{placeholders})", *these.map(&:id).unshift(type)])
         .group('droom_tags.id')
     }
-    
+
 
     ## VERY RETRO
     #
@@ -216,7 +216,7 @@ module Droom
 
 
   protected
-  
+
     def downcase
       self.name = self.name.downcase
     end

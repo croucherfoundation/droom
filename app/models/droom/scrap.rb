@@ -48,7 +48,7 @@ module Droom
         .order('droom_events.start ASC')
     }
 
-    scope :emergencies, -> { joins(:tags).where(tags: { name: ['Emergency Response - Tai Po'] }).distinct }
+    scope :emergencies, -> { joins(:tags).where(tags: { name: ['Emergency response'] }).distinct }
 
     Droom.scrap_types.each do |t|
       scope t.pluralize.to_sym, -> { where(:scraptype => t.to_s) }
