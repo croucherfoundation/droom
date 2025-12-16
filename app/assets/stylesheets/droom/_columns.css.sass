@@ -94,6 +94,7 @@ span.notcol
   grid-column-gap: 20px
   grid-row-gap: 20px
   grid-auto-rows: 20px
+
   &.compact
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr))
 
@@ -105,14 +106,23 @@ span.notcol
   opacity: 0
   pointer-events: none
   transition: opacity 0.25s ease-out
+  border-radius: 5px
+  padding-left: 0
+  border-radius: 5px
+  border: 1px solid $coolgrey2
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04)
+  transition: all 0.2s ease-out
+
   &.ready
     opacity: 1
     pointer-events: auto
+
   & > a.menu
     position: absolute
     top: 10px
     right: 10px
     z-index: 10
+
   .content
     position: relative
     padding: 16px 20px

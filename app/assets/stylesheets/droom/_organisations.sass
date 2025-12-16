@@ -1,7 +1,10 @@
 div.organisation
   position: relative
-  background-color: $coolgrey00
-  padding-left: 10px
+  &.pending
+    border: 1px solid $coolgrey2
+    padding: 10px
+    border-radius: 5px
+    margin-bottom: 20px
   p.actions
     float: right
     margin: 0
@@ -12,10 +15,10 @@ div.organisation
   p.description
     margin-top: 0.25em
   li.person
-    display: inline-block;
-    vertical-align: top;
-    margin-bottom: 20px;
-    line-height: 1.25;
+    display: inline-block
+    vertical-align: top
+    margin-bottom: 20px
+    line-height: 1.25
 
 .organisation
   .status

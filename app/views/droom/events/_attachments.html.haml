@@ -1,8 +1,9 @@
 - event ||= @event
 - folder ||= event.folder
 
-.col.attachments{data: {droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}", refreshes: "#event_#{event.id}"}}
-  %h3
-    = t :attachments
-  %ul.uploads{id: "queue_to_#{folder.id}"}
-  = render :partial => "droom/folders/contents", :locals => {folder: folder, narrow: false, drop_refreshes: ""}
+- if folder.documents.any?
+  .col.attachments{data: {droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}", refreshes: "#event_#{event.id}"}}
+    %h3
+      = t :attachments
+    %ul.uploads{id: "queue_to_#{folder.id}"}
+    = render :partial => "droom/folders/contents", :locals => {folder: folder, narrow: false, drop_refreshes: ""}

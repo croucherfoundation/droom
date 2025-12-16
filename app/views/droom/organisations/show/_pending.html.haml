@@ -1,7 +1,7 @@
 - pending ||= nil
 - organisation ||= pending || @organisation
 
-.organisation.holder{:id => "organisation_#{organisation.id}", :data => {:refreshing => true, :url => droom.organisation_path(organisation, view: "pending")} }
+.organisation.pending.holder{:id => "organisation_#{organisation.id}", :data => {:refreshing => true, :url => droom.organisation_path(organisation, view: "pending")} }
   - if admin?
     = render partial: "droom/organisations/show/status", locals: {organisation: organisation}
 
