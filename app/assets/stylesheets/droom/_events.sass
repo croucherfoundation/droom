@@ -47,6 +47,10 @@ div.event, form.event, div.project
         color: $text
         span.admin
           margin-left: 20px
+        span
+          &.location, &.time
+            display: block
+            padding-bottom: 5px
     p.visibility
       float: right
       margin: 10px 16px 0 10px
@@ -57,6 +61,16 @@ div.event, form.event, div.project
     display: block
     width: 100%
     margin-right: 0
+
+div.event.minimal
+  .sample
+    margin: 7px 0
+  .minimal-practicalities
+    margin: 0
+    span
+      &.location, &.time
+        display: block
+        padding-bottom: 5px
 
 div.event 
   .detail

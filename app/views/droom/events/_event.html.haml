@@ -45,25 +45,29 @@
             = render :partial => "droom/folders/contents", :locals => {:folder => event.folder, :open => true, :flat => true, :narrow => true, :limit => 3, :omit_menu => true, :for_more => droom.event_url(event)}
 
       %p.practicalities
-        %time
-          = l(event.start_time, :format => :natural)
-
-        - if event.finish?
-          = t :to
-          %time
-            = l(event.finish_time, :format => :natural)
-        - if event.timezone == "London"
-          = "(#{t(:uk_time)})"
-
-        - if event.venue
+        - if event.venue&.definite_name.present?
           %span.location
-            = t(:at)
+            %svg.icon.pint-sized
+              %use{"xlink:href" => "#location_symbol"}
             - if event.venue.url
-              = link_to event.venue.definite_name + ".", event.venue.url
+              = link_to event.venue.definite_name, event.venue.url
             - elsif Droom.show_venue_map?
-              = link_to event.venue.definite_name + ".", venues_url(:id => event.venue.id)
+              = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
             - else
-              = event.venue.definite_name + "."
+              = event.venue.definite_name
+        %span.time
+          %svg.icon.pint-sized2
+            %use{"xlink:href" => "#clock_symbol"}
+          %time
+            = l(event.start_time, :format => :natural)
+
+          - if event.finish?
+            = t :to
+            %time
+              = l(event.finish_time, :format => :natural)
+          - if event.timezone == "London"
+            = "(#{t(:uk_time)})"
+
         - if event.tags.any?
           %br
           = render "droom/tags/summary", tags: event.tags
