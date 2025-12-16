@@ -24,11 +24,8 @@
           = organisation.chinese_name
 
     - if organisation.tags.any?
-      %ul.croucher_tags.spacing_top
-        - organisation.tags.each do |tag|
-          %li.croucher_tag.small
-            = tag.name
-
+      = render "droom/tags/summary", tags: organisation.tags, tagclass: 'small'
+      
     %p.details.notes
       - if organisation.organisation_type
         = t "organisation_types.#{organisation.organisation_type.name.downcase}"

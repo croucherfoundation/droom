@@ -13,7 +13,7 @@
 
   - if notice.tags.any?
     %p.practicalities
-      = render "droom/tags/summary", tags: notice.tags, space_top: notice.scraptype == 'event'
+      = render "droom/tags/summary", tags: notice.tags, tagclass: 'small', space_top: notice.scraptype == 'event'
 
   .notice_body
     %div{class: truncated ? "compact" : ""}

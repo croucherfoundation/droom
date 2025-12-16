@@ -2,9 +2,6 @@
   = render :partial => "droom/dashboard/external"
 
 - else
-  -content_for :standfirst do
-    = render :partial => "droom/dashboard/welcome"
-
   -content_for :margin do
     - Droom.margin_dashboard_modules.each do |mod|
       = render :partial => "droom/dashboard/#{mod}"
