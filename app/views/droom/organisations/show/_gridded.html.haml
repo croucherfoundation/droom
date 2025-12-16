@@ -24,13 +24,10 @@
           = organisation.chinese_name
 
     - if organisation.tags.any?
-      %ul.tags
+      %ul.croucher_tags.spacing_top
         - organisation.tags.each do |tag|
-          %li.tag
-            %svg.prefix
-              %use{"xlink:href" => "#tag_symbol"}
-            %span.label
-              = tag.name
+          %li.croucher_tag.small
+            = tag.name
 
     %p.details.notes
       - if organisation.organisation_type

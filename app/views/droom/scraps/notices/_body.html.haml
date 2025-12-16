@@ -11,6 +11,10 @@
   - short_caption = truncate strip_tags(caption), length: caption_limit, :separator => " "
   - truncated = body != short_body || caption != short_caption
 
+  - if notice.tags.any?
+    %p.practicalities
+      = render "droom/tags/summary", tags: notice.tags, space_top: notice.scraptype == 'event'
+
   .notice_body
     %div{class: truncated ? "compact" : ""}
       - unless omit_body
@@ -33,10 +37,6 @@
             = sanitize(caption)
         %a.reveal
           =t (:notice_contract)
-
-  - if notice.tags.any?
-    %p.practicalities
-      = render "droom/tags/summary", tags: notice.tags
 
   .footnote
     %p

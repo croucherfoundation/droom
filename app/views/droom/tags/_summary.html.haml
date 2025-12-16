@@ -1,6 +1,8 @@
 - tags ||= []
+- space_top ||= false
+
 - if tags.any?
-  .croucher_tags.spacing_top
+  .croucher_tags.spacing_top{class: ("mt_20" if space_top)}
     - tags.each do |tag|
-      .croucher_tag 
+      .croucher_tag.small
         = tag.name
