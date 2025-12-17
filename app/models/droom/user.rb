@@ -67,7 +67,8 @@ module Droom
     scope :gatekeepers, -> { where(admin: true, gatekeeper: true) }
     scope :external, -> { joins(:organisation).where(droom_organisations: {external: true}) }
     scope :internal, -> { joins(:organisation).where(droom_organisations: {external: false}) }
-
+    scope :deleted, -> { where.not(deleted_at: nil) }
+    scope :undeleted, -> { where(deleted_at: nil) }
 
     # People are often invited into the system in batches or after offline contact.
     # set user.defer_confirmation to a true or call user.defer_confirmation! +before saving+
