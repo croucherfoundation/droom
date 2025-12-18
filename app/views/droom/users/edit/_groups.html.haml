@@ -3,7 +3,7 @@
 #note
   .standard-modal-overlay.active
     .standard-modal-container.active
-      %svg.logo.ml-56
+      %svg.logo
         %use{"xlink:href" => "#croucher_logo"}
       = form_for user, :html => {class: 'poppedup'}, data: {remote: true, type: :html} do |f|
         = hidden_field_tag :view, @view

@@ -1,7 +1,7 @@
 #compile_pdf
   .standard-modal-overlay.active
     .standard-modal-container.active
-      %svg.logo.ml-56
+      %svg.logo
         %use{"xlink:href" => "#croucher_logo"}
 
       = form_for @event, url: compile_pdf_selection_event_url(@event), method: :post, html: { class: 'compile-pdf' } do |f|

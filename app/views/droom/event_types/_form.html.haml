@@ -1,6 +1,6 @@
 .standard-modal-overlay.active
   .standard-modal-container.active
-    %svg.logo.ml-56
+    %svg.logo
       %use{"xlink:href" => "#croucher_logo"}
 
     = form_for @event_type, :html => {:class => 'edit event_type', :remote => true, :data => {:type => :html}} do |f|

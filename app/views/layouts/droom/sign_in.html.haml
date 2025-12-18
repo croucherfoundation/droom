@@ -21,6 +21,7 @@
     %link{rel: "apple-touch-icon", size: "76x76", href: "/images/apple-touch-icon.png"}
     %link{rel: "apple-touch-icon", href: "/images/apple-touch-icon.png"}
     %link{rel: "icon", type: "image/png", href: "/images/favicon.png"}
+    %meta{name: "viewport", content: "width=device-width, initial-scale=1"}
 
     - if Rails.env.production?
       %script(async src="https://www.googletagmanager.com/gtag/js?id=UA-38204053-9")
@@ -30,7 +31,7 @@
         gtag('js', new Date());
         gtag('config', 'UA-38204053-9');
 
-  %body
+  %body.no_m_inline
     = hidden_field_tag :user_status, nil, data: {sign_in: "#{user_signed_in?}", tz_enabled: "#{FeatureFlag.enabled?('time-zone-feature', current_user)}"}
     
     .main_sub_navbar_container
