@@ -15,24 +15,26 @@ module Droom::Concerns::Tagged
       with_any_tag thing.tag_names, options
     end
 
-    def with_tags_like(tags, options={})
-      bool_query = {
-        should: tags.map { |tag_name| {term: { tags: tag_name } }}
-      }
-      if options[:since]
-        bool_query[:filter] = {range: { created_at: {gte: options[:since]} }}
-      end
-      args = { body: {
-        query: { bool: bool_query },
-        sort: options[:recent] ? [{ updated_at: { order: "desc" }}] : "_score"
-      }}
-      args[:limit] = options[:limit] if options[:limit]
+    def with_tags_like(tags, options = {})
+      criteria = { funding_tags: tags }
+      criteria[:created_at] = { gte: options[:since] } if options[:since].present?
+
+      order =
+        if options[:recent]
+          { updated_at: :desc }
+        else
+          { _score: :desc }
+        end
+
+      args = { where: criteria, order: order }
+      args[:limit]  = options[:limit]  if options[:limit]
       args[:offset] = options[:offset] if options[:offset]
-      self.search **args
+
+      self.search("*", **args)
     end
 
     def with_any_tag(tags, options={})
-      self.search where: {tags: tags}
+      self.search where: {funding_tags: tags}
     end
   end
 
