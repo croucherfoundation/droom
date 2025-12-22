@@ -55,6 +55,19 @@ div.event, form.event, div.project
           span.location
             display: block
             padding-bottom: 5px
+            font-size: 18px
+            display: flex
+            align-items: flex-start
+            gap: 7px
+          span.time
+            font-size: 18px
+            display: flex
+            align-items: flex-start
+            gap: 11px
+            time
+              line-height: 1.4
+              display: inline-block
+              width: calc(100% - 40px)
         div.detail
           display: flex
           flex-wrap: nowrap
@@ -101,6 +114,8 @@ form.event
     font-size: 1.5em
   p.practicalities
     margin: 10px 0
+    span.location, span.time
+      font-size: 18px
     &.input-dates
       display: flex
   input.timepicker

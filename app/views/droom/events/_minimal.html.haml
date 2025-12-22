@@ -44,26 +44,27 @@
           %p.practicalities
             - if event.venue&.definite_name.present?
               %span.location
-                %svg.icon.pint-sized
+                %svg.icon.pint-sized3
                   %use{"xlink:href" => "#location_symbol"}
-                - if event.venue&.url
-                  = link_to event.venue&.definite_name, event.venue.url
-                - elsif Droom.show_venue_map?
-                  = link_to event.venue&.definite_name, venues_url(:id => event.venue.id)
-                - else
-                  = event.venue&.definite_name
+                %span.venue_name
+                  - if event.venue&.url
+                    = link_to event.venue&.definite_name, event.venue.url
+                  - elsif Droom.show_venue_map?
+                    = link_to event.venue&.definite_name, venues_url(:id => event.venue.id)
+                  - else
+                    = event.venue&.definite_name
             - if is_outside_event
               %span.time
-                %svg.icon.pint-sized2
+                %svg.icon.pint-sized3
                   %use{"xlink:href" => "#clock_symbol"}
                 %time
                   = render 'droom/shared/date', event: event
             - else
               %span.time
-                %svg.icon.pint-sized2
+                %svg.icon.pint-sized3
                   %use{"xlink:href" => "#clock_symbol"}
                 %time
-                  = event.start.strftime('%A %d %B %Y, %H:%M')
+                  = event.start.strftime('%A %-d %B %Y, %H:%M')
                   - if event.finish?
                     — #{event.finish.strftime('%H:%M')}
                 - if event.timezone == "London"
