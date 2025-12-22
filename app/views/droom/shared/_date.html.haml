@@ -5,18 +5,22 @@
 
 - if start_day.present? && end_day.present?
   - if start_day.to_date == end_day.to_date
-    = l(start_day.to_date, format: :natural_with_year)
+    = start_day.strftime('%A %d %B %Y')
   - elsif start_day.year != end_day.year
-    = l(start_day.to_date, format: :natural_with_year)
-    &ndash;
-    = l(end_day.to_date, format: :natural_with_year)
+    = start_day.strftime('%A %d %B %Y')
+    —
+    = end_day.strftime('%A %d %B %Y')
   - elsif start_day.month != end_day.month
-    = l(start_day.to_date, format: :day_month)
-    &ndash;
-    = l(end_day.to_date, format: :natural_with_year)
+    = start_day.strftime('%A %d %B')
+    —
+    = end_day.strftime('%A %d %B %Y')
+  - elsif start_day.month == end_day.month
+    = start_day.strftime('%d')
+    —
+    = end_day.strftime('%d %B %Y')
   - elsif start_day.day != end_day.day
-    = l(start_day.to_date, format: :day)
-    &ndash;
-    = l(end_day.to_date, format: :natural_with_year)
+    = start_day.strftime('%A %d')
+    —
+    = end_day.strftime('%A %d %B %Y')
 - elsif start_day.present?
-  = l(start_day.to_date, format: :natural_with_year)
+  = start_day.strftime('%A %d %B %Y')

@@ -10,6 +10,8 @@
 - skip_gdoc = true
 - event_master_id = event.master_id || event.id
 
+- is_outside_event = event&.calendar_id == 2
+
 - if @seen_events[event_master_id]
   - repeating = true
   - brief = true
@@ -50,11 +52,22 @@
                   = link_to event.venue&.definite_name, venues_url(:id => event.venue.id)
                 - else
                   = event.venue&.definite_name
-            %span.time
-              %svg.icon.pint-sized2
-                %use{"xlink:href" => "#clock_symbol"}
-              %time
-                = render 'droom/shared/date', event: event
+            - if is_outside_event
+              %span.time
+                %svg.icon.pint-sized2
+                  %use{"xlink:href" => "#clock_symbol"}
+                %time
+                  = render 'droom/shared/date', event: event
+            - else
+              %span.time
+                %svg.icon.pint-sized2
+                  %use{"xlink:href" => "#clock_symbol"}
+                %time
+                  = event.start.strftime('%A %d %B %Y, %H:%M')
+                  - if event.finish?
+                    — #{event.finish.strftime('%H:%M')}
+                - if event.timezone == "London"
+                  = " (#{t(:uk_time)})"
 
             - if show_folder && !full_attachments
               - if event.folder.populated?
