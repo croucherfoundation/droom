@@ -3,7 +3,7 @@
 
 - if calendar = Droom::Calendar.where(name: 'stream').first
   
-  #minimal{:data => {:refreshing => true, class: "#{centered ? 'redline_section_divider' : ''}"}}
+  #minimal{:data => {:refreshing => true}}
     - tag = centered ? 'h3' : 'h2'
     = content_tag tag, class: (centered ? 'text-subtitle mb_subtitle redline_t_0' : 'section') do
       = t(:external_events)

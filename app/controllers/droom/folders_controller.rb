@@ -11,6 +11,7 @@ module Droom
     def index
       @folders = @folders.populated unless current_user.admin?
       respond_with @folders do |format|
+        format.html { render layout: 'centered' }
         format.js {
           render :partial => 'droom/folders/folders'
         }

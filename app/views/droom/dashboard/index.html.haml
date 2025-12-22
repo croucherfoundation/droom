@@ -17,7 +17,7 @@
       - open_screeners = screeners.select { |screener| screener.round&.open? }.sort_by { |screener| screener.round&.screening_end || Time.current }
       - closed_screeners = screeners.select { |screener| !screener.round&.open? }.sort_by { |screener| screener.round&.screening_end || Time.zone.at(0) }.reverse
       - sorted_screeners = open_screeners + closed_screeners
-      .screeners.redline_section_divider
+      .screeners
         %h3.text-subtitle.mb_subtitle
           = t(:selection_rounds)
         = render partial: "droom/dashboard/screeners", collection: sorted_screeners, as: :screener
