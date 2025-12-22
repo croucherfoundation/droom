@@ -71,7 +71,7 @@
               %time
                 = datetime_by_timezone(event.start, 'datetime').strftime('%A %-d %B %Y, %H:%M')
                 - if event.finish?
-                  — #{datetime_by_timezone(event.finish, 'datetime').strftime('%H:%M')}
+                  – #{datetime_by_timezone(event.finish, 'datetime').strftime('%H:%M')}
               - if !current_user.timezone.present? && event.timezone == "London"
                 = " (#{t(:uk_time)})"
 
@@ -89,7 +89,7 @@
               %time
                 = event.start.strftime('%A %-d %B %Y, %H:%M')
                 - if event.finish?
-                  — #{event.finish.strftime('%H:%M')}
+                  – #{event.finish.strftime('%H:%M')}
               - if event.timezone == "London"
                 = " (#{t(:uk_time)})"
 
