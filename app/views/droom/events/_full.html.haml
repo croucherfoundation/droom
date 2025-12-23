@@ -1,0 +1,90 @@
+- @seen_events ||= []
+- event ||= @event
+- event_invitation ||= @event_invitation
+- show_folder = (event.folder && can?(:read, event.folder)) || current_user.permitted?('droom.library.read_event_documents')
+- skip_gdoc = true
+- is_outside_event = @event&.calendar_id == 2
+
+- event_master_id = event.master_id || event.id
+- if @seen_events[event_master_id]
+  - repeating = true
+  - brief = true
+- @seen_events[event_master_id] = true;
+
+- cssclasses = ['event']
+- cssclasses << 'invited' if event.attended_by?(current_user)
+
+- div_data = {refreshing: event_path(event, view: 'full', format: :js)}
+- if show_folder
+  - div_data[:droppable] = droom.folder_documents_path(event.folder)
+  - div_data[:queue] = "#queue_to_#{event.folder.id}"
+  - div_data[:refreshes] = "#event_#{event.id}"
+
+- content_for :title do
+  = event.name
+  = action_menulink(event)
+  = action_menu(event)
+
+%div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
+  .summary
+    .heading 
+      .detail-practicalities.full.text-body
+        %p.practicalities
+          - if event.venue&.definite_name.present?
+            %span.location
+              %svg.icon.pint-sized3
+                %use{"xlink:href" => "#location_symbol"}
+              %span.venue_name
+                - if event.venue.url
+                  = link_to event.venue.definite_name, event.venue.url
+                - elsif Droom.show_venue_map?
+                  = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
+                - else
+                  = event.venue.definite_name
+          
+          - if is_outside_event
+            %span.time
+              %svg.icon.pint-sized3
+                %use{"xlink:href" => "#clock_symbol"}
+              %time
+                = render 'droom/shared/date', event: event
+          
+          - else
+            %span.time
+              %svg.icon.pint-sized3
+                %use{"xlink:href" => "#clock_symbol"}
+              %time
+                = event.start.strftime('%A %-d %B %Y, %H:%M')
+                - if event.finish?
+                  – #{event.finish.strftime('%H:%M')}
+              - if event.timezone == "London"
+                = " (#{t(:uk_time)})"
+        
+        .detail
+          - if event.description?
+            .content{style: "width:100%"}
+              = sanitize(event.description)
+        
+        .links
+          - if event.url?
+            .inline
+              = t(:website) + ":"
+              = link_to ensure_protocol(event.url), target: "_blank", style: "color:black" do
+                %svg.icon{style: "height: 28px; padding-bottom: 1px"}
+                  %use{href: "#arrow_icon"}
+          - if event.video_conference_link?
+            .inline
+              = t(:conference_call) + ":"
+              = link_to ensure_protocol(event.video_conference_link), target: "_blank", style: "color:black" do
+                %svg.icon{style: "height: 28px; padding-bottom: 1px"}
+                  %use{href: "#arrow_icon"}
+      
+  - if show_folder 
+    .addenda.text-body.full
+      = render :partial => 'droom/events/attachments', :locals => {:event => event, skip_gdoc: skip_gdoc}
+      	
+    - if event_invitation
+      %h3.text-smallsubtitle.mb_subtitle
+        = t :invitations
+      = render :partial => 'droom/events/event_invitation', :locals => {:event => event}
+    = render :partial => 'droom/events/invitations', :locals => {:event => event}

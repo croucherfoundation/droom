@@ -1,8 +1,7 @@
 - event ||= @event
 
 .col
-  - if event.invitations.any?
-    %h3 Invitations
+  - if event.invitations.any?  
     %ul.people{ :"data-url" => "#{event_invitations_path(event)}.js", :"data-refreshing" => true}
       - event.invitations.each do |invitation|
         - next if invitation.user.nil?

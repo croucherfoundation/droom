@@ -1,13 +1,15 @@
-- content_for :title do
-  = link_to t(:calendar), droom.events_url, class: 'event_link_title'
-
+- content_for :pagetitle do
+  = t :calendar
+  
 - content_for :subnavbar do
   = render :partial => 'subnavbar'
 
-- content_for :margin do
-  %h3
+- content_for :after_content do
+  - other_events = Droom::Event.of_type(@event.event_type).other_than(@event).by_date_descending.limit(6)
+
+  %h3.text-subtitle.mb_subtitle
     Other events of this type
-
-  = render :partial => 'droom/events/minimal', collection: Droom::Event.of_type(@event.event_type).other_than(@event).by_date_descending
-
-= render :partial => 'droom/events/event', :object => @event, :locals => {:full_attachments => true}
+  .card_container 
+    = render :partial => 'droom/events/card', collection: other_events
+  
+= render :partial => 'droom/events/full', :object => @event, :locals => {:full_attachments => true}

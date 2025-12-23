@@ -55,12 +55,12 @@ div.event, form.event, div.project
           span.location
             display: block
             padding-bottom: 5px
-            font-size: 16px
+            font-size: 20px
             display: flex
             align-items: flex-start
             gap: 6px
           span.time
-            font-size: 16px
+            font-size: 20px
             display: flex
             align-items: flex-start
             gap: 10px
@@ -68,13 +68,18 @@ div.event, form.event, div.project
               line-height: 1.4
               display: inline-block
               width: calc(100% - 40px)
-              padding-top: 1px
         div.detail
           display: flex
           flex-wrap: nowrap
           padding-top: 5px
+        &.full
+          width: 100%
+          .detail
+            margin-top: 20px
+            margin-bottom: 10px
+          .links
+            margin-bottom: 45px
       .attachments
-        // display: inline-block
         width: 50%
     p.visibility
       float: right
@@ -86,6 +91,11 @@ div.event, form.event, div.project
     display: block
     width: 100%
     margin-right: 0
+  
+  div.full.addenda
+    .attachments
+      float: none
+      width: 100%
 
 .event.minimal .sample
   span.location, span.time

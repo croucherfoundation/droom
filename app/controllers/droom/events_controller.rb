@@ -16,6 +16,8 @@ module Droom
     before_action :set_timezone_feature, :only => [:index, :show]
     load_and_authorize_resource
 
+    before_action :set_event_invitation, only: [:show, :update]
+
     def index
       respond_with @events do |format|
         format.js { render :partial => 'droom/events/events' }
@@ -55,9 +57,9 @@ module Droom
     end
 
     def show
-      @event_invitation = Droom::Invitation.where(user_id: current_user.id, event_id: @event.id).first if @event
       respond_with @event do |format|
-        format.js { render :partial => 'droom/events/event' }
+        format.html { render :layout => 'centered' }
+        format.js { render :partial => "droom/events/#{params[:view].presence || 'event'}" }
         format.zip { send_file @event.documents_zipped.path, :type => 'application/zip', :disposition => 'attachment', :filename => "#{@event.slug}.zip" }
       end
     end
@@ -85,7 +87,11 @@ module Droom
         if @event.stream?
           render :partial => "minimal", locals: { show_color_button: true}
         else
-          render :partial => "event"
+          if request.referrer =~ /\/events\/\d+/
+            render :partial => "full"
+          else
+            render :partial => "event"
+          end
         end
       else
         respond_with @event
@@ -108,7 +114,7 @@ module Droom
           event.generate_thumbnails(file_path)
           render json: { success: true }
         end
-        
+
       else
         render json: { error: "Invalid file type" }, status: :unprocessable_entity
       end
@@ -200,6 +206,10 @@ module Droom
 
     def set_timezone_feature
       @timezone_feature = FeatureFlag.enabled?('time-zone-feature', current_user)
+    end
+
+    def set_event_invitation
+      @event_invitation = Droom::Invitation.where(user_id: current_user.id, event_id: @event.id).first if @event
     end
 
     def get_my_events

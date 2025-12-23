@@ -347,6 +347,7 @@ en:
   hong_koong_time: "Hong Kong time"
   invitation_successful: "Success: %{name} has been invited."
   invitations_highlighted: "Events to which you are invited will be highlighted."
+  invitations: "Invitations"
   invite: "Invite"
   invite_event: "Invitation status"
   invite_event_accepted: "Accepted to join this event"
