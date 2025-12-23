@@ -54,11 +54,16 @@
               %svg.icon.pint-sized3
                 %use{"xlink:href" => "#clock_symbol"}
               %time
-                = event.start.strftime('%A %-d %B %Y, %H:%M')
+                - start_time = event_time_in_hk(event.start, event)
+                = start_time.strftime('%A %-d %B %Y, %H:%M')
+
                 - if event.finish?
-                  – #{event.finish.strftime('%H:%M')}
-              - if event.timezone == "London"
-                = " (#{t(:uk_time)})"
+                  - finish_time = event_time_in_hk(event.finish, event)
+                  – #{finish_time.strftime('%H:%M')}
+
+            - if event.timezone == "London"
+              %i.note{style: "display: block;"}
+                = "#{event.start.strftime('%A %-d %B %Y, %H:%M')} (#{t(:uk_time)})"
         
         .detail
           - if event.description?
