@@ -19,7 +19,7 @@
     - open = true if folder == @folder || folder.ancestor_of?(@folder)
 
   - defer_contents ||= !open
-  - cssclass = "folder"
+  - cssclass = "folder text-body"
   - cssclass << " open" if open && !folder.loose?
   - cssclass << " root" if folder.loose?
   - cssclass << " empty" unless folder.populated?
