@@ -7,5 +7,9 @@
     = action_menulink(group)
   = action_menu(group)
 
-  .scroller.full-w
-    = render partial: "droom/groups/users", locals: {group: group, users: users}
+  - if users.count > 0
+    .scroller.full-w
+      = render partial: "droom/groups/users", locals: {group: group, users: users}
+  - else
+    %p
+      = t(:no_users_in_group)

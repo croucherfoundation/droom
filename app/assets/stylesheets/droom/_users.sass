@@ -75,6 +75,8 @@ ul.people
       grid-template-columns: repeat(2, 1fr)
     @media (max-width: 768px)
       grid-template-columns: repeat(1, 1fr)
+    li.person span.mugshot
+      margin-top: 5px
 
   li.person
     display: inline-block
@@ -98,6 +100,10 @@ ul.people
         white-space: nowrap
         display: block
         margin-bottom: 0px
+        font-size: 20px
+      &.name
+        font-size: 20px
+        white-space: break-spaces
       &.add
         color: $green
         span.mugshot
