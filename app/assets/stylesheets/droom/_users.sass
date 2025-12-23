@@ -66,6 +66,16 @@ ul.people
   margin: 10px 0 0 -2px
   padding: 0
   list-style: none
+  &.three_columns
+    display: grid
+    grid-template-columns: repeat(3, 1fr)
+    gap: 10px
+    max-width: 794px
+    @media (max-width: 1024px)
+      grid-template-columns: repeat(2, 1fr)
+    @media (max-width: 768px)
+      grid-template-columns: repeat(1, 1fr)
+
   li.person
     display: inline-block
     vertical-align: top
@@ -83,6 +93,11 @@ ul.people
       white-space: nowrap
       &.email
         color: $mid
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+        display: block
+        margin-bottom: 0px
       &.add
         color: $green
         span.mugshot

@@ -1,11 +1,11 @@
 - group ||= @group
 - users = @users || group.users.page(1).per(20)
 
-%div.group{:id => "group_#{group.id}", :data => {:refreshing => true, :url => group_path(group, :format => :js)} }
-  %h2
+%div.group.first-c-no-pt{:id => "group_#{group.id}", :data => {:refreshing => true, :url => group_path(group, :format => :js)} }
+  %h3.text-smallsubtitle.mb_subtitle
     = group.name
     = action_menulink(group)
   = action_menu(group)
 
-  .scroller
+  .scroller.full-w
     = render partial: "droom/groups/users", locals: {group: group, users: users}

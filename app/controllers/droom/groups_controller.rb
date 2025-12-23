@@ -1,6 +1,7 @@
 module Droom
   class GroupsController < Droom::DroomController
     respond_to :html, :js
+    layout 'centered', only: :index
 
     before_action :get_groups, :only => [:index]
     load_and_authorize_resource
