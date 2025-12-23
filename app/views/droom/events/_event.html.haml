@@ -69,18 +69,16 @@
               %svg.icon.pint-sized3
                 %use{"xlink:href" => "#clock_symbol"}
               %time
-                = datetime_by_timezone(event.start, 'datetime').strftime('%A %-d %B %Y, %H:%M')
-                - if event.finish?
-                  – #{datetime_by_timezone(event.finish, 'datetime').strftime('%H:%M')}
-              - if !current_user.timezone.present? && event.timezone == "London"
-                = " (#{t(:uk_time)})"
+                - start_time = event_time_in_hk(event.start, event)
+                = start_time.strftime('%A %-d %B %Y, %H:%M')
 
-            - if current_user.timezone
-              - city = current_user.timezone.split(",").map{|x| x.split("/").last}
-              - ev_timezone = event.timezone === 'Hong Kong' ? 'Hongkong' : event.timezone
-              - if city && !city.include?(ev_timezone)
-                %i.note{style: "display: block;"}
-                  = "#{event.start.strftime('%A %-d %B %Y, %H:%M')} (#{ev_timezone == 'London' ? t(:uk_time) : t(:hong_koong_time)})"
+                - if event.finish?
+                  - finish_time = event_time_in_hk(event.finish, event)
+                  – #{finish_time.strftime('%H:%M')}
+
+            - if event.timezone == "London"
+              %i.note{style: "display: block;"}
+                = "#{event.start.strftime('%A %-d %B %Y, %H:%M')} (#{t(:uk_time)})"
 
           - else
             %span.time
