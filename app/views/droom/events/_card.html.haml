@@ -5,12 +5,13 @@
     .card_title
       = event.name 
     .card_desc
-      .card_item 
-        .icon 
-          %svg.clock_icon
-            %use{"xlink:href" => "#location_symbol"}
-        .text 
-          = event.venue.definite_name
+      - if event.venue.present?
+        .card_item 
+          .icon 
+            %svg.clock_icon
+              %use{"xlink:href" => "#location_symbol"}
+          .text 
+            = event.venue.definite_name
       .card_item
         .icon 
           %svg.location_icon
