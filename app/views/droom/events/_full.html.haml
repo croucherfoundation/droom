@@ -81,11 +81,12 @@
                     %use{href: "#arrow_icon"}
       
   - if show_folder 
-    .addenda.text-body.full
-      = render :partial => 'droom/events/attachments', :locals => {:event => event, skip_gdoc: skip_gdoc}
-      	
-    - if event_invitation
-      %h3.text-smallsubtitle.mb_subtitle
-        = t :invitations
-      = render :partial => 'droom/events/event_invitation', :locals => {:event => event}
-    = render :partial => 'droom/events/invitations', :locals => {:event => event}
+    - if (event.folder.documents.count > 0 || event.folder.children.count > 0) || event.compiled_file.attached?
+      .addenda.text-body.full
+        = render :partial => 'droom/events/attachments', :locals => {:event => event, skip_gdoc: skip_gdoc}
+          
+      - if event_invitation
+        %h3.text-smallsubtitle.mb_subtitle
+          = t :invitations
+        = render :partial => 'droom/events/event_invitation', :locals => {:event => event}
+        = render :partial => 'droom/events/invitations', :locals => {:event => event}
