@@ -3,7 +3,7 @@
 
 %section
   #events{:data => {:refreshing => true, :url => droom.events_url(:limit => 5)}}
-    %h3.text-subtitle.mb_subtitle
+    %h3.text-smallsubtitle.mb_subtitle
       = link_to t(:upcoming_events), main_app.calendar_url
       
     - events = calendar.events.past.limit(5) unless events.any?
