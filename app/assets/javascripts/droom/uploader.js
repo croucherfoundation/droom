@@ -40,6 +40,15 @@
           this._triggers = $(picker_selector);
         } else {
           this._triggers = this._catcher.find('[data-role="upload-file"]');
+          if (this._triggers.length === 0) {
+            // Only attach to standard button if not already used by another droploader
+            if (!window.droploaderStandardTriggerAttached) {
+              this._triggers = $('.standard-upload-btn');
+              window.droploaderStandardTriggerAttached = true;
+            } else {
+              this._triggers = $();  // Empty set: no trigger for this droploader
+            }
+          }
         }
         this._triggers.click(this.triggerFilefield);
         this._readers = [];
