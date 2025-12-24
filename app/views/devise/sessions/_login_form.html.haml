@@ -21,7 +21,7 @@
           %label{for: "password"} Password
           = f.password_field :password, class: "sign_in_password #{'has-error' if params[:failed].present?}", placeholder: t("placeholders.session.password")
           %button.eye{type: "button"}
-            %img{alt: "open", src: "https://cmss.croucher.org.hk/assets/images/icons/eye-02.svg"}/
+            %img{alt: "open", src: "https://croucher.org.hk/assets/images/icons/eye-02.svg"}/
 
         .sign_in_btn
           = f.submit t(:sign_in), class: "croucher-standard-btn"

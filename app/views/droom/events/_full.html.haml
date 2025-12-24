@@ -70,20 +70,19 @@
             .content{style: "width:100%"}
               = sanitize(event.description)
         
-        - if event.url? || event.video_conference_link?
-          .links
-            - if event.url?
-              .inline
-                = t(:website) + ":"
-                = link_to ensure_protocol(event.url), target: "_blank", style: "color:black" do
-                  %svg.icon{style: "height: 28px; padding-bottom: 1px"}
-                    %use{href: "#arrow_icon"}
-            - if event.video_conference_link?
-              .inline
-                = t(:conference_call) + ":"
-                = link_to ensure_protocol(event.video_conference_link), target: "_blank", style: "color:black" do
-                  %svg.icon{style: "height: 28px; padding-bottom: 1px"}
-                    %use{href: "#arrow_icon"}
+        .links
+          - if event.url?
+            .inline
+              = t(:website) + ":"
+              = link_to ensure_protocol(event.url), target: "_blank", style: "color:black" do
+                %svg.icon{style: "height: 28px; padding-bottom: 1px"}
+                  %use{href: "#arrow_icon"}
+          - if event.video_conference_link?
+            .inline
+              = t(:conference_call) + ":"
+              = link_to ensure_protocol(event.video_conference_link), target: "_blank", style: "color:black" do
+                %svg.icon{style: "height: 28px; padding-bottom: 1px"}
+                  %use{href: "#arrow_icon"}
       
   - if show_folder 
     - if (event.folder.documents.count > 0 || event.folder.children.count > 0) || event.compiled_file.attached?
