@@ -1,8 +1,26 @@
 - content_for :pagetitle do
   = @event.name
+
+- content_for :title do
+  = @event.name
   
 - content_for :subnavbar do
   = render :partial => 'subnavbar'
+
+- content_for :buttons do
+  .action.standard-btn-group.pt.pr
+    - if can? :edit, @event
+      = link_to droom.edit_event_url(@event), class: "btn", data: {action: 'popup', affected: "#event_#{@event.id}"}  do
+        %svg
+          %use{href: "#edit_symbol"}
+        = t :edit_event
+
+      = link_to '#', class: "btn", data: {role: 'upload-file'}  do
+        = image_tag 'svg/add.svg', width: 20, height: 20 
+        = t :add_document
+      
+      .more-actions
+        = render 'droom/events/more_actions'
 
 - content_for :after_content do
   - other_events = Droom::Event.of_type(@event.event_type).other_than(@event).by_date_descending.limit(6)

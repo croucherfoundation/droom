@@ -100,7 +100,8 @@ module Droom
 
     def destroy
       @event.destroy
-      head :ok
+      flash[:notice] = 'Event deleted successfully.'
+      redirect_to droom.events_path
     end
 
     def upload_pdf

@@ -24,9 +24,9 @@
         .buttons
           = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
           - if user == current_user
-            = f.submit t(:save_your_profile), class: 'standard-modal-submit'
+            = f.submit t(:save_your_profile), class: 'croucher-standard-btn inline'
           - else
-            = f.submit t(:save_profile), class: 'standard-modal-submit'
+            = f.submit t(:save_profile), class: 'croucher-standard-btn inline'
 
           - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
             %p.inputs.mt-8
