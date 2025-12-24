@@ -22,8 +22,6 @@
 
 - content_for :title do
   = event.name
-  = action_menulink(event)
-  = action_menu(event)
 
 %div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
   .summary

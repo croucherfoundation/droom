@@ -43,8 +43,6 @@
     .heading
       %h2.name<
         = link_to event.name, event_url(event), :class => "name"
-        = action_menulink(event)
-      = action_menu(event)
       .detail-practicalities
         %p.practicalities
           - if event.venue&.definite_name.present?
