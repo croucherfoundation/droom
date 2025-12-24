@@ -25,6 +25,6 @@
       - closed_screeners = screeners.select { |screener| !screener.round&.open? }.sort_by { |screener| screener.round&.screening_end || Time.zone.at(0) }.reverse
       - sorted_screeners = open_screeners + closed_screeners
       .screeners
-        %h3.text-smallsubtitle.mb_subtitle.no_redtag
+        %h3.standard-h3-title
           = t(:selection_rounds)
         = render partial: "droom/dashboard/screeners", collection: sorted_screeners, as: :screener

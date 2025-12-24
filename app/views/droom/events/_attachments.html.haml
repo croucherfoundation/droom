@@ -3,7 +3,7 @@
 - folder ||= event.folder
 .col.attachments{data: {droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}", refreshes: "#event_#{event.id}"}, style: "margin-bottom: 20px"}
   - if (folder.documents.count > 0 || folder.children.count > 0) || event.compiled_file.attached?
-    %h3.text-smallsubtitle.mb_subtitle
+    %h3.standard-h3-title
       = t :attachments
   
   %ul.uploads{id: "queue_to_#{folder.id}"}

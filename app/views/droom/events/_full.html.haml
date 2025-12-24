@@ -85,7 +85,7 @@
         = render :partial => 'droom/events/attachments', :locals => {:event => event, skip_gdoc: skip_gdoc}
           
       - if event_invitation
-        %h3.text-smallsubtitle.mb_subtitle
+        %h3.standard-h3-title
           = t :invitations
         = render :partial => 'droom/events/event_invitation', :locals => {:event => event}
         = render :partial => 'droom/events/invitations', :locals => {:event => event}
