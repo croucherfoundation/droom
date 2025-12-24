@@ -7,8 +7,5 @@
     - tag = centered ? 'h3' : 'h2'
     = content_tag tag, class: (centered ? 'text-subtitle mb_subtitle redline_t_0' : 'section') do
       = t(:external_events)
-      - if can?(:create, Droom::Event)
-        %span.action
-          = link_to t(:add_event), droom.new_event_url(event: {calendar_id: calendar.id}), :class => "add", :data => {:action => "popup", :affected => "#minimal"}
     = render "droom/calendars/event_list", calendar: calendar, events: calendar.events.current_and_onwards.limit(10)
 
