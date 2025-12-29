@@ -85,7 +85,8 @@ module Droom
     # If the skip_session_limitable? method returns true, the session_limitable
     # devise module will skip checking the session's unique ID against the stored value.
     def skip_session_limitable?
-      Thread.current[:skip_session_limit]
+      return true if Thread.current[:skip_session_limit]
+      super # falls back to default false
     end
 
     def ability
