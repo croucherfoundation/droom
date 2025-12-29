@@ -46,7 +46,7 @@
             - if event.start?
               %span.time
                 %time
-                  - time_data = event_time_in_hk(event.start, event).strftime('%A · %H:%M')
+                  - time_data = event_time_in_hk(event.start, event).strftime('%a · %H:%M')
                   - if event.finish?
                     - finish_time = event_time_in_hk(event.finish, event) 
                     - time_data += "–#{finish_time.strftime('%H:%M')}"
@@ -54,7 +54,7 @@
 
               - if event.timezone == "London"
                 %i.note{style: "display: block;"}
-                  = "#{event.start.strftime('%A %-d %B %Y · %H:%M')} (#{t(:uk_time)})"
+                  = "#{event.start.strftime('%a · %H:%M')} (#{t(:uk_time)})"
             
             - if event.venue&.definite_name.present?
               %span.location
