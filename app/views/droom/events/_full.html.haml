@@ -27,6 +27,8 @@
         %p.practicalities
           - if event.start?
             %span.time
+              %svg.icon.standard
+                %use{"xlink:href" => "#clock_symbol"}
               %time
                 - time_data = event_time_in_hk(event.start, event).strftime('%A %-d %B %Y · %H:%M')
                 - if event.finish?
