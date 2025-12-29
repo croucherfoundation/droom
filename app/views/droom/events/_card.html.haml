@@ -5,21 +5,21 @@
     .card_title
       = link_to event.name, event_url(event)
     .card_desc
+      .card_item
+        .card_text 
+          - time_data = event_time_in_hk(event.start, event).strftime('%A %-d %B %Y · %H:%M')
+          - if event.finish?
+            - finish_time = event_time_in_hk(event.finish, event) 
+            - time_data += "–#{finish_time.strftime('%H:%M')}"
+          = time_data
+
       - if event.venue.present?
         .card_item 
           .icon 
-            %svg.clock_icon
+            %svg.location_icon
               %use{"xlink:href" => "#location_symbol"}
           .text 
             = event.venue.definite_name
-      .card_item
-        .icon 
-          %svg.location_icon
-            %use{"xlink:href" => "#clock_symbol"}
-        .text 
-          = event.start.strftime('%A %-d %B %Y, %H:%M')
-          - if event.finish?
-            – #{event.finish.strftime('%H:%M')}
       
       .card_item
         .card_text 
