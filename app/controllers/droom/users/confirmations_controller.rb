@@ -1,5 +1,6 @@
 module Droom::Users
   class ConfirmationsController < Devise::ConfirmationsController
+    prepend_before_action :skip_session_limit
     before_action :set_access_control_headers
     skip_before_action :verify_authenticity_token, raise: false
     skip_before_action :check_user_is_confirmed
@@ -27,5 +28,12 @@ module Droom::Users
       Droom.layout
     end
 
+    private
+
+    def skip_session_limit
+      if params[:send_invitation_memo].to_s == "true"
+        Thread.current[:skip_session_limit] = true
+      end
+    end
   end
 end

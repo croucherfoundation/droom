@@ -82,6 +82,12 @@ module Droom
     #
     attr_accessor :defer_confirmation, :send_confirmation, :confirming, :other_id
 
+    # If the skip_session_limitable? method returns true, the session_limitable
+    # devise module will skip checking the session's unique ID against the stored value.
+    def skip_session_limitable?
+      Thread.current[:skip_session_limit]
+    end
+
     def ability
       @ability ||= Ability.new(self)
     end
