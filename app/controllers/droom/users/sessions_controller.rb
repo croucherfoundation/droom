@@ -2,6 +2,7 @@ require 'droom/auth_cookie'
 
 module Droom::Users
   class SessionsController < Devise::SessionsController
+    prepend_before_action :reset_thread
     before_action :set_access_control_headers
     skip_before_action :verify_authenticity_token, raise: false
     layout 'droom/sign_in'
@@ -68,6 +69,12 @@ module Droom::Users
 
     def all_signed_out?
       !user_signed_in?
+    end
+
+    private
+
+    def reset_thread
+      Thread.current[:skip_session_limit] = nil
     end
 
   end

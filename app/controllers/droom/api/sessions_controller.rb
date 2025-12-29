@@ -4,6 +4,7 @@ module Droom::Api
 
     respond_to :json
     # skip_before_action :authenticate_user!, raise: false
+    prepend_before_action :reset_thread
     skip_before_action :verify_authenticity_token, raise: false
     before_action :set_access_control_headers
 
@@ -70,6 +71,12 @@ module Droom::Api
 
     def devise_controller?
       true
+    end
+
+    private
+
+    def reset_thread
+      Thread.current[:skip_session_limit] = nil
     end
   end
 end
