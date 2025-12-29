@@ -1,7 +1,9 @@
 module Droom
   class DashboardController < Droom::DroomController
     respond_to :html, :js
+    prepend_before_action :skip_session_limit
     skip_authorization_check
+
 
     def index
       authorize! :read, :dashboard

@@ -64,5 +64,10 @@ module Droom
       end
     end
 
+    def skip_session_limit
+      if params[:send_invitation_memo].to_s == "true"
+        Thread.current[:skip_session_limit] = true
+      end
+    end
   end
 end

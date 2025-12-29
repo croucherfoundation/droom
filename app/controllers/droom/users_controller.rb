@@ -2,6 +2,7 @@ module Droom
   class UsersController < Droom::DroomController
     helper Droom::DroomHelper
     respond_to :html, :js
+    prepend_before_action :skip_session_limit, only: [:setup]
     skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation]
     before_action :set_view, only: [:show, :new, :edit, :update]
     # before_action :search_users, only: [:admin]
