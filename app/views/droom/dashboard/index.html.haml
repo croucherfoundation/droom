@@ -17,7 +17,7 @@
     .dashboard
       - Droom.main_dashboard_modules.each do |mod|
         = render :partial => "droom/dashboard/#{mod}"
-    .outside_events
+    .outside_events.event_list
       - Droom.margin_dashboard_modules.each do |mod|
         = render :partial => "droom/dashboard/#{mod}", :locals => {:centered => true}
     - if screeners.any?
