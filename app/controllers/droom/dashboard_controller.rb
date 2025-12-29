@@ -9,6 +9,11 @@ module Droom
       render layout: Droom.dashboard_layout.to_s
     end
 
+    def centered_layout
+      authorize! :read, :dashboard
+      render layout: 'centered'
+    end
+
     private
 
     # force redirect to ER hub
