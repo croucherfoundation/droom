@@ -46,7 +46,7 @@
                 - time_data = event_time_in_hk(event.start, event).strftime('%a · %H:%M')
                 - if event.finish?
                   - finish_time = event_time_in_hk(event.finish, event) 
-                  - time_data += "–#{finish_time.strftime('%H:%M')}"
+                  - time_data += " – #{finish_time.strftime('%H:%M')}"
                 = time_data
 
             - if event.timezone == "London"
