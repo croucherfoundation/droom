@@ -21,7 +21,7 @@
   - div_data[:refreshes] = "#event_#{event.id}"
 
 %div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
-  .summary
+  .event_detail.summary
     .heading 
       .detail-practicalities.full.text-body
         %p.practicalities
@@ -29,12 +29,16 @@
             %span.time
               %svg.icon.standard
                 %use{"xlink:href" => "#clock_symbol"}
-              %time
-                - time_data = event_time_in_hk(event.start, event).strftime('%A %-d %B %Y · %H:%M')
+              %span.datetime
+                - event_date = event_time_in_hk(event.start, event).strftime('%A %-d %B %Y')
+                - event_time = event_time_in_hk(event.start, event).strftime('%H:%M') 
                 - if event.finish?
                   - finish_time = event_time_in_hk(event.finish, event) 
-                  - time_data += " – #{finish_time.strftime('%H:%M')}"
-                = time_data
+                  - event_time += " – #{finish_time.strftime('%H:%M')}"
+                = event_date 
+                %span.separator ·
+                %time
+                  = event_time
 
             - if event.timezone == "London"
               %i.note{style: "display: block;"}

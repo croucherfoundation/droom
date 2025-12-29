@@ -43,30 +43,26 @@
           = link_to event.name, event_url(event), :class => "name"
         .detail-practicalities
           %p.practicalities
-            - if event.start?
-              %span.time
+            %span.venue_time
+              - if event.venue.present?
+                - if event.venue.url
+                  = link_to event.venue.definite_name, event.venue.url
+                - elsif Droom.show_venue_map?
+                  = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
+                - else
+                  = event.venue.definite_name
+                
+                %span.separator ·
+              
+              - if start_time
                 %time
-                  - time_data = event_time_in_hk(event.start, event).strftime('%a · %H:%M')
-                  - if event.finish?
-                    - finish_time = event_time_in_hk(event.finish, event) 
-                    - time_data += " – #{finish_time.strftime('%H:%M')}"
-                  = time_data
+                  = start_time.strftime('%H:%M')
+                  - if finish_time
+                    = " – #{finish_time.strftime('%H:%M')}"
 
               - if event.timezone == "London"
                 %i.note{style: "display: block;"}
                   = "#{event.start.strftime('%a · %H:%M')} (#{t(:uk_time)})"
-            
-            - if event.venue&.definite_name.present?
-              %span.location
-                %svg.icon.standard
-                  %use{"xlink:href" => "#location_symbol"}
-                %span.venue_name
-                  - if event.venue&.url
-                    = link_to event.venue&.definite_name, event.venue.url
-                  - elsif Droom.show_venue_map?
-                    = link_to event.venue&.definite_name, venues_url(:id => event.venue.id)
-                  - else
-                    = event.venue&.definite_name
 
             - if show_folder && !full_attachments
               - if event.folder.populated?

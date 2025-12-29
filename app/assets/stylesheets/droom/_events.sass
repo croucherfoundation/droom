@@ -219,18 +219,24 @@ div.timepicker
   div.event 
     .venue_time
       display: inline
-
       &::before
         content: none !important
-
       word-break: keep-all
       white-space: normal
-
       span.separator
         white-space: pre
-      
       time
         white-space: nowrap
+
+.event_detail
+  span.datetime
+    word-break: keep-all
+    white-space: normal
+    span.separator
+      white-space: pre
+    time
+      display: inline !important
+      white-space: nowrap
 
 @media (max-width: 700px)
   .datemark
