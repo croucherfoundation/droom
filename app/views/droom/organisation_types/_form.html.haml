@@ -5,10 +5,10 @@
   %p.description
     = f.text_area :description, :class => 'name', :placeholder => t(:organisation_type_description)
     %br
-    = f.check_box :private
-    = f.label :private
-    = f.check_box :public
-    = f.label :public
+    = f.check_box :private, class: "checkbox"
+    = f.label :private, class: "checkbox_label"
+    = f.check_box :public, class: "checkbox"
+    = f.label :public, class: "checkbox_label"
 
   .buttons
     = f.submit t(:save), class: 'croucher-standard-btn inline'

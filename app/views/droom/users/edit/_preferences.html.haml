@@ -40,8 +40,8 @@
             
             - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
               %p.inputs.mt-8
-                = f.check_box :send_confirmation, class: "radio"
-                = f.label :send_confirmation, class: "radio_label mb-10"
+                = f.check_box :send_confirmation, class: "checkbox"
+                = f.label :send_confirmation, class: "checkbox_label mb-10"
 
             %p
               - if me
@@ -54,15 +54,15 @@
               - if admin?
                 = f.select :organisation_id, Droom::Organisation.for_selection, {}, :class => 'preferences mb-10'
                 %br
-                = f.check_box :organisation_admin, class: "radio"
-                = f.label :organisation_admin, class: "radio_label mb-10"
+                = f.check_box :organisation_admin, class: "checkbox"
+                = f.label :organisation_admin, class: "checkbox_label mb-10"
                 %br
-                = f.check_box :admin, class: "radio"
-                = f.label :admin, class: "radio_label mb-10"
+                = f.check_box :admin, class: "checkbox"
+                = f.label :admin, class: "checkbox_label mb-10"
                 %br
                 %span.subordinate{data: {dependent: "#user_admin"}}
-                  = f.check_box :gatekeeper, class: "radio"
-                  = f.label :gatekeeper, class: "radio_label mb-10"
+                  = f.check_box :gatekeeper, class: "checkbox"
+                  = f.label :gatekeeper, class: "checkbox_label mb-10"
 
         .buttons
           = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
