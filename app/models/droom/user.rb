@@ -94,6 +94,10 @@ module Droom
       super && really_send_confirmation?
     end
 
+    def skip_session_limitable?
+      needs_setup?
+    end
+
     def really_send_confirmation?
       !defer_confirmation?
     end
