@@ -30,5 +30,5 @@
 
           - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
             %p.inputs.mt-8
-              = f.check_box :send_confirmation, class: "radio"
-              = f.label :send_confirmation, class: "radio_label"
+              = f.check_box :send_confirmation, class: "checkbox"
+              = f.label :send_confirmation, class: "checkbox_label"

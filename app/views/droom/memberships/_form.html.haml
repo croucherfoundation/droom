@@ -12,8 +12,8 @@
     = f.fields_for :user, user do |uf|
       = render partial: "droom/users/edit/user_fields", locals: {f: uf, user: user, timezone_id: "membership_timezone"}
       %p.admin
-        = uf.check_box :defer_confirmation
-        = uf.label :defer_confirmation
+        = uf.check_box :defer_confirmation, class: "checkbox"
+        = uf.label :defer_confirmation, class: "checkbox_label"
     .buttons
       = f.submit t(:invite_to_group), class: 'croucher-standard-btn inline'
       = t :or

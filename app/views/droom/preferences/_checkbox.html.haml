@@ -5,5 +5,5 @@
   = f.fields_for :preferences, pref, :child_index => child_index do |pf|
     = pf.hidden_field :key
     = pf.hidden_field :uuid
-    = pf.check_box :value, class: "preference_#{key.gsub('.', '_')}"
-    = pf.label :value, t(:"preferences.#{key}")
+    = pf.check_box :value, class: "preference_#{key.gsub('.', '_')} checkbox"
+    = pf.label :value, t(:"preferences.#{key}"), class: "checkbox_label"
