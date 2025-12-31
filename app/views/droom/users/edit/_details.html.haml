@@ -10,5 +10,6 @@
 
   - unless user.new_record? || user.confirmed?
     %p.confirmation
-      = f.check_box :send_confirmation, class: "checkbox"
-      = f.label :send_confirmation, class: "checkbox_label"
+      %span.standard-checkbox
+        = f.check_box :send_confirmation
+        = f.label :send_confirmation, class: "standard-checkbox-label"

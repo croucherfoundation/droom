@@ -17,11 +17,13 @@
             = f.text_area :description, :class => 'name medium', :placeholder => t(:group_description)
             %br
             %span
-              = f.check_box :privileged, class: 'checkbox'
-              = f.label :privileged, class: 'checkbox_label pr-10'
+              %span.standard-checkbox
+                = f.check_box :privileged
+                = f.label :privileged, class: 'standard-checkbox-label pr-10'
             %span
-              = f.check_box :directory, class: 'checkbox'
-              = f.label :directory, class: 'checkbox_label'
+              %span.standard-checkbox
+                = f.check_box :directory
+                = f.label :directory, class: 'standard-checkbox-label'
 
       .buttons
         = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
