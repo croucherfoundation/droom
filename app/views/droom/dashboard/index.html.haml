@@ -2,13 +2,6 @@
   = render :partial => "droom/dashboard/external"
 
 - else
-  - content_for :buttons do
-    %p.action.standard-btn-group.pr
-      = link_to subscribe_events_url(current_user.authentication_token, protocol: "webcal", format: "ics"), class: "btn" do
-        %svg
-          %use{href: "#calendar_symbol"}
-        = t :subscribe_to_calendar
-
   - content_for :standfirst do
     = render :partial => "droom/dashboard/welcome"
 
