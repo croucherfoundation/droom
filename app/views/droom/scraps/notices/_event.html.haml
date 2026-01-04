@@ -3,8 +3,6 @@
     .datemark
       %span.mon= event.start.strftime('%b')
       %span.dom= event.start.strftime('%d')
-      - if event.start.year != Date.today.year
-        %span.year= event.start.strftime('%Y')
 
     %h2
       - if notice.event.url

@@ -14,8 +14,6 @@
       .datemark
         %span.mon= scrap.event.start.strftime('%b')
         %span.dom= scrap.event.start.strftime('%d')
-        - if scrap.event.start.year != Date.today.year
-          %span.year= scrap.event.start.strftime('%Y')
 
     - elsif scrap.scraptype == 'image' && scrap.image.attached?
       = link_to "image:", url, :class => "thumb", :style =>"background-image: url('#{scrap.image_url(:icon)}')", :data => {:scrap => scrap.id}
