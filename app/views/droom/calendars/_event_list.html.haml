@@ -1,9 +1,10 @@
 - calendar ||= @calendar
 - events ||= @events || calendar.events.future_and_current
+- omit_document ||= false
 
 #minimal{:data => {:refreshing => true, :url => droom.calendar_url(calendar)}}
   - if events.any?
-    = render :partial => "droom/events/minimal", :collection => events, locals: { show_color_button: true }
+    = render :partial => "droom/events/event", :collection => events, locals: { omit_document: omit_document }
   - else
-    %p.note
+    %p.text-body.no_external_events
       = t :no_external_events

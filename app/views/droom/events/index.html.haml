@@ -25,7 +25,7 @@
 - content_for :margin do
   = render :partial => "droom/shared/calendar_and_search"
   = render :partial => "droom/invitations/invitations"
-  = render :partial => "droom/dashboard/stream_events"
+  = render :partial => "droom/dashboard/stream_events", locals: { omit_document: true }
 
 - start_year = 1978
 - max_year = Droom::Event.pluck(:start).compact.map(&:year).uniq.max

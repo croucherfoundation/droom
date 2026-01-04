@@ -217,16 +217,26 @@ div.timepicker
 
 .event_list
   div.event 
-    .venue_time
-      display: inline
-      &::before
-        content: none !important
-      word-break: keep-all
-      white-space: normal
-      span.separator
-        white-space: pre
-      time
-        white-space: nowrap
+    .summary 
+      display: flex 
+      justify-content: space-between
+      .heading
+        .venue_time
+          display: inline
+          &::before
+            content: none !important
+          word-break: keep-all
+          white-space: normal
+          span.separator
+            white-space: pre
+          time
+            white-space: nowrap
+      .single_document
+        a.document 
+          display: unset 
+  
+  .no_external_events
+    margin-bottom: 40px
 
 .event_detail
   span.datetime
