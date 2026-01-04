@@ -23,7 +23,7 @@
         = render 'droom/events/more_actions'
 
 - content_for :after_content do
-  - other_events = Droom::Event.of_type(@event.event_type).other_than(@event).by_date_descending.limit(6)
+  - other_events = Droom::Event.of_type(@event.event_type).other_than(@event).by_date_descending.limit(3)
 
   %h3.text-subtitle.mb_subtitle
     Other events of this type
