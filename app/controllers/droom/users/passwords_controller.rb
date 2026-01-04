@@ -12,7 +12,8 @@ module Droom::Users
     end
 
     def completed
-      redirect_to dashboard_path
+      flash.clear
+      redirect_to root_path
     end
 
     def create
