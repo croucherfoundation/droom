@@ -12,7 +12,7 @@ module Droom::Users
     end
 
     def completed
-      render
+      redirect_to dashboard_path
     end
 
     def create
