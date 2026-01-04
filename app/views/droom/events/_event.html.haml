@@ -79,6 +79,7 @@
         - elsif event.documents.count >= 1
           - doc_url = droom.folder_document_url(event.documents.first.folder, event.documents.first)
         
-        = link_to doc_url, class: 'document pdf no-bg-image', target: "_blank", style: 'white-space: nowrap;' do
-          %svg.icon.medium
-            %use{"xlink:href" => "#pdf_symbol"}
+        - if doc_url.present?
+          = link_to doc_url, class: 'document pdf no-bg-image', target: "_blank", style: 'white-space: nowrap;' do
+            %svg.icon.medium
+              %use{"xlink:href" => "#pdf_symbol"}
