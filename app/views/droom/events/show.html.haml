@@ -8,7 +8,7 @@
   = render :partial => 'subnavbar'
 
 - content_for :buttons do
-  .action.standard-btn-group.pt.pr
+  .action.standard-btn-group.pt.pr.oy-visible
     - if can? :edit, @event
       = link_to droom.edit_event_url(@event), class: "btn", data: {action: 'popup', affected: "#event_#{@event.id}"}  do
         %svg
