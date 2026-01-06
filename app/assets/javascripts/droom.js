@@ -180,6 +180,7 @@
       this.find_including_self('.person_picker').person_picker();
       this.find_including_self('.group_picker').group_picker();
       this.find_including_self('fieldset[data-role="password"]').password_fieldset();
+      this.find_including_self('[data-role="single_password"]').single_password_field();
       this.find_including_self('input[type="submit"]').submitter();
       this.find_including_self('form.scrap').scrap_form();
       this.find_including_self('[data-role="filepicker"]').file_picker();

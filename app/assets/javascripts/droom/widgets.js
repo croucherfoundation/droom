@@ -658,6 +658,88 @@
       return PasswordFieldset;
 
     })();
+    $.fn.single_password_field = function() {
+      if (this.length) {
+        return new SinglePasswordField(this);
+      }
+    };
+    SinglePasswordField = function() {
+      function SinglePasswordField(element) {
+        this.checkPassword = bind(this.checkPassword, this);
+        this.valid = bind(this.valid, this);
+        this.empty = bind(this.empty, this);
+        this.required = bind(this.required, this);
+        this.fieldset = $(element);
+        this.password_field = this.fieldset.find('input[data-role="password"]');
+        this.submitter = this.fieldset.parents('form').find('input[type="submit"]');
+        var meter_holder = this.fieldset.find('[data-role="meter"]');
+        if (meter_holder.length) {
+          this.meter = new PasswordMeter(meter_holder);
+        }
+        this.password_field.bind('input', this.checkPassword);
+        this.checkPassword();
+      }
+
+      SinglePasswordField.prototype.checkPassword = function() {
+        var ok, password, ref, ref1;
+        if (this.empty()) {
+          this.password_field.removeClass('valid invalid');
+          if ((ref = this.meter) != null) {
+            ref.clear();
+          }
+          if (this.required()) {
+            this.unsubmittable();
+          } else {
+            this.submittable();
+          }
+          return false;
+        } else {
+          password = this.password_field.val();
+          ok = false;
+          if (password.length < 6) {
+            if ((ref1 = this.meter) != null) {
+              ref1.tooShort();
+            }
+          } else {
+            if (this.meter) {
+              this.meter.check(password);
+            }
+            ok = true;
+          }
+          if (ok) {
+            this.password_field.removeClass('invalid').addClass('valid');
+            this.submittable();
+          } else {
+            this.password_field.removeClass('valid').addClass('invalid');
+            this.unsubmittable();
+          }
+          return ok;
+        }
+      };
+
+      SinglePasswordField.prototype.required = function() {
+        return !!this.password_field.attr('required');
+      };
+
+      SinglePasswordField.prototype.empty = function() {
+        return this.password_field.val() === "";
+      };
+
+      SinglePasswordField.prototype.valid = function() {
+        return !this.empty() && this.password_field.val().length >= 6;
+      };
+
+      SinglePasswordField.prototype.submittable = function() {
+        return this.submitter.enable();
+      };
+
+      SinglePasswordField.prototype.unsubmittable = function() {
+        return this.submitter.disable();
+      };
+
+      return SinglePasswordField;
+
+    }();
     $.fn.password_meter = function() {
       this.each(function() {
         return new PasswordMeter(this);
@@ -689,12 +771,14 @@
       PasswordMeter.prototype.clear = function() {
         this._warnings.text("");
         this._container.removeClass('s0 s1 s2 s3 s4 acceptable');
+        this._container.hide();
         this._notes.html(this._original_notes);
         return this._warnings.html(this._original_warning);
       };
 
       PasswordMeter.prototype.tooShort = function() {
         this.clear();
+        this._container.show();
         this._container.addClass('s0');
         return this._warnings.text("Password too short.");
       };
@@ -711,11 +795,13 @@
       PasswordMeter.prototype.display = function(result) {
         var ref, ref1;
         if (result.score < 2) {
+          this._container.show();
           if ((ref = result.feedback) != null ? ref.warning : void 0) {
             this._warnings.text(result.feedback.warning);
           }
           return this._suggestions.text((ref1 = result.feedback) != null ? ref1.suggestions : void 0);
         } else {
+          this._container.hide();
           return this._container.removeClass('s0 s1 s2 s3 s4 acceptable');
         }
       };
@@ -1420,7 +1506,6 @@
         this._handle.on("mouseenter", this.lookDraggable);
         this._handle.on("dragleave", this.lookNormal);
         this._handle.on("mousedown", this.startDrag);
-        console.log("new draggable", this._remembered);
         if (this._remembered) {
           this.recallPosition();
         }
