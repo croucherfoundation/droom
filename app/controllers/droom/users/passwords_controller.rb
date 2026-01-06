@@ -6,6 +6,7 @@ module Droom::Users
     before_action :remember_original_destination, only: [:new]
     before_action :clear_session, only: [:edit]
     before_action :set_email, only: [:create]
+    layout 'droom/sign_in', only: [:edit]
 
     def show
       render
