@@ -14,7 +14,7 @@
 - content_for :buttons do
   .action.standard-btn-group.pt.pr.oy-visible
     - if can? :edit, Droom::Group
-      = link_to droom.reposition_groups_url, class: "btn", data: {action: 'popup', affected: "#groups"}  do
+      = link_to droom.reposition_groups_url, class: "btn", data: {action: 'popup', affected: ".groups"}  do
         %svg
           %use{href: "#edit_symbol"}
         = t :edit_page
@@ -37,5 +37,5 @@
         %p.note
           Type a fragment of name, email or phone number here to see everyone that matches.
 
-#groups{data: {refreshing: true, url: droom.groups_path(format: :js)}}
+#groups
   = render :partial => 'groups'
