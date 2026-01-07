@@ -985,8 +985,7 @@ module Droom
         groups: group_slugs,
         liveliness: liveliness,
         privileged: privileged?,
-        deleted: deleted?,
-        updated_at: updated_at
+        deleted: deleted?
       }
       data.merge(additional_search_data)
     end
