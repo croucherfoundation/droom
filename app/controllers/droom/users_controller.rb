@@ -160,7 +160,7 @@ module Droom
     def destroy
       Csw::Attendee.find_by_email(@user.email).try(:destroy)
       @user.destroy
-      head :ok
+      redirect_to droom.admin_users_url
     end
 
     def reinvite
