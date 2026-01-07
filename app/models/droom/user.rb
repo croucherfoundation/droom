@@ -988,8 +988,8 @@ module Droom
         deleted: deleted?,
         has_name: name.present?,
         created_at: created_at,
-        updated_at: updated_at
-        last_sign_in_at: last_sign_in_at,
+        updated_at: updated_at,
+        last_sign_in_at: last_sign_in_at
       }
       data.merge(additional_search_data)
     end
