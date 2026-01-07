@@ -1,0 +1,20 @@
+.standard-modal-overlay.active
+  .standard-modal-container.active
+    %svg.logo
+      %use{"xlink:href" => "#croucher_logo"}
+
+    = form_tag reposition_groups_path, :remote => true, :data => {:type => :html}, :html => {:class => 'edit group'} do
+      .container
+        %h2 Reorder cards
+        
+        .cards-order-container
+          - @groups.each do |group|
+            .orderable-card{data: {id: group.id}, draggable: 'true'}
+              %p.orderable-card-title
+                = group.name
+        
+        = hidden_field_tag 'groups', '', id: 'repositioned_ids'
+        
+      .buttons
+        = link_to t(:cancel_edit), "#", :class => 'cancel submit-button'
+        = submit_tag t(:save), class: 'croucher-standard-btn inline'

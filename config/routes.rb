@@ -204,6 +204,7 @@ Droom::Engine.routes.draw do
   end
 
   resources :groups do
+    match :reposition, to: "groups#reposition", via: [:get, :post], path: "reposition", on: :collection
     resources :memberships
     resources :group_permissions do
       post :upsert, on: :collection

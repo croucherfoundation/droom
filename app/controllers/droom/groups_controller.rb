@@ -3,7 +3,7 @@ module Droom
     respond_to :html, :js
     layout 'centered', only: :index
 
-    before_action :get_groups, :only => [:index]
+    before_action :get_groups, :only => [:index, :reposition]
     load_and_authorize_resource
 
     def index
@@ -43,18 +43,33 @@ module Droom
         respond_with @group
       end
     end
-    
+
+    def reposition
+      if request.post?
+        groups_data = JSON.parse(params[:groups])
+
+        Droom::Group.transaction do
+          groups_data.each do |group_data|
+            group = Droom::Group.find(group_data['id'])
+            group.update_column(:position, group_data['position'])
+          end
+        end
+
+        head :ok
+      end
+    end
+
     def destroy
       @group.destroy
       head :ok
     end
 
   protected
-  
+
     def group_params
       params.require(:group).permit(:name, :leader_id, :description, :directory, :privileged)
     end
-    
+
     def get_groups
       @groups = Droom::Group.shown_in_directory.accessible_by(current_ability).reorder(:position)
     end

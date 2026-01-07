@@ -11,6 +11,14 @@
 - content_for :subnavbar do
   = render :partial => 'droom/shared/directory_subnavbar'
 
+- content_for :buttons do
+  .action.standard-btn-group.pt.pr.oy-visible
+    - if can? :edit, Droom::Group
+      = link_to droom.reposition_groups_url, class: "btn", data: {action: 'popup', affected: "#groups"}  do
+        %svg
+          %use{href: "#edit_symbol"}
+        = t :edit_page
+
 - content_for :margin do
   %p.action
     - if can?(:create, Droom::Group)
@@ -28,7 +36,6 @@
       #found
         %p.note
           Type a fragment of name, email or phone number here to see everyone that matches.
-  
 
-#groups
+#groups{data: {refreshing: true, url: droom.groups_path(format: :js)}}
   = render :partial => 'groups'
