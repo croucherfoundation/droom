@@ -975,7 +975,8 @@ module Droom
       data = {
         uid: uid,
         title: title,
-        name: name,
+        name: name&.strip,
+        colloquial_name: colloquial_name&.strip,
         chinese_name: chinese_name,
         emails: emails.map(&:email),
         addresses: addresses.map(&:address),
