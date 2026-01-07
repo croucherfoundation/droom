@@ -5,7 +5,7 @@
 
     = form_tag reposition_groups_path, :remote => true, :data => {:type => :html}, :html => {:class => 'edit group'} do
       .container
-        %h2 Reorder cards
+        %h2 Reorder groups
         
         .cards-order-container
           - @groups.each do |group|
