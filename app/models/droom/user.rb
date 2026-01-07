@@ -985,7 +985,11 @@ module Droom
         groups: group_slugs,
         liveliness: liveliness,
         privileged: privileged?,
-        deleted: deleted?
+        deleted: deleted?,
+        has_name: name.present?,
+        created_at: created_at,
+        updated_at: updated_at
+        last_sign_in_at: last_sign_in_at,
       }
       data.merge(additional_search_data)
     end
