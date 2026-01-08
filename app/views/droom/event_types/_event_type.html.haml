@@ -6,7 +6,5 @@
 %div.event_type{:id => "event_type_#{event_type.id}", :data => {:refreshing => true, :url => event_type_path(event_type, :format => :js)} }
   %h2.name
     = link_to event_type.name, droom.event_type_url(event_type), class: aclass
-    = action_menulink(event_type)
-    = action_menu(event_type)
   %p
     = event_type.description.presence || t(:no_description)

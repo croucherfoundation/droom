@@ -37,15 +37,17 @@
       .detail-practicalities
         %p.practicalities
           %span.venue_time
-            - if event.venue.url
-              = link_to event.venue.definite_name, event.venue.url
-            - elsif Droom.show_venue_map?
-              = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
-            - else
-              = event.venue.definite_name
-            
-            - if start_time
+            - if event.venue.present?
+              - if event.venue.url
+                = link_to event.venue.definite_name, event.venue.url
+              - elsif Droom.show_venue_map?
+                = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
+              - else
+                = event.venue.definite_name
+              
               %span.separator ·
+              
+            - if start_time
               %time
                 = start_time.strftime('%H:%M')
                 - if finish_time

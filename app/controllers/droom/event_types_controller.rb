@@ -39,13 +39,17 @@ module Droom
 
     def destroy
       @event_type.destroy
-      head :ok
+      redirect_to droom.event_types_path, notice: 'Event type deleted.'
     end
 
   protected
 
     def event_type_params
       params.require(:event_type).permit(:name, :description, :public, :private)
+    end
+
+    def default_layout
+      'centered'
     end
 
   end

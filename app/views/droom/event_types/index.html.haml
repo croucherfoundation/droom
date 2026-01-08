@@ -1,3 +1,6 @@
+- content_for :pagetitle do
+  = t :event_type_admin
+
 - content_for :title do
   = t :event_type_admin
 
@@ -5,12 +8,14 @@
   = render :partial => 'shared/grants_subnavbar'
 
 - content_for :standfirst do
-  %p
-    = t :event_types_introduction
+  = t :event_types_introduction
+
+- content_for :buttons do
+  %p.action.standard-btn-group.pt.pr
+    - if can?(:create, Droom::EventType)
+      = link_to droom.new_event_type_url, class: "btn", data: {action: 'popup', affected: '.event_types'}  do
+        = image_tag 'svg/add.svg', width: 20, height: 20 
+        = t :add_event_type
 
 #event_types
   = render :partial => 'event_types'
-
-  %p.action
-    - if can?(:create, Droom::EventType)
-      = link_to t(:add_event_type), droom.new_event_type_url, :class => "add", :remote => true, :data => {:action => "popup", :type => "html", :affected => "div.event_types"}

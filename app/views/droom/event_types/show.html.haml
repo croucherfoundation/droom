@@ -1,12 +1,32 @@
 - content_for :subnavbar do
   = render :partial => 'shared/grants_subnavbar'
-#event_type
-  %h1.pt_title.pb_title
-    = @event_type.name
 
-  %p
-    = @event_type.description
+- content_for :pagetitle do
+  = @event_type.name
 
-  #events
-    - if @event_type.events.any?
-      = render :partial => 'droom/events/event', :collection => @event_type.events
+- content_for :title do
+  = @event_type.name
+
+- content_for :standfirst do
+  = @event_type.description
+
+- content_for :buttons do
+  - if can?(:create, Droom::Event)
+    %p.action.standard-btn-group.pt.pr
+      = link_to droom.new_event_url(event: {event_type_id: @event_type.id}), class: "btn", data: {action: 'popup', :affected => "#event_type_#{@event_type.id}"}  do
+        = image_tag 'svg/add.svg', width: 20, height: 20 
+        = t :add_event
+      
+      = link_to droom.edit_event_type_url(@event_type), class: 'btn', :data => {:action => "popup", :replaced => "#event_type_#{@event_type.id}"} do
+        %svg
+          %use{href: "#edit_symbol"}
+        = t :edit_event_type
+
+      = link_to droom.event_type_url(@event_type), :method => 'delete', :class => 'btn', :data => {:confirm => t(:confirm_delete_event_type, :name => @event_type.name)} do
+        %svg 
+          %use{href: "#trash_symbol"}
+        =t(:delete_event_type)
+
+#events.event_list
+  - if @event_type.events.any?
+    = render :partial => 'droom/events/event', :collection => @event_type.events

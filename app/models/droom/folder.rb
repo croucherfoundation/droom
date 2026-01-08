@@ -108,9 +108,8 @@ module Droom
       children.empty? && documents.count <= 3
     end
 
-    # If we start to get deep folder trees we'll have to use ancestry instead of acts_as_tree.
     def family
-      self_and_children
+      subtree
     end
 
     def loose?

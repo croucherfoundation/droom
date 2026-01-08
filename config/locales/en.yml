@@ -131,7 +131,7 @@ en:
   delete_scrap: "Remove"
   delete_service: "Delete service"
   delete_symbol: "✕"
-  delete_user: "Remove person"
+  delete_user: "Delete user"
   delete_user_from_invitations: "Remove person from invitations"
   detach_upload: "Detach upload"
   devices: "Devices"

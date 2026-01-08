@@ -212,7 +212,7 @@ Droom::Engine.routes.draw do
     end
   end
 
-  resources :event_types
+  resources :event_types, path: "event-types"
   resources :venues
 
   resources :dropbox_tokens do
