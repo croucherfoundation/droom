@@ -23,8 +23,7 @@ module Droom
       scholars = PersonPage.where(metadata: true)
       @total_scholars = scholars.total_count
 
-      latest_fss_applications = Application.where(latest_fss: true)
-      @total_fss_applications = latest_fss_applications.total_count
+      @total_subscribers = MailchimpSubscribersCacheService.total_count
     end
   end
 end
