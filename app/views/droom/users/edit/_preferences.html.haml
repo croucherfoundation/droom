@@ -56,10 +56,6 @@
                 = f.select :organisation_id, Droom::Organisation.for_selection, {}, :class => 'preferences mb-10'
                 %br
                 %span.standard-checkbox
-                  = f.check_box :organisation_admin
-                  = f.label :organisation_admin, class: "standard-checkbox-label mb-10"
-                %br
-                %span.standard-checkbox
                   = f.check_box :admin
                   = f.label :admin, class: "standard-checkbox-label mb-10"
                 %br
@@ -67,6 +63,10 @@
                   %span.standard-checkbox
                     = f.check_box :gatekeeper
                     = f.label :gatekeeper, class: "standard-checkbox-label mb-10"
+                %br
+                %span.standard-checkbox
+                  = f.check_box :organisation_admin
+                  = f.label :organisation_admin, class: "standard-checkbox-label mb-10"
 
         .buttons
           = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'

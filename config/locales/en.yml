@@ -332,7 +332,7 @@ en:
         other_id: "Merge entirely into"
         gatekeeper: "Admissions?"
         group_ids: "Group memberships"
-        organisation_admin: "Organisation admin?"
+        organisation_admin: "HKFx admin?"
         admin: "Site admin?"
         gender: "Gender:"
         gender_f: "Female"
