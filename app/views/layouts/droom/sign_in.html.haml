@@ -16,11 +16,7 @@
     = content_for :head
     = csrf_meta_tags
 
-    %link{rel: "apple-touch-icon", size: "152x152", href: "/images/apple-touch-icon@2x.png"}
-    %link{rel: "apple-touch-icon", size: "120x120", href: "/images/apple-touch-icon@2x.png"}
-    %link{rel: "apple-touch-icon", size: "76x76", href: "/images/apple-touch-icon.png"}
-    %link{rel: "apple-touch-icon", href: "/images/apple-touch-icon.png"}
-    %link{rel: "icon", type: "image/png", href: "/images/favicon.png"}
+    = render 'shared/favicons'
     %meta{name: "viewport", content: "width=device-width, initial-scale=1"}
 
     - if Rails.env.production?
