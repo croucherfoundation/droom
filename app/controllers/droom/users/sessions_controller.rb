@@ -7,6 +7,20 @@ module Droom::Users
     layout 'droom/sign_in'
 
     def new
+      # Devise stores the location in session via store_location_for during authenticate_user!
+      # Capture it and store in cookie to preserve across session resets
+      stored_location = session[:user_return_to]
+
+      if stored_location.present? && stored_location != "/" && stored_location != request.url
+        cookies[:return_to] = stored_location
+      elsif request.referrer.present? && request.referrer != request.url
+        referred_path = URI.parse(request.referrer).path
+        # Don't store if it's already a sign-in/out page
+        unless referred_path.match?(%r{/users/(sign_in|sign_out|password)})
+          cookies[:return_to] = referred_path
+        end
+      end
+
       cookie = Droom::AuthCookie.new(cookies)
       @not_confirmed_message = "We haven't received your confirmation. Please check your email." if params[:not_confirmed]
       @unlock_message = "Your account is unlocked. Please sign in." if params[:locked]
@@ -36,17 +50,10 @@ module Droom::Users
           return
         end
         sign_in(resource_name, resource)
-        if !session[:return_to].blank?
-          redirect_to session[:return_to]
-          session[:return_to] = nil
-        else
-          if params[:backto].present?
-            redirect_to CGI.unescape(params[:backto])
-          else
-            respond_with resource, :location => after_sign_in_path_for(resource)
-          end
-        end
-
+        
+        # Redirect to the originally requested page, or use fallback
+        redirect_path = determine_redirect_path
+        redirect_to redirect_path
       else
         redirect_to new_user_session_url(failed: true)
       end
@@ -64,6 +71,25 @@ module Droom::Users
       else
         super
       end
+    end
+
+    def determine_redirect_path
+      # Priority order for redirect destination
+      # 1. Check params[:backto] first (from hidden field in form)
+      if params[:backto].present?
+        path = CGI.unescape(params[:backto])
+        cookies.delete(:return_to)  # Clean up the cookie
+        return path if path != '/'
+      end
+      
+      # 2. Check cookies[:return_to] (stored before sign-in redirect)
+      if cookies[:return_to].present?
+        path = cookies.delete(:return_to)
+        return path if path != '/'
+      end
+      
+      # 3. Fall back to default sign-in path
+      after_sign_in_path_for(resource)
     end
 
     def all_signed_out?
