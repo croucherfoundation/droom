@@ -63,7 +63,7 @@ p.unlock_sent
   gap: 5px
 
 ul.people
-  margin: 10px 0 0 -2px
+  margin: 0
   padding: 0
   list-style: none
   &.three_columns
@@ -76,7 +76,7 @@ ul.people
     @media (max-width: 768px)
       grid-template-columns: repeat(1, 1fr)
     li.person span.mugshot
-      margin-top: 5px
+      margin-top: 0
 
   li.person
     display: inline-block
@@ -95,15 +95,17 @@ ul.people
       color: $dark
       white-space: nowrap
       &.email
-        color: $mid
+        color: $text
         overflow: hidden
         text-overflow: ellipsis
         white-space: nowrap
         display: block
         margin-bottom: 0px
         font-size: 20px
+        line-height: 30px
       &.name
         font-size: 20px
+        line-height: 30px
         white-space: break-spaces
       &.add
         color: $green
@@ -172,10 +174,11 @@ ul.people
     span.contact
       display: block
       overflow: hidden
+      margin-top: -2px
       span.name
         display: inline-block
         font-size: 1em
-        margin-top: 4px
+        margin-top: 0
 
 form.user
   h3

@@ -27,7 +27,4 @@
   %span.contact
     %span.name
       = link_to truncate(user.colloquial_name, length: 32), user_url(user), data: {action: "popup"}
-      = action_menulink(user)
-    %br
     = mail_to user.email, user.email, class: "email"
-    = action_menu(user, event: event, group: group, invitation: invitation)
