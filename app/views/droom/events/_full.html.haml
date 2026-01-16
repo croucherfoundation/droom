@@ -25,24 +25,28 @@
     .heading 
       .detail-practicalities.full.text-body
         %p.practicalities
-          - if event.start?
-            %span.time
-              %svg.icon.standard
-                %use{"xlink:href" => "#clock_symbol"}
-              %span.datetime
-                - event_date = event_time_in_hk(event.start, event).strftime('%A %-d %B %Y')
-                - event_time = event_time_in_hk(event.start, event).strftime('%H:%M') 
-                - if event.finish?
-                  - finish_time = event_time_in_hk(event.finish, event) 
-                  - event_time += " – #{finish_time.strftime('%H:%M')}"
-                = event_date 
-                %span.separator ·
-                %time
-                  = event_time
+          - if is_outside_event
+            %span.time.date_range
+              = render 'droom/shared/date', event: event
+          - else 
+            - if event.start?
+              %span.time
+                %svg.icon.standard
+                  %use{"xlink:href" => "#clock_symbol"}
+                %span.datetime
+                  - event_date = event_time_in_hk(event.start, event).strftime('%A %-d %B %Y')
+                  - event_time = event_time_in_hk(event.start, event).strftime('%H:%M') 
+                  - if event.finish?
+                    - finish_time = event_time_in_hk(event.finish, event) 
+                    - event_time += " – #{finish_time.strftime('%H:%M')}"
+                  = event_date 
+                  %span.separator ·
+                  %time
+                    = event_time
 
-            - if event.timezone == "London"
-              %i.note{style: "display: block;"}
-                = "#{event.start.strftime('%A %-d %B %Y · %H:%M')} (#{t(:uk_time)})"
+              - if event.timezone == "London"
+                %i.note{style: "display: block;"}
+                  = "#{event.start.strftime('%A %-d %B %Y · %H:%M')} (#{t(:uk_time)})"
           
           - if event.venue&.definite_name.present?
             %span.location

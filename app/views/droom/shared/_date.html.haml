@@ -7,20 +7,20 @@
   - if start_day.to_date == end_day.to_date
     = start_day.strftime('%A %-d %B %Y')
   - elsif start_day.year != end_day.year
-    = start_day.strftime('%A %-d %B %Y')
+    = start_day.strftime('%-d %B %Y')
     –
-    = end_day.strftime('%A %-d %B %Y')
+    = end_day.strftime('%-d %B %Y')
   - elsif start_day.month != end_day.month
-    = start_day.strftime('%A %-d %B')
+    = start_day.strftime('%-d %B')
     –
-    = end_day.strftime('%A %-d %B %Y')
+    = end_day.strftime('%-d %B %Y')
   - elsif start_day.month == end_day.month
     = start_day.strftime('%-d')
     –
     = end_day.strftime('%-d %B %Y')
   - elsif start_day.day != end_day.day
-    = start_day.strftime('%A %-d')
+    = start_day.strftime('%-d')
     –
-    = end_day.strftime('%A %-d %B %Y')
+    = end_day.strftime('%-d %B %Y')
 - elsif start_day.present?
-  = start_day.strftime('%A %-d %B %Y')
+  = start_day.strftime('%-d %B %Y')

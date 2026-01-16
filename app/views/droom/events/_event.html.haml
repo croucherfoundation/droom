@@ -16,9 +16,6 @@
 - cssclasses << 'full' if here
 - cssclasses << 'invited' if event.attended_by?(current_user)
 
-- start_time = event_time_in_hk(event.start, event)
-- finish_time = event_time_in_hk(event.finish, event)
-
 - div_data = {refreshing: event_path(event, format: :js)}
 
 %div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
@@ -44,18 +41,23 @@
                 = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
               - else
                 = event.venue.definite_name
-              
               %span.separator ·
-              
-            - if start_time
-              %time
-                = start_time.strftime('%H:%M')
-                - if finish_time
-                  = " – #{finish_time.strftime('%H:%M')}"
 
-            - if event.timezone == "London"
-              %i.note{style: "display: block;"}
-                = "#{event.start.strftime('%a · %H:%M')} (#{t(:uk_time)})"
+            - if is_outside_event
+              %time.date_range
+                = render 'droom/shared/date', event: event
+            - else 
+              - start_time = event_time_in_hk(event.start, event)
+              - finish_time = event_time_in_hk(event.finish, event)
+              - if start_time
+                %time
+                  = start_time.strftime('%H:%M')
+                  - if finish_time
+                    = " – #{finish_time.strftime('%H:%M')}"
+
+              - if event.timezone == "London"
+                %i.note{style: "display: block;"}
+                  = "#{event.start.strftime('%a · %H:%M')} (#{t(:uk_time)})"
 
         .detail
           - if event.description?
