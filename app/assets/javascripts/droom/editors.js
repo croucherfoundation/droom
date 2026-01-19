@@ -54,6 +54,14 @@
           ]
         }
       });
+
+      // Subscribe to MediumEditor's editableInput event for better timing
+      editor.subscribe('editableInput', function(event, editable) {
+        setTimeout(function() {
+          cleanupFontAttributes(editable);
+        }, 50);
+      });
+
       this.on('keydown', function(event) {
         if (event.key === 'Enter' && event.shiftKey) {
           event.preventDefault();
@@ -73,8 +81,33 @@
           }
         }
       });
+
       return editor;
     };
+
+    // Helper function to clean up font attributes
+    function cleanupFontAttributes(element) {
+      // Remove all style attributes
+      element.querySelectorAll('[style]').forEach(el => {
+        el.removeAttribute('style');
+      });
+
+      // Remove font tags
+      element.querySelectorAll('font').forEach(el => {
+        while (el.firstChild) {
+          el.parentNode.insertBefore(el.firstChild, el);
+        }
+        el.parentNode.removeChild(el);
+      });
+
+      // Remove span tags with style or font-related classes, but keep other spans
+      element.querySelectorAll('span[style], span[class*="font"]').forEach(el => {
+        while (el.firstChild) {
+          el.parentNode.insertBefore(el.firstChild, el);
+        }
+        el.parentNode.removeChild(el);
+      });
+    }
   });
 
 }).call(this);
@@ -88,9 +121,37 @@
     },
 
     handlePaste: function (event, editable) {
-      // Get clipboard text
+      // Get clipboard content as HTML
       const clipboard = (event.clipboardData || window.clipboardData);
+      let html = clipboard ? clipboard.getData('text/html') : '';
       let text = clipboard ? clipboard.getData('text/plain') : '';
+
+      // If HTML is available, strip font attributes; otherwise use plain text
+      if (html) {
+        // Create a temporary container to parse HTML
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+
+        // Remove all style attributes, font tags, and span tags with style
+        temp.querySelectorAll('[style]').forEach(el => {
+          el.removeAttribute('style');
+        });
+        temp.querySelectorAll('font').forEach(el => {
+          while (el.firstChild) {
+            el.parentNode.insertBefore(el.firstChild, el);
+          }
+          el.parentNode.removeChild(el);
+        });
+        temp.querySelectorAll('span[style], span[class*="font"]').forEach(el => {
+          while (el.firstChild) {
+            el.parentNode.insertBefore(el.firstChild, el);
+          }
+          el.parentNode.removeChild(el);
+        });
+
+        // Get the cleaned text content
+        text = temp.innerText;
+      }
 
       if (!text) return;
 
