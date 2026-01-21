@@ -20,12 +20,13 @@ module Droom
 
     def index
       respond_with @events do |format|
+        format.html { render :layout => 'centered' }
         format.js { render :partial => 'droom/events/events' }
       end
     end
 
     def calendar
-      respond_with @events
+      respond_with @events, layout: 'application_v2'
     end
 
     def subscribe
@@ -53,7 +54,10 @@ module Droom
     def past
       @direction = "past"
       get_events
-      render template: "droom/events/index"
+      respond_with @events do |format|
+        format.html { render template: 'droom/events/index', layout: 'centered' }
+        format.js { render partial: 'droom/events/events' }
+      end
     end
 
     def show

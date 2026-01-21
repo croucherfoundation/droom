@@ -1,0 +1,19 @@
+.toolbar
+  .toolbar-bottom
+    .toolbar-left
+      %span#date-range.date-range
+    
+    .toolbar-center
+      %button.view-btn{data: {view: 'day'}} Day
+      %button.view-btn{data: {view: 'week'}} Week 
+      %button.view-btn{data: {view: 'month'}} Month 
+      %button.view-btn{data: {view: 'year'}} Year 
+    
+    .rbc-toolbar-right
+      %button#prev-btn.prev.nav-btn 
+        %svg.prev 
+          %use{ href: "#previous_symbol" }
+      %button#today-btn.today.nav-btn Today
+      %button#next-btn.next.nav-btn 
+        %svg.next
+          %use{ href: "#next_symbol" }

@@ -1,0 +1,8 @@
+%fieldset.search_options.mb.faceting{data: {refreshing: true}}
+  .croucher_dropdown_container
+    .parent_custom_dropdown
+      - start_year = 1978
+      - max_year = Droom::Event.pluck(:start).compact.map(&:year).uniq.max
+      - years = (start_year..max_year).to_a.reverse
+
+      = select_tag "year", options_for_select(years, params[:year]), { include_blank: t(:filter_year), class: "facet custom_year_width custom_dropdown custom-img" }
