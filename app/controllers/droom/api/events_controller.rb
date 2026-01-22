@@ -13,6 +13,26 @@ module Droom::Api
       render json: @event
     end
 
+    def calendar
+      range_type = params[:range_type].presence || "month"
+      date = params[:date].present? ? Date.parse(params[:date]) : Date.today
+      
+      range =
+        case range_type
+        when "day"   then date.beginning_of_day..date.end_of_day
+        when "week"  then date.beginning_of_week..date.end_of_week
+        when "month" then date.beginning_of_month..date.end_of_month
+        when "year"  then date.beginning_of_year..date.end_of_year
+        end
+
+      @events = Droom::Event.where(
+        "(start BETWEEN :start AND :end) OR (end_date BETWEEN :start AND :end)",
+        start: range.begin, end: range.end
+      )
+
+      render json: @events, each_serializer: Droom::CalendarSerializer
+    end
+
     def update
       @event.update(event_params)
       render json: @event
