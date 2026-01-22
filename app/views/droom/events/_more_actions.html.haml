@@ -2,7 +2,8 @@
 
 .action-commands-dropdown
   = link_to droom.compile_pdf_event_url(@event), class: "btn", target: '_blank'  do
-    = image_tag 'svg/add.svg', width: 20, height: 20 
+    %svg
+      %use{href: "#document_noline_symbol"}
     = t :compile_pdf
 
   = link_to droom.edit_folder_url(@event.folder), class: "btn", data: {action: 'popup', affected: "#event_#{@event.id}"}  do
@@ -15,7 +16,8 @@
     = t :add_subfolder
   
   = link_to droom.new_event_group_invitation_url(@event), class: "btn", data: {action: 'popup', affected: "#event_#{@event.id}"} do
-    = image_tag 'svg/add.svg', width: 20, height: 20 
+    %svg
+      %use{href: "#signin_symbol"}
     = t :invite_group
   
   = link_to droom.event_url(@event), method: 'delete', class: "btn", data: {confirm: t(:confirm_delete_event, name: @event.name)} do 
