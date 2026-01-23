@@ -1,10 +1,17 @@
 - events ||= @events
 
 #events{:data => {:refreshing => true, :url => droom.events_url(:js)}}
+  - if @direction == 'past'
+    %form.faceter{action: droom.past_events_url(:js), id: "events_search", style: "width: auto", data: {target: '#events'}}
+      = hidden_field_tag :year, params[:year]
+
+      .croucher_search_detail.showing
+        = render partial: 'droom/events/facets'
+
   - if events.any?
     = render :partial => 'droom/events/event', :collection => events
   - else
-    %p.nothing
+    %p
       = t :no_events
       
 - unless params[:year].present?

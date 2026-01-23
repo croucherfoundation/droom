@@ -1,8 +1,18 @@
-- if params[:day]
-  - date = Time.zone.local(params[:year].to_i, params[:month].to_i, params[:mday].to_i)
-- elsif params[:month]
-  - date = Time.zone.local(params[:year].to_i, params[:month].to_i, 1)
-- else
-  - date ||= Time.zone.now
+- content_for :pagetitle do 
+  Caledar view 
 
-= render "calendar", date: date
+- content_for :breadcrumb do
+  .breadcrumb-container
+    = link_to 'Home', root_path
+    = link_to 'Events', croucher_droom_url("/calendar")
+    = link_to 'Calendar', '#', class: 'disabled'
+
+.calendar_container
+  = render 'droom/events/calendar/toolbar'
+
+  -# JS will populate this div with the calendar view
+  #calendar_view.calendar_view{ data: { events: croucher_droom_url('/api/events/calendar') } }
+    
+  = render 'droom/events/calendar/dialog'
+
+.calendar_spacer

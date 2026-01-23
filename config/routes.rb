@@ -27,7 +27,11 @@ Droom::Engine.routes.draw do
       delete 'remove_reviewer_group', on: :member, as: :remove_reviewer_group
     end
     put "update_timezone" => 'users#update_timezone', as: 'update_timezone'
-    resources :events
+    resources :events do 
+      collection do
+        get :calendar
+      end
+    end
     resources :venues
     resources :images
     resources :videos
