@@ -20,14 +20,18 @@ module Droom::Api
       range =
         case range_type
         when "day"   then date.beginning_of_day..date.end_of_day
-        when "week"  then date.beginning_of_week..date.end_of_week
-        when "month" then date.beginning_of_month..date.end_of_month
-        when "year"  then date.beginning_of_year..date.end_of_year
+        when "week"  then date.beginning_of_week(:sunday)..date.end_of_week(:sunday).end_of_day
+        when "month" then date.beginning_of_month..date.end_of_month.end_of_day
+        when "year"  then date.beginning_of_year..date.end_of_year.end_of_day
         end
 
       @events = Droom::Event.where(
-        "(start BETWEEN :start AND :end) OR (end_date BETWEEN :start AND :end)",
-        start: range.begin, end: range.end
+        "start <= ? AND (
+          (end_date IS NOT NULL AND end_date >= ?) OR
+          (end_date IS NULL AND finish IS NOT NULL AND finish >= ?) OR
+          (end_date IS NULL AND finish IS NULL AND start >= ?)
+        )",
+        range.end, range.begin.to_date, range.begin, range.begin
       )
 
       render json: @events, each_serializer: Droom::CalendarSerializer

@@ -14,7 +14,10 @@ class Droom::CalendarSerializer < ActiveModel::Serializer
   end
 
   def end
-    return format_datetime(object.finish) unless object.end_date.present?
+    unless object.end_date.present?
+      return format_datetime(object.finish) if object.finish.present?
+      return format_datetime(object.start)
+    end
 
     dt = object.end_date.to_datetime.change(
       hour: object.start_time.hour,
@@ -32,6 +35,6 @@ class Droom::CalendarSerializer < ActiveModel::Serializer
 
   def format_datetime(dt)
     return nil unless dt.present?
-    I18n.l(dt, format: :full)
+    dt.strftime("%d %B %Y, %H:%M")
   end
 end

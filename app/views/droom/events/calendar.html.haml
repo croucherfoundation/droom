@@ -1,6 +1,12 @@
 - content_for :pagetitle do 
   Caledar view 
 
+- content_for :breadcrumb do
+  .breadcrumb-container
+    = link_to 'Home', root_path
+    = link_to 'Events', croucher_droom_url("/calendar")
+    = link_to 'Calendar', '#', class: 'disabled'
+
 .calendar_container
   = render 'droom/events/calendar/toolbar'
 
