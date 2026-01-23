@@ -11,7 +11,7 @@
   = render 'droom/events/calendar/toolbar'
 
   -# JS will populate this div with the calendar view
-  #calendar_view.calendar_view{ data: { events: croucher_droom_url('/api/events/calendar') } }
+  #calendar_view.calendar_view{ data: { events: croucher_droom_url("/api/events/calendar?tok=#{current_user.authentication_token}") } }
     
   = render 'droom/events/calendar/dialog'
 

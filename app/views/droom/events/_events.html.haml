@@ -4,16 +4,18 @@
   - if @direction == 'past'
     %form.faceter{action: droom.past_events_url(:js), id: "events_search", style: "width: auto", data: {target: '#events'}}
       = hidden_field_tag :year, params[:year]
+      = hidden_field_tag :page, params[:page]
 
       .croucher_search_detail.showing
         = render partial: 'droom/events/facets'
 
   - if events.any?
     = render :partial => 'droom/events/event', :collection => events
+
+    - unless params[:year].present?
+      .pagination
+        = paginate events
+
   - else
     %p
       = t :no_events
-      
-- unless params[:year].present?
-  .fp_events.course-summary
-    = paginate @events

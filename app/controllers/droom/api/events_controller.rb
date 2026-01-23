@@ -1,9 +1,11 @@
 module Droom::Api
   class EventsController < Droom::Api::ApiController
-
+    skip_before_action :assert_local_request!, only: [:calendar], raise: false
+    prepend_before_action :authenticate_from_param, only: [:calendar]
     before_action :get_events, only: [:index]
     before_action :find_or_create_event, only: [:create]
-    load_and_authorize_resource find_by: :uuid, class: "Droom::Event"
+    load_and_authorize_resource find_by: :uuid, class: "Droom::Event", except: [:calendar]
+    skip_load_and_authorize_resource only: [:calendar]
     
     def index
       render json: @events
@@ -79,6 +81,19 @@ module Droom::Api
 
     def event_params
       params.require(:event).permit(:name, :description, :event_set_id, :calendar_id, :all_day, :url, :start, :finish, :timezone, :venue_id, :venue_name)
+    end
+
+    def authenticate_from_param
+      if params[:tok].present?
+        user = Droom::User.find_by(authentication_token: params[:tok])
+        if user && user.data_room_user?
+          sign_in user
+        else
+          raise Droom::AccessDenied
+        end
+      else
+        raise Droom::AccessDenied
+      end
     end
 
   end
