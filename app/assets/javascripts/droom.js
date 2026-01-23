@@ -28,6 +28,7 @@
 //= require droom/grid
 //= require droom/pdf_upload
 //= require droom/file_selector
+//= require droom/folder_sorting
 //= require_self 
 
 
@@ -197,6 +198,7 @@
       this.find_including_self('form#suggestions').suggestion_form();
       if (!$('body').hasClass('mobile')) {
         this.find_including_self('.sortable_files').sortable_files();
+        this.find_including_self('.sortable_folders').sortable_folders();
       }
       this.find_including_self('[data-draggable]').draggable();
       this.find_including_self('.gridbox:not(.notice)').gridBox();

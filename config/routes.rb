@@ -167,6 +167,7 @@ Droom::Engine.routes.draw do
     get "dropbox", on: :member, as: :dropbox
     get "move_folder", on: :member
     put "moved", on: :member
+    put "reposition", on: :member
     resources :documents
     resources :folders
   end

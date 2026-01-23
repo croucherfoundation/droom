@@ -63,6 +63,12 @@ module Droom
       head :ok
     end
 
+    def reposition
+      folder = Droom::Folder.find(params[:id])
+      folder.insert_at(params[:position].to_i)
+      head :ok
+    end
+
     def move_folder
       respond_with @folder
     end

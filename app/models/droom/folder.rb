@@ -3,6 +3,10 @@ module Droom
     has_ancestry
     # don't use Slugged: we need to apply a dynamic parent scope.
 
+    # acts_as_list for ordering folders within the same level (same ancestry)
+    # Using column: 'ancestry' to handle the string ancestry column (not a foreign key)
+    acts_as_list column: 'position', scope: [:ancestry]
+
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :holder, :polymorphic => true
     has_many :documents, -> {order(position: :asc, file_file_name: :asc)}, :dependent => :destroy
@@ -12,7 +16,7 @@ module Droom
     after_save :set_file_path
     validates :slug, presence: true, uniqueness: { scope: :ancestry }
 
-    default_scope -> { includes(:documents) }
+    default_scope -> { includes(:documents).order(:position) }
 
     scope :non_roots, -> { where.not(ancestry: nil) }
     scope :all_private, -> { where("#{table_name}.private = 1") }

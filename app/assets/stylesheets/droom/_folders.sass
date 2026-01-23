@@ -98,3 +98,46 @@ ul#folders, #single_folder, div.attachments
           image: image-url('droom/spinner.gif')
           position: 0 3px
           repeat: no-repeat
+  
+  // Drag handle for reordering folders
+  li.folder
+    position: relative
+    > .drag-handle
+      position: absolute
+      left: -35px
+      top: -2px
+      display: inline-block
+      vertical-align: middle
+      padding: 4px 0px 0 2px
+      border-radius: 5px
+      cursor: grab
+      opacity: 0
+      .grip-icon
+        display: block
+        vertical-align: middle
+      
+      svg.icon
+        width: 23px
+        height: 26px
+      
+      &:hover
+        opacity: 1 !important
+        background-color: $iconbg
+      
+      &:active
+        cursor: grabbing
+        background-color: $iconbg
+
+    // Show drag handle on folder hover
+    &:hover > .drag-handle
+      opacity: 0.6
+
+  // Drag states for Sortable.js
+  .folder-ghost
+    opacity: 0.4
+  
+  .folder-chosen
+    background-color: $iconbg
+  
+  .folder-drag
+    opacity: 0.5
