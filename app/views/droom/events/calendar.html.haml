@@ -1,14 +1,12 @@
 - content_for :pagetitle do 
   Caledar view 
 
-- content_for :breadcrumb do
-  = render "droom/events/calendar/breadcrumb"
-
 .calendar_container
   = render 'droom/events/calendar/toolbar'
 
   -# JS will populate this div with the calendar view
-  #calendar-view.calendar-view{ data: { api: croucher_droom_url('/api/events/calendar') } }
+  #calendar_view.calendar_view{ data: { events: croucher_droom_url('/api/events/calendar') } }
     
   = render 'droom/events/calendar/dialog'
 
+.calendar_spacer
