@@ -9,6 +9,7 @@ module Droom
     load_and_authorize_resource
 
     def index
+      @sortable = params[:sortable] == 'true'
       @folders = @folders.populated unless current_user.admin?
       respond_with @folders do |format|
         format.html { render layout: 'centered' }
@@ -19,6 +20,7 @@ module Droom
     end
 
     def show
+      @sortable = params[:sortable] == 'true'
       @skip_gdoc = params[:skip_gdoc] == 'true'
       respond_with @folder do |format|
         format.js {

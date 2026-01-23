@@ -1,3 +1,4 @@
+- sortable ||= @sortable.presence || false
 - skip_gdoc ||= false
 - limit ||= false
 - for_more ||= false
@@ -11,7 +12,7 @@
 - if !flat && can?(:edit, folder)
   - lidata = {droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}", refreshes: drop_refreshes}
   - uldata = {folder_id: folder.id}
-  - ulclass = 'sortable_files'
+  - ulclass = 'sortable_files' if sortable
 
 - folder.documents.each_with_index do |d, i|
   - d.update(position: i + 1)
@@ -20,7 +21,7 @@
   - if limit && document_count > 0 && limit < document_count
     %li.files{data: lidata}
       %ul
-        = render :partial => 'droom/documents/listing', :collection => folder.documents.where(google_doc_link: nil).limit(limit), locals: {narrow: narrow, skip_gdoc: skip_gdoc}
+        = render :partial => 'droom/documents/listing', :collection => folder.documents.where(google_doc_link: nil).limit(limit), locals: {narrow: narrow, skip_gdoc: skip_gdoc, sortable: sortable}
         - if for_more
           %li.more
             = link_to t(:more_documents_count, :count => document_count - limit), for_more
@@ -29,7 +30,7 @@
     - if document_count > 0
       %li.files{data: lidata}
         %ul{class: ulclass, data: uldata}
-          = render :partial => 'droom/documents/listing', :collection => folder.documents, locals: {narrow: narrow, skip_gdoc: skip_gdoc}
+          = render :partial => 'droom/documents/listing', :collection => folder.documents, locals: {narrow: narrow, skip_gdoc: skip_gdoc, sortable: sortable}
 
     - children = folder.children
     - if flat # floated in event view
@@ -46,9 +47,9 @@
           - if limit && limit < document_count + folder.children.count
             - children = children.limit(limit - document_count)
             - children = children.populated unless can?(:edit, folder)
-            = render :partial => 'droom/folders/folder', :collection => children, :locals => {:defer_contents => true, skip_gdoc: skip_gdoc}
+            = render :partial => 'droom/folders/folder', :collection => children, :locals => {:defer_contents => true, skip_gdoc: skip_gdoc, sortable: sortable}
             - if for_more
               %li.more
                 = link_to t(:more), for_more
           - else
-            = render :partial => 'droom/folders/folder', :collection => children, :locals => {:defer_contents => true, skip_gdoc: skip_gdoc}
+            = render :partial => 'droom/folders/folder', :collection => children, :locals => {:defer_contents => true, skip_gdoc: skip_gdoc, sortable: sortable}

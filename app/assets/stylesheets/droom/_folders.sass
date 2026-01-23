@@ -141,3 +141,10 @@ ul#folders, #single_folder, div.attachments
   
   .folder-drag
     opacity: 0.5
+
+// Hide drag handles on mobile/touch devices
+@media (max-width: 768px)
+  ul#folders, #single_folder, div.attachments
+    li.folder, li.document
+      > .drag-handle
+        display: none !important

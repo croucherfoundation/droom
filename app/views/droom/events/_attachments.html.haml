@@ -12,4 +12,4 @@
     %ul 
       = render :partial => "droom/events/compile_pdf/compile_document", :locals => {event: event}        
   
-  = render :partial => "droom/folders/contents", :locals => {folder: folder, narrow: false, drop_refreshes: "", skip_gdoc: skip_gdoc}
+  = render :partial => "droom/folders/contents", :locals => {folder: folder, narrow: false, drop_refreshes: "", skip_gdoc: skip_gdoc, sortable: true}

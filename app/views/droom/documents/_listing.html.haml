@@ -1,3 +1,4 @@
+- sortable ||= @sortable.presence || false
 - skip_gdoc ||= false
 - listing ||= nil
 - omit_menu ||= false
@@ -20,10 +21,11 @@
   - cssclasses << ' no-bg-image' if %w[pdf gdoc notion png jpg jpeg webp].include?(extension)
   
   - unless skip_gdoc && (document.google_doc_link.present? || document.notion_page_link.present?)
-    %span.drag-handle{title: "Drag to reorder"}
-      %svg.icon
-        %use{"xlink:href": "#grid_symbol"}
-        
+    - if sortable
+      %span.drag-handle{title: "Drag to reorder"}
+        %svg.icon
+          %use{"xlink:href": "#grid_symbol"}
+
     = link_to detail_url, class: cssclasses, target: "_blank" do
       - if %w[pdf png jpg jpeg webp].include?(extension)
         %svg.icon.standard
