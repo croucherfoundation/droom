@@ -10,10 +10,10 @@
     = t :user_profile_account
 
   #account_info_container
-    .right-pane-container
-      .left-pane-contents
+    .detail-row
+      .detail-label
         = "Statuses: "
-      %span.label.right-pane-contents
+      %span.label.detail-value
         = t ("status_labels.#{@user.liveliness}")
       -# %div{class: "liveliness #{@user.liveliness}"}
         -# %svg.icon.small
@@ -21,45 +21,45 @@
         
       
     .account_info_contents
-      .right-pane-container
-        .left_pane.left-pane-contents
+      .detail-row
+        .left_pane.detail-label
           = 'Created at: '
-        .right-pane-contents
+        .detail-value
           %b
             = @user.created_at.present? ? @user.created_at.strftime('%e %b %Y') : t(:not_known)
-      .right-pane-container
-        .mid_pane.left-pane-contents
+      .detail-row
+        .mid_pane.detail-label
           = 'Last signed in: '
-        .right-pane-contents
+        .detail-value
           %b
             = @user.last_sign_in_at.present? ? @user.last_sign_in_at.strftime('%e %b %Y') : t(:not_known)
 
-      .right-pane-container
-        .right_pane.left-pane-contents
+      .detail-row
+        .right_pane.detail-label
           = 'Data room access: '
-        .right-pane-contents
+        .detail-value
           %b
             = @user.data_room_user? ? 'Yes' : 'No'
 
     .account_info_contents
-      .right-pane-container
-        .left_pane.left-pane-contents
+      .detail-row
+        .left_pane.detail-label
           = 'Account confirmed?: '
-        .right-pane-contents
+        .detail-value
           %b
             = @user.confirmed? ? 'Yes' : 'No'
 
-      .right-pane-container
-        .mid_pane.left-pane-contents
+      .detail-row
+        .mid_pane.detail-label
           = 'Confirmed at: '
-        .right-pane-contents
+        .detail-value
           %b
             = @user.confirmed_at.present? ? @user.confirmed_at.strftime('%e %b %Y') : t(:not_known)
 
-      .right-pane-container
-        .right_pane.left-pane-contents
+      .detail-row
+        .right_pane.detail-label
           = 'Administrator?: '
-        .right-pane-contents
+        .detail-value
           %b
             = @user.admin? ? 'Yes' : 'No'
 .section-divider
