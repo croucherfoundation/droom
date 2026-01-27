@@ -6,13 +6,13 @@
   -#   %span.user_controls
   -#     = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'preferences'), class: "edit", data: {action: 'popup', affected: "section.account_info"}
 
-  %h3.standard-h3-title.section.section-divider
+  %h3.standard-h3-title.section
     = t :user_profile_account
 
   #account_info_container
     .right-pane-container
       .left-pane-contents
-        = "Externals: "
+        = "Statuses: "
       %span.label.right-pane-contents
         = t ("status_labels.#{@user.liveliness}")
       -# %div{class: "liveliness #{@user.liveliness}"}
@@ -62,4 +62,4 @@
         .right-pane-contents
           %b
             = @user.admin? ? 'Yes' : 'No'
-%br
+.section-divider

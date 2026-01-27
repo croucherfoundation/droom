@@ -6,18 +6,16 @@
   -#   %span.user_controls
   -#     = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'personal'), class: "edit", data: {action: 'popup', affected: 'section.personal_info, span.user_title'}
 
-  %h3.standard-h3-title.section.section-divider
+  %h3.standard-h3-title.section
     = t :user_profile_personal
 
   #personal_info_content
-    -# #left_pane
-    -#   - if @user.image.attached?
-    -#     - img = @user.image.url
-      
-    -#   - img = img.presence || image_url('missing/user.png')
-
-    -#   .image-upload{:data => {:role => "imagepicker"}}
-    -#     %a.box.border-0{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
+    #left_pane
+      - if @user.image.attached?
+        - img = @user.image.url
+        - img = img.presence || image_url('missing/user.png')
+        .profile-upload-image{:data => {:role => "imagepicker"}}
+          %a.box.border-0{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
 
     #right_pane
       .right-pane-container
@@ -92,3 +90,4 @@
           .right-pane-contents
             %b
               = @user.timezone.present? ? shorten(@user.timezone.gsub(',', ', '), 64, ",") : t(:not_known)
+.section-divider

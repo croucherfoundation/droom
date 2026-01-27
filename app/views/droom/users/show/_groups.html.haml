@@ -14,7 +14,7 @@
   -#   %span.user_controls
   -#     = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'groups'), class: "edit", data: {action: 'popup', affected: "section.groups_info,section.statuses_info"}
 
-  %h3.standard-h3-title.section.section-divider
+  %h3.standard-h3-title.section
     = t :user_profile_groups
 
   %div#groups_info_container.croucher_tags
@@ -27,3 +27,4 @@
             = "#{r}"
     - else
       = 'None'
+.section-divider
