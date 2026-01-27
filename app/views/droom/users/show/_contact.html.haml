@@ -1,13 +1,19 @@
 - cssclass = 'contacts'
-- cssclass << ' editable' if can?(:edit, @user)
+-# - cssclass << ' editable' if can?(:edit, @user)
 
 %section{class: cssclass, data: {refreshing: true, url: droom.user_url(@user, view: 'contact', format: :js)}}
-  - if @user && can?(:edit, @user)
-    %span.user_controls
-      = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'contact'), class: "edit", data: {action: 'popup', affected: "section.contacts, section.user"}
+  -# - if @user && can?(:edit, @user)
+  -#   %span.user_controls
+  -#     = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'contact'), class: "edit", data: {action: 'popup', affected: "section.contacts, section.user"}
 
-  %h2.section
+  %h3.standard-h3-title.section.section-divider
     = t :user_profile_contact
+    - if @user && can?(:edit, @user)
+      = link_to droom.edit_user_url(@user, view: 'contact'), class: "edit", data: {action: 'popup', affected: "section.contacts, section.user"} do
+        %svg.icon{focusable: "false", aria: {hidden: true}}
+          %use{href: "#edit_symbol"}
+
+  
 
   - if @user
     %ul.address_book
