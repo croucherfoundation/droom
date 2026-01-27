@@ -34,7 +34,7 @@ module Droom::Api
           (end_date IS NULL AND finish IS NULL AND start >= ?)
         )",
         range.end, range.begin.to_date, range.begin, range.begin
-      )
+      ).order(:start)
 
       render json: @events, each_serializer: Droom::CalendarSerializer
     end
