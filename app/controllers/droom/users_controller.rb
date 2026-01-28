@@ -328,13 +328,5 @@ module Droom
     def find_user_by_user_id
       @user ||= Droom::User.find_by_id(params[:user_id])
     end
-
-    def default_layout
-      if action_name == 'show'
-        'centered'
-      else
-        Droom.config.layout
-      end
-    end
   end
 end
