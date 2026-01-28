@@ -88,6 +88,13 @@
       e.preventDefault();
 
       const $form = $(this).closest('form');
+      const form = $form[0];
+      
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      
       const url = $form.attr('action');
 
       $.post(url, $form.serialize())
