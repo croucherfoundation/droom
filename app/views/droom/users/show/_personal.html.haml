@@ -1,7 +1,7 @@
 - cssclass = 'personal_info'
 -# - cssclass << ' editable' if can?(:edit, @user)
 
-%section{class: cssclass, data: {refreshing: true, url: droom.user_url(@user, view: 'personal', format: :js)}}
+%section{class: cssclass, data: {refreshing: true, url: droom.user_url(@user, view: 'personal', format: :js), affected: '.user_profile_title'}}
   -# - if @user && can?(:edit, @user)
   -#   %span.user_controls
   -#     = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'personal'), class: "edit", data: {action: 'popup', affected: 'section.personal_info, span.user_title'}
@@ -22,16 +22,21 @@
         .detail-label
           = 'Name: '
         .detail-value
-          = @user.informal_name
+          %span{data: {refresh: "informal_name"}}
+            = @user.informal_name
           - if @user.chinese_name
-            %span.chinese_name
+            %span.chinese_name{data: {refresh: "chinese_name"}}
               = @user.chinese_name
 
       .detail-row
         .detail-label
           = 'Title: '
         .detail-value
-          = @user.title.present? ? @user.title : t(:not_known)
+          - if @user.title.present?
+            %span{data: {refresh: "title"}}
+              = @user.title
+          - else
+            = t(:not_known)
       .detail-row
         .detail-label
           = 'Gender: '
