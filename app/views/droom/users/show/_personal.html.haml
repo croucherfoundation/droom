@@ -22,72 +22,62 @@
         .detail-label
           = 'Name: '
         .detail-value
-          %b
-            = @user.informal_name
-            - if @user.chinese_name
-              %span.chinese_name
-                = @user.chinese_name
+          = @user.informal_name
+          - if @user.chinese_name
+            %span.chinese_name
+              = @user.chinese_name
 
       .detail-row
         .detail-label
           = 'Title: '
         .detail-value
-          %b
-            = @user.title.present? ? @user.title : t(:not_known)
+          = @user.title.present? ? @user.title : t(:not_known)
       .detail-row
         .detail-label
           = 'Gender: '
         .detail-value
-          %b
-            = @user.gender.present? ? ( @user.gender == 'm' ? 'Male' : 'Female') : t(:not_known)
+          = @user.gender.present? ? ( @user.gender == 'm' ? 'Male' : 'Female') : t(:not_known)
 
       .detail-row
         .detail-label
           = 'Date of birth: '
         .detail-value
-          %b
-            = @user.dob.present? ? @user.dob.strftime('%e %b %Y') : t(:not_known)
+          = @user.dob.present? ? @user.dob.strftime('%e %b %Y') : t(:not_known)
       
       .detail-row
         .detail-label
           = 'Place of birth: '
         .detail-value
-          %b
-            = @user.pob.present? ? @user.pob : t(:not_known)
+          = @user.pob.present? ? @user.pob : t(:not_known)
         
       .detail-row
         .detail-label
           = 'Nationality: '
         .detail-value
-          %b
-            = @user.nationality.present? ? @user.nationality : t(:not_known)
+          = @user.nationality.present? ? @user.nationality : t(:not_known)
       
       .detail-row
         .detail-label
           = 'HKID name: '
         .detail-value
-          %b
-            = @user.preferred_name.present? ? @user.preferred_name : t(:not_known)
+          = @user.preferred_name.present? ? @user.preferred_name : t(:not_known)
         
       .detail-row
         .detail-label
           = 'HKID: '
         .detail-value
-          %b
-            = @user.hkid.present? ? @user.hkid : t(:not_known)
+          = @user.hkid.present? ? @user.hkid : t(:not_known)
       
       .detail-row
         .detail-label
           = 'Pronoun: '
         .detail-value
-          %b
-            = @user.preferred_pronoun.present? ? @user.preferred_pronoun : t(:not_known)
+          = @user.preferred_pronoun.present? ? @user.preferred_pronoun : t(:not_known)
 
       - if FeatureFlag.enabled?('time-zone-feature', current_user)
         .detail-row
           .detail-label
             = 'Timezone: '
           .detail-value
-            %b
-              = @user.timezone.present? ? shorten(@user.timezone.gsub(',', ', '), 64, ",") : t(:not_known)
-.section-divider
+            = @user.timezone.present? ? shorten(@user.timezone.gsub(',', ', '), 64, ",") : t(:not_known)
+  .section-divider

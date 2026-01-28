@@ -25,41 +25,35 @@
         .left_pane.detail-label
           = 'Created at: '
         .detail-value
-          %b
-            = @user.created_at.present? ? @user.created_at.strftime('%e %b %Y') : t(:not_known)
+          = @user.created_at.present? ? @user.created_at.strftime('%e %b %Y') : t(:not_known)
       .detail-row
         .mid_pane.detail-label
           = 'Last signed in: '
         .detail-value
-          %b
-            = @user.last_sign_in_at.present? ? @user.last_sign_in_at.strftime('%e %b %Y') : t(:not_known)
+          = @user.last_sign_in_at.present? ? @user.last_sign_in_at.strftime('%e %b %Y') : t(:not_known)
 
       .detail-row
         .right_pane.detail-label
           = 'Data room access: '
         .detail-value
-          %b
-            = @user.data_room_user? ? 'Yes' : 'No'
+          = @user.data_room_user? ? 'Yes' : 'No'
 
     .account_info_contents
       .detail-row
         .left_pane.detail-label
           = 'Account confirmed?: '
         .detail-value
-          %b
-            = @user.confirmed? ? 'Yes' : 'No'
+          = @user.confirmed? ? 'Yes' : 'No'
 
       .detail-row
         .mid_pane.detail-label
           = 'Confirmed at: '
         .detail-value
-          %b
-            = @user.confirmed_at.present? ? @user.confirmed_at.strftime('%e %b %Y') : t(:not_known)
+          = @user.confirmed_at.present? ? @user.confirmed_at.strftime('%e %b %Y') : t(:not_known)
 
       .detail-row
         .right_pane.detail-label
           = 'Administrator?: '
         .detail-value
-          %b
-            = @user.admin? ? 'Yes' : 'No'
-.section-divider
+          = @user.admin? ? 'Yes' : 'No'
+  .section-divider
