@@ -28,7 +28,7 @@
             %p.onecol
               %span.col>
                 = f.label :other_id
-                = f.text_field :other_id, placeholder: t('placeholders.user.other_id')
+                = f.text_field :other_id, placeholder: t('placeholders.user.other_id'), required: true
 
             %p.note 
               Note: The account merging process will be handled by a background job and may take some time to complete.
