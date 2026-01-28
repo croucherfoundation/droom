@@ -4,6 +4,6 @@
 %li{class: cssclass}
   %svg.icon.small
     - icon = address.address_type ? address.address_type.slug : "correspondence"
-    %use{"xlink:href" => "#address_type_#{icon}_symbol"}
+    %use{"xlink:href" => "#address_type_home2_symbol"}
   %span.contact
     = address.address&.html_safe

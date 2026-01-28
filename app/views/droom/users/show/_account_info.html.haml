@@ -1,51 +1,59 @@
 - cssclass = 'account_info'
-- cssclass << ' editable' if can?(:edit, @user)
+-# - cssclass << ' editable' if can?(:edit, @user)
 
 %section{class: cssclass, data: {refreshing: true, url: droom.user_url(@user, view: 'account_info', format: :js)}}
-  - if @user && can?(:edit, @user)
-    %span.user_controls
-      = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'preferences'), class: "edit", data: {action: 'popup', affected: "section.account_info"}
+  -# - if @user && can?(:edit, @user)
+  -#   %span.user_controls
+  -#     = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'preferences'), class: "edit", data: {action: 'popup', affected: "section.account_info"}
 
-  %h2.section
+  %h3.standard-h3-title.section
     = t :user_profile_account
 
   #account_info_container
-    %div{class: "liveliness #{@user.liveliness}"}
-      %svg.icon.small
-        %use{href: "#user_#{@user.liveliness}_symbol"}
-      %span.label
+    .detail-row
+      .detail-label
+        = "Statuses: "
+      %span.label.detail-value
         = t ("status_labels.#{@user.liveliness}")
+      -# %div{class: "liveliness #{@user.liveliness}"}
+        -# %svg.icon.small
+        -#   %use{href: "#user_#{@user.liveliness}_symbol"}
+        
       
-
     .account_info_contents
-      .left_pane
-        = 'Created at: '
-        %b
+      .detail-row
+        .left_pane.detail-label
+          = 'Created at: '
+        .detail-value
           = @user.created_at.present? ? @user.created_at.strftime('%e %b %Y') : t(:not_known)
-
-      .mid_pane
-        = 'Last signed in: '
-        %b
+      .detail-row
+        .mid_pane.detail-label
+          = 'Last signed in: '
+        .detail-value
           = @user.last_sign_in_at.present? ? @user.last_sign_in_at.strftime('%e %b %Y') : t(:not_known)
 
-      .right_pane
-        = 'Data room access: '
-        %b
+      .detail-row
+        .right_pane.detail-label
+          = 'Data room access: '
+        .detail-value
           = @user.data_room_user? ? 'Yes' : 'No'
 
     .account_info_contents
-      .left_pane
-        = 'Account confirmed?: '
-        %b
+      .detail-row
+        .left_pane.detail-label
+          = 'Account confirmed?: '
+        .detail-value
           = @user.confirmed? ? 'Yes' : 'No'
 
-      .mid_pane
-        = 'Confirmed at: '
-        %b
+      .detail-row
+        .mid_pane.detail-label
+          = 'Confirmed at: '
+        .detail-value
           = @user.confirmed_at.present? ? @user.confirmed_at.strftime('%e %b %Y') : t(:not_known)
 
-      .right_pane
-        = 'Administrator?: '
-        %b
+      .detail-row
+        .right_pane.detail-label
+          = 'Administrator?: '
+        .detail-value
           = @user.admin? ? 'Yes' : 'No'
-%br
+  .section-divider

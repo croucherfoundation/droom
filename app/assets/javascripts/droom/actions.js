@@ -67,6 +67,14 @@
             old_container.trigger('refreshed', _this._container);
             old_container.remove();
             replacement.activate().signal_confirmation();
+            
+            // Sync data-refresh attributes globally
+            replacement.find('[data-refresh]').each(function() {
+              var key = $(this).attr('data-refresh');
+              var value = $(this).text();
+              $('[data-refresh="' + key + '"]').text(value);
+            });
+            
             return _this._container = replacement;
           };
         })(this));

@@ -1,12 +1,5 @@
-- cssclass = 'contacts'
-- cssclass << ' editable' if can?(:edit, @user)
-
-%section{class: cssclass, data: {refreshing: true, url: droom.user_url(@user, view: 'contact', format: :js)}}
-  - if @user && can?(:edit, @user)
-    %span.user_controls
-      = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'contact'), class: "edit", data: {action: 'popup', affected: "section.contacts, section.user"}
-
-  %h2.section
+%section{class: 'contacts', data: {refreshing: true, url: droom.user_url(@user, view: 'contact', format: :js)}}
+  %h3.standard-h3-title.section
     = t :user_profile_contact
 
   - if @user
@@ -19,6 +12,6 @@
             %strong
               = t('problems.user.unreachable')
 
-        
       = render partial: "droom/phones/phone", collection: @user.phones.by_preference
       = render partial: "droom/addresses/address", collection: @user.addresses.by_preference
+  .section-divider

@@ -1,79 +1,88 @@
 - cssclass = 'personal_info'
-- cssclass << ' editable' if can?(:edit, @user)
+-# - cssclass << ' editable' if can?(:edit, @user)
 
-%section{class: cssclass, data: {refreshing: true, url: droom.user_url(@user, view: 'personal', format: :js)}}
-  - if @user && can?(:edit, @user)
-    %span.user_controls
-      = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'personal'), class: "edit", data: {action: 'popup', affected: 'section.personal_info, span.user_title'}
+%section{class: cssclass, data: {refreshing: true, url: droom.user_url(@user, view: 'personal', format: :js), affected: '.user_profile_title'}}
+  -# - if @user && can?(:edit, @user)
+  -#   %span.user_controls
+  -#     = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'personal'), class: "edit", data: {action: 'popup', affected: 'section.personal_info, span.user_title'}
 
-  %h2.section
+  %h3.standard-h3-title.section
     = t :user_profile_personal
 
   #personal_info_content
     #left_pane
       - if @user.image.attached?
         - img = @user.image.url
-      
-      - img = img.presence || image_url('missing/user.png')
-
-      .image-upload{:data => {:role => "imagepicker"}}
-        %a.box.border-0{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
+        - img = img.presence || image_url('missing/user.png')
+        .profile-upload-image{:data => {:role => "imagepicker"}}
+          %a.box.border-0{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
 
     #right_pane
-      .right_pane_container
-        .right_pane_contents
+      .detail-row
+        .detail-label
           = 'Name: '
-          %b
+        .detail-value
+          %span{data: {refresh: "informal_name"}}
             = @user.informal_name
-            - if @user.chinese_name
-              %span.chinese_name
-                = @user.chinese_name
-        
-        .right_pane_contents
-          = 'Title: '
-          %b
-            = @user.title.present? ? @user.title : t(:not_known)
-      .right_pane_container
-        .right_pane_contents
-          = 'Gender: '
-          %b
-            = @user.gender.present? ? ( @user.gender == 'm' ? 'Male' : 'Female') : t(:not_known)
-        
-        .right_pane_contents
-          = 'Date of birth: '
-          %b
-            = @user.dob.present? ? @user.dob.strftime('%e %b %Y') : t(:not_known)
-      
-      .right_pane_container
-        .right_pane_contents
-          = 'Place of birth: '
-          %b
-            = @user.pob.present? ? @user.pob : t(:not_known)
-        
-        .right_pane_contents
-          = 'Nationality: '
-          %b
-            = @user.nationality.present? ? @user.nationality : t(:not_known)
-      
-      .right_pane_container
-        .right_pane_contents
-          = 'HKID name: '
-          %b
-            = @user.preferred_name.present? ? @user.preferred_name : t(:not_known)
-        
-        .right_pane_contents
-          = 'HKID: '
-          %b
-            = @user.hkid.present? ? @user.hkid : t(:not_known)
-      
-      .right_pane_container
-        .right_pane_contents
-          = 'Pronoun: '
-          %b
-            = @user.preferred_pronoun.present? ? @user.preferred_pronoun : t(:not_known)
+          - if @user.chinese_name
+            %span.chinese_name{data: {refresh: "chinese_name"}}
+              = @user.chinese_name
 
-        - if FeatureFlag.enabled?('time-zone-feature', current_user)
-          .right_pane_contents
+      .detail-row
+        .detail-label
+          = 'Title: '
+        .detail-value
+          - if @user.title.present?
+            %span{data: {refresh: "title"}}
+              = @user.title
+          - else
+            = t(:not_known)
+      .detail-row
+        .detail-label
+          = 'Gender: '
+        .detail-value
+          = @user.gender.present? ? ( @user.gender == 'm' ? 'Male' : 'Female') : t(:not_known)
+
+      .detail-row
+        .detail-label
+          = 'Date of birth: '
+        .detail-value
+          = @user.dob.present? ? @user.dob.strftime('%e %b %Y') : t(:not_known)
+      
+      .detail-row
+        .detail-label
+          = 'Place of birth: '
+        .detail-value
+          = @user.pob.present? ? @user.pob : t(:not_known)
+        
+      .detail-row
+        .detail-label
+          = 'Nationality: '
+        .detail-value
+          = @user.nationality.present? ? @user.nationality : t(:not_known)
+      
+      .detail-row
+        .detail-label
+          = 'HKID name: '
+        .detail-value
+          = @user.preferred_name.present? ? @user.preferred_name : t(:not_known)
+        
+      .detail-row
+        .detail-label
+          = 'HKID: '
+        .detail-value
+          = @user.hkid.present? ? @user.hkid : t(:not_known)
+      
+      .detail-row
+        .detail-label
+          = 'Pronoun: '
+        .detail-value
+          = @user.preferred_pronoun.present? ? @user.preferred_pronoun : t(:not_known)
+
+      - if FeatureFlag.enabled?('time-zone-feature', current_user)
+        .detail-row
+          .detail-label
             = 'Timezone: '
-            %b
-              = @user.timezone.present? ? shorten(@user.timezone.gsub(',', ', '), 64, ",") : t(:not_known)
+          .detail-value
+            = @user.timezone.present? ? shorten(@user.timezone.gsub(',', ', '), 64, ",") : t(:not_known)
+  .section-divider

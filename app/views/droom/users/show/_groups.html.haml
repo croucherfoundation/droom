@@ -1,5 +1,5 @@
 - cssclass = 'groups_info'
-- cssclass << ' editable' if can?(:edit, @user)
+-# - cssclass << ' editable' if can?(:edit, @user)
 
 - group_names = []
 
@@ -10,19 +10,21 @@
 - group_names_size = group_names.any? ? group_names.size - 1 : 0
 
 %section{class: cssclass, data:{refreshing: true, url: droom.user_url(@user, view: 'groups', format: :js)}}
-  - if @user && can?(:edit, @user)
-    %span.user_controls
-      = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'groups'), class: "edit", data: {action: 'popup', affected: "section.groups_info,section.statuses_info"}
+  -# - if @user && can?(:edit, @user)
+  -#   %span.user_controls
+  -#     = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'groups'), class: "edit", data: {action: 'popup', affected: "section.groups_info,section.statuses_info"}
 
-  %h2.section
+  %h3.standard-h3-title.section
     = t :user_profile_groups
 
-  %div#groups_info_container
+  %div#groups_info_container.croucher_tags
     - if group_names.any?
       - group_names.each_with_index do |r, index|
-        - if index == group_names_size
-          = r
-        - else
-          = "#{r}, "
+        .croucher_tag.croucher_tag--grey
+          - if index == group_names_size
+            = r
+          - else
+            = "#{r}"
     - else
       = 'None'
+  .section-divider
