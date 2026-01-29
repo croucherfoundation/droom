@@ -12,13 +12,13 @@
           = t title
         .inputs
           %p.name
-            = f.text_field :name, :class => 'name', :placeholder => 'Name'
+            = f.text_field :name, :class => 'name', :placeholder => 'Name', required: true
 
           %p.slug
-            = f.text_field :slug, :class => 'slug', :placeholder => 'Key'
+            = f.text_field :slug, :class => 'slug', :placeholder => 'Key', required: true
 
           %p.description
-            = f.text_area :description, :class => 'description', :placeholder => 'Notes'
+            = f.text_area :description, :class => 'description', :placeholder => 'Notes (optional)'
 
       .buttons
         = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
