@@ -38,12 +38,12 @@
             - phone_count = 0
             - user.phones.each_with_index do |phone, index|
               = f.fields_for :phones, phone, child_index: index do |phone_fields|
-                = phone_fields.phone_field :phone, placeholder: t("placeholders.standard_modal.phone", count: index)
+                = phone_fields.phone_field :phone, placeholder: t("placeholders.standard_modal.phone", count: index), required: index<1 ? true : false
                 = phone_fields.hidden_field :address_type_id
               - phone_count+=1
             - while phone_count < 2
               = f.fields_for :phones, user.phones.new, child_index: phone_count do |phone_fields|
-                = phone_fields.phone_field :phone, placeholder: t("placeholders.standard_modal.phone", count: phone_count)
+                = phone_fields.phone_field :phone, placeholder: t("placeholders.standard_modal.phone", count: phone_count), required: phone_count<1 ? true : false
                 = phone_fields.hidden_field :address_type_id, value: phone_count < 1 ? 1 : 4
               - phone_count+=1
 
@@ -51,12 +51,12 @@
             - address_count = 0
             - user.addresses.each_with_index do |address, index|
               = f.fields_for :addresses, address, child_index: index do |address_fields|
-                = address_fields.text_area :address, placeholder: t("placeholders.standard_modal.address", count: index)
+                = address_fields.text_area :address, placeholder: t("placeholders.standard_modal.address", count: index), required: index<1 ? true : false
                 = address_fields.hidden_field :address_type_id
               - address_count+=1
             - while address_count < 2
               = f.fields_for :addresses, user.addresses.new, child_index: address_count do |address_fields|
-                = address_fields.text_area :address, placeholder: t("placeholders.standard_modal.address", count: address_count)
+                = address_fields.text_area :address, placeholder: t("placeholders.standard_modal.address", count: address_count), required: address_count<1 ? true : false
                 = address_fields.hidden_field :address_type_id, value: address_count < 1 ? 1 : 4
               - address_count+=1
 

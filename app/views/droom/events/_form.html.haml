@@ -29,14 +29,14 @@
             = f.hidden_field :start_date
         .summary.inputs
           .name
-            = f.text_field :name, :class => 'name', :placeholder => t(:event_name), :autofocus => true
+            = f.text_field :name, :class => 'name', :placeholder => t(:event_name), :autofocus => true, required: true
           - if is_outside_event
             %p.practicalities.input-dates.flex
-              = f.text_field :start_date, class: "start_date mr-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.start"), autocomplete: "off"
-              = f.text_field :end_date, class: "end_date ml-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.end_date"), autocomplete: "off"
+              = f.text_field :start_date, class: "start_date mr-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.start"), autocomplete: "off", required: true
+              = f.text_field :end_date, class: "end_date ml-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.end_date"), autocomplete: "off", required: true
 
           .practicalities.flex.standard-selection-list
-            = f.text_field :start_time, :class => "timepicker start", :value => (I18n.l(@event.start_time, :format => :precise) if @event.start_time), :placeholder => t(:event_time)
+            = f.text_field :start_time, :class => "timepicker start", :value => (I18n.l(@event.start_time, :format => :precise) if @event.start_time), :placeholder => t(:event_time), required: true
             .between-letter
               = t :to
             = f.text_field :finish_time, :class => "timepicker finish", :value => (I18n.l(@event.finish_time, :format => :precise) if @event.finish_time), :placeholder => t(:finish_time)
@@ -51,7 +51,7 @@
                   = t :uk_time
 
           %p.video_conference_link
-            = f.text_field :video_conference_link, :class => 'name', :placeholder => "Add video conference link"
+            = f.text_field :video_conference_link, :class => 'name', :placeholder => "Add video conference link (optional)"
 
           .description
             = f.text_area :description, class: "rte", placeholder: t("placeholders.event.description")
@@ -70,7 +70,7 @@
               = f.hidden_field :calendar_id
 
           .meeting_number
-            = f.text_field :meeting_number, :class => 'name', :placeholder => "Meeting number"
+            = f.text_field :meeting_number, :class => 'name', :placeholder => "Meeting number (optional)"
 
       .buttons
         = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'

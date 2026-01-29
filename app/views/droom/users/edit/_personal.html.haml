@@ -45,7 +45,7 @@
                           
                     %tr
                       %td Last name
-                      %td Chinese name
+                      %td Chinese name (optional)
                     %tr
                       %td
                         %span.name>
@@ -62,15 +62,15 @@
                     %tr
                       %td
                         %span.pro_name>
-                          = f.text_field :preferred_name, placeholder: t("placeholders.user.preferred_name")
+                          = f.text_field :preferred_name, placeholder: t("placeholders.user.preferred_name"), required: true
 
                       %td
                         %span.hkid>
-                          = f.text_field :hkid, placeholder: t("placeholders.user.hkid"), class: "hkid", data: {role: "hkid"}
+                          = f.text_field :hkid, placeholder: t("placeholders.user.hkid"), class: "hkid", data: {role: "hkid"}, required: true
 
                     %tr
-                      %td Gender
-                      %td Date of birth
+                      %td Gender (optional)
+                      %td Date of birth (optional)
                     %tr
                       %td{valign: 'top'}
                         = f.radio_button :gender, "m", class: 'radio'
@@ -81,8 +81,8 @@
                         = f.date_select :dob, {order: [:day, :month, :year], prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }, start_year: 1940, end_year: Date.today.year}
                         .std-input-mb
                     %tr
-                      %td Place of birth
-                      %td Nationality
+                      %td Place of birth (optional)
+                      %td Nationality (optional)
                     %tr
                       %td
                         %span.pro_name>

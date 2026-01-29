@@ -223,7 +223,7 @@ en:
   find_documents: "Find documents"
   find_people: "Find people"
   find_people_notes: "The quickest way to find a particular person is to start typing their name or email address here."
-  finish_time: "Finish?"
+  finish_time: "Finish? (optional)"
   folder: "folder"
   follow_stream: "Follow the stream in an RSS reader"
   forgot_password: "Forgotten your password?"
@@ -515,22 +515,22 @@ en:
     standard_modal:
       email:
         zero: "Email address"
-        one: "Alternative email address"
-        other: "Alternative email address"
+        one: "Alternative email address (optional)"
+        other: "Alternative email address (optional)"
       phone:
         zero: "Phone number"
-        one: "Alternative phone number"
-        other: "Alternative phone number"
+        one: "Alternative phone number (optional)"
+        other: "Alternative phone number (optional)"
       address:
         zero: "Postal address"
-        one: "Alternative postal address"
-        other: "Alternative postal address"
+        one: "Alternative postal address (optional)"
+        other: "Alternative postal address (optional)"
     event:
       cover_text: "Add meeting PDF cover details"
       datemark: "Click to change date"
-      description: "Please give a brief description"
-      venue_name: "Venue name"
-      url: "Website URL"
+      description: "Please give a brief description (optional)"
+      venue_name: "Venue name (optional)"
+      url: "Website URL (optional)"
       start: "Event start date"
       end_date: "Event end date"
     organisation:
