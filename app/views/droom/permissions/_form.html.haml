@@ -12,10 +12,10 @@
           = title
         .inputs
           %p.name
-            = f.text_field :name, :class => 'name', :placeholder => t("helpers.label.service.name"), :autofocus => true
+            = f.text_field :name, :class => 'name', :placeholder => t("helpers.label.service.name"), :autofocus => true, required: true
 
           %p.description
-            = f.text_area :description, :class => 'description', :placeholder => t("helpers.label.service.description")
+            = f.text_area :description, :class => 'description', :placeholder => "#{t("helpers.label.service.description")} (optional)"
 
           %p.service
             = f.label :service_id
