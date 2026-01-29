@@ -14,10 +14,10 @@
           = modal_title
         .inputs
           %p.name
-            = f.text_field :name, :class => 'name', :placeholder => t(:group_name)
+            = f.text_field :name, :class => 'name', :placeholder => t(:group_name), required: true
             
           %p.description
-            = f.text_area :description, :class => 'name medium', :placeholder => t(:group_description)
+            = f.text_area :description, :class => 'name medium', :placeholder => "#{t(:group_description)} (optional)"
             %br
             %span
               %span.standard-checkbox
