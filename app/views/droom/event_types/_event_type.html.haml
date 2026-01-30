@@ -4,7 +4,7 @@
 - aclass << " public" if event_type.public?
 
 %div.event_type{:id => "event_type_#{event_type.id}", :data => {:refreshing => true, :url => event_type_path(event_type, :format => :js)} }
-  %h2.name
+  %h2.name.text-preview-title
     = link_to event_type.name, droom.event_type_url(event_type), class: aclass
   %p
     = event_type.description.presence || t(:no_description)
