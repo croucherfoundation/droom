@@ -6,7 +6,7 @@
 - narrow ||= false
 - character_count = narrow ? 28 : 64
 
-%li.document{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id}}
+%li.document.text-preview-title.f-20{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id}}
   - if document.google_doc_link.present?
     - detail_url = document.google_doc_link
     - extension = 'gdoc'
