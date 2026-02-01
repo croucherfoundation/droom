@@ -73,8 +73,10 @@ ul#folders, #single_folder, div.attachments
       color: $text
       white-space: nowrap
       font-weight: bold
-      +hover
+      // +hover
       +waitable
+      &:hover
+        background-position: 0 0
       padding: 4px 0
     &.root
       > a.folder
@@ -82,8 +84,8 @@ ul#folders, #single_folder, div.attachments
     &.open
       > a.folder
         background-position: 0 -192px
-        &:hover
-          background-position: 0 -240px
+        // &:hover
+        //   background-position: 0px -192px
     &.empty
       > a.folder
         color: $pale
