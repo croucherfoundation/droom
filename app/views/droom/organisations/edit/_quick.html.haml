@@ -25,45 +25,45 @@
             %h2
               = title
             .inputs
-            %p.name.twocol<
-              %span.col>
-                = f.text_field :name, :required => true, :autofocus => true, placeholder: t("placeholders.organisation.name")
-              %span.col>
-                = f.text_field :chinese_name, placeholder: t("placeholders.organisation.chinese_name")
+              %p.name.twocol<
+                %span.col>
+                  = f.text_field :name, :required => true, :autofocus => true, placeholder: t("placeholders.organisation.name")
+                %span.col>
+                  = f.text_field :chinese_name, placeholder: t("placeholders.organisation.chinese_name")
 
-            %p.secondary.twocol
-              %span.col>
-                = f.label :url
+              %p.secondary.twocol
+                %span.col>
+                  = f.label :url
+                  %br
+                  = f.url_field :url, :class => "url", placeholder: t("placeholders.organisation.url")
+
+                %span.col>
+                  = f.label :organisation_type_id
+                  %br
+                  = f.select :organisation_type_id, Droom::OrganisationType.for_selection, :class => 'preferences'
+
+              %p.secondary.tagger
+                = f.label :keywords
                 %br
-                = f.url_field :url, :class => "url", placeholder: t("placeholders.organisation.url")
+                = f.text_field :keywords, placeholder: t("placeholders.organisation.keywords"), class: "tags"
 
-              %span.col>
-                = f.label :organisation_type_id
+              - if admin? || organisation_admin?(organisation)
+                %p.secondary.admins
+                  = f.label :administrator_ids
+                  %br
+                  - @organisation.users.each do |u|
+                    = f.check_box :administrator_ids, {multiple: true, class: "fancy"}, u.id
+                    = f.label :administrator_ids, u.name, value: u.id
+
+              .description
+                = f.label :description
                 %br
-                = f.select :organisation_type_id, Droom::OrganisationType.for_selection, :class => 'preferences'
-
-            %p.secondary.tagger
-              = f.label :keywords
-              %br
-              = f.text_field :keywords, placeholder: t("placeholders.organisation.keywords"), class: "tags"
-
-            - if admin? || organisation_admin?(organisation)
-              %p.secondary.admins
-                = f.label :administrator_ids
-                %br
-                - @organisation.users.each do |u|
-                  = f.check_box :administrator_ids, {multiple: true, class: "fancy"}, u.id
-                  = f.label :administrator_ids, u.name, value: u.id
-
-            .description
-              = f.label :description
-              %br
-              = f.text_area :description, class: "rte", placeholder: t("placeholders.organisation.description")
-        
-            - if admin?
-              %p.admin
-                = f.check_box :external, class: 'fancy'
-                = f.label :external
+                = f.text_area :description, class: "rte", placeholder: t("placeholders.organisation.description")
+          
+              - if admin?
+                %p.admin
+                  = f.check_box :external, class: 'fancy'
+                  = f.label :external
         
         .standard-modal-footer
           .buttons
