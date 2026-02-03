@@ -26,12 +26,6 @@
             .inputs
               = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, timezone_id: "profile_timezone"}
 
-              - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
-                %p.inputs.mt-8
-                  %span.standard-checkbox
-                    = f.check_box :send_confirmation
-                    = f.label :send_confirmation, class: "standard-checkbox-label"
-
         .standard-modal-footer
           .buttons
             = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
@@ -39,3 +33,10 @@
               = f.submit t(:save_your_profile), class: 'croucher-standard-btn inline'
             - else
               = f.submit t(:save_profile), class: 'croucher-standard-btn inline'
+
+            - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
+              %p.inputs.mt-8
+                %span.standard-checkbox
+                  = f.check_box :send_confirmation
+                  = f.label :send_confirmation, class: "standard-checkbox-label"
+
