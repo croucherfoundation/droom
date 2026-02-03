@@ -15,12 +15,11 @@
             %h2
               = t(:biography_for, name: user.name)
             .inputs
-
-            - if Droom.use_biogs?
-              - user.description = "" unless user.description?
-              .description.wysihtml
-                .toolbar#t1
-                  = f.text_area :description
+              - if Droom.use_biogs?
+                - user.description = "" unless user.description?
+                .description.wysihtml
+                  .toolbar#t1
+                    = f.text_area :description
         .standard-modal-footer
           .buttons
             = render partial: 'droom/users/edit/buttons', locals: {f: f}

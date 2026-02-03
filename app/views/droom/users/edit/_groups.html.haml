@@ -17,17 +17,16 @@
             %h2
               = t(:groups_for, name: user.name)
             .inputs
-
-            - groups = Droom::Group.all
-            - if groups.any?
-              %div{style: 'width: 100%;'}
-                = f.label(:group_ids, class: "important") + ":"
-                .group-checkboxes-grid
-                  - groups.each do |group|
-                    %span.standard-checkbox
-                      = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}"
-                      %label.standard-checkbox-label.mb.pr-10{for: "user_group_ids_#{group.id}"}
-                        = group.name
+              - groups = Droom::Group.all
+              - if groups.any?
+                %div{style: 'width: 100%;'}
+                  = f.label(:group_ids, class: "important") + ":"
+                  .group-checkboxes-grid
+                    - groups.each do |group|
+                      %span.standard-checkbox
+                        = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}"
+                        %label.standard-checkbox-label.mb.pr-10{for: "user_group_ids_#{group.id}"}
+                          = group.name
         .standard-modal-footer
           .buttons
             = render partial: 'droom/users/edit/buttons', locals: {f: f}

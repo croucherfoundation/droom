@@ -17,58 +17,58 @@
             = t title
           .inputs
 
-          %ul.scraptypes
-            - Droom.scrap_types.each do |type|
-              - cssclass = @scrap.scraptype == type ? "#{type} here" : type
-              %li{:data => {:action => 'tab', :selector => ".#{type}"}}
-                = f.radio_button :scraptype, type
-                = f.label :"scraptype_#{type}", type, :class => cssclass
+            %ul.scraptypes
+              - Droom.scrap_types.each do |type|
+                - cssclass = @scrap.scraptype == type ? "#{type} here" : type
+                %li{:data => {:action => 'tab', :selector => ".#{type}"}}
+                  = f.radio_button :scraptype, type
+                  = f.label :"scraptype_#{type}", type, :class => cssclass
 
-          .specifics.image
-            - if @scrap.image.attached?
-              - img = @scrap.image_url(:thumb)
-            - else
-              - img = ""
+            .specifics.image
+              - if @scrap.image.attached?
+                - img = @scrap.image_url(:thumb)
+              - else
+                - img = ""
 
-            .image-upload{:data => {:role => "imagepicker"}}
-              %a.box{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
-              = f.file_field :image, :accept => 'image/*'
+              .image-upload{:data => {:role => "imagepicker"}}
+                %a.box{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
+                = f.file_field :image, :accept => 'image/*'
 
-          .specifics.event
-            - event = @scrap.event ||= @scrap.build_event(:start => Time.now.floor(30.minutes))
-            = f.fields_for :event, event do |ef|
-              = ef.hidden_field :calendar_id, :value => Droom::Calendar.stream_calendar
-              .datemark{data: {role: "datepicker"}}
-                %a{:href => "#"}
-                  %span.mon= event.start.strftime('%b')
-                  %span.dom= event.start.strftime('%d')
-                  %span.year= event.start.strftime('%Y')
-                = ef.hidden_field :start, value: event.start.strftime('%Y-%b-%d')
+            .specifics.event
+              - event = @scrap.event ||= @scrap.build_event(:start => Time.now.floor(30.minutes))
+              = f.fields_for :event, event do |ef|
+                = ef.hidden_field :calendar_id, :value => Droom::Calendar.stream_calendar
+                .datemark{data: {role: "datepicker"}}
+                  %a{:href => "#"}
+                    %span.mon= event.start.strftime('%b')
+                    %span.dom= event.start.strftime('%d')
+                    %span.year= event.start.strftime('%Y')
+                  = ef.hidden_field :start, value: event.start.strftime('%Y-%b-%d')
 
-          .specifics.document
-            - document = @scrap.document ||= @scrap.build_document()
-            = f.fields_for :document, document do |df|
-              = df.hidden_field :folder_id, :value => Droom::Folder.where(slug: "Stream").first_or_create.id
-              .filemark.filepicker{:data => {:role => "filepicker"}}
-                = link_to "choose file", "#", :class => "ul minimal #{document.file_extension}", :data => {:action => "pick"}
-                = df.file_field :file, :class => "file"
-                %p.tip
-                  = t :click_to_choose_file
+            .specifics.document
+              - document = @scrap.document ||= @scrap.build_document()
+              = f.fields_for :document, document do |df|
+                = df.hidden_field :folder_id, :value => Droom::Folder.where(slug: "Stream").first_or_create.id
+                .filemark.filepicker{:data => {:role => "filepicker"}}
+                  = link_to "choose file", "#", :class => "ul minimal #{document.file_extension}", :data => {:action => "pick"}
+                  = df.file_field :file, :class => "file"
+                  %p.tip
+                    = t :click_to_choose_file
 
-          .non-image-data
-            .floatable
-              %p.name
-                = f.text_field :name, :class => 'name', placeholder: t("placeholders.scrap.name")
-              %p.url
-                = f.url_field :url, :class => 'url', placeholder: t("placeholders.scrap.url")
+            .non-image-data
+              .floatable
+                %p.name
+                  = f.text_field :name, :class => 'name', placeholder: t("placeholders.scrap.name")
+                %p.url
+                  = f.url_field :url, :class => 'url', placeholder: t("placeholders.scrap.url")
 
-            .text
-              = f.label :body
-              %br
-              = f.text_area :body, :class => 'rte text', placeholder: t("placeholders.scrap.body"), :id => 'd1'
+              .text
+                = f.label :body
+                %br
+                = f.text_area :body, :class => 'rte text', placeholder: t("placeholders.scrap.body"), :id => 'd1'
 
-            %p.caption
-              = f.text_field :note, :class => 'note', placeholder: t("placeholders.scrap.caption")
+              %p.caption
+                = f.text_field :note, :class => 'note', placeholder: t("placeholders.scrap.caption")
 
       .standard-modal-footer
         .buttons
