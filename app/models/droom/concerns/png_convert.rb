@@ -4,7 +4,7 @@ require 'mini_magick'
 
 module Droom::Concerns::PngConvert
   extend ActiveSupport::Concern
-  COLORS = %w( #F6E36C #EE3A43 #8ED7E2 #FFAE00 #7AAEE5 #E14CA3 #EF652A #2065C5 #7E0091 #2AB252).freeze
+  COLORS = %w( #F6E36C #FFAE00 #EF652A #EE3A43 #E14CA3 #7E0091 #8ED7E2 #7AAEE5 #2065C5 #2AB252).freeze
 
   def attach_initials_image(user)
     return if user.given_name.blank? && user.family_name.blank?
