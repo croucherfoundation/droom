@@ -12,48 +12,51 @@
 #edit_user
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
       = form_for user, :html => {:class => 'edit user', :autocomplete => false} do |f|
-        .container
-          %h2
-            = title
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+        .standard-modal-body
+          .container
+            %h2
+              = title
 
-          .inputs
-            = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, minimal: true, timezone_id: "simple_timezone"}
-            -# = render partial: 'droom/users/edit/groups', locals: {f: f, user: user, minimal: true}
-            = hidden_field_tag "user[group_ids][]", nil
+            .inputs
+              = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, minimal: true, timezone_id: "simple_timezone"}
+              -# = render partial: 'droom/users/edit/groups', locals: {f: f, user: user, minimal: true}
+              = hidden_field_tag "user[group_ids][]", nil
 
-            - groups = Droom::Group.all
-            - if groups.any?
-              %div{style: 'width: 100%;'}
-                = f.label(:group_ids, class: "important") + ":"
-                .group-checkboxes-grid
-                  - groups.each do |group|
-                    %span.standard-checkbox
-                      = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}"
-                      %label.standard-checkbox-label.mb.pr-10{for: "user_group_ids_#{group.id}"}
-                        = group.name
+              - groups = Droom::Group.all
+              - if groups.any?
+                %div{style: 'width: 100%;'}
+                  = f.label(:group_ids, class: "important") + ":"
+                  .group-checkboxes-grid
+                    - groups.each do |group|
+                      %span.standard-checkbox
+                        = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}"
+                        %label.standard-checkbox-label.mb.pr-10{for: "user_group_ids_#{group.id}"}
+                          = group.name
 
-            - unless @user.confirmed?
-              = f.hidden_field :send_confirmation, value: true
+              - unless @user.confirmed?
+                = f.hidden_field :send_confirmation, value: true
 
-            - if Droom.use_organisations?
-              - if admin?
-                %p.organisation.admin
-                  = f.label :organisation_id
-                  = f.select :organisation_id, Droom::Organisation.for_selection, :class => 'preferences'
-              - else
-                = f.hidden_field :organisation_id
+              - if Droom.use_organisations?
+                - if admin?
+                  %p.organisation.admin
+                    = f.label :organisation_id
+                    = f.select :organisation_id, Droom::Organisation.for_selection, :class => 'preferences'
+                - else
+                  = f.hidden_field :organisation_id
 
-        .buttons
-          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
-          - if user == current_user
-            = f.submit t(:save_your_profile), class: 'croucher-standard-btn inline'
-          - elsif user.new_record?
-            = f.submit t(:invite), class: 'croucher-standard-btn inline'
-          - else
-            = f.submit t(:save_profile), class: 'croucher-standard-btn inline'
+        .standard-modal-footer
+          .buttons
+            = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+            - if user == current_user
+              = f.submit t(:save_your_profile), class: 'croucher-standard-btn inline'
+            - elsif user.new_record?
+              = f.submit t(:invite), class: 'croucher-standard-btn inline'
+            - else
+              = f.submit t(:save_profile), class: 'croucher-standard-btn inline'

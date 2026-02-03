@@ -2,17 +2,19 @@
 #note
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
       = form_for user, :html => {class: 'poppedup'}, data: {remote: true, type: :html} do |f|
-        = hidden_field_tag :view, @view
-        .container
-          %h2
-            = t(:contacts_for, name: user.name)
-          #edit_contacts.inputs
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+        .standard-modal-body
+          = hidden_field_tag :view, @view
+          .container
+            %h2
+              = t(:contacts_for, name: user.name)
+            #edit_contacts.inputs
             -# = render "droom/users/edit/emails", f: f, user: user
             - email_count = 0
             - user.emails.each_with_index do |email, index|
@@ -60,5 +62,6 @@
                 = address_fields.hidden_field :address_type_id, value: address_count < 1 ? 1 : 4
               - address_count+=1
 
-        .buttons
-          = render partial: 'droom/users/edit/buttons', locals: {f: f}
+        .standard-modal-footer
+          .buttons
+            = render partial: 'droom/users/edit/buttons', locals: {f: f}

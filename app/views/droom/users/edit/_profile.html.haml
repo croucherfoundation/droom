@@ -12,27 +12,31 @@
 #edit_user
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
       = form_for user, :html => {:class => 'edit user', :autocomplete => false} do |f|
-        .container
-          %h2
-            = title
-          .inputs
-            = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, timezone_id: "profile_timezone"}
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+        .standard-modal-body
+          .container
+            %h2
+              = title
+            .inputs
+              = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, timezone_id: "profile_timezone"}
 
-        .buttons
-          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
-          - if user == current_user
-            = f.submit t(:save_your_profile), class: 'croucher-standard-btn inline'
-          - else
-            = f.submit t(:save_profile), class: 'croucher-standard-btn inline'
+        .standard-modal-footer
+          .buttons
+            = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+            - if user == current_user
+              = f.submit t(:save_your_profile), class: 'croucher-standard-btn inline'
+            - else
+              = f.submit t(:save_profile), class: 'croucher-standard-btn inline'
 
-          - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
-            %p.inputs.mt-8
-              %span.standard-checkbox
-                = f.check_box :send_confirmation
-                = f.label :send_confirmation, class: "standard-checkbox-label"
+            - if !@user.confirmed? && (admin? || @user.organisation && organisation_admin?(@user.organisation))
+              %p.inputs.mt-8
+                %span.standard-checkbox
+                  = f.check_box :send_confirmation
+                  = f.label :send_confirmation, class: "standard-checkbox-label"
+

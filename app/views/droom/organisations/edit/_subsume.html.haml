@@ -4,28 +4,31 @@
 #edit_organisation
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
       = form_for [droom, organisation], url: merge_organisation_url(organisation), method: 'put', html: {:class => 'edit organisation'} do |f|
-        .container
-          %h2
-            = title
-          .inputs
-            %p
-              You are about to transfer all the users, assets and history of
-              %strong
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+        .standard-modal-body
+          .container
+            %h2
+              = title
+            .inputs
+              %p
+                You are about to transfer all the users, assets and history of
+                %strong
+                  = organisation.name
+                into the organisation you choose below. Please be careful: the
                 = organisation.name
-              into the organisation you choose below. Please be careful: the
-              = organisation.name
-              organisation will vanish completely and its users will have a new affiliation.
+                organisation will vanish completely and its users will have a new affiliation.
 
-            %p.organisation
-              = f.label :other_id
-              = f.select :other_id, Droom::Organisation.for_selection_with_owner(true)
+              %p.organisation
+                = f.label :other_id
+                = f.select :other_id, Droom::Organisation.for_selection_with_owner(true)
 
-        .buttons
-          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
-          = f.submit t(:subsume_organisation), class: 'croucher-standard-btn inline'
+        .standard-modal-footer
+          .buttons
+            = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+            = f.submit t(:subsume_organisation), class: 'croucher-standard-btn inline'

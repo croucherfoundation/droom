@@ -1,33 +1,36 @@
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
-      
     = form_for @folder, :html => {:class => 'edit folder'} do |f|
-      .container
-        %h2
-          = t title
-        .inputs
-          = f.hidden_field :parent_id
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
 
-          %p.error{style: 'color: red'}
-          %p.name
-            = f.label :name
-            %br
-            = f.text_field :name, required: true, class: "name", placeholder: t("helpers.label.folder.name"), autofocus: true, data: {role: 'name'}
+      .standard-modal-body
+        .container
+          %h2
+            = t title
+          .inputs
+            = f.hidden_field :parent_id
 
-          %p.slug
-            %strong<
-            - if @folder.parent
-              = @folder.parent.path + "/"
-            - else
-              \/
-            %br
-            = f.text_field :slug, :class => "slug", :placeholder => t("helpers.label.folder.slug"), data: {role: 'slug'}, readonly: true, style: "background: #eee"
+            %p.error{style: 'color: red'}
+            %p.name
+              = f.label :name
+              %br
+              = f.text_field :name, required: true, class: "name", placeholder: t("helpers.label.folder.name"), autofocus: true, data: {role: 'name'}
 
-      .buttons
-        = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
-        = f.submit t(:save_folder), class: 'croucher-standard-btn inline'
+            %p.slug
+              %strong<
+              - if @folder.parent
+                = @folder.parent.path + "/"
+              - else
+                \/
+              %br
+              = f.text_field :slug, :class => "slug", :placeholder => t("helpers.label.folder.slug"), data: {role: 'slug'}, readonly: true, style: "background: #eee"
+
+      .standard-modal-footer
+        .buttons
+          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+          = f.submit t(:save_folder), class: 'croucher-standard-btn inline'

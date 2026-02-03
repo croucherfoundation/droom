@@ -13,16 +13,18 @@
 #edit_organisation
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
       = form_for [droom, organisation], :html => {:class => 'edit organisation'} do |f|
-        .container
-          %h2
-            = title
-          .inputs
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+        .standard-modal-body
+          .container
+            %h2
+              = title
+            .inputs
             %p.name.twocol<
               %span.col>
                 = f.text_field :name, :required => true, :autofocus => true, placeholder: t("placeholders.organisation.name")
@@ -63,6 +65,7 @@
                 = f.check_box :external, class: 'fancy'
                 = f.label :external
         
-        .buttons
-          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
-          = f.submit t(:save), class: 'croucher-standard-btn inline'
+        .standard-modal-footer
+          .buttons
+            = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+            = f.submit t(:save), class: 'croucher-standard-btn inline'

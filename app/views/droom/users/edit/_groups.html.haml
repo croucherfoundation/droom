@@ -3,18 +3,20 @@
 #note
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
       = form_for user, :html => {class: 'poppedup'}, data: {remote: true, type: :html} do |f|
-        = hidden_field_tag :view, @view
-        = hidden_field_tag "user[group_ids][]", nil
-        .container
-          %h2
-            = t(:groups_for, name: user.name)
-          .inputs
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+        .standard-modal-body
+          = hidden_field_tag :view, @view
+          = hidden_field_tag "user[group_ids][]", nil
+          .container
+            %h2
+              = t(:groups_for, name: user.name)
+            .inputs
 
             - groups = Droom::Group.all
             - if groups.any?
@@ -26,5 +28,6 @@
                       = check_box_tag "user[group_ids][]", group.id, user.group_ids.include?(group.id), id: "user_group_ids_#{group.id}"
                       %label.standard-checkbox-label.mb.pr-10{for: "user_group_ids_#{group.id}"}
                         = group.name
-        .buttons
-          = render partial: 'droom/users/edit/buttons', locals: {f: f}
+        .standard-modal-footer
+          .buttons
+            = render partial: 'droom/users/edit/buttons', locals: {f: f}

@@ -4,18 +4,21 @@
     .modal-content
       .standard-modal-overlay.active
         .standard-modal-container.active
-          .standard-modal-close-btn.cursor-pointer
-            %svg.standard_close_icon
-              %use{"xlink:href" => "#standard_close_symbol"}
-          %svg.logo
-            %use{"xlink:href" => "#croucher_logo"}
-          .container
-            %h2 Password reset instructions not delivered
-            .form-fields
-              %section
-                %p
-                  = t :password_reset_instructions_not_delivered
+          .standard-modal-header
+            .standard-modal-close-btn.cursor-pointer
+              %svg.standard_close_icon
+                %use{"xlink:href" => "#standard_close_symbol"}
+            %svg.logo
+              %use{"xlink:href" => "#croucher_logo"}
+          .standard-modal-body
+            .container
+              %h2 Password reset instructions not delivered
+              .form-fields
+                %section
+                  %p
+                    = t :password_reset_instructions_not_delivered
 
-          %section.actions.buttons
-            %button.croucher-standard-btn.modal-btn.cancel{type: "button"}
-              Close
+          .standard-modal-footer
+            %section.actions.buttons
+              %button.croucher-standard-btn.modal-btn.cancel{type: "button"}
+                Close

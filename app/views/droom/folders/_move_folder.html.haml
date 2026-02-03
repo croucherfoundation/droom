@@ -1,21 +1,24 @@
 .standard-modal-overlay.active
     .standard-modal-container.active
-        .standard-modal-close-btn.cursor-pointer
-            %svg.standard_close_icon
-                %use{"xlink:href" => "#standard_close_symbol"}
-        %svg.logo
-            %use{"xlink:href" => "#croucher_logo"}
         %form.edit.folder{action: "/folders/#{@folder.id}/moved", :method => 'put'}
-            .container
-                %h2
-                    = 'Move folder'
-                .inputs
-                    = hidden_field_tag :new_parent_id, ''
-                    = select_tag 'folders', options_from_collection_for_select(Droom::Folder.roots, "id", "name"), id: 'folders_list_1', class: 'folders_list', prompt: "Please select a root folder"
-                    #child_folders
-            .buttons
-                = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
-                %input{name: "submit", type: "submit", value: t(:save_folder), class: "croucher-standard-btn inline"}
+            .standard-modal-header
+                .standard-modal-close-btn.cursor-pointer
+                    %svg.standard_close_icon
+                        %use{"xlink:href" => "#standard_close_symbol"}
+                %svg.logo
+                    %use{"xlink:href" => "#croucher_logo"}
+            .standard-modal-body
+                .container
+                    %h2
+                        = 'Move folder'
+                    .inputs
+                        = hidden_field_tag :new_parent_id, ''
+                        = select_tag 'folders', options_from_collection_for_select(Droom::Folder.roots, "id", "name"), id: 'folders_list_1', class: 'folders_list', prompt: "Please select a root folder"
+                        #child_folders
+            .standard-modal-footer
+                .buttons
+                    = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+                    %input{name: "submit", type: "submit", value: t(:save_folder), class: "croucher-standard-btn inline"}
 
 :javascript
     $(document).ready( function() {

@@ -3,16 +3,19 @@
 
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
     = form_for @scrap, :html => {:class => 'edit scrap'} do |f|
-      .container
-        %h2
-          = t title
-        .inputs
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
+
+      .standard-modal-body
+        .container
+          %h2
+            = t title
+          .inputs
 
           %ul.scraptypes
             - Droom.scrap_types.each do |type|
@@ -67,6 +70,7 @@
             %p.caption
               = f.text_field :note, :class => 'note', placeholder: t("placeholders.scrap.caption")
 
+      .standard-modal-footer
         .buttons
           = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
           = f.submit t(:save), class: 'croucher-standard-btn inline'
