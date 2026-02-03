@@ -1,23 +1,26 @@
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
-
     = form_tag reposition_groups_path, :remote => true, :data => {:type => :html}, :html => {:class => 'edit group'} do
-      .container
-        %h2 Reorder groups
-        
-        .cards-order-container
-          - @groups.each do |group|
-            .orderable-card{data: {id: group.id}, draggable: 'true'}
-              %p.orderable-card-title
-                = group.name
-        
-        = hidden_field_tag 'groups', '', id: 'repositioned_ids'
-        
-      .buttons
-        = link_to t(:cancel_edit), "#", :class => 'cancel submit-button'
-        = submit_tag t(:save), class: 'croucher-standard-btn inline'
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
+
+      .standard-modal-body
+        .container
+          %h2 Reorder groups
+          
+          .cards-order-container
+            - @groups.each do |group|
+              .orderable-card{data: {id: group.id}, draggable: 'true'}
+                %p.orderable-card-title
+                  = group.name
+          
+          = hidden_field_tag 'groups', '', id: 'repositioned_ids'
+          
+      .standard-modal-footer
+        .buttons
+          = link_to t(:cancel_edit), "#", :class => 'cancel submit-button'
+          = submit_tag t(:save), class: 'croucher-standard-btn inline'

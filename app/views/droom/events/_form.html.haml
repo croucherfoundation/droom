@@ -5,73 +5,76 @@
 
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
-      
     = form_for @event, :html => {:class => 'edit standard-event', :remote => true, :data => {:type => :html}} do |f|
-      .container
-        %h2
-          = modal_title
-        - unless is_outside_event
-          .datemark{data: {role: "datepicker"}}
-            %a{:href => "#", title: t("placeholders.event.datemark")}
-              - if @event.start
-                %span.mon= @event.start.strftime('%b')
-                %span.dom= @event.start.strftime('%d')
-                %span.year= @event.start.strftime('%Y')
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
+
+      .standard-modal-body
+        .container
+          %h2
+            = modal_title
+          - unless is_outside_event
+            .datemark{data: {role: "datepicker"}}
+              %a{:href => "#", title: t("placeholders.event.datemark")}
+                - if @event.start
+                  %span.mon= @event.start.strftime('%b')
+                  %span.dom= @event.start.strftime('%d')
+                  %span.year= @event.start.strftime('%Y')
+                - else
+                  %span.mon= t(:mon)
+                  %span.dom= t(:dom)
+                  %span.year= t(:year)
+              = f.hidden_field :start_date
+          .summary.inputs
+            .name
+              = f.text_field :name, :class => 'name', :placeholder => t(:event_name), :autofocus => true
+            - if is_outside_event
+              %p.practicalities.input-dates.flex
+                = f.text_field :start_date, class: "start_date mr-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.start"), autocomplete: "off"
+                = f.text_field :end_date, class: "end_date ml-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.end_date"), autocomplete: "off"
+
+            .practicalities.flex.standard-selection-list
+              = f.text_field :start_time, :class => "timepicker start", :value => (I18n.l(@event.start_time, :format => :precise) if @event.start_time), :placeholder => t(:event_time)
+              .between-letter
+                = t :to
+              = f.text_field :finish_time, :class => "timepicker finish", :value => (I18n.l(@event.finish_time, :format => :precise) if @event.finish_time), :placeholder => t(:finish_time)
+              .between-letter
+                = t :at
+              = f.text_field :venue_name, :class => "venuepicker", :placeholder => t("placeholders.event.venue_name"), :autocomplete => "off",  data: {role: "venuepicker", width: 300}
+            - if Droom.config.second_time_zone?
+              %span.std-modal-timezone
+                %span.standard-checkbox
+                  = f.check_box :timezone, {id: "event_timezone_UK"}, "London", "Hong Kong"
+                  %label{for: "event_timezone_UK", class: 'standard-checkbox-label'}
+                    = t :uk_time
+
+            %p.video_conference_link
+              = f.text_field :video_conference_link, :class => 'name', :placeholder => "Add video conference link"
+
+            .description
+              = f.text_area :description, class: "rte", placeholder: t("placeholders.event.description")
+
+            .description
+              = f.text_field :url, class: "full-width", placeholder: t("placeholders.event.url")
+
+            %p.admin.model_box.std-input-mb
+              - if Droom::EventType.count > 1
+                = f.label :event_type_id, t(:file_under)
+                = f.select :event_type_id, Droom::EventType.for_selection, {}, class: "small"
+              - if Droom.config.separate_calendars? && Droom::Calendar.count > 1
+                = f.label :calendar_id
+                = f.select :calendar_id, Droom::Calendar.for_selection, {}, class: "small calendar_modelbox w-222"
               - else
-                %span.mon= t(:mon)
-                %span.dom= t(:dom)
-                %span.year= t(:year)
-            = f.hidden_field :start_date
-        .summary.inputs
-          .name
-            = f.text_field :name, :class => 'name', :placeholder => t(:event_name), :autofocus => true
-          - if is_outside_event
-            %p.practicalities.input-dates.flex
-              = f.text_field :start_date, class: "start_date mr-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.start"), autocomplete: "off"
-              = f.text_field :end_date, class: "end_date ml-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.end_date"), autocomplete: "off"
+                = f.hidden_field :calendar_id
 
-          .practicalities.flex.standard-selection-list
-            = f.text_field :start_time, :class => "timepicker start", :value => (I18n.l(@event.start_time, :format => :precise) if @event.start_time), :placeholder => t(:event_time)
-            .between-letter
-              = t :to
-            = f.text_field :finish_time, :class => "timepicker finish", :value => (I18n.l(@event.finish_time, :format => :precise) if @event.finish_time), :placeholder => t(:finish_time)
-            .between-letter
-              = t :at
-            = f.text_field :venue_name, :class => "venuepicker", :placeholder => t("placeholders.event.venue_name"), :autocomplete => "off",  data: {role: "venuepicker", width: 300}
-          - if Droom.config.second_time_zone?
-            %span.std-modal-timezone
-              %span.standard-checkbox
-                = f.check_box :timezone, {id: "event_timezone_UK"}, "London", "Hong Kong"
-                %label{for: "event_timezone_UK", class: 'standard-checkbox-label'}
-                  = t :uk_time
+            .meeting_number
+              = f.text_field :meeting_number, :class => 'name', :placeholder => "Meeting number"
 
-          %p.video_conference_link
-            = f.text_field :video_conference_link, :class => 'name', :placeholder => "Add video conference link"
-
-          .description
-            = f.text_area :description, class: "rte", placeholder: t("placeholders.event.description")
-          
-          .description
-            = f.text_field :url, class: "full-width", placeholder: t("placeholders.event.url")
-          
-          %p.admin.model_box.std-input-mb
-            - if Droom::EventType.count > 1
-              = f.label :event_type_id, t(:file_under)
-              = f.select :event_type_id, Droom::EventType.for_selection, {}, class: "small"
-            - if Droom.config.separate_calendars? && Droom::Calendar.count > 1
-              = f.label :calendar_id
-              = f.select :calendar_id, Droom::Calendar.for_selection, {}, class: "small calendar_modelbox w-222"
-            - else
-              = f.hidden_field :calendar_id
-
-          .meeting_number
-            = f.text_field :meeting_number, :class => 'name', :placeholder => "Meeting number"
-
-      .buttons
-        = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
-        = f.submit t(:save_event), class: 'croucher-standard-btn inline'
+      .standard-modal-footer
+        .buttons
+          = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
+          = f.submit t(:save_event), class: 'croucher-standard-btn inline'

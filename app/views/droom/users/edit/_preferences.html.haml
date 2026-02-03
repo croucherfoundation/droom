@@ -5,21 +5,23 @@
 #edit_user
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
       = form_for @user, :html => {:class => 'edit user password', :autocomplete => false} do |f|
-        .container
-          %h2
-            = title
-          %p
-            - if me
-              = t :account_emails
-            - else
-              = t :admin_account_emails
-          .inputs
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+        .standard-modal-body
+          .container
+            %h2
+              = title
+            %p
+              - if me
+                = t :account_emails
+              - else
+                = t :admin_account_emails
+            .inputs
             -# = render "droom/users/edit/emails", f: f, user: user
             - email_count = 0
             - user.emails.each_with_index do |email, index|
@@ -71,9 +73,10 @@
                   = f.check_box :organisation_admin
                   = f.label :organisation_admin, class: "standard-checkbox-label mb-10"
 
-        .buttons
-          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
-          - if @user == current_user
-            = f.submit t(:save_your_preferences), class: 'croucher-standard-btn inline'
-          - else
-            = f.submit t(:save_preferences), class: 'croucher-standard-btn inline'
+        .standard-modal-footer
+          .buttons
+            = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+            - if @user == current_user
+              = f.submit t(:save_your_preferences), class: 'croucher-standard-btn inline'
+            - else
+              = f.submit t(:save_preferences), class: 'croucher-standard-btn inline'

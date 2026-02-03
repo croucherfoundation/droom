@@ -1,27 +1,30 @@
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
-
     = form_for [@service, @permission], :html => { :multipart => true, :class => 'edit permission', :remote => true, :data => {:type => :html}} do |f|
-      .container
-        %h2
-          = title
-        .inputs
-          %p.name
-            = f.text_field :name, :class => 'name', :placeholder => t("helpers.label.service.name"), :autofocus => true
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
 
-          %p.description
-            = f.text_area :description, :class => 'description', :placeholder => t("helpers.label.service.description")
+      .standard-modal-body
+        .container
+          %h2
+            = title
+          .inputs
+            %p.name
+              = f.text_field :name, :class => 'name', :placeholder => t("helpers.label.service.name"), :autofocus => true
 
-          %p.service
-            = f.label :service_id
-            %br
-            = f.select :service_id, Droom::Service.for_selection
+            %p.description
+              = f.text_area :description, :class => 'description', :placeholder => t("helpers.label.service.description")
 
-      .buttons
-        = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
-        = f.submit t(:save_permission), class: 'croucher-standard-btn inline'
+            %p.service
+              = f.label :service_id
+              %br
+              = f.select :service_id, Droom::Service.for_selection
+
+      .standard-modal-footer
+        .buttons
+          = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
+          = f.submit t(:save_permission), class: 'croucher-standard-btn inline'

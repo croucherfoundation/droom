@@ -1,26 +1,29 @@
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
-
     = form_for [@event, @group_invitation], :html => {:class => "invitation", :remote => true, :data => {:type => :html}} do |f|
-      .container.standard-selection-list
-        %h2
-          = title
-        .inputs
-          %ul.groups
-            - Droom::Group.all.each do |group|
-              %li.empty-content.group
-                = f.radio_button :group_id, group.id, class: 'radio'
-                = f.label :"group_id_#{group.id}", group.name, class: 'radio_label mb'
-                - if group.invited_to?(@event)
-                  %br
-                  %span.formnote
-                    = t :group_already_invited
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
 
-      .buttons
-        = link_to t(:cancel_edit), '#', :class => "cancel submit-button"
-        = f.submit t(:invite), :class => "croucher-standard-btn inline"
+      .standard-modal-body
+        .container.standard-selection-list
+          %h2
+            = title
+          .inputs
+            %ul.groups
+              - Droom::Group.all.each do |group|
+                %li.empty-content.group
+                  = f.radio_button :group_id, group.id, class: 'radio'
+                  = f.label :"group_id_#{group.id}", group.name, class: 'radio_label mb'
+                  - if group.invited_to?(@event)
+                    %br
+                    %span.formnote
+                      = t :group_already_invited
+
+      .standard-modal-footer
+        .buttons
+          = link_to t(:cancel_edit), '#', :class => "cancel submit-button"
+          = f.submit t(:invite), :class => "croucher-standard-btn inline"
