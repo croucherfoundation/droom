@@ -23,7 +23,7 @@
     - if is_outside_event
       %button.color_button{ style: "background-color: #{get_profile_color}; float: left;" }
     - else
-      .datemark
+      .standard-datemark
         %span.mon= event.start.strftime('%b')
         %span.dom= event.start.strftime('%d')
 
