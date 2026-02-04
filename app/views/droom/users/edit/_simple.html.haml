@@ -19,11 +19,11 @@
               %use{"xlink:href" => "#standard_close_symbol"}
           %svg.logo
             %use{"xlink:href" => "#croucher_logo"}
-        .standard-modal-body
           .container
             %h2
               = title
-
+        .standard-modal-body
+          .container
             .inputs
               = render partial: 'droom/users/edit/user_fields', locals: {f: f, user: user, minimal: true, timezone_id: "simple_timezone"}
               -# = render partial: 'droom/users/edit/groups', locals: {f: f, user: user, minimal: true}

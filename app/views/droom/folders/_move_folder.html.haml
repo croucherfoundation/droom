@@ -7,10 +7,11 @@
                         %use{"xlink:href" => "#standard_close_symbol"}
                 %svg.logo
                     %use{"xlink:href" => "#croucher_logo"}
-            .standard-modal-body
                 .container
                     %h2
                         = 'Move folder'
+            .standard-modal-body
+                .container
                     .inputs
                         = hidden_field_tag :new_parent_id, ''
                         = select_tag 'folders', options_from_collection_for_select(Droom::Folder.roots, "id", "name"), id: 'folders_list_1', class: 'folders_list', prompt: "Please select a root folder"

@@ -9,11 +9,12 @@
               %use{"xlink:href" => "#standard_close_symbol"}
           %svg.logo
             %use{"xlink:href" => "#croucher_logo"}
-        .standard-modal-body
-          = hidden_field_tag :view, @view
           .container
             %h2
               = t(:contacts_for, name: user.name)
+        .standard-modal-body
+          = hidden_field_tag :view, @view
+          .container
             #edit_contacts.inputs
               -# = render "droom/users/edit/emails", f: f, user: user
               - email_count = 0

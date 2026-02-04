@@ -8,12 +8,12 @@
               %use{"xlink:href" => "#standard_close_symbol"}
           %svg.logo
             %use{"xlink:href" => "#croucher_logo"}
-
-        .standard-modal-body
           .container
             %h2
               Compile meeting PDF
 
+        .standard-modal-body
+          .container
             .inputs 
               %p.type
                 = f.select :compile_type, [['Compile all attachments', 'all'], ['Compile selected attachments', 'selected']], {prompt: 'Select'}, { id: 'compile-type' }

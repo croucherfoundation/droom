@@ -7,11 +7,12 @@
             %use{"xlink:href" => "#standard_close_symbol"}
         %svg.logo
           %use{"xlink:href" => "#croucher_logo"}
+        .container
+          %h2
+            = title
 
       .standard-modal-body
         .container.standard-selection-list
-          %h2
-            = title
           .inputs
             %ul.groups
               - Droom::Group.all.each do |group|

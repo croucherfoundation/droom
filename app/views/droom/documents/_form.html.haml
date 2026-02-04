@@ -7,13 +7,14 @@
             %use{"xlink:href" => "#standard_close_symbol"}
         %svg.logo
           %use{"xlink:href" => "#croucher_logo"}
+        .container
+          %h2
+            = title
 
       .standard-modal-body
         = hidden_field_tag :authenticity_token, form_authenticity_token
         = hidden_field_tag :document_id, @document.id
         .container
-          %h2
-            = title
           .inputs
             %p.error{style: 'color: red'}
 
