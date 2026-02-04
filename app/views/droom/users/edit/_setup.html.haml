@@ -3,39 +3,43 @@
 #edit_user
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
-
       = form_for user, :html => {class: 'poppedup'}, data: {remote: true, type: :html} do |f|
-        .container
-          %h2
-            = t("user_setup.welcome", name: user.name)
-          .inputs
-            = hidden_field_tag :view, @view
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+          .container
+            %h2
+              = t("user_setup.welcome", name: user.name)
 
-            #setup
-              %h1
-                Welcome!
-              %p
-                Thank you for accepting our invitation.
-                This is a default welcome message that the owner of this site will want to override with their own,
-                which will probably include useful guidance nd links to key features.
+        .standard-modal-body
+          .container
+            .inputs
+              = hidden_field_tag :view, @view
 
-              %fieldset{data: {role: 'preferences'}}
-                %p.names
-                  - if Droom.use_titles?
-                    %span.title>
-                      = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']],{}, { class: 'w-85' }
-                  %span.name>
-                    = f.text_field :given_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.given_name")
-                  %span.name>
-                    = f.text_field :family_name, :required => true, placeholder: t("placeholders.user.family_name")
-                  - if Droom.use_chinese_names?
-                    %span.chinese_name>
-                      = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")
+              #setup
+                %h1
+                  Welcome!
+                %p
+                  Thank you for accepting our invitation.
+                  This is a default welcome message that the owner of this site will want to override with their own,
+                  which will probably include useful guidance nd links to key features.
 
-        .buttons
-          = render partial: 'droom/users/edit/buttons', locals: {f: f}
+                %fieldset{data: {role: 'preferences'}}
+                  %p.names
+                    - if Droom.use_titles?
+                      %span.title>
+                        = f.select :title, [['Select a title', nil], ['Mr', 'Mr'], ['Ms', 'Ms'], ['Dr', 'Dr'], ['Professor', 'Professor']],{}, { class: 'w-85' }
+                    %span.name>
+                      = f.text_field :given_name, :required => true, :autofocus => true, placeholder: t("placeholders.user.given_name")
+                    %span.name>
+                      = f.text_field :family_name, :required => true, placeholder: t("placeholders.user.family_name")
+                    - if Droom.use_chinese_names?
+                      %span.chinese_name>
+                        = f.text_field :chinese_name, placeholder: t("placeholders.user.chinese_name")
+
+        .standard-modal-footer
+          .buttons
+            = render partial: 'droom/users/edit/buttons', locals: {f: f}

@@ -1,20 +1,24 @@
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
-
     = form_for [@event, @invitation], :html => { :class => "invitation", :remote => true, :data => {:type => :html}} do |f|
-      .container
-        %h2
-          = title
-        .inputs
-          %p
-            %input.person_selector.name{:type => "text", :placeholder => t(:type_name), :autocomplete => "off"}
-            = f.hidden_field :user_id, :class => "person_picker_target"
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
+        .container
+          %h2
+            = title
 
-      .buttons
-        = link_to t(:cancel_edit), '#', :class => "cancel submit-button"
-        = f.submit t(:invite), :class => "croucher-standard-btn inline"
+      .standard-modal-body
+        .container
+          .inputs
+            %p
+              %input.person_selector.name{:type => "text", :placeholder => t(:type_name), :autocomplete => "off"}
+              = f.hidden_field :user_id, :class => "person_picker_target"
+
+      .standard-modal-footer
+        .buttons
+          = link_to t(:cancel_edit), '#', :class => "cancel submit-button"
+          = f.submit t(:invite), :class => "croucher-standard-btn inline"

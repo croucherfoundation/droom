@@ -3,70 +3,75 @@
 
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
     = form_for @scrap, :html => {:class => 'edit scrap'} do |f|
-      .container
-        %h2
-          = t title
-        .inputs
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
+        .container
+          %h2
+            = t title
 
-          %ul.scraptypes
-            - Droom.scrap_types.each do |type|
-              - cssclass = @scrap.scraptype == type ? "#{type} here" : type
-              %li{:data => {:action => 'tab', :selector => ".#{type}"}}
-                = f.radio_button :scraptype, type
-                = f.label :"scraptype_#{type}", type, :class => cssclass
+      .standard-modal-body
+        .container
+          .inputs
 
-          .specifics.image
-            - if @scrap.image.attached?
-              - img = @scrap.image_url(:thumb)
-            - else
-              - img = ""
+            %ul.scraptypes
+              - Droom.scrap_types.each do |type|
+                - cssclass = @scrap.scraptype == type ? "#{type} here" : type
+                %li{:data => {:action => 'tab', :selector => ".#{type}"}}
+                  = f.radio_button :scraptype, type
+                  = f.label :"scraptype_#{type}", type, :class => cssclass
 
-            .image-upload{:data => {:role => "imagepicker"}}
-              %a.box{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
-              = f.file_field :image, :accept => 'image/*'
+            .specifics.image
+              - if @scrap.image.attached?
+                - img = @scrap.image_url(:thumb)
+              - else
+                - img = ""
 
-          .specifics.event
-            - event = @scrap.event ||= @scrap.build_event(:start => Time.now.floor(30.minutes))
-            = f.fields_for :event, event do |ef|
-              = ef.hidden_field :calendar_id, :value => Droom::Calendar.stream_calendar
-              .datemark{data: {role: "datepicker"}}
-                %a{:href => "#"}
-                  %span.mon= event.start.strftime('%b')
-                  %span.dom= event.start.strftime('%d')
-                  %span.year= event.start.strftime('%Y')
-                = ef.hidden_field :start, value: event.start.strftime('%Y-%b-%d')
+              .image-upload{:data => {:role => "imagepicker"}}
+                %a.box{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
+                = f.file_field :image, :accept => 'image/*'
 
-          .specifics.document
-            - document = @scrap.document ||= @scrap.build_document()
-            = f.fields_for :document, document do |df|
-              = df.hidden_field :folder_id, :value => Droom::Folder.where(slug: "Stream").first_or_create.id
-              .filemark.filepicker{:data => {:role => "filepicker"}}
-                = link_to "choose file", "#", :class => "ul minimal #{document.file_extension}", :data => {:action => "pick"}
-                = df.file_field :file, :class => "file"
-                %p.tip
-                  = t :click_to_choose_file
+            .specifics.event
+              - event = @scrap.event ||= @scrap.build_event(:start => Time.now.floor(30.minutes))
+              = f.fields_for :event, event do |ef|
+                = ef.hidden_field :calendar_id, :value => Droom::Calendar.stream_calendar
+                .datemark{data: {role: "datepicker"}}
+                  %a{:href => "#"}
+                    %span.mon= event.start.strftime('%b')
+                    %span.dom= event.start.strftime('%d')
+                    %span.year= event.start.strftime('%Y')
+                  = ef.hidden_field :start, value: event.start.strftime('%Y-%b-%d')
 
-          .non-image-data
-            .floatable
-              %p.name
-                = f.text_field :name, :class => 'name', placeholder: t("placeholders.scrap.name")
-              %p.url
-                = f.url_field :url, :class => 'url', placeholder: t("placeholders.scrap.url")
+            .specifics.document
+              - document = @scrap.document ||= @scrap.build_document()
+              = f.fields_for :document, document do |df|
+                = df.hidden_field :folder_id, :value => Droom::Folder.where(slug: "Stream").first_or_create.id
+                .filemark.filepicker{:data => {:role => "filepicker"}}
+                  = link_to "choose file", "#", :class => "ul minimal #{document.file_extension}", :data => {:action => "pick"}
+                  = df.file_field :file, :class => "file"
+                  %p.tip
+                    = t :click_to_choose_file
 
-            .text
-              = f.label :body
-              %br
-              = f.text_area :body, :class => 'rte text', placeholder: t("placeholders.scrap.body"), :id => 'd1'
+            .non-image-data
+              .floatable
+                %p.name
+                  = f.text_field :name, :class => 'name', placeholder: t("placeholders.scrap.name")
+                %p.url
+                  = f.url_field :url, :class => 'url', placeholder: t("placeholders.scrap.url")
 
-            %p.caption
-              = f.text_field :note, :class => 'note', placeholder: t("placeholders.scrap.caption")
+              .text
+                = f.label :body
+                %br
+                = f.text_area :body, :class => 'rte text', placeholder: t("placeholders.scrap.body"), :id => 'd1'
 
+              %p.caption
+                = f.text_field :note, :class => 'note', placeholder: t("placeholders.scrap.caption")
+
+      .standard-modal-footer
         .buttons
           = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
           = f.submit t(:save), class: 'croucher-standard-btn inline'

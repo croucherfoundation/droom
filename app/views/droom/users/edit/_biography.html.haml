@@ -2,22 +2,25 @@
 #note
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
       = form_for user, :html => {class: 'poppedup'}, data: {remote: true, type: :html} do |f|
-        = hidden_field_tag :view, @view
-        .container 
-          %h2
-            = t(:biography_for, name: user.name)
-          .inputs
-
-            - if Droom.use_biogs?
-              - user.description = "" unless user.description?
-              .description.wysihtml
-                .toolbar#t1
-                  = f.text_area :description
-        .buttons
-          = render partial: 'droom/users/edit/buttons', locals: {f: f}
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+          .container 
+            %h2
+              = t(:biography_for, name: user.name)
+        .standard-modal-body
+          = hidden_field_tag :view, @view
+          .container 
+            .inputs
+              - if Droom.use_biogs?
+                - user.description = "" unless user.description?
+                .description.wysihtml
+                  .toolbar#t1
+                    = f.text_area :description
+        .standard-modal-footer
+          .buttons
+            = render partial: 'droom/users/edit/buttons', locals: {f: f}

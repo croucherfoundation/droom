@@ -2,48 +2,52 @@
 #note
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
-
       = form_for user, :html => {class: 'poppedup'}, data: {remote: true, type: :html} do |f|
-        .container
-          %h2
-            = t(:account_info_for, name: user.name)
-          .inputs
-            = hidden_field_tag :view, @view
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+          .container
+            %h2
+              = t(:account_info_for, name: user.name)
 
-          #edit_account_info
-            .edit_account_info_content
-              .content_box
-                = 'Created at: '
-                %b
-                  = user.created_at.present? ? user.created_at.strftime('%e %b %Y') : t(:not_known)
-              .content_box
-                = 'Last signed in: '
-                %b
-                  = user.last_sign_in_at.present? ? user.last_sign_in_at.strftime('%e %b %Y') : t(:not_known)
+        .standard-modal-body
+          .container
+            .inputs
+              = hidden_field_tag :view, @view
 
-              .last_content_box
-                = 'Data room access: '
-                %b
-                  = user.data_room_user? ? 'Yes' : 'No'
+            #edit_account_info
+              .edit_account_info_content
+                .content_box
+                  = 'Created at: '
+                  %b
+                    = user.created_at.present? ? user.created_at.strftime('%e %b %Y') : t(:not_known)
+                .content_box
+                  = 'Last signed in: '
+                  %b
+                    = user.last_sign_in_at.present? ? user.last_sign_in_at.strftime('%e %b %Y') : t(:not_known)
 
-            .edit_account_info_content
-              .content_box
-                = 'Account confirmed?: '
-                %b
-                  = user.confirmed? ? 'Yes' : 'No'
+                .last_content_box
+                  = 'Data room access: '
+                  %b
+                    = user.data_room_user? ? 'Yes' : 'No'
 
-              .content_box
-                = 'Confirmed at: '
-                %b
-                  = user.confirmed_at.present? ? user.confirmed_at.strftime('%e %b %Y') : t(:not_known)
-              .last_content_box
-                = 'Administrator?: '
-                = f.check_box :admin
+              .edit_account_info_content
+                .content_box
+                  = 'Account confirmed?: '
+                  %b
+                    = user.confirmed? ? 'Yes' : 'No'
 
-        .buttons
-          = render partial: 'droom/users/edit/buttons', locals: {f: f}
+                .content_box
+                  = 'Confirmed at: '
+                  %b
+                    = user.confirmed_at.present? ? user.confirmed_at.strftime('%e %b %Y') : t(:not_known)
+                .last_content_box
+                  = 'Administrator?: '
+                  = f.check_box :admin
+
+        .standard-modal-footer
+          .buttons
+            = render partial: 'droom/users/edit/buttons', locals: {f: f}

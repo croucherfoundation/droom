@@ -2,32 +2,36 @@
 
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
-      
     = form_for @group, :html => {:class => 'edit group', :remote => true, :data => {:type => :html}} do |f|
-      .container
-        %h2
-          = modal_title
-        .inputs
-          %p.name
-            = f.text_field :name, :class => 'name', :placeholder => t(:group_name)
-            
-          %p.description
-            = f.text_area :description, :class => 'name medium', :placeholder => t(:group_description)
-            %br
-            %span
-              %span.standard-checkbox
-                = f.check_box :privileged
-                = f.label :privileged, class: 'standard-checkbox-label pr-10'
-            %span
-              %span.standard-checkbox
-                = f.check_box :directory
-                = f.label :directory, class: 'standard-checkbox-label'
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
+        .container
+          %h2
+            = modal_title
 
-      .buttons
-        = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
-        = f.submit t(:save), class: 'croucher-standard-btn inline'
+      .standard-modal-body
+        .container
+          .inputs
+            %p.name
+              = f.text_field :name, :class => 'name', :placeholder => t(:group_name)
+
+            %p.description
+              = f.text_area :description, :class => 'name medium', :placeholder => t(:group_description)
+              %br
+              %span
+                %span.standard-checkbox
+                  = f.check_box :privileged
+                  = f.label :privileged, class: 'standard-checkbox-label pr-10'
+              %span
+                %span.standard-checkbox
+                  = f.check_box :directory
+                  = f.label :directory, class: 'standard-checkbox-label'
+
+      .standard-modal-footer
+        .buttons
+          = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
+          = f.submit t(:save), class: 'croucher-standard-btn inline'

@@ -1,25 +1,29 @@
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
-
     = form_for [@service], :html => { :multipart => true, :class => 'edit service', :remote => true, :data => {:type => :html}} do |f|
-      .container
-        %h2
-          = t title
-        .inputs
-          %p.name
-            = f.text_field :name, :class => 'name', :placeholder => 'Name'
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
+        .container
+          %h2
+            = t title
 
-          %p.slug
-            = f.text_field :slug, :class => 'slug', :placeholder => 'Key'
+      .standard-modal-body
+        .container
+          .inputs
+            %p.name
+              = f.text_field :name, :class => 'name', :placeholder => 'Name'
 
-          %p.description
-            = f.text_area :description, :class => 'description', :placeholder => 'Notes'
+            %p.slug
+              = f.text_field :slug, :class => 'slug', :placeholder => 'Key'
 
-      .buttons
-        = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
-        = f.submit t(:save_service), class: 'croucher-standard-btn inline'
+            %p.description
+              = f.text_area :description, :class => 'description', :placeholder => 'Notes'
+
+      .standard-modal-footer
+        .buttons
+          = link_to t(:cancel_edit), "/", :class => 'cancel submit-button'
+          = f.submit t(:save_service), class: 'croucher-standard-btn inline'

@@ -1,25 +1,30 @@
 .standard-modal-overlay.active
   .standard-modal-container.active
-    .standard-modal-close-btn.cursor-pointer
-      %svg.standard_close_icon
-        %use{"xlink:href" => "#standard_close_symbol"}
-    %svg.logo
-      %use{"xlink:href" => "#croucher_logo"}
     = form_for @link, :html => {:class => 'edit link'} do |f|
-      .container
-        %h2
-          = t title
-        .inputs
-          %p.error{style: 'color: red'}
-          %p.name
-            = f.label :name
-            %br
-            = f.text_field :name, required: true, class: "name", placeholder: t("helpers.label.link.name"), autofocus: true, data: {role: 'name'}
-          %p.url
-            = f.label :url
-            %br
-            = f.text_field :url, required: true, class: "url", placeholder: t("helpers.label.link.url"), data: {role: 'url'}
+      .standard-modal-header
+        .standard-modal-close-btn.cursor-pointer
+          %svg.standard_close_icon
+            %use{"xlink:href" => "#standard_close_symbol"}
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
+        .container
+          %h2
+            = t title
 
-      .buttons
-        = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
-        = f.submit t(:save_link), class: 'croucher-standard-btn inline'
+      .standard-modal-body
+        .container
+          .inputs
+            %p.error{style: 'color: red'}
+            %p.name
+              = f.label :name
+              %br
+              = f.text_field :name, required: true, class: "name", placeholder: t("helpers.label.link.name"), autofocus: true, data: {role: 'name'}
+            %p.url
+              = f.label :url
+              %br
+              = f.text_field :url, required: true, class: "url", placeholder: t("helpers.label.link.url"), data: {role: 'url'}
+
+      .standard-modal-footer
+        .buttons
+          = link_to t(:cancel_edit), '#', :class => 'cancel submit-button'
+          = f.submit t(:save_link), class: 'croucher-standard-btn inline'

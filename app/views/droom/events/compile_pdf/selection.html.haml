@@ -1,31 +1,34 @@
 #compile_pdf
   .standard-modal-overlay.active
     .standard-modal-container.active
-      .standard-modal-close-btn.cursor-pointer
-        %svg.standard_close_icon
-          %use{"xlink:href" => "#standard_close_symbol"}
-      %svg.logo
-        %use{"xlink:href" => "#croucher_logo"}
-
       = form_for @event, url: compile_pdf_selection_event_url(@event), method: :post, html: { class: 'compile-pdf' } do |f|
-        .container
-          %h2
-            Compile meeting PDF
+        .standard-modal-header
+          .standard-modal-close-btn.cursor-pointer
+            %svg.standard_close_icon
+              %use{"xlink:href" => "#standard_close_symbol"}
+          %svg.logo
+            %use{"xlink:href" => "#croucher_logo"}
+          .container
+            %h2
+              Compile meeting PDF
 
-          .inputs 
-            %p.type
-              = f.select :compile_type, [['Compile all attachments', 'all'], ['Compile selected attachments', 'selected']], {prompt: 'Select'}, { id: 'compile-type' }
-            
-            %br
-            
-            %p.compile-documents
-              = f.select :selected_document_ids, @event.documents.for_selection, {}, { multiple: true, id: 'selected-document-ids', style: 'display: none' }
-        
-        %br
+        .standard-modal-body
+          .container
+            .inputs 
+              %p.type
+                = f.select :compile_type, [['Compile all attachments', 'all'], ['Compile selected attachments', 'selected']], {prompt: 'Select'}, { id: 'compile-type' }
+              
+              %br
+              
+              %p.compile-documents
+                = f.select :selected_document_ids, @event.documents.for_selection, {}, { multiple: true, id: 'selected-document-ids', style: 'display: none' }
+          
+          %br
 
-        .buttons
-          = link_to t(:cancel_edit), "/", class: 'cancel submit-button'
-          = button_tag t(:save), type: 'button', class: 'submit croucher-standard-btn inline', id: 'compile-pdf-btn'
+        .standard-modal-footer
+          .buttons
+            = link_to t(:cancel_edit), "/", class: 'cancel submit-button'
+            = button_tag t(:save), type: 'button', class: 'submit croucher-standard-btn inline', id: 'compile-pdf-btn'
 
 :javascript
   $(document).ready(function() {
