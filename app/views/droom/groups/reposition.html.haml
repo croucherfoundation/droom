@@ -7,11 +7,11 @@
             %use{"xlink:href" => "#standard_close_symbol"}
         %svg.logo
           %use{"xlink:href" => "#croucher_logo"}
+        .container
+          %h2 Reorder groups
 
       .standard-modal-body
         .container
-          %h2 Reorder groups
-          
           .cards-order-container
             - @groups.each do |group|
               .orderable-card{data: {id: group.id}, draggable: 'true'}

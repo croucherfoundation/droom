@@ -9,11 +9,12 @@
             %use{"xlink:href" => "#standard_close_symbol"}
         %svg.logo
           %use{"xlink:href" => "#croucher_logo"}
-
-      .standard-modal-body
         .container
           %h2
             = modal_title
+
+      .standard-modal-body
+        .container
           .inputs
             %p.name
               = f.text_field :name, :class => 'name', :placeholder => t(:group_name)
