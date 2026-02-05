@@ -2,8 +2,14 @@
   .menu{:data => {:for => "group_#{group.id}"}}
     %ul.actions
       %li
-        = link_to t(:edit_group), droom.edit_group_url(group), :class => 'edit', :data => {:action => "popup", :replaced => "#group_#{group.id}"}
+        = link_to droom.edit_group_url(group), :class => 'edit', :data => {:action => "popup", :replaced => "#group_#{group.id}"} do
+          %svg
+            %use{href: "#edit_symbol"}
+          = t(:edit_group)
       / %li
       /   = link_to t(:add_member), droom.new_group_membership_url(group), :class => 'add', :data => {:action => "popup", :affected => "#group_#{group.id}"}
       %li
-        = link_to t(:delete_group), droom.group_url(group), :method => 'delete', :class => 'delete', :data => {:action => "remove", :removed => "#group_#{group.id}", :confirm => t(:confirm_delete_group, :name => group.name)}
+        = link_to droom.group_url(group), :method => 'delete', :class => 'delete', :data => {:action => "remove", :removed => "#group_#{group.id}", :confirm => t(:confirm_delete_group, :name => group.name)} do
+          %svg
+            %use{href: "#trash_symbol"}
+          = t(:delete_group)

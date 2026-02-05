@@ -4,9 +4,18 @@
   .menu{:data => {:for => "service_#{service.id}"}}
     %ul.actions
       %li
-        = link_to t(:edit_service), droom.edit_service_url(service), :class => 'edit', :data => {:action => "popup", :affected => "#services"}
+        = link_to droom.edit_service_url(service), :class => 'edit', :data => {:action => "popup", :affected => "#services"} do
+          %svg
+            %use{href: "#edit_symbol"}
+          = t(:edit_service)
       %li
-        = link_to t(:delete_service), droom.service_url(service), :method => 'delete', :class => 'delete', :data => {:action => "remove_all", :removed => ".s_#{service.id}", :confirm => t(:confirm_delete_service, :name => service.name)}
+        = link_to droom.service_url(service), :method => 'delete', :class => 'delete', :data => {:action => "remove_all", :removed => ".s_#{service.id}", :confirm => t(:confirm_delete_service, :name => service.name)} do
+          %svg
+            %use{href: "#trash_symbol"}
+          = t(:delete_service)
       %li
-        = link_to t(:add_permission), droom.new_service_permission_url(service), :class => 'add', :data => {:action => "popup", :affected => "#services"}
+        = link_to droom.new_service_permission_url(service), :class => 'add', :data => {:action => "popup", :affected => "#services"} do
+          %svg
+            %use{href: "#add_symbol"}
+          = t(:add_permission)
 

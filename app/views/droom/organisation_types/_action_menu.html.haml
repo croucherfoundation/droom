@@ -2,8 +2,17 @@
   .menu{:data => {:for => "organisation_type_#{organisation_type.id}"}}
     %ul.actions
       %li
-        = link_to t(:add_organisation), droom.new_organisation_url(event: {organisation_type_id: organisation_type.id}), :class => 'add', :data => {:action => "popup", :affected => "#organisation_type_#{organisation_type.id}"}
+        = link_to droom.new_organisation_url(event: {organisation_type_id: organisation_type.id}), :class => 'add', :data => {:action => "popup", :affected => "#organisation_type_#{organisation_type.id}"} do
+          %svg
+            %use{href: "#add_symbol"}
+          = t(:add_organisation)
       %li
-        = link_to t(:edit_organisation_type), droom.edit_organisation_type_url(organisation_type), :class => 'edit', :data => {:action => "popup", :replaced => "#organisation_type_#{organisation_type.id}"}
+        = link_to droom.edit_organisation_type_url(organisation_type), :class => 'edit', :data => {:action => "popup", :replaced => "#organisation_type_#{organisation_type.id}"} do
+          %svg
+            %use{href: "#edit_symbol"}
+          = t(:edit_organisation_type)
       %li
-        = link_to t(:delete_organisation_type), droom.organisation_type_url(organisation_type), :method => 'delete', :class => 'delete', :data => {:action => "remove", :removed => "#organisation_type_#{organisation_type.id}", :confirm => t(:confirm_delete_organisation_type, :name => organisation_type.name)}
+        = link_to droom.organisation_type_url(organisation_type), :method => 'delete', :class => 'delete', :data => {:action => "remove", :removed => "#organisation_type_#{organisation_type.id}", :confirm => t(:confirm_delete_organisation_type, :name => organisation_type.name)} do
+          %svg
+            %use{href: "#trash_symbol"}
+          = t(:delete_organisation_type)
