@@ -6,7 +6,7 @@
   .heading
     - if admin? and organisation.pending?
       = render partial: "droom/organisations/show/status", locals: {organisation: organisation}
-    %h2.name<
+    %h2.name.action-menu-target<
       = link_to organisation.name, organisation_url(organisation), :class => "name"
 
       = action_menulink(organisation) unless organisation.pending?

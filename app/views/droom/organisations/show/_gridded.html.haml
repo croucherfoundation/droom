@@ -4,7 +4,7 @@
 - cssclass << " pending" if organisation.pending?
 - cssclass << " disapproved" if organisation.disapproved?
 
-%div{id: "organisation_#{organisation.id}", class: cssclass, data: {refreshing: true, url: droom.organisation_path(organisation, view: 'gridded')} }
+%div.action-menu-target{id: "organisation_#{organisation.id}", class: cssclass, data: {refreshing: true, url: droom.organisation_path(organisation, view: 'gridded')} }
   - unless organisation.pending?
     = action_menu(organisation)
     = action_menulink(organisation)

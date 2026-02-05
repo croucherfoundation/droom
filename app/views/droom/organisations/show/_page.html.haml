@@ -14,7 +14,7 @@
       .darken
       .fg
         = action_menu(organisation)
-        %h1.title
+        %h1.title.action-menu-target
           = link_to t(:directory), main_app.directory_url, class: "breadhead"
           = organisation.name
           = action_menulink(organisation)

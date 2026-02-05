@@ -16,7 +16,7 @@
       %svg
         %use{"xlink:href" => "#unknown_symbol"}
   %span.contact
-    %span.name
+    %span.name.action-menu-target
       = link_to truncate(user.colloquial_name, length: 32), user_url(user), class: "name", data: {action: "popup"}
       = action_menulink(user)
     %br

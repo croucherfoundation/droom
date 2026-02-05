@@ -6,7 +6,7 @@
 %div.organisation_type{:id => "organisation_type_#{organisation_type.id}", :data => {:refreshing => true, :url => organisation_type_path(organisation_type, :format => :js)} }
   = action_menu(organisation_type)
 
-  %h2.name
+  %h2.name.action-menu-target
     = link_to organisation_type.name, droom.organisation_type_url(organisation_type), class: aclass
     = action_menulink(organisation_type)
 

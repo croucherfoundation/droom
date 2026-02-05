@@ -28,7 +28,7 @@
   - cssclass << " standalone" if standalone
   - cssclass << " auto" if folder.automatic? && can?(:edit, folder)
 
-  %li{class: cssclass, id: "folder_#{folder.id}", data: {refreshing: url, label: folder.slug }}<
+  %li.action-menu-target{class: cssclass, id: "folder_#{folder.id}", data: {refreshing: url, label: folder.slug }}<
     - if sortable
       %span.drag-handle{title: "Drag to reorder"}
         %svg.icon
