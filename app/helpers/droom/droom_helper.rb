@@ -133,7 +133,11 @@ module Droom
           :data => {:menu => "#{classname}_#{thing.id}#{group.try(:id)}"}
         })
         html_options[:class] << ' menu'
-        link_to t(:edit), "#", html_options if can?(:edit, thing)
+        link_to "#", html_options do
+          content_tag(:svg) do
+            content_tag(:use, '', href: "#edit_symbol")
+          end
+        end
       end
     end
 

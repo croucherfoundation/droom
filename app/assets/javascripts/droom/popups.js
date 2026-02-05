@@ -269,7 +269,8 @@
         pos = this._link.position();
         return $(this._selector).css({
           top: pos.top + 20,
-          left: pos.left
+          right: 0
+          // right: pos.left
         });
       };
 
