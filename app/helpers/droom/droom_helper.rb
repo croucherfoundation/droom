@@ -130,10 +130,10 @@ module Droom
         classname = thing.class.to_s.underscore.split('/').last
         html_options.reverse_merge!({
           :class => "",
-          :data => {:menu => "#{classname}_#{thing.id}#{group.try(:id)}"}
+          :data => {:menu => "#{classname}_#{thing.id}#{group.try(:id)}", action: 'toggle-actions-dropdown', affected: ".#{classname}_#{thing.id}_actions"}
         })
         html_options[:class] << ' menu'
-        link_to t(:edit), "#", html_options if can?(:edit, thing)
+        link_to t(:edit), 'javascript:void(0)', html_options if can?(:edit, thing)
       end
     end
 
