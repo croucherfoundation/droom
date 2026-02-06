@@ -45,6 +45,7 @@ en:
   admin: "Admin"
   advanced_search: "Search terms"
   advanced_search_link: "...advanced search"
+  all_types: "All types"
   allow: "Allow"
   all_permissions: 'All permissions'
   and_invited: "and invited to log in."
