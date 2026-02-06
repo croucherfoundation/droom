@@ -28,14 +28,14 @@
   - cssclass << " standalone" if standalone
   - cssclass << " auto" if folder.automatic? && can?(:edit, folder)
 
-  %li.action-menu-target{class: cssclass, id: "folder_#{folder.id}", data: {refreshing: url, label: folder.slug }}<
+  %li{class: cssclass, id: "folder_#{folder.id}", data: {refreshing: url, label: folder.slug }}<
     - if sortable
       %span.drag-handle{title: "Drag to reorder"}
         %svg.icon
           %use{"xlink:href": "#grid_symbol"}
     = link_to shorten(title, length), url, class: "folder text-preview-title f-20", data: {droppable: droom.folder_documents_path(folder), picker: "#upload_to_folder_#{folder.id}", queue: "#queue_to_#{folder.id}", refreshes: "#folder_#{folder.id}"}
     - unless omit_menu
-      = action_menulink(folder)
+      = action_menulink(folder, class: "parent-menu")
     %ul.uploads{id: "queue_to_#{folder.id}"}
     - unless defer_contents
       = render partial: "droom/folders/contents", locals: {folder: folder, limit: limit, for_more: for_more, flat: flat, narrow: narrow, skip_gdoc: skip_gdoc}

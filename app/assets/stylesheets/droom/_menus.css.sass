@@ -2,28 +2,39 @@ div.menu
   position: absolute
   z-index: 50
   display: none
-  box-shadow: 0 4px 6px $shadow
-  background-color: $admin
+  // box-shadow: 0 4px 6px $shadow
+  background-color: white
+  border-radius: 5px
+  box-shadow: 0 0px 1px rgba(0, 0, 0, 0.05), 0 4px 24px rgba(0, 0, 0, 0.08)
   ul.actions
     padding: 0
-    margin: 8px 10px 3px 5px
+    margin: 10px
     list-style: none
     font-size: 14px
     letter-spacing: initial
     li
+      &:hover
+        background-color: #e5e5e3
       a
-        color: white !important
+        color: $svggrey !important
         min-height: 16px
-        &.add
-          +menu_link("droom/menu/smalladd.png")
-        &.edit
-          +menu_link("droom/menu/smalledit.png")
-        &.delete
-          +menu_link("droom/menu/smalldelete.png")
-        &.download
-          +menu_link("droom/menu/smalldownload.png")
-        &.send
-          +menu_link("droom/menu/smalledit.png")
+        white-space: nowrap
+        // &.add
+        //   +menu_link("droom/menu/smalladd.png")
+        // &.edit
+        //   // +menu_link("droom/menu/smalledit.png")
+        // &.delete
+        //   +menu_link("droom/menu/smalldelete.png")
+        // &.download
+        //   +menu_link("droom/menu/smalldownload.png")
+        // &.send
+        //   +menu_link("droom/menu/smalledit.png")
+        svg
+          position: relative
+          top: 3px
+          width: 16px
+          height: 16px
+          fill: currentColor
 
 a.menu
   display: inline-block
@@ -34,28 +45,41 @@ a.menu
   padding-top: 3px
   overflow: hidden
   opacity: 0.4
-  background:
-    color: transparent
-    position: 0 0
-    repeat: no-repeat
-    image: image-url('droom/menu/asterisk.png')
+  color: $color-black !important
+  svg
+    width: 16px
+    height: 16px
+    fill: currentColor
+    display: block
+  // background:
+  //   color: transparent
+  //   position: 0 0
+  //   repeat: no-repeat
+  //   image: image-url('droom/menu/asterisk.png')
   &:hover
     background-position: 0 -48px
     opacity: 1
+    color: $color-black !important
   &:active
     background-position: 0 0
     opacity: 1
-  &.up
-    box-shadow: 0 4px 6px $dark
-    opacity: 1
-    visibility: visible
-    background:
-      position: 0 -144px
-      color: $admin
+  // &.up
+    // box-shadow: 0 4px 6px $dark
+    // opacity: 1
+    // visibility: visible
+    // background:
+    //   position: 0 -144px
+    //   color: $admin
   &.small
-    background-image: image-url('droom/menu/smallasterisk.png')
+    // background-image: image-url('droom/menu/smallasterisk.png')
     width: 20px
     height: 18px
+    color: $svggrey
+    svg
+      width: 16px
+      height: 16px
+      fill: currentColor
+      display: block
   *:hover > &
     visibility: visible
 

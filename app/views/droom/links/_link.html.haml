@@ -4,8 +4,8 @@
 
   - url = droom.link_path(link)
 
-  %li.action-menu-target{id: "link_#{link.id}", data: {refreshing: url}, class: "link_icon"}<
+  %li.link-position{id: "link_#{link.id}", data: {refreshing: url}, class: "link_icon"}<
     = link_to link.name, link.url, class: "link manage text-preview-title", target: '_blank'
-    = action_menulink(link)
+    = action_menulink(link, class: "parent-menu")
     = action_menu(link)
 
