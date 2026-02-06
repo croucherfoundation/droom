@@ -4,7 +4,7 @@
   .croucher_dropdown_container
     .parent_custom_dropdown
       - event_type_options = Droom::EventType.all.map{|et| [et.name, et.id]}
-      = select_tag "event_type", options_for_select(event_type_options, params[:event_type]), { include_blank: t(:all_types), class: "facet custom_dropdown custom-img" }
+      = select_tag "event_type", options_for_select(event_type_options, params[:event_type]), { include_blank: t(:event_type_admin), class: "facet custom_dropdown custom-img" }
 
     - if past 
       .parent_custom_dropdown
