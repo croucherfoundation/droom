@@ -1,7 +1,10 @@
 - if can? :edit, link
-  .menu{:data =>{:for => "link_#{link.id}"}}
-    %ul.actions
-      %li
-        = link_to t(:edit_link), droom.edit_link_url(link), :class => "edit", :data => {:action => "popup", :type => "html", :affected => "#link_#{link.id}"}
-      %li
-        = link_to t(:delete_link), droom.link_url(link), :method => 'delete', :class => 'delete', :data => {:action => "remove", :removed => "#link_#{link.id}", :confirm => t(:confirm_delete_link)}
+  .action-commands-dropdown.menu{:data =>{:for => "link_#{link.id}"}, class: "link_#{link.id}_actions"}
+    = link_to droom.edit_link_url(link), :class => "edit btn", :data => {:action => "popup", :type => "html", :affected => "#link_#{link.id}"} do
+      %svg
+        %use{href: "#edit_symbol"}
+      = t(:edit_link)
+    = link_to droom.link_url(link), :method => 'delete', :class => 'delete btn', :data => {:action => "remove", :removed => "#link_#{link.id}", :confirm => t(:confirm_delete_link)} do
+      %svg
+        %use{href: "#trash_symbol"}
+      = t(:delete_link)

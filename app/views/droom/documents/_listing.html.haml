@@ -39,5 +39,7 @@
       %span
         = shorten(document.name, 100, '')
     - unless omit_menu
-      = action_menulink(document)
-    = action_menu(document)
+      .standard-btn-group.inline.folder-action-pos
+        .more-actions
+          = action_menulink(document, class: 'toggle-commands-dropdown')
+          = action_menu(document)
