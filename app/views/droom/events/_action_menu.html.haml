@@ -5,24 +5,19 @@
         %use{href: "#edit_symbol"}
       = t(:edit_event)
     = link_to droom.compile_pdf_event_url(event), class: "add btn", target: '_blank' do
-      %svg
-        %use{href: "#add_symbol"}
+      = image_tag 'svg/add.svg', width: 20, height: 20
       = t(:compile_pdf)
     = link_to '#', class: "add btn", data: {role: "upload-file"} do
-      %svg
-        %use{href: "#add_symbol"}
+      = image_tag 'svg/add.svg', width: 20, height: 20
       = t(:add_document)
     = link_to droom.edit_folder_url(event.folder), class: "add btn", data: {action: "popup", affected: "#event_#{event.id}"} do
-      %svg
-        %use{href: "#add_symbol"}
+      = image_tag 'svg/add.svg', width: 20, height: 20
       = t(:edit_event_folder)
     = link_to droom.new_folder_folder_url(event.folder), class: "add btn", data: {action: "popup", affected: "#event_#{event.id}"} do
-      %svg
-        %use{href: "#add_symbol"}
+      = image_tag 'svg/add.svg', width: 20, height: 20
       = t(:add_subfolder)
     = link_to droom.new_event_group_invitation_url(event), class: "add btn", data: {action: "popup", affected: "#event_#{event.id}"} do
-      %svg
-        %use{href: "#add_symbol"}
+      = image_tag 'svg/add.svg', width: 20, height: 20
       = t(:invite_group)
     = link_to droom.event_url(event), method: 'delete', class: 'delete btn', data: {action: "remove", removed: "#event_#{event.id}", affected: ".minimonth", confirm: t(:confirm_delete_event, name: event.name)} do
       %svg
