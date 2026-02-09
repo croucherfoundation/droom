@@ -1,10 +1,13 @@
 - permission ||= @permission
 
 - if can?(:edit, permission)
-  .menu{:data => {:for => "permission_#{permission.id}"}}
-    %ul.actions
-      %li
-        = link_to t(:edit_permission), droom.edit_service_permission_url(permission.service, permission), :class => 'edit', :data => {:action => "popup", :affected => "#services"}
-      %li
-        = link_to t(:delete_permission), droom.service_permission_url(permission.service, permission), :method => 'delete', :class => 'delete', :data => {:action => "remove_all", :removed => ".p_#{permission.id}", :affected => "#services", :confirm => t(:confirm_delete_permission, :name => permission.name, :service_name => permission.service.name)}
+  .action-commands-dropdown.menu{:data => {:for => "permission_#{permission.id}"}, class: "permission_#{permission.id}_actions"}
+    = link_to droom.edit_service_permission_url(permission.service, permission), :class => 'edit btn', :data => {:action => "popup", :affected => "#services"} do
+      %svg
+        %use{href: "#edit_symbol"}
+      = t(:edit_permission)
+    = link_to droom.service_permission_url(permission.service, permission), :method => 'delete', :class => 'delete btn', :data => {:action => "remove_all", :removed => ".p_#{permission.id}", :affected => "#services", :confirm => t(:confirm_delete_permission, :name => permission.name, :service_name => permission.service.name)} do
+      %svg
+        %use{href: "#trash_symbol"}
+      = t(:delete_permission)
 

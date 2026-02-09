@@ -231,15 +231,26 @@ module Droom
 
     def get_events
       get_my_events
-      if params[:year].present?
-        @year = params[:year].to_i
-        @events = @events.in_year(@year).order('start ASC')
-      elsif @direction == 'past'
-        @events = paginated(@events.past.order('start DESC'))
+
+      if @direction == 'past'
+        @events = @events.past.order('start DESC')
+        
+        if params[:year].present?
+          @year = params[:year].to_i
+          @events = @events.in_year(@year)
+        end
       else
         @direction = 'future'
-        @events = paginated(@events.future_and_current.order('start ASC'))
+        @events = @events.future_and_current.order('start ASC')
       end
+
+      # event_type filter applies to both past and future
+      if params[:event_type].present?
+        @event_type = Droom::EventType.find(params[:event_type])
+        @events = @events.where(event_type_id: @event_type.id) if @event_type
+      end
+
+      @events = paginated(@events)
     end
 
     def build_event

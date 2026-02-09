@@ -1,23 +1,41 @@
 - if can? :edit, folder
-  .menu{:data =>{:for => "folder_#{folder.id}"}}
-    %ul.actions
-      %li 
-        = link_to t(:copy_link), 'javascript:void(0)', :class => "copy add", :id => "copy_folder_#{folder.id}", data: {:action => 'copy', :clipboard_text => droom.folder_url(folder, shareable: true)}
-      %li
-        = link_to t(:edit_folder), droom.edit_folder_url(folder), :class => "edit", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
-      %li
-        = link_to t(:add_document), '#', class: "add", id: "upload_to_folder_#{folder.id}", data: {role: "upload-file"}
-      - unless @skip_gdoc_menu
-        %li
-          = link_to t(:add_google_doc), droom.new_folder_document_url(folder, view: 'google_doc'), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
-        %li
-          = link_to t(:add_notion_page), droom.new_folder_document_url(folder, view: 'notion_page'), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
-      %li
-        = link_to t(:add_subfolder), droom.new_folder_folder_url(folder), :class => "add", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"}
-      %li
-        = link_to t(:move_folder), droom.move_folder_folder_url(folder), :class => "edit", :id => "move_folder_#{folder.id}", :data => {:action => "popup", :type => "html", :affected => "#folders"}
-      %li
-        = link_to t(:delete_folder), droom.folder_url(folder), :method => 'delete', :class => 'delete', :data => {:action => "remove", :removed => "#folder_#{folder.id}", :confirm => t(:confirm_delete_folder, :path => folder.path)}
-      - if folder.populated?
-        / %li
-        /   = link_to t(:download_folder), droom.folder_url(folder, :zip), :class => 'download'
+  .action-commands-dropdown.menu{:data =>{:for => "folder_#{folder.id}"}, class: "folder_#{folder.id}_actions"}
+    = link_to 'javascript:void(0)', :class => "copy add btn", :id => "copy_folder_#{folder.id}", data: {:action => 'copy', :clipboard_text => droom.folder_url(folder, shareable: true)} do
+      %svg
+        %use{href: "#copy_symbol"}
+      = t(:copy_link)
+
+    = link_to droom.edit_folder_url(folder), :class => "edit btn", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"} do
+      %svg
+        %use{href: "#edit_symbol"}
+      = t(:edit_folder)
+
+    = link_to '#', class: "add btn", id: "upload_to_folder_#{folder.id}", data: {role: "upload-file"} do
+      %svg
+        %use{href: "#add_symbol"}
+      = t(:add_document)
+
+    = link_to droom.new_folder_document_url(folder, view: 'google_doc'), :class => "add btn", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"} do
+      %svg
+        %use{href: "#add_symbol"}
+      = t(:add_google_doc)
+
+    = link_to droom.new_folder_document_url(folder, view: 'notion_page'), :class => "add btn", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"} do
+      %svg
+        %use{href: "#add_symbol"}
+      = t(:add_notion_page)
+
+    = link_to droom.new_folder_folder_url(folder), :class => "add btn", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"} do
+      %svg
+        %use{href: "#add_symbol"}
+      = t(:add_subfolder)
+
+    = link_to droom.move_folder_folder_url(folder), :class => "edit btn", :id => "move_folder_#{folder.id}", :data => {:action => "popup", :type => "html", :affected => "#folders"} do
+      %svg
+        %use{href: "#edit_symbol"}
+      = t(:move_folder)
+
+    = link_to droom.folder_url(folder), :method => 'delete', :class => 'delete btn', :data => {:action => "remove", :removed => "#folder_#{folder.id}", :confirm => t(:confirm_delete_folder, :path => folder.path)} do
+      %svg
+        %use{href: "#trash_symbol"}
+      = t(:delete_folder)

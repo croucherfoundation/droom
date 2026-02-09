@@ -1,13 +1,22 @@
 - if can? :edit, organisation
-  .menu{:data => {:for => "organisation_#{organisation.id}"}}
-    %ul.actions
-      %li
-        = link_to t(:quick_edit), droom.edit_organisation_url(organisation, view: "quick"), :class => 'edit', :data => {:action => "popup", :affected => "#organisation_#{organisation.id}"}
-      / %li
-      /   = link_to t(:edit), droom.edit_organisation_url(organisation, view: "full"), :class => 'edit', :data => {:action => "popup", :affected => "#organisation_#{organisation.id}"}
-      %li
-        = link_to t(:add_user), droom.new_organisation_user_url(organisation), :class => 'add', :data => {:action => "popup", :affected => "#organisation_#{organisation.id}"}
-      %li
-        = link_to t(:subsume_organisation), droom.edit_organisation_url(organisation, view: "subsume"), :class => 'delete', :data => {:action => "popup", :affected => "#organisations"}
-      %li
-        = link_to t(:delete_organisation), droom.organisation_url(organisation), :method => 'delete', :class => 'delete', :data => {:action => "remove", :removed => "#organisation_#{organisation.id}", :confirm => t(:confirm_delete_organisation, :name => organisation.name)}
+  .action-commands-dropdown.menu{:data => {:for => "organisation_#{organisation.id}"}, class: "organisation_#{organisation.id}_actions"}
+    = link_to droom.edit_organisation_url(organisation, view: "quick"), :class => 'edit btn', :data => {:action => "popup", :affected => "#organisation_#{organisation.id}"} do
+      %svg
+        %use{href: "#edit_symbol"}
+      = t(:quick_edit)
+    /= link_to droom.edit_organisation_url(organisation, view: "full"), :class => 'edit btn', :data => {:action => "popup", :affected => "#organisation_#{organisation.id}"} do
+    /  %svg
+    /    %use{href: "#edit_symbol"}
+    /  = t(:edit)
+    = link_to droom.new_organisation_user_url(organisation), :class => 'add btn', :data => {:action => "popup", :affected => "#organisation_#{organisation.id}"} do
+      %svg
+        %use{href: "#add_symbol"}
+      = t(:add_user)
+    = link_to droom.edit_organisation_url(organisation, view: "subsume"), :class => 'delete btn', :data => {:action => "popup", :affected => "#organisations"} do
+      %svg
+        %use{href: "#trash_symbol"}
+      = t(:subsume_organisation)
+    = link_to droom.organisation_url(organisation), :method => 'delete', :class => 'delete btn', :data => {:action => "remove", :removed => "#organisation_#{organisation.id}", :confirm => t(:confirm_delete_organisation, :name => organisation.name)} do
+      %svg
+        %use{href: "#trash_symbol"}
+      = t(:delete_organisation)
