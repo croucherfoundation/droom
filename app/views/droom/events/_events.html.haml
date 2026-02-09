@@ -1,13 +1,16 @@
 - events ||= @events
+- past = @direction == 'past'
+- form_url = past ? droom.past_events_url(:js) : droom.events_url(:js)
 
-#events{:data => {:refreshing => true, :url => droom.events_url(:js)}}
-  - if @direction == 'past'
-    %form.faceter{action: droom.past_events_url(:js), id: "events_search", style: "width: auto", data: {target: '#events'}}
+#events{:data => {:refreshing => true, :url => form_url}}
+  %form.faceter{action: form_url, id: "events_search", style: "width: auto", data: {target: '#events'}}
+    - if past
       = hidden_field_tag :year, params[:year]
-      = hidden_field_tag :page, params[:page]
+    = hidden_field_tag :event_type, params[:event_type]
+    = hidden_field_tag :page, params[:page]
 
-      .croucher_search_detail.showing
-        = render partial: 'droom/events/facets'
+    .croucher_search_detail.showing
+      = render partial: 'droom/events/facets', locals: {past: past}
 
   - if events.any?
     = render :partial => 'droom/events/event', :collection => events
