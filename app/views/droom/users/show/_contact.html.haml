@@ -3,7 +3,7 @@
     = t :user_profile_contact
 
   - if @user
-    %ul.address_book
+    %ul.address_book.text-body-secondary
       - if @user.emails.any?
         = render partial: "droom/emails/email", collection: @user.emails.by_preference
       - else

@@ -12,6 +12,6 @@
         %svg.icon
           %use{href: "#green_circle"}
       = link_to round.name, url
-    .application_status
+    .application_status.text-body-secondary
       .status-item
         = "#{t(:screener_total_application, count: total)}, #{t(:screener_total_rated_application, count: sofar)}, #{t(:screener_total_unrated_application, count: left)}"

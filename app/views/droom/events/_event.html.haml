@@ -31,7 +31,7 @@
     .heading
       %h2.text-preview-title<
         = link_to event.name, event_url(event), :class => "name"
-      .detail-practicalities.text-body
+      .detail-practicalities.text-body-secondary
         %p.practicalities
           %span.venue_time
             - if event.venue.present?
