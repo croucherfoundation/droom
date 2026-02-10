@@ -4,8 +4,10 @@
 %div.group.first-c-no-pt{:id => "group_#{group.id}", :data => {:refreshing => true, :url => group_path(group, :format => :js)} }
   %h3.standard-h3-title
     = group.name
-    = action_menulink(group)
-  = action_menu(group)
+    .standard-btn-group.inline.action-menu-pos
+      .more-actions
+        = action_menulink(group, class: 'toggle-commands-dropdown')
+        = action_menu(group)
 
   - if users.count > 0
     .scroller.full-w
