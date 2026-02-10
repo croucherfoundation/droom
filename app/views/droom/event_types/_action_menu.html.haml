@@ -1,8 +1,7 @@
 - if can? :edit, event_type
   .action-commands-dropdown.menu{:data => {:for => "event_type_#{event_type.id}"}, class: "event_type_#{event_type.id}_actions"}
     = link_to droom.new_event_url(event: {event_type_id: event_type.id}), :class => 'add btn', :data => {:action => "popup", :affected => "#event_type_#{event_type.id}"} do
-      %svg
-        %use{href: "#add_symbol"}
+      = image_tag 'svg/add.svg', width: 20, height: 20
       = t(:add_event)
     = link_to droom.edit_event_type_url(event_type), :class => 'edit btn', :data => {:action => "popup", :replaced => "#event_type_#{event_type.id}"} do
       %svg
