@@ -1,11 +1,6 @@
 - cssclass = 'personal_info'
--# - cssclass << ' editable' if can?(:edit, @user)
 
 %section{class: cssclass, data: {refreshing: true, url: droom.user_url(@user, view: 'personal', format: :js), affected: '.user_profile_title'}}
-  -# - if @user && can?(:edit, @user)
-  -#   %span.user_controls
-  -#     = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'personal'), class: "edit", data: {action: 'popup', affected: 'section.personal_info, span.user_title'}
-
   %h3.standard-h3-title.section
     = t :user_profile_personal
 
@@ -17,7 +12,7 @@
         .profile-upload-image{:data => {:role => "imagepicker"}}
           %a.box.border-0{:href => "#", :style => "background-image: url(#{img})", :data => {:action => "pick"}}
 
-    #right_pane
+    #right_pane.text-body-secondary
       .detail-row
         .detail-label
           = 'Name: '

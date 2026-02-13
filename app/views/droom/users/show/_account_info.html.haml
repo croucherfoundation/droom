@@ -1,24 +1,15 @@
 - cssclass = 'account_info'
--# - cssclass << ' editable' if can?(:edit, @user)
 
 %section{class: cssclass, data: {refreshing: true, url: droom.user_url(@user, view: 'account_info', format: :js)}}
-  -# - if @user && can?(:edit, @user)
-  -#   %span.user_controls
-  -#     = link_to t(:edit_user_profile_symbol), droom.edit_user_url(@user, view: 'preferences'), class: "edit", data: {action: 'popup', affected: "section.account_info"}
-
   %h3.standard-h3-title.section
     = t :user_profile_account
 
-  #account_info_container
+  #account_info_container.text-body-secondary
     .detail-row
       .detail-label
         = "Statuses: "
       %span.label.detail-value
         = t ("status_labels.#{@user.liveliness}")
-      -# %div{class: "liveliness #{@user.liveliness}"}
-        -# %svg.icon.small
-        -#   %use{href: "#user_#{@user.liveliness}_symbol"}
-        
       
     .account_info_contents
       .detail-row

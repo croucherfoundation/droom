@@ -10,8 +10,9 @@
     = t :user_profile_biography
 
   - if Droom.use_biogs?
-    - if @user.description?
-      = @user.description.html_safe
-    - else
-      %span.unknown
-        = 'None'
+    .text-body-secondary
+      - if @user.description?
+        = @user.description.html_safe
+      - else
+        %span.unknown
+          = t(:none)
