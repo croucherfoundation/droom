@@ -4,7 +4,7 @@
 %div.group.first-c-no-pt{:id => "group_#{group.id}", :data => {:refreshing => true, :url => group_path(group, :format => :js)} }
   %h3.standard-h3-title.action-menu-target
     = group.name
-    .standard-btn-group.inline.action-menu-pos
+    .standard-btn-group.inline.action-menu-pos.mb-t15
       .more-actions
         = action_menulink(group, class: 'toggle-commands-dropdown')
         = action_menu(group)
