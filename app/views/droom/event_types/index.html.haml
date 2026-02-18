@@ -14,7 +14,7 @@
   %p.action.standard-btn-group.pt.pr
     - if can?(:create, Droom::EventType)
       = link_to droom.new_event_type_url, class: "btn", data: {action: 'popup', affected: '.event_types'}  do
-        = image_tag 'svg/add.svg', width: 20, height: 20 
+        = image_tag 'svg/add.svg', width: 16, height: 16 
         = t :add_event_type
 
 #event_types

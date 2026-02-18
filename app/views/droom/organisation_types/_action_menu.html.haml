@@ -1,7 +1,7 @@
 - if can? :edit, organisation_type
   .action-commands-dropdown.menu{:data => {:for => "organisation_type_#{organisation_type.id}"}, class: "organisation_type_#{organisation_type.id}_actions"}
     = link_to droom.new_organisation_url(event: {organisation_type_id: organisation_type.id}), :class => 'add btn', :data => {:action => "popup", :affected => "#organisation_type_#{organisation_type.id}"} do
-      = image_tag 'svg/add.svg', width: 20, height: 20
+      = image_tag 'svg/add.svg', width: 16, height: 16
       = t(:add_organisation)
     = link_to droom.edit_organisation_type_url(organisation_type), :class => 'edit btn', :data => {:action => "popup", :replaced => "#organisation_type_#{organisation_type.id}"} do
       %svg
