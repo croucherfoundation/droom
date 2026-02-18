@@ -11,19 +11,19 @@
       = t(:edit_folder)
 
     = link_to '#', class: "add btn", id: "upload_to_folder_#{folder.id}", data: {role: "upload-file"} do
-      = image_tag 'svg/add.svg', width: 16, height: 16 
+      = image_tag 'svg/add.svg', width: 18, height: 18 
       = t(:add_document)
 
     = link_to droom.new_folder_document_url(folder, view: 'google_doc'), :class => "add btn", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"} do
-      = image_tag 'svg/add.svg', width: 16, height: 16 
+      = image_tag 'svg/add.svg', width: 18, height: 18 
       = t(:add_google_doc)
 
     = link_to droom.new_folder_document_url(folder, view: 'notion_page'), :class => "add btn", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"} do
-      = image_tag 'svg/add.svg', width: 16, height: 16 
+      = image_tag 'svg/add.svg', width: 18, height: 18 
       = t(:add_notion_page)
 
     = link_to droom.new_folder_folder_url(folder), :class => "add btn", :data => {:action => "popup", :type => "html", :affected => "#folder_#{folder.id}"} do
-      = image_tag 'svg/add.svg', width: 16, height: 16 
+      = image_tag 'svg/add.svg', width: 18, height: 18 
       = t(:add_subfolder)
 
     = link_to droom.move_folder_folder_url(folder), :class => "edit btn", :id => "move_folder_#{folder.id}", :data => {:action => "popup", :type => "html", :affected => "#folders"} do

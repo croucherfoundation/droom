@@ -9,7 +9,7 @@
     /    %use{href: "#edit_symbol"}
     /  = t(:edit)
     = link_to droom.new_organisation_user_url(organisation), :class => 'add btn', :data => {:action => "popup", :affected => "#organisation_#{organisation.id}"} do
-      = image_tag 'svg/add.svg', width: 16, height: 16
+      = image_tag 'svg/add.svg', width: 18, height: 18
       = t(:add_user)
     = link_to droom.edit_organisation_url(organisation, view: "subsume"), :class => 'delete btn', :data => {:action => "popup", :affected => "#organisations"} do
       %svg
