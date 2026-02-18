@@ -154,7 +154,7 @@ en:
   edit: "Edit"
   edit_account: "Edit account settings"
   edit_account_info: "Edit account information"
-  edit_account_of: "Edit account settings for %{name}"
+  edit_account_of: "Edit account settings of %{name}"
   edit_biography: "Edit biography"
   edit_contact: "Edit contact"
   edit_event: "Edit event"
@@ -172,7 +172,7 @@ en:
   edit_person: "Edit person"
   edit_personal_info: "Edit personal information"
   edit_profile: "Edit profile"
-  edit_profile_of: "Edit profile for %{name}"
+  edit_profile_of: "Edit personal information of %{name}"
   edit_scrap: "Edit"
   edit_service: "Edit service"
   edit_symbol: "❡"
@@ -183,7 +183,7 @@ en:
   edit_your_organisation_note: "This information will be visible to other users."
   edit_your_preferences: "Edit your account settings"
   edit_your_preferences_note: "These are administrative settings like your password and preferred email address. "
-  edit_your_profile: "Edit your address book card"
+  edit_your_profile: "Edit your personal information"
   edit_your_profile_note: 'This is the contact information that <a href="%{url}" data-action="popup">other people see</a> when you are listed.'
   email_note: "This can be any address that we have on file for you."
   errors:
