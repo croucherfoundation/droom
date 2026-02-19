@@ -1,9 +1,7 @@
 - if can? :edit, document
   .action-commands-dropdown.menu{:data =>{:for => "document_#{document.id}"}, class: "document_#{document.id}_actions"}
-    - if document.google_doc_link.present?
-      - view = 'google_doc'
-    - elsif document.notion_page_link.present?
-      - view = 'notion_page'
+    - if (link_info = document_external_link_info(document))
+      - view = link_info[:view]
     
     = link_to droom.edit_folder_document_url(document.folder, document, view: view), :class => 'edit btn', :data => {:action => "popup", :replaced => "#document_#{document.id}"} do
       %svg

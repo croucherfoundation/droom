@@ -51,7 +51,7 @@ module Droom
     end
 
     def update
-      if @document.google_doc_link.present? || @document.notion_page_link.present?
+      if @document.google_doc_link.present? || @document.notion_page_link.present? || @document.memo_page_link.present?
         @data = Document.where(name: document_params[:name], folder_id: params[:folder_id])
         @document.assign_attributes(document_params)
         if @data.blank?
@@ -131,7 +131,7 @@ module Droom
 
     def document_params
       if params[:document]
-        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link, :notion_page_link)
+        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link, :notion_page_link, :memo_page_link)
       else
         {}
       end

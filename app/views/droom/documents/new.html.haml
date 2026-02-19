@@ -1,9 +1,5 @@
+- view = @view.presence || 'document'
+- title = t("add_#{view}")
+
 #document
-  - if @view == 'google_doc'
-    - title = t(:add_google_doc)
-  - elsif @view == 'notion_page'
-    - title = t(:add_notion_page)
-  - else
-    - title = t(:add_document)
-    
   = render :partial => 'form', locals: {title: title}

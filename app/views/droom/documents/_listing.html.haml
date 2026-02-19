@@ -7,35 +7,29 @@
 - character_count = narrow ? 28 : 64
 
 %li.document.text-preview-title.f-20{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id}}
-  - if document.google_doc_link.present?
-    - detail_url = document.google_doc_link
-    - extension = 'gdoc'
-  - elsif document.notion_page_link.present?
-    - detail_url = document.notion_page_link
-    - extension = 'notion'
+  - if (link_info = document_external_link_info(document))
+    - detail_url = link_info[:url]
+    - extension = link_info[:extension]
   - else
     - extension = document.file_extension.downcase
     - detail_url = droom.folder_document_url(document.folder, document)
   
   - cssclasses = "document #{extension}"
-  - cssclasses << ' no-bg-image' if %w[pdf gdoc notion png jpg jpeg webp].include?(extension)
+  - cssclasses << ' no-bg-image' if %w[pdf gdoc notion memo png jpg jpeg webp].include?(extension)
   
-  - unless skip_gdoc && (document.google_doc_link.present? || document.notion_page_link.present?)
+  - unless skip_gdoc && document_has_external_link?(document)
     - if sortable
       %span.drag-handle{title: "Drag to reorder"}
         %svg.icon
           %use{"xlink:href": "#grid_symbol"}
 
     = link_to detail_url, class: cssclasses, target: "_blank" do
-      - if %w[pdf png jpg jpeg webp].include?(extension)
+      - if %w[pdf png jpg jpeg webp memo].include?(extension)
         %svg.icon.standard
           %use{"xlink:href" => "#pdf_symbol"}
-      - elsif extension == 'gdoc'
+      - elsif %w[gdoc notion].include?(extension)
         %svg.icon.standard
-          %use{"xlink:href" => "#google_doc_symbol"}
-      - elsif extension == 'notion'
-        %svg.icon.standard
-          %use{"xlink:href" => "#notion_symbol"}
+          %use{"xlink:href" => "##{link_info[:symbol]}"}
       %span
         = shorten(document.name, 100, '')
     - unless omit_menu

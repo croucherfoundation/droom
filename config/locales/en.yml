@@ -26,6 +26,7 @@ en:
   add_group: "Add group"
   add_member: "Add group member"
   add_member_to: "Add a member to the %{name} group"
+  add_memo_page: "Add Memo page"
   add_new_link: "Add link"
   add_new_user: "Invite a new network user"
   add_notice: "Add a notice"
@@ -266,8 +267,10 @@ en:
         attached_to: "Attached to"
         name: "Document name"
         description: "Document description"
-        gogole_doc_name: 'Google Doc name'
-        gogole_doc_link: 'Google Doc link'
+        google_doc_name: 'Google Doc name'
+        google_doc_link: 'Google Doc link'
+        memo_page_name: 'Memo page name'
+        memo_page_link: 'Memo page link'
         notion_page_name: 'Notion page name'
         notion_page_link: 'Notion page link'
       event:
