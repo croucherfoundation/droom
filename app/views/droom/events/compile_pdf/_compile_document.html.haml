@@ -1,12 +1,13 @@
-%li.files  
+%li.files
   %ul
-    %li.document{id: "compiled_file_#{event.id}"}
+    %li.document.text-preview-title.f-20{id: "compiled_file_#{event.id}"}
       = link_to show_compiled_file_event_url(event), class: 'document pdf no-bg-image', target: "_blank", style: 'white-space: nowrap;' do
         %svg.icon.standard
           %use{"xlink:href" => "#pdf_symbol"}
-        %span
+        %span.name
           = event.generate_compiled_pdf_filename
 
-      = link_to 'Edit', '#', class: 'menu', data: { menu: "compiled_file_#{event.id}" }
-
-      = render partial: 'droom/events/compile_pdf/action_menu', locals: { event: event }
+      .standard-btn-group.inline.action-menu-pos.t-8
+        .more-actions
+          = action_menulink(event, class: 'toggle-commands-dropdown')
+          = render partial: 'droom/events/compile_pdf/action_menu', locals: { event: event }

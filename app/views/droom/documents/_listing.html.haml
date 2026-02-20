@@ -13,10 +13,10 @@
   - else
     - extension = document.file_extension.downcase
     - detail_url = droom.folder_document_url(document.folder, document)
-  
+
   - cssclasses = "document #{extension}"
   - cssclasses << ' no-bg-image' if %w[pdf gdoc notion memo png jpg jpeg webp].include?(extension)
-  
+
   - unless skip_gdoc && document_has_external_link?(document)
     - if sortable
       %span.drag-handle{title: "Drag to reorder"}
@@ -33,7 +33,7 @@
       %span
         = shorten(document.name, 100, '')
     - unless omit_menu
-      .standard-btn-group.inline.folder-action-pos
+      .standard-btn-group.inline.action-menu-pos.t-8
         .more-actions
           = action_menulink(document, class: 'toggle-commands-dropdown')
           = action_menu(document)
