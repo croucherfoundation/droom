@@ -4,8 +4,8 @@
 
   - url = droom.link_path(link)
 
-  %li{id: "link_#{link.id}", data: {refreshing: url}, class: "link_icon pos-rel w-100"}<
-    = link_to link.name, link.url, class: "link manage text-preview-title", target: '_blank'
+  %li{id: "link_#{link.id}", data: {refreshing: url}, class: "link_icon"}<
+    = link_to link.name, link.url, class: "link manage", target: '_blank'
     .standard-btn-group.inline.folder-action-pos
       .more-actions
         = action_menulink(link, class: 'toggle-commands-dropdown')
