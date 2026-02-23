@@ -69,26 +69,28 @@ ul#folders, #single_folder, div.attachments
         padding-left: 32px
     a.folder
       +big_icon_link("droom/folder.png")
+      width: 100%
       text-indent: 32px
       color: $text
       white-space: nowrap
-      font-weight: bold
-      // +hover
+      padding: 4px 0
+      cursor: pointer
+      text-decoration: none
+      transition: background-color 0.1s ease
+      border-radius: 5px
       +waitable
       &:hover
         background-position: 0 0
-      padding: 4px 0
+      &:active
+        background-color: $grey50
     &.root
       > a.folder
         text-indent: 32px
     &.open
       > a.folder
         background-position: 0 -192px
-        // &:hover
-        //   background-position: 0px -192px
     &.empty
       > a.folder
-        color: $pale
         background-position: 0 -144px
       &.open
         > a.folder

@@ -737,47 +737,49 @@ a.no-bg-image
   &.notion
     svg 
       width: 19px
-      margin-left: 4px
-  &.gdoc
+      margin-left: 2px
+  &.pdf, &.png, &.memo
     svg 
-      margin-left: 1px
-  &.pdf, &.png
-    svg 
-      margin-top: -2px
+      margin-top: -3px
       fill: $pearl_black
+  
+  svg.icon + span
+    margin-left: 7px
 
 
 a.document
+  width: 100%
   display: inline-block
   padding: 6px 0 0 34px
   min-height: 20px
   line-height: 30px
   color: $pearl_black
+  cursor: pointer
+  text-decoration: none
+  transition: background-color 0.1s ease
+  border-radius: 5px
   background:
     repeat: no-repeat
-    position: 0 0
+    position: -1px 4px
     image: image-url('droom/icons.png')
+  &:active
+    background-color: $grey50
   &.pdf
     background-position: 0 -48px
-    +hover
     .icon
       color: #ff0000
   &.gdoc, &.notion
-    +hover
     .icon
       color: #2e62ce
   &.doc, &.docx
     padding: 6px 0 0 30px
     background-position: 0px -92px
-    +hover
   &.xls, &.xlsx
-    padding: 6px 0 0 32px
+    padding: 6px 0 0 34px
     background-position: 0 -140px
-    +hover
   &.mp4, &.mov, &.ogg
     padding: 6px 0 0 32px
-    background-position: 0px -188px
-    +hover
+    background-position: -2px -188px
   &.waiting
     color: $pale
     background-position: 8px 8px
