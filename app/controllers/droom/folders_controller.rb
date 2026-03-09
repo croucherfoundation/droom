@@ -23,6 +23,7 @@ module Droom
       @sortable = params[:sortable] == 'true'
       @skip_gdoc = params[:skip_gdoc] == 'true'
       respond_with @folder do |format|
+        format.html { render layout: 'centered' }
         format.js {
           render :partial => 'droom/folders/folder'
         }

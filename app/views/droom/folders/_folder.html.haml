@@ -28,19 +28,17 @@
   - cssclass << " standalone" if standalone
   - cssclass << " auto" if folder.automatic? && can?(:edit, folder)
 
-  %li{class: cssclass, id: "folder_#{folder.id}", data: {refreshing: url, label: folder.slug }}<
+  %li{class: cssclass, id: "folder_#{folder.id}", data: {label: folder.slug, folder_behavior: "navigate"}}<
     - if sortable
       %span.drag-handle{title: "Drag to reorder"}
         %svg.icon
           %use{"xlink:href": "#grid_symbol"}
-    = link_to shorten(title, length), url, class: "folder", data: {droppable: droom.folder_documents_path(folder), picker: "#upload_to_folder_#{folder.id}", queue: "#queue_to_#{folder.id}", refreshes: "#folder_#{folder.id}"}
+    = link_to droom.folder_path(folder), class: "folder no-bg-image", target: "_blank" do
+      %svg.icon.standard{style: "margin-top: -4px;"}
+        %use{"xlink:href" => "#folder_closed_symbol"}
+      %span= shorten(title, length)
     - unless omit_menu
       .standard-btn-group.inline.folder-action-pos
         .more-actions
           = action_menulink(folder, class: 'toggle-commands-dropdown')
           = action_menu(folder)
-    %ul.uploads{id: "queue_to_#{folder.id}"}
-    - unless defer_contents
-      = render partial: "droom/folders/contents", locals: {folder: folder, limit: limit, for_more: for_more, flat: flat, narrow: narrow, skip_gdoc: skip_gdoc}
-    -# - unless omit_menu
-    -#   = action_menu(folder)

@@ -1210,6 +1210,10 @@
         this.replace = bind(this.replace, this);
         this.set = bind(this.set, this);
         this._container = $(element);
+        this._behavior = this._container.data('folderBehavior') || 'toggle';
+        if (this._behavior === 'navigate') {
+          return;
+        }
         this._label = this._container.attr('data-label');
         this._list = this._container.children('ul.filing');
         if (this._list[0]) {
