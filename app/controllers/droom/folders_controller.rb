@@ -44,6 +44,7 @@ module Droom
       else
         @folder.update(folder_params)
         respond_with @folder do |format|
+          format.html { render :partial => 'droom/folders/show/contents' }
           format.js { render :partial => "droom/folders/folder" }
         end
       end
@@ -60,6 +61,7 @@ module Droom
       else
         @folder.save
         respond_with @folder do |format|
+          format.html { render :partial => 'droom/folders/show/contents' }
           format.js { render :partial => "droom/folders/folder" }
         end
       end
