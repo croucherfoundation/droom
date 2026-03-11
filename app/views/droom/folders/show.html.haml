@@ -10,14 +10,4 @@
 - content_for :buttons do
   = render partial: 'droom/folders/show_buttons'
 
-- folder_ul_class = @sortable ? "sortable_folders" : ""
-- files_ul_class = @sortable ? "sortable_files" : ""
-
-#main.folders{data: {panel: false}}
-  %ul#folders{class: folder_ul_class}
-    - @folder.children.each do |child|
-      = render partial: 'droom/folders/folder', locals: {folder: child, sortable: @sortable || false}
-    %li.files
-      %ul{class: files_ul_class, data: {folder_id: @folder.id}}
-        - @folder.documents.each do |doc|
-          = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
+= render partial: 'droom/folders/show/contents'

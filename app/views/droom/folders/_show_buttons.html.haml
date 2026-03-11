@@ -16,7 +16,7 @@
       .more-actions
         %a{class: 'toggle-commands-dropdown', data: {action: 'toggle-actions-dropdown', affected: '.action-commands-dropdown'}}
         .action-commands-dropdown
-          = link_to 'javascript:void(0)', class: "btn", id: "copy_folder_#{folder.id}", data: {action: 'copy', clipboard_text: droom.folder_url(folder, shareable: true)} do
+          = link_to 'javascript:void(0)', class: "copy btn", id: "copy_folder_#{folder.id}", data: {action: 'copy', clipboard_text: droom.folder_url(folder, shareable: true)} do
             %svg
               %use{href: "#copy_symbol"}
             = t(:copy_link)

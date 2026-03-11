@@ -24,19 +24,19 @@
 
     = link_to detail_url, class: cssclasses, target: "_blank" do
       - if %w[doc docx pdf txt gdoc notion memo].include?(extension)
-        %svg.icon.standard
+        %svg.icon.standard{style: "margin-top: -4px;"}
           %use{"xlink:href" => "#pdf_symbol"}
       - elsif %w[jpg jpeg png psd tiff tif webp].include?(extension)
-        %svg.icon.standard
+        %svg.icon.standard{style: "margin-top: -4px;"}
           %use{"xlink:href" => "#image_symbol"}
       - elsif %w[xls xlsx csv].include?(extension)
-        %svg.icon.standard
+        %svg.icon.standard{style: "margin-top: -4px;"}
           %use{"xlink:href" => "#spreadsheet_symbol"}
       - elsif %w[zip rar gz tar 7z].include?(extension)
         %svg.icon.standard{style: "margin-top: -4px;"}
           %use{"xlink:href" => "#folder_closed_symbol"}
       - else
-        %svg.icon.standard
+        %svg.icon.standard{style: "margin-top: -4px;"}
           %use{"xlink:href" => "#document_noline_symbol"}
       %span
         = shorten(document.name, 100, '')

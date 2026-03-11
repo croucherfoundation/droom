@@ -1,0 +1,12 @@
+
+- folder_ul_class = @sortable ? "sortable_folders" : ""
+- files_ul_class = @sortable ? "sortable_files" : ""
+
+.folders{data: {panel: false, refreshing: droom.folder_path(@folder, source: 'library', format: :js), droppable: droom.folder_documents_path(@folder), picker: "#upload_to_folder_#{@folder.id}", queue: "#upload_queue"}, id: "folder_#{@folder.id}"}
+  %ul#folders{class: folder_ul_class}
+    - @folder.children.each do |child|
+      = render partial: 'droom/folders/folder', locals: {folder: child, sortable: @sortable || false}
+    %li.files
+      %ul#upload_queue{class: files_ul_class, data: {folder_id: @folder.id}}
+        - @folder.documents.each do |doc|
+          = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}

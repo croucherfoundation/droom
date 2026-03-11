@@ -25,7 +25,11 @@ module Droom
       respond_with @folder do |format|
         format.html { render layout: 'centered' }
         format.js {
-          render :partial => 'droom/folders/folder'
+          if params[:source] == 'library'
+            render :partial => 'droom/folders/show/contents'
+          else
+            render :partial => 'droom/folders/folder'
+          end
         }
       end
     end
