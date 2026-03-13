@@ -37,8 +37,4 @@
       %svg.icon.standard{style: "margin-top: -4px;"}
         %use{"xlink:href" => "#folder_closed_symbol"}
       %span= shorten(title, length)
-    - unless omit_menu
-      .standard-btn-group.inline.folder-action-pos
-        .more-actions
-          = action_menulink(folder, class: 'toggle-commands-dropdown')
-          = action_menu(folder)
+
