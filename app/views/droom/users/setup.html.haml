@@ -5,36 +5,39 @@
 - content_for :pagetitle do
   Set up your account
 
-- content_for :title do
-  =t :hello
-  = current_user.formal_name.strip.presence || ", valued user"
+.standard-modal-overlay.active
+  .standard-modal-container.active
+    = form_for user, url: droom.setup_users_path, method: "PUT", html: {class: "user setup custom-validate"} do |f|
+      = hidden_field_tag :destination, destination
+      = hidden_field_tag :send_invitation_memo, send_invitation_memo
 
-- content_for :standfirst do
-  %p
-    = t :set_password_preamble
+      .standard-modal-header
+        %svg.logo
+          %use{"xlink:href" => "#croucher_logo"}
+        
+        .container
+          %h2
+            Set up your account
+          
+          %br
 
-= form_for user, url: droom.setup_users_path, method: "PUT", html: {class: "user"} do |f|
-  = hidden_field_tag :destination, destination
-  = hidden_field_tag :send_invitation_memo, send_invitation_memo
+          %p.std-mt
+            Create a password to get started.
 
-  %h3
-    - if user.names?
-      = t "user_setup.check_name"
-    - else
-      = t "user_setup.give_name"
-  .user-setup
-    = render "droom/users/edit/name_fields", f: f, user: user, with_label: false
+      .standard-modal-body
+        .container.std-mt
+          .inputs
+            .std-row
+              .input-group
+                = f.text_field :given_name, required: true, placeholder: t("placeholders.user.given_name"), data: { validation_message: "Please enter your first name" }
+              .input-group
+                = f.text_field :family_name, required: true, placeholder: t("placeholders.user.family_name"), data: { validation_message: "Please enter your last name" }
+            
+            .input-group
+              = f.password_field :password, placeholder: t("placeholders.user.password"), required: true, minlength: 8, data: { validation_message: "Password must be at least 8 characters" }
+              %button.eye{type: "button"}
+                %img{alt: "open", src: "https://croucher.org.hk/assets/images/icons/eye-02.svg"}/
 
-    %h3
-      = t "user_setup.set_password"
-    = render "droom/users/edit/password_fields", f: f, user: user, with_label: false, with_submit: false
-
-    - if FeatureFlag.enabled?('time-zone-feature', current_user)
-      %h3
-        = t "user_setup.time_zone"
-      .note
-        = t(:timezone_note)
-      = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}
-
-    %p.buttons{:data => {:role => "confirmation"}}>
-      = f.submit t(:continue), class: 'croucher-standard-btn'
+      .standard-modal-footer
+        .buttons
+          = f.submit t(:continue), class: 'submit croucher-standard-btn'

@@ -277,7 +277,8 @@ module Droom::Concerns::ControllerHelpers
 
   def prompt_for_setup
     Rails.logger.warn "⚠️ prompt_for_setup"
-    render template: "/droom/users/setup", locals: {user: current_user}
+    @hide_footer = true
+    render template: "/droom/users/setup", layout: 'centered', locals: {user: current_user}
   end
 
   def check_user_has_organisation
