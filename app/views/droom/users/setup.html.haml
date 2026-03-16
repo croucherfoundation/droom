@@ -35,7 +35,7 @@
             
             .input-group
               = f.password_field :password, placeholder: t("placeholders.user.password"), required: true, minlength: 8, data: { validation_message: "Password must be at least 8 characters" }
-              %button.eye{type: "button"}
+              %button.eye-icon{type: "button"}
                 %img{alt: "open", src: "https://croucher.org.hk/assets/images/icons/eye-02.svg"}/
 
       .standard-modal-footer

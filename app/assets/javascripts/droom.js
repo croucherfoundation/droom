@@ -201,7 +201,7 @@
         this.find_including_self('.sortable_folders').sortable_folders();
       }
       this.find_including_self('form.user.custom-validate').custom_validation();
-      this.find_including_self('form.user button.eye').password_toggle();
+      this.find_including_self('form.user button.eye-icon').password_toggle();
       this.find_including_self('[data-draggable]').draggable();
       this.find_including_self('.gridbox:not(.notice)').gridBox();
       this.find_including_self('.tagger').tagger();
