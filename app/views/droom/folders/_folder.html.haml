@@ -33,7 +33,7 @@
       %span.drag-handle{title: "Drag to reorder"}
         %svg.icon
           %use{"xlink:href": "#grid_symbol"}
-    = link_to droom.folder_path(folder), class: "folder no-bg-image", target: "_blank" do
+    = link_to droom.folder_path(folder), class: "folder no-bg-image" do
       %svg.icon.standard{style: "margin-top: -4px;"}
         %use{"xlink:href" => "#folder_closed_symbol"}
       %span= shorten(title, length)

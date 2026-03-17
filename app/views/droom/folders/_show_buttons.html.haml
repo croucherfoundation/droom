@@ -1,7 +1,15 @@
 - folder = @folder
 
-- if can?(:manage, Droom::Folder)
-  .action.standard-btn-group.pt.pr.oy-visible
+- back_path = folder.parent ? droom.folder_path(folder.parent) : droom.folders_path
+
+.action.standard-btn-group.pt.pr.oy-visible
+  - unless @sortable
+    = link_to back_path, class: "btn back-btn" do
+      %svg
+        %use{"xlink:href" => "#back_btn_symbol"}
+      = t(:back, default: "Back")
+
+  - if can?(:manage, Droom::Folder)
     - if @sortable
       = link_to droom.folder_path(folder), class: "btn" do
         %svg
@@ -12,7 +20,7 @@
         %svg
           %use{"xlink:href" => "#edit_symbol"}
         = t :edit_page
-  
+
       .more-actions
         %a{class: 'toggle-commands-dropdown', data: {action: 'toggle-actions-dropdown', affected: '.action-commands-dropdown'}}
         .action-commands-dropdown
