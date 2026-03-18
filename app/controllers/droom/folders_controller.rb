@@ -20,7 +20,10 @@ module Droom
         @folders = @folders.populated unless current_user.admin?
       end
 
-      respond_with @folders
+      respond_with @folders do |format|
+        format.html
+        format.js { render partial: 'droom/folders/folders' }
+      end
     end
 
     def show
@@ -53,7 +56,7 @@ module Droom
       else
         @folder.update(folder_params.merge(created_by: current_user))
         respond_with @folder do |format|
-          format.html { render :partial => 'droom/folders/show/contents' }
+          format.html { render :partial => 'droom/folders/folder' }
           format.js { render :partial => "droom/folders/folder" }
         end
       end
@@ -70,7 +73,7 @@ module Droom
       else
         @folder.save
         respond_with @folder do |format|
-          format.html { render :partial => 'droom/folders/show/contents' }
+          format.html { render :partial => 'droom/folders/folder' }
           format.js { render :partial => "droom/folders/folder" }
         end
       end
