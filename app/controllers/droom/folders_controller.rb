@@ -4,6 +4,7 @@ module Droom
     layout :no_layout_if_pjax, only: [:index, :show]
 
     before_action :get_root_folders, :only => [:index]
+    before_action :get_home_documents, :only => [:index]
     before_action :get_parent_folder, :only => [:new, :create]
     before_action :find_by_name, only: [:create, :update]
     before_action :get_links, :only => [:index]
@@ -146,7 +147,12 @@ module Droom
     end
 
     def get_root_folders
-      @folders = Droom::Folder.roots
+      @folders = Droom::Folder.roots.not_hidden
+    end
+
+    def get_home_documents
+      @home_folder = Droom::Folder.home_documents_folder
+      @home_documents = @home_folder.documents
     end
 
     def get_parent_folder

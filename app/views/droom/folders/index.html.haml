@@ -1,12 +1,24 @@
+- content_for :subnavbar do
+  = render :partial => 'shared/library_subnavbar'
+
 - content_for :pagetitle do
   = t :library
 
-- content_for :title do
-  = t :library
+- content_for :buttons do
+  = render 'more_actions'
+    
+#main.folders{data: {panel: false}}
+  = render partial: 'folders'
+  
+  -# 
+  #home_folder{data: {droppable: droom.folder_documents_path(@home_folder), picker: "#upload_to_folder_#{@home_folder.id}", queue: "#upload_queue", refreshes: "#home_folder"}}
+    %ul#folders
+      %li.files
+        %ul#upload_queue{class: 'sortable_files', data: {folder_id: @home_folder.id}}
+          - @home_folder.documents.each do |doc|
+            = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
 
-- content_for :standfirst do
-  %p
-    = t :library_introduction
+    %ul#upload_queue
 
-#main.folders{:data => {:panel => false}}
-  = render :partial => 'folders'
+  - unless @searching
+    = render partial: 'links'

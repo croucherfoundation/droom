@@ -19,6 +19,7 @@ module Droom
     default_scope -> { includes(:documents).order(:position) }
 
     scope :non_roots, -> { where.not(ancestry: nil) }
+    scope :not_hidden, -> { where(hidden: false) }
     scope :all_private, -> { where("#{table_name}.private = 1") }
     scope :not_private, -> { where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL") }
     scope :all_public, -> { where("#{table_name}.public = 1 AND #{table_name}.private <> 1 OR #{table_name}.private IS NULL") }
@@ -41,6 +42,13 @@ module Droom
 
     def automatic?
       holder || !parent && (name == "Events" || name == "Groups")
+    end
+
+    def self.home_documents_folder
+      find_or_create_by!(name: "Home Documents", ancestry: nil, hidden: true) do |f|
+        f.slug = "home-documents"
+        f.public = true
+      end
     end
 
     def visible_to?(user)

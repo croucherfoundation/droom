@@ -36,7 +36,7 @@ en:
   add_permission: "Add permission"
   add_permission_to: "Add permission to %{name}"
   add_phone: "Add phone number"
-  add_root_folder: "Add root folder"
+  add_root_folder: "Add folder"
   add_service: "Add service"
   add_subfolder: Add sub-folder
   move_folder: "Move folder"
