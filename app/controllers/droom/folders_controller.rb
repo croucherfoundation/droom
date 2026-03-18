@@ -1,6 +1,7 @@
 module Droom
   class FoldersController < Droom::DroomController
     respond_to :html, :json, :js
+    layout :no_layout_if_pjax, only: [:index]
 
     before_action :get_root_folders, :only => [:index]
     before_action :get_parent_folder, :only => [:new, :create]
@@ -10,13 +11,16 @@ module Droom
 
     def index
       @sortable = params[:sortable] == 'true'
-      @folders = @folders.populated unless current_user.admin?
-      respond_with @folders do |format|
-        format.html { render layout: 'centered' }
-        format.js {
-          render :partial => 'droom/folders/folders'
-        }
+      @q = params[:q].to_s.strip
+      @searching = @q.present?
+
+      if @searching
+        search_library
+      else
+        @folders = @folders.populated unless current_user.admin?
       end
+
+      respond_with @folders
     end
 
     def show
@@ -153,6 +157,31 @@ module Droom
       @document_map = Droom::Document.all.each_with_object({}) do |d, contents|
         contents[d.folder_id] ||= []
         contents[d.folder_id].push(d)
+      end
+    end
+
+    def search_library
+      fields = ["name^10", "filename^5", "content"]
+      highlight = {tag: "<strong>", fields: {name: {}, content: {fragment_size: 320}}}
+      criteria = {}
+      criteria[:confidential] = false unless current_user.privileged?
+      @show = (params[:show].presence || 20).to_i
+      @page = (params[:page].presence || 1).to_i
+      @search_results = Searchkick.search @q,
+        models: [Droom::Folder, Droom::Document],
+        fields: fields,
+        where: criteria,
+        order: {_score: :desc},
+        per_page: @show,
+        page: @page,
+        highlight: highlight
+    end
+
+    def default_layout
+      if %w[index].include?(action_name)
+        'centered'
+      else
+        Droom.config.layout
       end
     end
   end

@@ -644,6 +644,7 @@ en:
   signed_in_as: "Signed in as <strong>%{name}</strong>."
   slug_note: "Spaces and odd characters will be replaced with dashes"
   sorry_no_matches: "Sorry: we have found nothing matching <strong>%{q}</strong>."
+  search_in_library: "Search in Library"
   stream: "Stream"
   stream_events: "Stream events"
   subfolder_count:

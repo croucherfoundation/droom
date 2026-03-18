@@ -142,7 +142,11 @@ module Droom
         content: @file_content || "",
         event_type: get_event_type || "",
         year: get_year || "",
-        confidential: confidential?
+        confidential: confidential?,
+        item_type: "document",
+        folder_path: folder&.folder_path || "",
+        created_by_id: created_by_id,
+        modified_at: updated_at
       }
     end
 

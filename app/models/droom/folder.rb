@@ -170,6 +170,22 @@ module Droom
       children.each {|folder| folder.set_confidentiality!(confidential?) }
     end
 
+    ## Search
+    #
+    searchkick callbacks: :async, default_fields: [:name], highlight: [:name]
+    after_save :reindex
+
+    def search_data
+      {
+        name: name || "",
+        item_type: "folder",
+        folder_path: folder_path,
+        created_by_id: created_by_id,
+        modified_at: updated_at,
+        confidential: confidential?
+      }
+    end
+
     def set_file_path
       self.documents.map{|m| m.update_columns(file_full_path: m.folder.folder_path.tr(" ", "_")) unless m.file_full_path.nil?}
       unless self.children.empty?
