@@ -1,11 +1,12 @@
 %ul#folders{class: ("sortable_folders" unless @searching), data: {refreshing: true, url: "#{folders_path}.js"}}
-  %form.faceter{action: droom.folders_url, id: "library_search", style: "width: auto", data: {target: '#folders'}}
-    = hidden_field_tag :page, params[:page]
-    = hidden_field_tag :show, params[:show]
-    = hidden_field_tag :sort, params[:sort]
-    = hidden_field_tag :view, params[:view]
-    
-    = render "shared/page_search", title: t(:search_in_library)
+  - unless @sortable
+    %form.faceter{action: droom.folders_url, id: "library_search", style: "width: auto", data: {target: '#folders'}}
+      = hidden_field_tag :page, params[:page]
+      = hidden_field_tag :show, params[:show]
+      = hidden_field_tag :sort, params[:sort]
+      = hidden_field_tag :view, params[:view]
+      
+      = render "shared/page_search", title: t(:search_in_library)
 
   - if @searching
     = render :partial => 'droom/folders/search_results'

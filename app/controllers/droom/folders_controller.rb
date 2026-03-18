@@ -166,15 +166,14 @@ module Droom
     end
 
     def search_library(folder: nil)
-      fields = ["name^10", "filename^5", "content"]
-      highlight = {tag: "<strong>", fields: {name: {}, content: {fragment_size: 320}}}
+      fields = ["name^10", "filename^5"]
       criteria = {}
       criteria[:confidential] = false unless current_user.privileged?
       if folder
         descendant_ids = folder.subtree_ids
         criteria[:folder_id] = descendant_ids
       end
-      @show = (params[:show].presence || 50).to_i
+      @show = (params[:show].presence || 20).to_i
       @page = (params[:page].presence || 1).to_i
       @search_results = Searchkick.search @q,
         models: [Droom::Folder, Droom::Document],
@@ -182,8 +181,7 @@ module Droom
         where: criteria,
         order: {_score: :desc},
         per_page: @show,
-        page: @page,
-        highlight: highlight
+        page: @page
     end
 
     def default_layout
