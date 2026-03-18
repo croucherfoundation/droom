@@ -1,7 +1,7 @@
 module Droom
   class FoldersController < Droom::DroomController
     respond_to :html, :json, :js
-    layout :no_layout_if_pjax, only: [:index]
+    layout :no_layout_if_pjax, only: [:index, :show]
 
     before_action :get_root_folders, :only => [:index]
     before_action :get_parent_folder, :only => [:new, :create]
@@ -26,8 +26,13 @@ module Droom
     def show
       @sortable = params[:sortable] == 'true'
       @skip_gdoc = params[:skip_gdoc] == 'true'
+      @q = params[:q].to_s.strip
+      @searching = @q.present?
+
+      search_library(folder: @folder) if @searching
+
       respond_with @folder do |format|
-        format.html { render layout: 'centered' }
+        format.html
         format.js {
           if params[:source] == 'library'
             render :partial => 'droom/folders/show/contents'
@@ -160,12 +165,16 @@ module Droom
       end
     end
 
-    def search_library
+    def search_library(folder: nil)
       fields = ["name^10", "filename^5", "content"]
       highlight = {tag: "<strong>", fields: {name: {}, content: {fragment_size: 320}}}
       criteria = {}
       criteria[:confidential] = false unless current_user.privileged?
-      @show = (params[:show].presence || 20).to_i
+      if folder
+        descendant_ids = folder.subtree_ids
+        criteria[:folder_id] = descendant_ids
+      end
+      @show = (params[:show].presence || 50).to_i
       @page = (params[:page].presence || 1).to_i
       @search_results = Searchkick.search @q,
         models: [Droom::Folder, Droom::Document],
@@ -178,7 +187,7 @@ module Droom
     end
 
     def default_layout
-      if %w[index].include?(action_name)
+      if %w[index show].include?(action_name)
         'centered'
       else
         Droom.config.layout

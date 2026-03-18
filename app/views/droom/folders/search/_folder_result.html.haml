@@ -1,7 +1,7 @@
 - folder ||= folder_result
-%li{class: "folder root text-body", id: "folder_#{folder.id}", data: {label: folder.slug}}
+%li{class: "folder root text-body", id: "folder_#{folder.id}", data: {label: folder.slug, folder_behavior: 'navigate'}}
   = link_to droom.folder_path(folder), class: "folder no-bg-image" do
     %svg.icon.standard{style: "margin-top: -4px;"}
       %use{"xlink:href" => "#folder_closed_symbol"}
     %span= folder.name
-  %span.search-result-path= folder.folder_path
+  -# %span.search-result-path= folder.folder_path(true)

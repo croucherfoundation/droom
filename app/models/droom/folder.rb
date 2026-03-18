@@ -85,10 +85,14 @@ module Droom
       !populated?
     end
 
-    def folder_path
+    def folder_path(fullpath=false)
       folders = is_event? ? [] : [self.name]
       if self.ancestors.present?
-        folders << ancestors.reject{|x| x.parent_id.nil? || x.holder_type.present?}.map{|x| x.name }.flatten
+        if fullpath 
+          folders << ancestors.reject{|x| x.holder_type.present? }.map{|x| x.name }.flatten
+        else
+          folders << ancestors.reject{|x| x.parent_id.nil? || x.holder_type.present?}.map{|x| x.name }.flatten
+        end
       end
       "/" + folders.flatten.reverse.join('/')
     end
@@ -179,7 +183,8 @@ module Droom
       {
         name: name || "",
         item_type: "folder",
-        folder_path: folder_path,
+        folder_id: ancestor_ids + [id],
+        folder_path: folder_path(true),
         created_by_id: created_by_id,
         modified_at: updated_at,
         confidential: confidential?

@@ -144,7 +144,8 @@ module Droom
         year: get_year || "",
         confidential: confidential?,
         item_type: "document",
-        folder_path: folder&.folder_path || "",
+        folder_id: folder_id,
+        folder_path: folder&.folder_path(true) || "",
         created_by_id: created_by_id,
         modified_at: updated_at
       }

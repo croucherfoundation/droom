@@ -1,5 +1,5 @@
 - document ||= document_result
-%li.document{id: "document_#{document.id}", data: {doc_id: document.id}}
+%li.document.text-body{id: "document_#{document.id}", data: {doc_id: document.id}}
   - if (link_info = document_external_link_info(document))
     - detail_url = link_info[:url]
     - extension = link_info[:extension]
@@ -25,5 +25,5 @@
         %use{"xlink:href" => "#document_noline_symbol"}
     %span
       = shorten(document.name, 100, '')
-  %span.search-result-path
-    = document.folder.folder_path if document.folder
+  -# %span.search-result-path
+  -#   = document.folder.folder_path(true) if document.folder
