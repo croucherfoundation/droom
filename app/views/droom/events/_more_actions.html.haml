@@ -12,7 +12,8 @@
     = t :edit_event_folder
 
   = link_to droom.new_folder_folder_url(@event.folder), class: "btn", data: {action: 'popup', affected: "#event_#{@event.id}"}  do
-    = image_tag 'svg/add.svg', width: 18, height: 18 
+    %svg
+      %use{href: "#folder_closed_symbol"}
     = t :add_subfolder
   
   = link_to droom.new_event_group_invitation_url(@event), class: "btn", data: {action: 'popup', affected: "#event_#{@event.id}"} do
