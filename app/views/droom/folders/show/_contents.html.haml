@@ -13,10 +13,15 @@
   - if @searching
     = render partial: 'droom/folders/search_results'
   - else
-    %ul#folders{class: folder_ul_class}
-      - @folder.children.each do |child|
-        = render partial: 'droom/folders/folder', locals: {folder: child, sortable: @sortable || false}
-      %li.files
-        %ul#upload_queue{class: files_ul_class, data: {folder_id: @folder.id}}
-          - @folder.documents.each do |doc|
-            = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
+    - if @folder.children.any? || @folder.documents.any?
+      %ul#folders{class: folder_ul_class}
+        - @folder.children.each do |child|
+          = render partial: 'droom/folders/folder', locals: {folder: child, sortable: @sortable || false}
+        %li.files
+          %ul#upload_queue{class: files_ul_class, data: {folder_id: @folder.id}}
+            - @folder.documents.each do |doc|
+              = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
+    - else
+      .nomatch
+        %h2
+          Sorry: no documents
