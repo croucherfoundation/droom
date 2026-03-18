@@ -46,7 +46,7 @@ module Droom
       if @data.exists?
         render json: 'Folder with this name already exists!', status: 409
       else
-        @folder.update(folder_params)
+        @folder.update(folder_params.merge(created_by: current_user))
         respond_with @folder do |format|
           format.html { render :partial => 'droom/folders/show/contents' }
           format.js { render :partial => "droom/folders/folder" }
