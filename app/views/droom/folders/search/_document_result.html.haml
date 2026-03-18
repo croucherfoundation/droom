@@ -23,7 +23,7 @@
     - else
       %svg.icon.standard{style: "margin-top: -4px;"}
         %use{"xlink:href" => "#document_noline_symbol"}
-    %span
+    %span{style: "white-space: nowrap;"}
       = shorten(document.name, 100, '')
   -# %span.search-result-path
   -#   = document.folder.folder_path(true) if document.folder

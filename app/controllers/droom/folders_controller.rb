@@ -172,6 +172,7 @@ module Droom
       if folder
         descendant_ids = folder.subtree_ids
         criteria[:folder_id] = descendant_ids
+        criteria[:id] = {not: folder.id}
       end
       @show = (params[:show].presence || 20).to_i
       @page = (params[:page].presence || 1).to_i
