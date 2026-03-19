@@ -213,6 +213,11 @@
                 allowedExtensions.test(file.name);
         };
 
+        // Maximum file size: 200MB
+        const MAX_FILE_SIZE = 200 * 1024 * 1024;
+        // Large file threshold for async scanning: 25MB
+        const LARGE_FILE_THRESHOLD = 25 * 1024 * 1024;
+
         const results = [];
 
         for (let i = 0; i < files.length; i++) {
@@ -224,18 +229,27 @@
             continue;
           }
 
-          results.push(this.uploadFile(file));
+          if (file.size > MAX_FILE_SIZE) {
+            alert('File too large: "' + file.name + '" (' + (file.size / (1024 * 1024)).toFixed(1) + 'MB). Maximum file size is 200MB.');
+            console.warn('File too large:', file.name, file.size);
+            continue;
+          }
+
+          // Flag large files so the Upload object can show scanning status
+          var isLargeFile = file.size > LARGE_FILE_THRESHOLD;
+          results.push(this.uploadFile(file, isLargeFile));
         }
 
         return results;
       };
 
-      Droploader.prototype.uploadFile = function(file) {
+      Droploader.prototype.uploadFile = function(file, isLargeFile) {
         return new Upload({
           file: file,
           queue: this._queue,
           url: this._url,
-          callback: this.finishUpload
+          callback: this.finishUpload,
+          isLargeFile: isLargeFile || false
         });
       };
 
@@ -294,6 +308,7 @@
       this._queue = opts.queue;
       this._url = opts.url;
       this._callback = opts.callback;
+      this._isLargeFile = opts.isLargeFile || false;
       console.log("Upload", opts);
       if (this._file && this._url) {
         this.readFile();
@@ -361,7 +376,11 @@
         prog = e.loaded / e.total;
         this._bar.width(Math.round(this._w * prog));
         if (prog > 0.99) {
-          return this._li.addClass('waiting');
+          this._li.addClass('waiting');
+          // For large files, show that virus scanning will happen in background
+          if (this._isLargeFile) {
+            this._label.text(this._filename + ' — processing, virus scan will run in background...');
+          }
         }
       }
     };
@@ -386,6 +405,16 @@
       confirmation.activate();
       this._li.after(confirmation);
       this._li.remove();
+
+      // Check if the document is pending virus scan (large file async scan)
+      var scanStatus = confirmation.data('scan-status') || confirmation.attr('data-scan-status');
+      if (scanStatus === 'pending') {
+        var scanBadge = confirmation.find('.scan-status.scanning');
+        if (scanBadge.length === 0) {
+          confirmation.append('<span class="scan-status scanning" title="File is being scanned for viruses">⏳ Scanning...</span>');
+        }
+      }
+
       confirmation.signal_confirmation();
       return typeof this._callback === "function" ? this._callback(this, confirmation) : void 0;
     };

@@ -6,7 +6,7 @@
 - narrow ||= false
 - character_count = narrow ? 28 : 64
 
-%li.document{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id}}
+%li.document{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id, scan_status: document.respond_to?(:scan_status) ? document.scan_status : 'clean'}}
   - if (link_info = document_external_link_info(document))
     - detail_url = link_info[:url]
     - extension = link_info[:extension]
@@ -45,3 +45,13 @@
         .more-actions
           = action_menulink(document, class: 'toggle-commands-dropdown')
           = action_menu(document)
+
+  - if document.respond_to?(:scan_status) && document.scan_status == "pending"
+    %span.scan-status.scanning{title: "File is being scanned for viruses"}
+      ⏳ Scanning...
+  - elsif document.respond_to?(:scan_status) && document.scan_status == "infected"
+    %span.scan-status.infected{title: "This file was found to contain malware and has been removed"}
+      🚨 Malware detected
+  - elsif document.respond_to?(:scan_status) && document.scan_status == "scan_error"
+    %span.scan-status.scan-error{title: "Virus scan could not be completed"}
+      ⚠️ Scan error

@@ -165,6 +165,7 @@ Droom::Engine.routes.draw do
   resources :documents do
     get "suggest", on: :collection
     put "reposition", on: :member
+    get "scan_status", on: :member
   end
 
   resources :folders do

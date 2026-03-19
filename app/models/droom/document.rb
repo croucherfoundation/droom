@@ -17,6 +17,9 @@ module Droom
     has_one_attached :file
     scan_attachment :file
 
+    # Maximum file size allowed for uploads (200MB)
+    MAX_FILE_SIZE = 200.megabytes
+
     acts_as_list scope: :folder_id
 
     before_create :inherit_confidentiality
@@ -25,6 +28,7 @@ module Droom
     before_save :track_file_change
     after_commit :file_changed_callback, if: -> { @file_changed }
     validate :file_must_be_allowed
+    validate :file_size_within_limit
 
     # validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
@@ -297,6 +301,13 @@ module Droom
       unless FileSecurityService.allowed_file?(file_name, content_type)
         error_message = FileSecurityService.security_error_message(file_name, content_type)
         errors.add(:file, error_message)
+      end
+    end
+
+    def file_size_within_limit
+      return unless file.attached?
+      if file.blob.byte_size > MAX_FILE_SIZE
+        errors.add(:file, "is too large (#{(file.blob.byte_size / 1.megabyte.to_f).round(1)}MB). Maximum file size is #{MAX_FILE_SIZE / 1.megabyte}MB.")
       end
     end
 

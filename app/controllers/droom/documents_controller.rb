@@ -2,9 +2,9 @@ module Droom
   class DocumentsController < Droom::DroomController
     respond_to :html, :js, :json
 
-    before_action :get_folder, except: [:index, :suggest, :reposition]
+    before_action :get_folder, except: [:index, :suggest, :reposition, :scan_status]
     before_action :select_documents, only: [:index, :suggest]
-    load_and_authorize_resource :document, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest]
+    load_and_authorize_resource :document, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest, :scan_status]
     before_action :find_by_name, only: [:create]
 
 
@@ -87,6 +87,14 @@ module Droom
       @document.destroy
       # @document.enqueue_for_croucher_deindexing # calling search_client method
       head :ok
+    end
+
+    def scan_status
+      @document = Droom::Document.find(params[:id])
+      render json: {
+        id: @document.id,
+        scan_status: @document.respond_to?(:scan_status) ? @document.scan_status : "clean"
+      }
     end
 
   protected

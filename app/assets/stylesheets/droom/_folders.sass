@@ -199,6 +199,31 @@ ul#folders, #single_folder, div.attachments
   .folder-drag
     opacity: 0.5
 
+  // Scan status indicators for documents with async virus scanning
+  .scan-status
+    display: inline-block
+    font-size: 12px
+    padding: 2px 8px
+    border-radius: 3px
+    margin-left: 8px
+    white-space: nowrap
+    &.scanning
+      color: #856404
+      background-color: #fff3cd
+      animation: pulse-scan 2s infinite
+    &.infected
+      color: #721c24
+      background-color: #f8d7da
+    &.scan-error
+      color: #856404
+      background-color: #fff3cd
+
+@keyframes pulse-scan
+  0%, 100%
+    opacity: 1
+  50%
+    opacity: 0.5
+
 // Hide drag handles on mobile/touch devices
 @media (max-width: 768px)
   ul#folders, #single_folder, div.attachments

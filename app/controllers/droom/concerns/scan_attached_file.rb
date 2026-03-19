@@ -1,6 +1,9 @@
 module Droom::Concerns::ScanAttachedFile
   extend ActiveSupport::Concern
 
+  # Files larger than this threshold will be scanned in background
+  LARGE_FILE_THRESHOLD = 25.megabytes
+
   class_methods do
     def clamav_scan_file_for(param_paths, options = {})
       fallback = options.delete(:fallback) || :root_path
@@ -12,6 +15,14 @@ module Droom::Concerns::ScanAttachedFile
         paths.each do |param_path|
           uploaded = param_path.to_s.split('.').inject(params) { |h, key| h[key] if h }
           next unless uploaded.is_a?(ActionDispatch::Http::UploadedFile)
+
+          # Skip synchronous scan for large files — they'll be scanned asynchronously
+          # via ScanDocumentFileJob after the record is saved
+          if uploaded.size > LARGE_FILE_THRESHOLD
+            Rails.logger.info "⏳ Large file upload (#{(uploaded.size / 1.megabyte.to_f).round(1)}MB), deferring virus scan to background job"
+            next
+          end
+
           result = ClamavServices.scan_file(uploaded.tempfile.path )
           @object_name = param_path.to_s.split('.').first
 
