@@ -354,7 +354,12 @@
       this._bar = $('<span class="bar"></span>').appendTo(this._progress_holder);
       this._canceller = $('<a class="cancel minimal"></a>').appendTo(this._li);
       this._waiter = $('<span class="waiting"></a>').appendTo(this._li);
-      this._w = this._progress_holder.width();
+      // Defer width measurement until element is rendered
+      var self = this;
+      setTimeout(function() {
+        self._w = self._progress_holder.width() || 300;
+      }, 0);
+      this._w = 300; // fallback default
       return this._canceller.click(this.cancel);
     };
 
@@ -374,12 +379,11 @@
       var prog;
       if (e.lengthComputable) {
         prog = e.loaded / e.total;
-        this._bar.width(Math.round(this._w * prog));
+        this._bar.css('width', Math.round(prog * 100) + '%');
         if (prog > 0.99) {
           this._li.addClass('waiting');
-          // For large files, show that virus scanning will happen in background
           if (this._isLargeFile) {
-            this._label.text(this._filename + ' — processing, virus scan will run in background...');
+            this._label.text(this._filename + ' — saving...');
           }
         }
       }
@@ -388,7 +392,7 @@
     Upload.prototype.stateChange = function() {
       if (this._xhr.readyState === 4) {
         if (this._xhr.status === 200) {
-          this._bar.width(this._w);
+          this._bar.css('width', '100%');
           return this.success(this._xhr.responseText);
         } else {
           return this.error();
@@ -411,7 +415,7 @@
       if (scanStatus === 'pending') {
         var scanBadge = confirmation.find('.scan-status.scanning');
         if (scanBadge.length === 0) {
-          confirmation.append('<span class="scan-status scanning" title="File is being scanned for viruses">⏳ Scanning...</span>');
+          confirmation.append('<span class="scan-status scanning" title="File is being scanned for viruses">Scanning...</span>');
         }
         // Subscribe to ActionCable for real-time scan status updates
         var docId = confirmation.data('doc-id') || confirmation.attr('id').replace('document_', '');

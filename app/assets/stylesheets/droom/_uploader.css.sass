@@ -32,8 +32,9 @@ ul.uploads
     display: none
   li.uploading
     position: relative
-    max-width: 400px
+    max-width: 100%
     width: auto
+    padding: 6px 0
     span.label
       display: block
       img.thumbnail
@@ -60,21 +61,23 @@ ul.uploads
         line-height: 26px
         padding-top: 4px
         width: calc(100% - 32px)
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
     span.progress
       position: relative
-      display: inline-block
-      vertical-align: middle
-      height: 2px
-      margin-left: 3px
-      margin-top: -8px
-      width: calc(100% - 40px)
-      border: 1px solid $pale
+      display: block
+      height: 3px
+      margin-top: 2px
+      margin-bottom: 2px
+      width: 100%
+      background-color: $palest
       border-radius: 2px
       span.bar
         float: left
         background-color: $green
         border-radius: 2px
-        height: 2px
+        height: 3px
         width: 0
     a.cancel
       display: inline-block
@@ -119,6 +122,18 @@ ul.uploads
           color: $red
       span.progress, a.cancel
         display: none
+
+// Upload progress item inside folder document list
+ul#upload_queue, #single_folder ul, div.attachments ul
+  li.uploading
+    list-style: none
+    padding: 4px 0
+    span.label
+      span.filename
+        font-size: 14px
+        color: $mid
+    span.progress
+      max-width: 300px
 
 
 //Older but still in use for user profiles etc.

@@ -33,7 +33,7 @@ module Droom::Concerns::ScanAttachment
 
         if file_size && file_size > LARGE_FILE_THRESHOLD && self.respond_to?(:scan_status=)
           self.scan_status = "pending"
-          Rails.logger.info "⏳ Large file detected (#{(file_size / 1.megabyte.to_f).round(1)}MB), deferring virus scan to background job"
+          Rails.logger.info "[ScanAttachment] Large file detected (#{(file_size / 1.megabyte.to_f).round(1)}MB), deferring virus scan to background job"
           next
         end
 
@@ -63,9 +63,9 @@ module Droom::Concerns::ScanAttachment
 
   def enqueue_scan_job_if_pending
     Droom::ScanDocumentFileJob.perform_later(self.id)
-    Rails.logger.info "🔍 Enqueued background virus scan for document ##{self.id}"
+    Rails.logger.info "[ScanAttachment] Enqueued background virus scan for document ##{self.id}"
   rescue => e
-    Rails.logger.error "Failed to enqueue scan job for document ##{self.id}: #{e.message}"
+    Rails.logger.error "[ScanAttachment] Failed to enqueue scan job for document ##{self.id}: #{e.message}"
   end
 
   # Below methods are used for scanning attachments outside of the model validation context and can be used in controllers or services.

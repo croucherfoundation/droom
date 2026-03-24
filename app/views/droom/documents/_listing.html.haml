@@ -48,10 +48,10 @@
 
   - if document.respond_to?(:scan_status) && document.scan_status == "pending"
     %span.scan-status.scanning{title: "File is being scanned for viruses"}
-      ⏳ Scanning...
+      Scanning...
   - elsif document.respond_to?(:scan_status) && document.scan_status == "infected"
     %span.scan-status.infected{title: "This file was found to contain malware and has been removed"}
-      🚨 Malware detected
+      Malware detected
   - elsif document.respond_to?(:scan_status) && document.scan_status == "scan_error"
     %span.scan-status.scan-error{title: "Virus scan could not be completed"}
-      ⚠️ Scan error
+      Scan error
