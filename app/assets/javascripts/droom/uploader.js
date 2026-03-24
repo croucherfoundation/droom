@@ -413,6 +413,11 @@
         if (scanBadge.length === 0) {
           confirmation.append('<span class="scan-status scanning" title="File is being scanned for viruses">⏳ Scanning...</span>');
         }
+        // Subscribe to ActionCable for real-time scan status updates
+        var docId = confirmation.data('doc-id') || confirmation.attr('id').replace('document_', '');
+        if (docId && window.DocumentScanSubscriber) {
+          window.DocumentScanSubscriber.subscribeToDocument(docId);
+        }
       }
 
       confirmation.signal_confirmation();
