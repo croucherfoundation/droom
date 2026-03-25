@@ -281,8 +281,24 @@
 
       Droploader.prototype.finishUpload = function(upload, el) {
         var target_selector;
+
+        // Hide "no documents" message when a file is uploaded
+        this._catcher.find('.nomatch').hide();
+
+        // If there's a refresh target, refresh that element
         if (target_selector = this._catcher.data('refreshes')) {
           return $(target_selector).refresh();
+        }
+
+        // For pages where the upload was the first file in an empty folder,
+        // reload the page to rebuild proper UI structure (folder/files list)
+        var wasEmpty = this._catcher.find('ul#folders').length === 0 &&
+                       this._catcher.find('ul.filing li').length === 0 &&
+                       this._catcher.find('li.document').length <= 1; // only the just-uploaded one
+        if (wasEmpty) {
+          setTimeout(function() {
+            window.location.reload();
+          }, 1500);
         }
       };
 
