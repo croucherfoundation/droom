@@ -22,6 +22,7 @@
             - @folder.documents.each do |doc|
               = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
     - else
+      %ul#upload_queue{data: {folder_id: @folder.id}}
       .nomatch
         %h2
           Sorry: no documents
