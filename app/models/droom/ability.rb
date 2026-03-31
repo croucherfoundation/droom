@@ -24,6 +24,7 @@ module Droom
           end
 
           if user.organisation.present?
+            can :read, Droom::Organisation
             can :read, Droom::Event
             can :read, Droom::Scrap
           end
