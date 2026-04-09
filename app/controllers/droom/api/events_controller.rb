@@ -80,7 +80,7 @@ module Droom::Api
     end
 
     def event_params
-      params.require(:event).permit(:name, :description, :event_set_id, :calendar_id, :all_day, :url, :start, :finish, :timezone, :venue_id, :venue_name)
+      params.require(:event).permit(:name, :description, :event_set_id, :calendar_id, :event_type_id, :all_day, :url, :start, :finish, :timezone, :venue_id, :venue_name)
     end
 
     def authenticate_from_param
