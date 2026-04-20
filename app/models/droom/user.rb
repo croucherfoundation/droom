@@ -80,7 +80,8 @@ module Droom
     # defer_confirmation is also set by remote services that send out their own invitations,
     # eg. when a new user is invited to screen an application round.
     #
-    attr_accessor :defer_confirmation, :send_confirmation, :confirming, :other_id
+    attr_accessor :defer_confirmation, :send_confirmation, :confirming, :other_id,
+            :reset_password_destination
 
     def ability
       @ability ||= Ability.new(self)
@@ -463,6 +464,7 @@ module Droom
     #
     def self.send_reset_password_instructions(attributes = {})
       email = attributes[:email]
+      destination = attributes[:destination].presence || attributes[:backto].presence
       user  = from_email(email).first
 
       if user
@@ -472,6 +474,7 @@ module Droom
         end
 
         if valid_for_delivery?(email)
+          user.reset_password_destination = destination
           user.instance_variable_set(:@reset_password_target_email, email)
           user.send_reset_password_instructions
         else
@@ -483,6 +486,12 @@ module Droom
       end
 
       user
+    end
+
+    def reset_password_link_params(token)
+      { reset_password_token: token }.tap do |params|
+        params[:destination] = reset_password_destination if reset_password_destination.present?
+      end
     end
 
     def self.send_unlock_instructions(attributes = {})
