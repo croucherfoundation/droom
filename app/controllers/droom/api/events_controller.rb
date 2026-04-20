@@ -63,6 +63,12 @@ module Droom::Api
 
     def find_or_create_event
       if params[:event]
+        # Resolve event_type_slug to event_type_id so callers can pass a slug
+        if params[:event][:event_type_slug].present?
+          event_type = Droom::EventType.find_by(slug: params[:event].delete(:event_type_slug))
+          params[:event][:event_type_id] = event_type.id if event_type
+        end
+
         if params[:event][:uid].present?
           @event = Droom::Event.where(uid: params[:event][:uid]).first
         end

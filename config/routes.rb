@@ -31,7 +31,7 @@ Droom::Engine.routes.draw do
       collection do
         get :calendar
       end
-      resources :invitations, only: [:create, :destroy]
+      resources :invitations, only: [:index, :create, :destroy]
     end
     resources :venues
     resources :images
