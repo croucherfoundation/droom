@@ -4,8 +4,7 @@ module Droom::Api
     prepend_before_action :authenticate_from_param, only: [:calendar]
     before_action :get_events, only: [:index]
     before_action :find_or_create_event, only: [:create]
-    load_and_authorize_resource find_by: :uuid, class: "Droom::Event", except: [:calendar]
-    skip_load_and_authorize_resource only: [:calendar]
+    load_resource find_by: :uuid, class: "Droom::Event", except: [:calendar]
     
     def index
       render json: @events
@@ -73,7 +72,7 @@ module Droom::Api
           @event = Droom::Event.where(uid: params[:event][:uid]).first
         end
       end
-      @event ||= Droom::Event.create(event_params)
+      @event ||= Droom::Event.create!(event_params)
     end
 
     def get_events
@@ -86,7 +85,7 @@ module Droom::Api
     end
 
     def event_params
-      params.require(:event).permit(:name, :description, :event_set_id, :calendar_id, :event_type_id, :all_day, :url, :start, :finish, :timezone, :venue_id, :venue_name)
+      params.require(:event).permit(:name, :description, :event_set_id, :calendar_id, :event_type_id, :event_type_slug, :all_day, :url, :start, :finish, :end_date, :timezone, :venue_id, :venue_name)
     end
 
     def authenticate_from_param
