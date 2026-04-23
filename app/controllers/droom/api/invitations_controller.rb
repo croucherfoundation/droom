@@ -1,19 +1,10 @@
 module Droom::Api
   class InvitationsController < Droom::Api::ApiController
-    before_action :find_event
+    load_resource :event, class: Droom::Event, find_by: :uuid
 
     def index
       @invitations = @event.invitations
-      render json: {
-        invitations: @invitations.map do |invitation|
-          {
-            id: invitation.id,
-            event_id: @event.uuid,
-            user_id: invitation.user_id,
-            user_uid: invitation.user&.uid
-          }
-        end
-      }
+      render json: @invitations
     end
 
     def create
@@ -22,9 +13,9 @@ module Droom::Api
       @invitation = @event.invitations.find_or_initialize_by(user_id: user.id)
       if @invitation.new_record?
         @invitation.save!
-        render json: { invitation: { id: @invitation.id, event_id: @event.id, user_id: user.id } }, status: :created
+        render json: @invitation, status: :created
       else
-        render json: { invitation: { id: @invitation.id, event_id: @event.id, user_id: user.id } }, status: :ok
+        render json: @invitation, status: :ok
       end
     end
 
@@ -32,12 +23,6 @@ module Droom::Api
       @invitation = @event.invitations.find(params[:id])
       @invitation.destroy
       head :ok
-    end
-
-  protected
-
-    def find_event
-      @event = Droom::Event.find_by!(uuid: params[:event_id])
     end
   end
 end
