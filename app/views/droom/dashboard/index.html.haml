@@ -24,6 +24,7 @@
 
   - else
     = render :partial => "droom/dashboard/my_events"
+
     - screeners = current_user.screeners
     - if screeners.any?
       - open_screeners = screeners.select { |screener| screener.round&.open? }.sort_by { |screener| screener.round&.screening_end || Time.current }

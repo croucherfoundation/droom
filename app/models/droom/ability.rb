@@ -64,6 +64,13 @@ module Droom
                 can :calendar, Droom::Event
               end
 
+              if user.groups.where(slug: %w[screeners interviewers]).any?
+                can :read, Droom::Event, id: user.event_ids
+                can :read, Droom::Invitation, user_id: user.id
+                can :past, Droom::Event
+                can :calendar, Droom::Event
+              end
+
               if user.permitted?('droom.directory')
                 can :manage, Droom::Group
                 can :manage, Droom::Organisation
