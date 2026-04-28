@@ -691,6 +691,8 @@ en:
   uninvite: "uninvite"
   unlock_account_insturctions_not_delivered: "We cannot currently deliver emails to the email address you have given us. This may be due to a full mailbox or an incorrect email address. Please check and resolve this issue before requesting another account unlock."
   upcoming_events: "Upcoming events"
+  your_upcoming_events: "Your upcoming events"
+  no_upcoming_events: "No upcoming events."
   update_person_email: "also update your public email address"
   user_account_number: "Account number"
   user_admin: "User admin"

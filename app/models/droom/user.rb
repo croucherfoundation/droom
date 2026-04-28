@@ -389,6 +389,10 @@ module Droom
       email?
     end
 
+    def upcoming_invited_events
+      events.merge(Droom::Event.future_and_current).order('start ASC')
+    end
+
     scope :personally_invited_to_event, -> event {
       joins('LEFT OUTER JOIN droom_invitations on droom_users.id = droom_invitations.user_id').where('droom_invitations.group_invitation_id is null AND droom_invitations.event_id = ?', event.id)
     }
