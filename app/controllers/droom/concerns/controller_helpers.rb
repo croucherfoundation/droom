@@ -130,6 +130,22 @@ module Droom::Concerns::ControllerHelpers
     return false
   end
 
+  def screener?
+    if user_signed_in? && !admin? && !committee? && !trustee? && !developer? && !staff?
+      groups = current_user.groups
+      return groups.any? && groups.exists?(slug: 'screeners')
+    end
+    return false
+  end
+
+  def interviewer?
+    if user_signed_in? && !admin? && !committee? && !trustee? && !developer? && !staff?
+      groups = current_user.groups
+      return groups.any? && groups.exists?(slug: 'interviewers')
+    end
+    return false
+  end
+
   def committee?
     if user_signed_in?
       committees = ['audit-committee', 'investment-committee']

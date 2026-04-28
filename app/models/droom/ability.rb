@@ -64,13 +64,6 @@ module Droom
                 can :calendar, Droom::Event
               end
 
-              if user.groups.where(slug: %w[screeners interviewers]).any?
-                can :read, Droom::Event, id: user.event_ids
-                can :read, Droom::Invitation, user_id: user.id
-                can :past, Droom::Event
-                can :calendar, Droom::Event
-              end
-
               if user.permitted?('droom.directory')
                 can :manage, Droom::Group
                 can :manage, Droom::Organisation
@@ -119,6 +112,15 @@ module Droom
                 cannot :read, Droom::Folder, private: true
                 cannot :read, Droom::Document, private: true
               end
+            end
+
+            # Panel members (screeners/interviewers) can see their assigned events
+            # even without full data room or calendar permissions.
+            if user.screener? || user.interviewer?
+              can :read, Droom::Event, id: user.event_ids
+              can :read, Droom::Invitation, user_id: user.id
+              can :past, Droom::Event, id: user.event_ids
+              can :calendar, Droom::Event, id: user.event_ids
             end
 
           else

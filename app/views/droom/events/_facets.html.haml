@@ -1,9 +1,13 @@
-- past ||= false 
+- past ||= false
+- restricted_slugs = []
+- restricted_slugs << 'screening' if current_user.screener?
+- restricted_slugs << 'award_interview' if current_user.interviewer?
+- event_types = restricted_slugs.any? ? Droom::EventType.where(slug: restricted_slugs) : Droom::EventType.all
 
 %fieldset.search_options.mb.faceting{data: {refreshing: true}}
   .croucher_dropdown_container
     .parent_custom_dropdown
-      - event_type_options = Droom::EventType.all.map{|et| [et.name, et.id]}
+      - event_type_options = event_types.map{|et| [et.name, et.id]}
       = select_tag "event_type", options_for_select(event_type_options, params[:event_type]), { include_blank: t(:event_type_admin), class: "facet custom_dropdown custom-img" }
 
     - if past 

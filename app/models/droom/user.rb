@@ -314,6 +314,14 @@ module Droom
       groups.any? { |group| group.slug.match(/applicants/i) }
     end
 
+    def screener?
+      groups.any? { |group| group.slug.match(/screeners/i) }
+    end
+
+    def interviewer?
+      groups.any? { |group| group.slug.match(/interviewers/i) }
+    end
+    
     ## Group memberships
     #
     has_many :memberships, :dependent => :destroy

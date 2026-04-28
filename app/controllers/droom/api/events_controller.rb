@@ -26,7 +26,7 @@ module Droom::Api
         when "year"  then date.beginning_of_year..date.end_of_year.end_of_day
         end
 
-      @events = Droom::Event.where(
+      @events = Droom::Event.accessible_by(current_ability).where(
         "start <= ? AND (
           (end_date IS NOT NULL AND end_date >= ?) OR
           (end_date IS NULL AND finish IS NOT NULL AND finish >= ?) OR
