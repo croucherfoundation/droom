@@ -4,6 +4,7 @@
 - show_folder = (event.folder && can?(:read, event.folder)) || current_user.permitted?('droom.library.read_event_documents')
 - skip_gdoc = true
 - is_outside_event = @event&.calendar_id == 2
+- has_date_range = event.end_date.present?
 
 - event_master_id = event.master_id || event.id
 - if @seen_events[event_master_id]
@@ -24,7 +25,7 @@
     .heading 
       .detail-practicalities.full.text-body
         %p.practicalities
-          - if is_outside_event
+          - if has_date_range
             %span.time.date_range
               = render 'droom/shared/date', event: event
           - else 

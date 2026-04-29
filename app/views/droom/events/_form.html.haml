@@ -1,6 +1,7 @@
 - @event.calendar ||= Droom::Calendar.default_calendar
 - calendar_id = params.dig(:event, :calendar_id) || @event.calendar_id
 - is_outside_event = calendar_id.to_i == 2
+- has_date_range = @event.end_date.present?
 - modal_title = is_new ? t(:add_event) : t(:edit_event)
 
 .standard-modal-overlay.active
@@ -18,7 +19,7 @@
 
       .standard-modal-body
         .container
-          - unless is_outside_event
+          - unless is_outside_event || has_date_range
             .datemark{data: {role: "datepicker"}}
               %a{:href => "#", title: t("placeholders.event.datemark")}
                 - if @event.start
@@ -33,10 +34,10 @@
           .summary.inputs
             .name
               = f.text_field :name, :class => 'name', :placeholder => t(:event_name), :autofocus => true
-            - if is_outside_event
+            - if is_outside_event || has_date_range
               %p.practicalities.input-dates.flex
-                = f.text_field :start_date, class: "start_date mr-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.start"), autocomplete: "off"
-                = f.text_field :end_date, class: "end_date ml-5 full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.end_date"), autocomplete: "off"
+                = f.text_field :start_date, class: "start_date full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.start"), autocomplete: "off"
+                = f.text_field :end_date, class: "end_date full-width", data: {role: "datepicker"}, placeholder: t("placeholders.event.end_date"), autocomplete: "off"
 
             .practicalities.flex.standard-selection-list
               = f.text_field :start_time, :class => "timepicker start", :value => (I18n.l(@event.start_time, :format => :precise) if @event.start_time), :placeholder => t(:event_time)
