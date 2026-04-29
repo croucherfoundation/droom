@@ -1,7 +1,7 @@
 - past ||= false
 - restricted_slugs = []
-- restricted_slugs << 'screening' if current_user.screener?
-- restricted_slugs << 'award_interviews' if current_user.interviewer?
+- restricted_slugs << 'screening' if screener?
+- restricted_slugs << 'award_interviews' if interviewer?
 - event_types = restricted_slugs.any? ? Droom::EventType.where(slug: restricted_slugs) : Droom::EventType.all
 
 %fieldset.search_options.mb.faceting{data: {refreshing: true}}
