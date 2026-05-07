@@ -64,6 +64,46 @@ module Droom
 
     scope :latest, -> limit { order("droom_documents.updated_at DESC, droom_documents.created_at DESC").limit(limit) }
 
+    CONTENT_TYPE_GROUPS = {
+      'documents' => %w[
+        application/pdf
+        application/msword
+        application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        text/plain
+      ],
+      'spreadsheets' => %w[
+        application/vnd.ms-excel
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        text/csv
+      ],
+      'images' => %w[
+        image/jpeg
+        image/png
+        image/gif
+        image/svg+xml
+        image/webp
+      ]
+    }.freeze
+
+    scope :by_type, -> type {
+      if type == 'folders'
+        none
+      elsif CONTENT_TYPE_GROUPS.key?(type)
+        where(file_content_type: CONTENT_TYPE_GROUPS[type])
+      else
+        all
+      end
+    }
+
+    scope :modified_since, -> period {
+      duration = case period
+                 when '7d'   then 7.days.ago
+                 when '30d'  then 30.days.ago
+                 when '365d' then 365.days.ago
+                 end
+      duration ? where('droom_documents.updated_at >= ?', duration) : all
+    }
+
     scope :unindexed, -> { where(indexed_at: nil) }
 
     def attach_to(holder)

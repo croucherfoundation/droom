@@ -21,6 +21,8 @@ module Droom
         @folders = @folders.populated unless current_user.admin?
       end
 
+      apply_filters
+
       respond_with @folders do |format|
         format.html
         format.js { render partial: 'droom/folders/folders' }
@@ -34,6 +36,8 @@ module Droom
       @searching = @q.present?
 
       search_library(folder: @folder) if @searching
+
+      apply_filters
 
       respond_with @folder do |format|
         format.html
@@ -183,15 +187,55 @@ module Droom
         criteria[:folder_id] = descendant_ids
         criteria[:id] = {not: folder.id}
       end
+      criteria[:content_type] = Droom::Document::CONTENT_TYPE_GROUPS[params[:type]] if params[:type].present? && params[:type] != 'folders'
+      criteria[:modified_at] = {gte: modified_since_time} if params[:modified].present? && modified_since_time
       @show = (params[:show].presence || 20).to_i
       @page = (params[:page].presence || 1).to_i
       @search_results = Searchkick.search @q,
-        models: [Droom::Folder, Droom::Document],
+        models: search_models,
         fields: fields,
         where: criteria,
         order: {_score: :desc},
         per_page: @show,
         page: @page
+    end
+
+    def apply_filters
+      @filter_type = params[:type].presence
+      @filter_modified = params[:modified].presence
+      @filtering = @filter_type.present? || @filter_modified.present?
+
+      return unless @filtering && !@searching
+
+      if @filter_type.present?
+        @folders = @folders.by_type(@filter_type) if @folders
+        @home_documents = @home_documents.by_type(@filter_type) if @home_documents
+        @filtered_documents = -> (docs) { docs.by_type(@filter_type) }
+      end
+
+      if @filter_modified.present?
+        @home_documents = @home_documents.modified_since(@filter_modified) if @home_documents
+        @filtered_documents_modified = -> (docs) { docs.modified_since(@filter_modified) }
+        # Folders don't have a modified filter — they remain visible
+      end
+    end
+
+    def search_models
+      if params[:type] == 'folders'
+        [Droom::Folder]
+      elsif params[:type].present?
+        [Droom::Document]
+      else
+        [Droom::Folder, Droom::Document]
+      end
+    end
+
+    def modified_since_time
+      case params[:modified]
+      when '7d'   then 7.days.ago
+      when '30d'  then 30.days.ago
+      when '365d' then 365.days.ago
+      end
     end
 
     def default_layout
