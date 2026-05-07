@@ -24,6 +24,9 @@ module Droom
     scope :by_type, -> type {
       type == 'folders' ? all : none
     }
+    scope :created_by, -> user_id {
+      where(created_by_id: user_id)
+    }
     scope :all_private, -> { where("#{table_name}.private = 1") }
     scope :not_private, -> { where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL") }
     scope :all_public, -> { where("#{table_name}.public = 1 AND #{table_name}.private <> 1 OR #{table_name}.private IS NULL") }

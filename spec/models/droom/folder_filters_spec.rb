@@ -24,4 +24,22 @@ describe Droom::Folder do
       expect(results).to be_empty
     end
   end
+
+  describe '.created_by' do
+    let(:user) { FactoryGirl.create(:user) }
+    let(:other_user) { FactoryGirl.create(:user) }
+    let!(:user_folder) { FactoryGirl.create(:folder, slug: 'user-folder', created_by: user) }
+    let!(:other_folder) { FactoryGirl.create(:folder, slug: 'other-folder', created_by: other_user) }
+
+    it 'returns only folders created by the specified user' do
+      results = Droom::Folder.created_by(user.id)
+      expect(results).to include(user_folder)
+      expect(results).not_to include(other_folder)
+    end
+
+    it 'returns empty when no folders belong to the user' do
+      results = Droom::Folder.created_by(0)
+      expect(results).to be_empty
+    end
+  end
 end

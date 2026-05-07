@@ -94,4 +94,28 @@ describe Droom::Document do
       expect(results).to include(recent_doc, month_old_doc, old_doc)
     end
   end
+
+  describe '.created_by' do
+    let(:folder) { FactoryGirl.create(:folder) }
+    let(:user) { FactoryGirl.create(:user) }
+    let(:other_user) { FactoryGirl.create(:user) }
+
+    let!(:user_doc) do
+      FactoryGirl.create(:document, name: 'mine.pdf', file_content_type: 'application/pdf', folder: folder, created_by: user)
+    end
+    let!(:other_doc) do
+      FactoryGirl.create(:document, name: 'theirs.pdf', file_content_type: 'application/pdf', folder: folder, created_by: other_user)
+    end
+
+    it 'returns only documents created by the specified user' do
+      results = Droom::Document.created_by(user.id)
+      expect(results).to include(user_doc)
+      expect(results).not_to include(other_doc)
+    end
+
+    it 'returns empty when no documents belong to the user' do
+      results = Droom::Document.created_by(0)
+      expect(results).to be_empty
+    end
+  end
 end

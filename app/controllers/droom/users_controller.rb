@@ -1,7 +1,7 @@
 module Droom
   class UsersController < Droom::DroomController
     helper Droom::DroomHelper
-    respond_to :html, :js
+    respond_to :html, :js, :json
     skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation]
     before_action :set_view, only: [:show, :new, :edit, :update]
     # before_action :search_users, only: [:admin]
@@ -25,6 +25,21 @@ module Droom
       @users = @users.internal.in_name_order.includes(:emails, :phones, :addresses)
       @users = @users.matching(params[:q]) unless params[:q].blank?
       render :vcf => @users.map(&:to_vcf)
+    end
+
+    def search
+      q = params[:q].to_s.strip
+      users = Droom::User.undeleted.in_name_order
+      users = users.matching(q) if q.present?
+      users = users.limit(20)
+      render json: users.map { |u|
+        {
+          id: u.id,
+          name: u.formal_name,
+          email: u.email,
+          avatar_url: u.image_url(:icon)
+        }
+      }
     end
 
     def show

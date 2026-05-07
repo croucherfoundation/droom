@@ -104,6 +104,10 @@ module Droom
       duration ? where('droom_documents.updated_at >= ?', duration) : all
     }
 
+    scope :created_by, -> user_id {
+      where(created_by_id: user_id)
+    }
+
     scope :unindexed, -> { where(indexed_at: nil) }
 
     def attach_to(holder)

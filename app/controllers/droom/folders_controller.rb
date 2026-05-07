@@ -189,6 +189,7 @@ module Droom
       end
       criteria[:content_type] = Droom::Document::CONTENT_TYPE_GROUPS[params[:type]] if params[:type].present? && params[:type] != 'folders'
       criteria[:modified_at] = {gte: modified_since_time} if params[:modified].present? && modified_since_time
+      criteria[:created_by_id] = params[:user_id].to_i if params[:user_id].present?
       @show = (params[:show].presence || 20).to_i
       @page = (params[:page].presence || 1).to_i
       @search_results = Searchkick.search @q,
@@ -203,20 +204,23 @@ module Droom
     def apply_filters
       @filter_type = params[:type].presence
       @filter_modified = params[:modified].presence
-      @filtering = @filter_type.present? || @filter_modified.present?
+      @filter_user_id = params[:user_id].presence
+      @filtering = @filter_type.present? || @filter_modified.present? || @filter_user_id.present?
 
       return unless @filtering && !@searching
 
       if @filter_type.present?
         @folders = @folders.by_type(@filter_type) if @folders
         @home_documents = @home_documents.by_type(@filter_type) if @home_documents
-        @filtered_documents = -> (docs) { docs.by_type(@filter_type) }
       end
 
       if @filter_modified.present?
         @home_documents = @home_documents.modified_since(@filter_modified) if @home_documents
-        @filtered_documents_modified = -> (docs) { docs.modified_since(@filter_modified) }
-        # Folders don't have a modified filter — they remain visible
+      end
+
+      if @filter_user_id.present?
+        @folders = @folders.created_by(@filter_user_id) if @folders
+        @home_documents = @home_documents.created_by(@filter_user_id) if @home_documents
       end
     end
 

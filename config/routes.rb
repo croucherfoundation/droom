@@ -200,6 +200,7 @@ Droom::Engine.routes.draw do
     put :preference, on: :member, as: :set_preference
     get :download, on: :collection
     get :admin, on: :collection
+    get :search, on: :collection
     put :setup, on: :collection
     put :reinvite, on: :member
     put :merge, on: :member
