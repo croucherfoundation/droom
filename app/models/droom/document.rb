@@ -69,19 +69,33 @@ module Droom
         application/pdf
         application/msword
         application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        application/vnd.oasis.opendocument.text
+        application/vnd.ms-powerpoint
+        application/vnd.openxmlformats-officedocument.presentationml.presentation
+        application/vnd.apple.pages
+        application/vnd.apple.keynote
         text/plain
+        text/rtf
+        text/html
       ],
       'spreadsheets' => %w[
         application/vnd.ms-excel
         application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        application/vnd.apple.numbers
         text/csv
       ],
       'images' => %w[
         image/jpeg
+        image/jpg
         image/png
         image/gif
         image/svg+xml
         image/webp
+        image/bmp
+        image/tiff
+        image/heic
+        image/heif
+        image/avif
       ]
     }.freeze
 
@@ -187,6 +201,7 @@ module Droom
         name: name || "",
         filename: file_file_name || "",
         content_type: get_content_type,
+        file_content_type: file_content_type.presence || 'text/plain',
         content: @file_content || "",
         event_type: get_event_type || "",
         year: get_year || "",

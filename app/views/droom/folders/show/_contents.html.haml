@@ -7,8 +7,12 @@
   %form.faceter{action: droom.folder_path(@folder), method: :get, id: "folder_search", style: "width: auto", data: {target: "#folder_#{@folder.id}"}}
     = hidden_field_tag :page, params[:page]
     = hidden_field_tag :show, params[:show]
-    
+    = hidden_field_tag :user_id, params[:user_id], class: 'facet'
+
     = render "shared/page_search", title: t(:search_in_folder, name: @folder.name)
+
+    .croucher_search_detail.showing
+      = render 'droom/folders/library_filters'
 
   - if @searching
     = render partial: 'droom/folders/search_results'

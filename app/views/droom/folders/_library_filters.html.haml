@@ -1,0 +1,10 @@
+- type_options = options_for_select([['Folders', 'folders'], ['Documents', 'documents'], ['Spreadsheets', 'spreadsheets'], ['Images', 'images']], selected: @filter_type)
+- modified_options = options_for_select([['Last 7 days', '7d'], ['Last 30 days', '30d'], ['Last 12 months', '365d']], selected: @filter_modified)
+
+%fieldset.search_options.mb.library-filters.faceting{data: {refreshing: true}}
+  .croucher_dropdown_container
+    .parent_custom_dropdown
+      = select_tag "type", type_options, { include_blank: "Type", class: "facet custom_dropdown custom-img" }
+
+    .parent_custom_dropdown
+      = select_tag "modified", modified_options, { include_blank: "Modified", class: "facet custom_dropdown custom-img" }

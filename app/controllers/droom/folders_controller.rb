@@ -13,7 +13,8 @@ module Droom
     def index
       @sortable = params[:sortable] == 'true'
       @q = params[:q].to_s.strip
-      @searching = @q.present?
+      @filtering = filter_params_present?
+      @searching = @q.present? || @filtering
 
       if @searching
         search_library
@@ -21,7 +22,7 @@ module Droom
         @folders = @folders.populated unless current_user.admin?
       end
 
-      apply_filters
+      set_filter_ivars
 
       respond_with @folders do |format|
         format.html
@@ -33,11 +34,12 @@ module Droom
       @sortable = params[:sortable] == 'true'
       @skip_gdoc = params[:skip_gdoc] == 'true'
       @q = params[:q].to_s.strip
-      @searching = @q.present?
+      @filtering = filter_params_present?
+      @searching = @q.present? || @filtering
 
       search_library(folder: @folder) if @searching
 
-      apply_filters
+      set_filter_ivars
 
       respond_with @folder do |format|
         format.html
@@ -187,12 +189,13 @@ module Droom
         criteria[:folder_id] = descendant_ids
         criteria[:id] = {not: folder.id}
       end
-      criteria[:content_type] = Droom::Document::CONTENT_TYPE_GROUPS[params[:type]] if params[:type].present? && params[:type] != 'folders'
+      criteria[:file_content_type] = Droom::Document::CONTENT_TYPE_GROUPS[params[:type]] if params[:type].present? && params[:type] != 'folders'
       criteria[:modified_at] = {gte: modified_since_time} if params[:modified].present? && modified_since_time
       criteria[:created_by_id] = params[:user_id].to_i if params[:user_id].present?
       @show = (params[:show].presence || 20).to_i
       @page = (params[:page].presence || 1).to_i
-      @search_results = Searchkick.search @q,
+      query = @q.present? ? @q : "*"
+      @search_results = Searchkick.search query,
         models: search_models,
         fields: fields,
         where: criteria,
@@ -201,27 +204,15 @@ module Droom
         page: @page
     end
 
-    def apply_filters
+    def set_filter_ivars
       @filter_type = params[:type].presence
       @filter_modified = params[:modified].presence
       @filter_user_id = params[:user_id].presence
-      @filtering = @filter_type.present? || @filter_modified.present? || @filter_user_id.present?
+      @filter_user = Droom::User.find_by(id: @filter_user_id) if @filter_user_id.present?
+    end
 
-      return unless @filtering && !@searching
-
-      if @filter_type.present?
-        @folders = @folders.by_type(@filter_type) if @folders
-        @home_documents = @home_documents.by_type(@filter_type) if @home_documents
-      end
-
-      if @filter_modified.present?
-        @home_documents = @home_documents.modified_since(@filter_modified) if @home_documents
-      end
-
-      if @filter_user_id.present?
-        @folders = @folders.created_by(@filter_user_id) if @folders
-        @home_documents = @home_documents.created_by(@filter_user_id) if @home_documents
-      end
+    def filter_params_present?
+      params[:type].present? || params[:modified].present? || params[:user_id].present?
     end
 
     def search_models

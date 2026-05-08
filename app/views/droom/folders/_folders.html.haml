@@ -5,9 +5,13 @@
       = hidden_field_tag :show, params[:show]
       = hidden_field_tag :sort, params[:sort]
       = hidden_field_tag :view, params[:view]
+      = hidden_field_tag :user_id, params[:user_id], class: 'facet'
       
       = render "shared/page_search", title: t(:search_in_library)
 
+      .croucher_search_detail.showing
+        = render 'droom/folders/library_filters'
+  
   - if @searching
     = render :partial => 'droom/folders/search_results'
   - else
