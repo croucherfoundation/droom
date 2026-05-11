@@ -29,6 +29,7 @@
 //= require droom/pdf_upload
 //= require droom/file_selector
 //= require droom/folder_sorting
+//= require droom/user_filter
 //= require_self 
 
 
@@ -180,6 +181,7 @@
       this.find_including_self('.person_selector').person_selector();
       this.find_including_self('.person_picker').person_picker();
       this.find_including_self('.group_picker').group_picker();
+      this.find_including_self('.user-filter-target').userFilter();
       this.find_including_self('fieldset[data-role="password"]').password_fieldset();
       this.find_including_self('[data-role="single_password"]').single_password_field();
       this.find_including_self('input[type="submit"]').submitter();

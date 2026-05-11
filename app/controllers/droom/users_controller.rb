@@ -29,15 +29,14 @@ module Droom
 
     def search
       q = params[:q].to_s.strip
-      users = Droom::User.undeleted.in_name_order
-      users = users.matching(q) if q.present?
-      users = users.limit(20)
-      render json: users.map { |u|
+      query = q.present? ? q : "*"
+      results = Droom::User.search(query, where: { deleted: false }, order: { name: :asc }, limit: 10)
+      render json: results.map { |u|
         {
           id: u.id,
           name: u.formal_name,
           email: u.email,
-          avatar_url: u.image_url(:icon)
+          avatar_url: u.image.url
         }
       }
     end

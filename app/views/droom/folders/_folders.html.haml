@@ -21,3 +21,16 @@
       .nomatch
         %h2
           = t :sorry_no_matches
+
+    - if @home_folder
+      #home_folder{data: {droppable: droom.folder_documents_path(@home_folder), picker: "#upload_to_folder_#{@home_folder.id}", queue: "#upload_queue", refreshes: "#home_folder"}}
+        %ul.folders
+          %li.files
+            %ul#upload_queue{class: 'sortable_files', data: {folder_id: @home_folder.id}}
+              - @home_folder.documents.each do |doc|
+                = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
+
+        %ul#upload_queue
+
+    - if @links.present?
+      = render partial: 'links'

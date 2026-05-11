@@ -7,4 +7,7 @@
       = select_tag "type", type_options, { include_blank: "Type", class: "facet custom_dropdown custom-img" }
 
     .parent_custom_dropdown
+      %span.user-filter-target{data: {placeholder: "People", "selected-name" => @filter_user&.formal_name}}
+
+    .parent_custom_dropdown
       = select_tag "modified", modified_options, { include_blank: "Modified", class: "facet custom_dropdown custom-img" }
