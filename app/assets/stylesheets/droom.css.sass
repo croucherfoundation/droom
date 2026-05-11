@@ -763,7 +763,7 @@ ul.dropdown
         cursor: pointer
         font-size: 16px
         display: flex
-        align-items: center
+        align-items: flex-start
         gap: 10px
         .user-filter-avatar
           width: 28px
@@ -772,9 +772,20 @@ ul.dropdown
           object-fit: cover
           flex-shrink: 0
         .user-filter-info
+          display: flex
+          flex-direction: column
           overflow: hidden
-          text-overflow: ellipsis
-          white-space: nowrap
+          min-width: 0
+          .user-filter-name
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+          .user-filter-email
+            font-size: 13px
+            color: $mid
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
         &:hover
           background-color: rgb(243, 243, 240)
         &.no-results

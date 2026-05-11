@@ -78,7 +78,11 @@
         $.each(items, function(i, item) {
           var $li = $('<li></li>');
           var $avatar = $('<img class="user-filter-avatar">').attr('src', item.avatar_url || '');
-          var $info = $('<span class="user-filter-info"></span>').text(item.prompt);
+          var $info = $('<div class="user-filter-info"></div>');
+          $info.append($('<span class="user-filter-name"></span>').text(item.value));
+          if (item.email) {
+            $info.append($('<span class="user-filter-email"></span>').text(item.email));
+          }
           $li.append($avatar).append($info);
           $li.on('mousedown', function(e) {
             e.preventDefault();
@@ -113,7 +117,7 @@
         request = $.getJSON('/users/search.json', { q: q }, function(users) {
           var items = $.map(users, function(u) {
             var display = u.email ? u.name + ' (' + u.email + ')' : u.name;
-            return { id: u.id, value: u.name, prompt: display, avatar_url: u.avatar_url };
+            return { id: u.id, value: u.name, email: u.email, avatar_url: u.avatar_url };
           });
           cache[q] = items;
           populate(items);
