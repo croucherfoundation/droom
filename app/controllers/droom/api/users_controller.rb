@@ -1,11 +1,11 @@
 module Droom::Api
   class UsersController < Droom::Api::ApiController
-    before_action :authenticate_user, unless: :local_request?, only: [:update, :remove_profile]
+    before_action :authenticate_user, unless: :local_request?, only: [:update, :upload_profile_image, :remove_profile]
 
     before_action :get_users, only: [:index]
     before_action :search_users, only: [:accounts]
     before_action :find_or_create_user, only: [:create]
-    skip_before_action :assert_local_request!, only: [:update_timezone, :update, :remove_profile]
+    skip_before_action :assert_local_request!, only: [:update_timezone, :update, :upload_profile_image, :remove_profile]
     load_resource find_by: :uid, class: "Droom::User"
 
 
@@ -84,6 +84,23 @@ module Droom::Api
         render json: @user.reload
       else
         render json: @user, serializer: Droom::UserSerializer, meta: {error: @user.errors.full_messages}
+      end
+    end
+
+    def upload_profile_image
+      profile_image = user_params[:image] if user_params[:image].present?
+      attach_base64_image(@user, :image, profile_image) if profile_image.present?
+
+      if @user.save
+        render json: {
+          success: true,
+          photo_url: profile_image_url(@user.reload)
+        }
+      else
+        render json: {
+          success: false,
+          error: @user.errors.full_messages
+        }, status: :unprocessable_entity
       end
     end
 
@@ -219,6 +236,10 @@ module Droom::Api
         emails: [:id, :email, :email_type],
         addresses: [:id, :address, :address_type]
       )
+    end
+
+    def profile_image_url(user)
+      user.image.attached? ? user.image.url : ""
     end
 
   end
