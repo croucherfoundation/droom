@@ -11,6 +11,8 @@ module Droom
     belongs_to :holder, :polymorphic => true
     has_many :documents, -> {order(position: :asc, file_file_name: :asc)}, :dependent => :destroy
     has_many :personal_folders, :dependent => :destroy
+    has_many :favourites, :as => :favouritable, :dependent => :destroy
+    has_many :shares, :as => :shareable, :dependent => :destroy
 
     before_validation :set_properties
     after_save :set_file_path

@@ -13,6 +13,8 @@ module Droom
 
     has_many :thumbnails, dependent: :destroy
     has_many :single_documents, dependent: :destroy
+    has_many :favourites, :as => :favouritable, :dependent => :destroy
+    has_many :shares, :as => :shareable, :dependent => :destroy
 
     has_one_attached :file
     scan_attachment :file

@@ -422,6 +422,9 @@ module Droom
     #
     has_many :personal_folders
     has_many :folders, :through => :personal_folders
+    has_many :favourites, :dependent => :destroy
+    has_many :shares_received, :class_name => "Droom::Share", :foreign_key => :shared_with_id, :dependent => :destroy
+    has_many :shares_given, :class_name => "Droom::Share", :foreign_key => :shared_by_id, :dependent => :destroy
 
     def add_personal_folders(folders=[])
       self.folders << folders if folders
