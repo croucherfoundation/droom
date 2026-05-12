@@ -11,7 +11,7 @@ Droom::Engine.routes.draw do
     #post '/reindex_user' => 'users#reindex_user', as: 'reindex'
     #post '/users/:uid/reindex' => 'users#reindex', as: 'reindex'
     resources :addresses
-    resources :emails, only: [:show, :index, :create]
+    resources :emails, only: [:show, :index, :create, :update, :destroy]
     resources :users do
       post 'reindex', on: :member, as: :reindex
       put 'update_contact',  on: :member, as: :update_contact
