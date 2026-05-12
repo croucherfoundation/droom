@@ -88,8 +88,15 @@ module Droom::Api
     end
 
     def upload_profile_image
-      profile_image = user_params[:image] if user_params[:image].present?
-      attach_base64_image(@user, :image, profile_image) if profile_image.present?
+      return render_image_validation_error unless user_params[:image].present?
+
+      profile_image = user_params[:image]
+
+      # Validate format and size before attaching
+      validation_error = validate_image_data(profile_image)
+      return render_image_validation_error(validation_error) if validation_error.present?
+
+      attach_base64_image(@user, :image, profile_image)
 
       if @user.save
         render json: {
@@ -240,6 +247,43 @@ module Droom::Api
 
     def profile_image_url(user)
       user.image.attached? ? user.image.url : ""
+    end
+
+    def validate_image_data(base64_data)
+      return "No image data provided" unless base64_data.present?
+
+      begin
+        content_type, encoded_image = base64_data.split(',')
+        return "Invalid base64 image format" unless encoded_image.present?
+
+        decoded_image = Base64.decode64(encoded_image)
+        mime_type = content_type.split(':')[1].split(';')[0]
+
+        # Validate format
+        allowed_formats = ['image/jpeg', 'image/png']
+        unless allowed_formats.include?(mime_type)
+          return "Invalid image format. Accepted formats: JPG, PNG"
+        end
+
+        # Validate size (5MB = 5242880 bytes)
+        max_size_bytes = 5 * 1024 * 1024
+        if decoded_image.bytesize > max_size_bytes
+          size_mb = (decoded_image.bytesize.to_f / 1024 / 1024).round(2)
+          return "Image too large (#{size_mb}MB). Maximum size: 5MB"
+        end
+
+        nil  # No error
+      rescue => e
+        "Error validating image: #{e.message}"
+      end
+    end
+
+    def render_image_validation_error(error_msg = nil)
+      render json: {
+        success: false,
+        photo_url: "",
+        error: [error_msg || "Image is required and must be JPG or PNG, maximum 5MB"]
+      }, status: :unprocessable_entity
     end
 
   end
