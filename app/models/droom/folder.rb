@@ -29,6 +29,19 @@ module Droom
     scope :created_by, -> user_id {
       where(created_by_id: user_id)
     }
+    scope :owned_by, -> user {
+      where(created_by_id: user.id)
+    }
+    scope :shared_with, -> user {
+      joins('INNER JOIN droom_shares AS ds ON droom_folders.id = ds.shareable_id AND ds.shareable_type = "Droom::Folder"')
+        .where(["ds.shared_with_id = ?", user.id])
+        .where.not(created_by_id: user.id)
+    }
+    scope :data_room, -> { where("#{table_name}.public = 1") }
+    scope :favourited_by, -> user {
+      joins('INNER JOIN droom_favourites AS df ON droom_folders.id = df.favouritable_id AND df.favouritable_type = "Droom::Folder"')
+        .where(["df.user_id = ?", user.id])
+    }
     scope :all_private, -> { where("#{table_name}.private = 1") }
     scope :not_private, -> { where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL") }
     scope :all_public, -> { where("#{table_name}.public = 1 AND #{table_name}.private <> 1 OR #{table_name}.private IS NULL") }

@@ -124,6 +124,20 @@ module Droom
       where(created_by_id: user_id)
     }
 
+    scope :owned_by, -> user {
+      where(created_by_id: user.id)
+    }
+    scope :shared_with, -> user {
+      joins('INNER JOIN droom_shares AS ds ON droom_documents.id = ds.shareable_id AND ds.shareable_type = "Droom::Document"')
+        .where(["ds.shared_with_id = ?", user.id])
+        .where.not(created_by_id: user.id)
+    }
+    scope :data_room, -> { where("droom_documents.public = 1") }
+    scope :favourited_by, -> user {
+      joins('INNER JOIN droom_favourites AS df ON droom_documents.id = df.favouritable_id AND df.favouritable_type = "Droom::Document"')
+        .where(["df.user_id = ?", user.id])
+    }
+
     scope :unindexed, -> { where(indexed_at: nil) }
 
     def attach_to(holder)
