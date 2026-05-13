@@ -60,6 +60,44 @@ module Droom::Api
       render json: @user, serializer: Droom::UserMinimalSerializer
     end
 
+    def account_setting_update
+      service = EmailVerificationService.new(@user)
+
+      # Handle primary email change (requires verification)
+      new_email = account_params[:email]
+      if new_email.present? && new_email != @user.email
+        unless service.request_verification(new_email)
+          return render json: { errors: service.errors }, status: :unprocessable_entity
+        end
+
+        unless has_other_setting_updates?
+          return render json: { message: "Verification email sent to #{new_email}" }, status: :ok
+        end
+      end
+
+      @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
+      @user.assign_attributes(given_name: account_params[:first_name]) if account_params[:first_name].present?
+      @user.assign_attributes(family_name: account_params[:last_name]) if account_params[:last_name].present?
+      @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
+
+      if @user.save
+        @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
+      end
+
+      render json: @user, serializer: Droom::UserMinimalSerializer
+    end
+
+    def verify_email
+      result = EmailVerificationService.verify_by_token(params[:token])
+
+      if result[:success]
+        user = result[:user]
+        render json: user.reload, serializer: Droom::UserMinimalSerializer
+      else
+        render json: { errors: result[:errors] }, status: :unprocessable_entity
+      end
+    end
+
     def send_otp
       VerificationService.new(@user).send_otp
       head :ok
@@ -240,9 +278,14 @@ module Droom::Api
     def account_params
       params.require(:user).permit(
        :password, :password_confirmation, :timezone,
+       :first_name, :last_name, :email, :backup_email,
         emails: [:id, :email, :email_type],
         addresses: [:id, :address, :address_type]
       )
+    end
+
+    def has_other_setting_updates?
+      account_params[:timezone].present? || account_params[:password].present?
     end
 
     def profile_image_url(user)

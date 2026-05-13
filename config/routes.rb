@@ -11,7 +11,7 @@ Droom::Engine.routes.draw do
     #post '/reindex_user' => 'users#reindex_user', as: 'reindex'
     #post '/users/:uid/reindex' => 'users#reindex', as: 'reindex'
     resources :addresses
-    resources :emails, only: [:show, :index, :create]
+    resources :emails, only: [:show, :index, :create, :update, :destroy]
     resources :users do
       post 'reindex', on: :member, as: :reindex
       put 'upload_profile_image', on: :member, as: :upload_profile_image
@@ -19,12 +19,14 @@ Droom::Engine.routes.draw do
       get "whoami" , on: :collection, as: :whoami
       get "authenticable", on: :member, as: :authenticable
       put 'account_update', on: :member, as: :account_update
+      put 'account_setting_update', on: :member, as: :account_setting_update
       get 'send_otp', on: :member, as: :send_otp
       post 'verify_otp', on: :member, as: :verify_otp
       get  'remove_profile', on: :member, as: :remove_profile
       get 'sync_profile_image', on: :member, as: :sync_profile_image
       get 'validate_email', on: :member, as: :validate_email
       get :accounts, on: :collection
+      get 'verify_email', on: :collection, as: :verify_email
       delete 'remove_reviewer_group', on: :member, as: :remove_reviewer_group
     end
     put "update_timezone" => 'users#update_timezone', as: 'update_timezone'

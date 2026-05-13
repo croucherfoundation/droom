@@ -1,10 +1,13 @@
 module Droom::Api
   class EmailsController < Droom::Api::ApiController
-    load_resource class: "Droom::Email", only: [:show, :index]
+    load_resource class: "Droom::Email", only: [:show, :index, :update, :destroy]
+    # skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
 
     def index
       if params[:email]
         @emails = Droom::Email.where(email: params[:email])
+      elsif params[:email_verification_token]
+        @emails = Droom::Email.where(email_verification_token: params[:email_verification_token])
       else
         @emails = Droom::Email.all
       end
@@ -22,6 +25,19 @@ module Droom::Api
       else
         render json: { errors: @email.errors.full_messages }, status: :unprocessable_entity
       end
+    end
+
+    def update
+      if @email.update(email_params)
+        render json: @email, serializer: Droom::EmailSerializer
+      else
+        render json: { errors: @email.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+
+    def destroy
+      @email.destroy
+      head :no_content
     end
 
     private
