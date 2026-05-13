@@ -76,6 +76,8 @@ module Droom::Api
       end
 
       @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
+      @user.assign_attributes(given_name: account_params[:first_name]) if account_params[:first_name].present?
+      @user.assign_attributes(family_name: account_params[:last_name]) if account_params[:last_name].present?
       @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
 
       if @user.save
