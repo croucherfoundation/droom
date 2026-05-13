@@ -29,13 +29,18 @@ module Droom
     scope :created_by, -> user_id {
       where(created_by_id: user_id)
     }
+    # Library view scopes
     scope :owned_by, -> user {
       where(created_by_id: user.id)
     }
+    # Merges new sharing (droom_shares) with legacy sharing (personal_folders).
+    # Excludes own items and public (data room) items.
     scope :shared_with, -> user {
-      joins('INNER JOIN droom_shares AS ds ON droom_folders.id = ds.shareable_id AND ds.shareable_type = "Droom::Folder"')
-        .where(["ds.shared_with_id = ?", user.id])
+      joins('LEFT JOIN droom_shares AS ds ON droom_folders.id = ds.shareable_id AND ds.shareable_type = "Droom::Folder" LEFT JOIN droom_personal_folders AS dpf ON droom_folders.id = dpf.folder_id')
+        .where(["ds.shared_with_id = ? OR dpf.user_id = ?", user.id, user.id])
         .where.not(created_by_id: user.id)
+        .where("droom_folders.public != 1 OR droom_folders.public IS NULL")
+        .group('droom_folders.id')
     }
     scope :data_room, -> { where("#{table_name}.public = 1") }
     scope :favourited_by, -> user {

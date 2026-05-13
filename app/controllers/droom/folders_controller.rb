@@ -172,6 +172,7 @@ module Droom
       @library_view = 'my_library' unless LIBRARY_VIEWS.include?(@library_view)
     end
 
+    # Applies the active library view scope to an AR relation (browsing path).
     def apply_library_view_scope(relation)
       case @library_view
       when 'my_library'
@@ -187,15 +188,21 @@ module Droom
       end
     end
 
+    # Applies the active library view as ES/Searchkick criteria (search path).
+    # For shared/favourites, pre-fetches IDs since ES can't do joins.
     def apply_library_view_to_criteria(criteria)
       case @library_view
       when 'my_library'
         criteria[:created_by_id] = current_user.id
       when 'shared'
+        # Merge new shares (droom_shares) with legacy shares (personal_folders)
         shared_doc_ids = Droom::Share.for_user(current_user).of_type('Droom::Document').pluck(:shareable_id)
         shared_folder_ids = Droom::Share.for_user(current_user).of_type('Droom::Folder').pluck(:shareable_id)
-        criteria[:id] = shared_doc_ids + shared_folder_ids
+        personal_folder_ids = current_user.personal_folders.pluck(:folder_id)
+        personal_doc_ids = Droom::Document.where(folder_id: personal_folder_ids).pluck(:id)
+        criteria[:id] = (shared_doc_ids + shared_folder_ids + personal_folder_ids + personal_doc_ids).uniq
         criteria[:created_by_id] = {not: current_user.id}
+        criteria[:public] = false
       when 'data_room'
         criteria[:public] = true
       when 'favourites'
