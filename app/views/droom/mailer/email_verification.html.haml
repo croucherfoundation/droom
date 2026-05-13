@@ -1,0 +1,22 @@
+- support_email = Settings.email.it_support
+- url = Settings.url + '/api/users/verify_email' + '?' + {token: @token}.to_param
+
+%p
+  Dear
+  = @user.given_name + ','
+
+%p
+  We have received a request to change the email address associated with your account to
+  = @new_email + "."
+
+%p
+  Please confirm this change by clicking
+  = link_to('here', url, target: '_blank', style: 'text-decoration: none; color: #EE3A43; cursor: pointer;') + '.'
+
+%p
+  This link will expire in 24 hours. If you did not request this change, you can safely ignore this email.
+
+%p
+  Best wishes,
+  %br
+  The Croucher Foundation
