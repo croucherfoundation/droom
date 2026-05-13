@@ -4,8 +4,9 @@
 
 %fieldset.search_options.mb.library-filters.faceting{data: {refreshing: true}}
   .croucher_dropdown_container
-    .parent_custom_dropdown
-      = select_tag "view", view_options, { class: "facet custom_dropdown custom-img" }
+    - unless @folder
+      .parent_custom_dropdown
+        = select_tag "view", view_options, { class: "custom_dropdown custom-img", onchange: "window.location.href='#{droom.folders_path}?view=' + this.value" }
 
     .parent_custom_dropdown
       = select_tag "type", type_options, { include_blank: "Type", class: "facet custom_dropdown custom-img" }
