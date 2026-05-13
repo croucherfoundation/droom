@@ -169,7 +169,7 @@ module Droom
 
     def set_library_view
       @library_view = params[:view].presence
-      @library_view = 'my_library' unless LIBRARY_VIEWS.include?(@library_view)
+      @library_view = 'data_room' unless LIBRARY_VIEWS.include?(@library_view)
     end
 
     # Applies the active library view scope to an AR relation (browsing path).
