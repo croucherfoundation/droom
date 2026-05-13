@@ -4,7 +4,6 @@
       = hidden_field_tag :page, params[:page]
       = hidden_field_tag :show, params[:show]
       = hidden_field_tag :sort, params[:sort]
-      = hidden_field_tag :view, params[:view]
       = hidden_field_tag :user_id, params[:user_id], class: 'facet'
       
       = render "shared/page_search", title: t(:search_in_library)
@@ -27,10 +26,10 @@
         %ul.folders
           %li.files
             %ul#upload_queue{class: 'sortable_files', data: {folder_id: @home_folder.id}}
-              - @home_folder.documents.each do |doc|
+              - @home_documents.each do |doc|
                 = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
 
         %ul#upload_queue
 
-    - if @links.present?
+    - if @links.present? && @library_view == 'data_room'
       = render partial: 'links'

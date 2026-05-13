@@ -11,6 +11,8 @@ module Droom
     belongs_to :holder, :polymorphic => true
     has_many :documents, -> {order(position: :asc, file_file_name: :asc)}, :dependent => :destroy
     has_many :personal_folders, :dependent => :destroy
+    has_many :favourites, :as => :favouritable, :dependent => :destroy
+    has_many :shares, :as => :shareable, :dependent => :destroy
 
     before_validation :set_properties
     after_save :set_file_path
@@ -26,6 +28,24 @@ module Droom
     }
     scope :created_by, -> user_id {
       where(created_by_id: user_id)
+    }
+    # Library view scopes
+    scope :owned_by, -> user {
+      where(created_by_id: user.id)
+    }
+    # Merges new sharing (droom_shares) with legacy sharing (personal_folders).
+    # Excludes own items and data_room items.
+    scope :shared_with, -> user {
+      joins('LEFT JOIN droom_shares AS ds ON droom_folders.id = ds.shareable_id AND ds.shareable_type = "Droom::Folder" LEFT JOIN droom_personal_folders AS dpf ON droom_folders.id = dpf.folder_id')
+        .where(["ds.shared_with_id = ? OR dpf.user_id = ?", user.id, user.id])
+        .where.not(created_by_id: user.id)
+        .where("#{table_name}.data_room != 1 OR #{table_name}.data_room IS NULL")
+        .group('droom_folders.id')
+    }
+    scope :data_room, -> { where("#{table_name}.data_room = 1") }
+    scope :favourited_by, -> user {
+      joins('INNER JOIN droom_favourites AS df ON droom_folders.id = df.favouritable_id AND df.favouritable_type = "Droom::Folder"')
+        .where(["df.user_id = ?", user.id])
     }
     scope :all_private, -> { where("#{table_name}.private = 1") }
     scope :not_private, -> { where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL") }
@@ -202,7 +222,8 @@ module Droom
         folder_path: folder_path(true),
         created_by_id: created_by_id,
         modified_at: updated_at,
-        confidential: confidential?
+        confidential: confidential?,
+        data_room: self.data_room?
       }
     end
 

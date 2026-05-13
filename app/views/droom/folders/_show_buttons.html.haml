@@ -11,12 +11,12 @@
 
   - if can?(:manage, Droom::Folder)
     - if @sortable
-      = link_to droom.folder_path(folder), class: "btn" do
+      = link_to droom.folder_path(folder, view: 'data_room'), class: "btn" do
         %svg
           %use{"xlink:href" => "#view_public_symbol"}
         = t :view_page
     - else
-      = link_to droom.folder_path(folder, sortable: true), class: "btn" do
+      = link_to droom.folder_path(folder, sortable: true, view: 'data_room'), class: "btn" do
         %svg
           %use{"xlink:href" => "#edit_symbol"}
         = t :edit_page

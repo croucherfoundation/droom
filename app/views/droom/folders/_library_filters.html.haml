@@ -1,8 +1,13 @@
+- view_options = options_for_select([['myLibrary', 'my_library'], ['Shared with me', 'shared'], ['Data Room', 'data_room'], ['Favourites', 'favourites']], selected: @library_view)
 - type_options = options_for_select([['Folders', 'folders'], ['Documents', 'documents'], ['Spreadsheets', 'spreadsheets'], ['Images', 'images']], selected: @filter_type)
 - modified_options = options_for_select([['Last 7 days', '7d'], ['Last 30 days', '30d'], ['Last 12 months', '365d']], selected: @filter_modified)
 
 %fieldset.search_options.mb.library-filters.faceting{data: {refreshing: true}}
   .croucher_dropdown_container
+    - unless @folder
+      .parent_custom_dropdown
+        = select_tag "view", view_options, { class: "custom_dropdown custom-img", onchange: "window.location.href='#{droom.folders_path}?view=' + this.value" }
+
     .parent_custom_dropdown
       = select_tag "type", type_options, { include_blank: "Type", class: "facet custom_dropdown custom-img" }
 

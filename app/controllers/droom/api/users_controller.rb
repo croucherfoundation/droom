@@ -1,11 +1,11 @@
 module Droom::Api
   class UsersController < Droom::Api::ApiController
-    before_action :authenticate_user, unless: :local_request?, only: [:update, :remove_profile]
+    before_action :authenticate_user, unless: :local_request?, only: [:update, :upload_profile_image, :remove_profile]
 
     before_action :get_users, only: [:index]
     before_action :search_users, only: [:accounts]
     before_action :find_or_create_user, only: [:create]
-    skip_before_action :assert_local_request!, only: [:update_timezone, :update, :remove_profile]
+    skip_before_action :assert_local_request!, only: [:update_timezone, :update, :upload_profile_image, :remove_profile]
     load_resource find_by: :uid, class: "Droom::User"
 
 
@@ -120,6 +120,30 @@ module Droom::Api
         render json: @user.reload
       else
         render json: @user, serializer: Droom::UserSerializer, meta: {error: @user.errors.full_messages}
+      end
+    end
+
+    def upload_profile_image
+      return render_image_validation_error unless user_params[:image].present?
+
+      profile_image = user_params[:image]
+
+      # Validate format and size before attaching
+      validation_error = validate_image_data(profile_image)
+      return render_image_validation_error(validation_error) if validation_error.present?
+
+      attach_base64_image(@user, :image, profile_image)
+
+      if @user.save
+        render json: {
+          success: true,
+          photo_url: profile_image_url(@user.reload)
+        }
+      else
+        render json: {
+          success: false,
+          error: @user.errors.full_messages
+        }, status: :unprocessable_entity
       end
     end
 
@@ -260,6 +284,47 @@ module Droom::Api
 
     def has_other_setting_updates?
       account_params[:timezone].present? || account_params[:password].present?
+    end
+
+    def profile_image_url(user)
+      user.image.attached? ? user.image.url : ""
+    end
+
+    def validate_image_data(base64_data)
+      return "No image data provided" unless base64_data.present?
+
+      begin
+        content_type, encoded_image = base64_data.split(',')
+        return "Invalid base64 image format" unless encoded_image.present?
+
+        decoded_image = Base64.decode64(encoded_image)
+        mime_type = content_type.split(':')[1].split(';')[0]
+
+        # Validate format
+        allowed_formats = ['image/jpeg', 'image/png']
+        unless allowed_formats.include?(mime_type)
+          return "Invalid image format. Accepted formats: JPG, PNG"
+        end
+
+        # Validate size (5MB = 5242880 bytes)
+        max_size_bytes = 5 * 1024 * 1024
+        if decoded_image.bytesize > max_size_bytes
+          size_mb = (decoded_image.bytesize.to_f / 1024 / 1024).round(2)
+          return "Image too large (#{size_mb}MB). Maximum size: 5MB"
+        end
+
+        nil  # No error
+      rescue => e
+        "Error validating image: #{e.message}"
+      end
+    end
+
+    def render_image_validation_error(error_msg = nil)
+      render json: {
+        success: false,
+        photo_url: "",
+        error: [error_msg || "Image is required and must be JPG or PNG, maximum 5MB"]
+      }, status: :unprocessable_entity
     end
 
   end
