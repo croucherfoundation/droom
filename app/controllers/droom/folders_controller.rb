@@ -202,9 +202,9 @@ module Droom
         personal_doc_ids = Droom::Document.where(folder_id: personal_folder_ids).pluck(:id)
         criteria[:id] = (shared_doc_ids + shared_folder_ids + personal_folder_ids + personal_doc_ids).uniq
         criteria[:created_by_id] = {not: current_user.id}
-        criteria[:public] = false
+        criteria[:data_room] = false
       when 'data_room'
-        criteria[:public] = true
+        criteria[:data_room] = true
       when 'favourites'
         fav_doc_ids = Droom::Favourite.for_user(current_user).of_type('Droom::Document').pluck(:favouritable_id)
         fav_folder_ids = Droom::Favourite.for_user(current_user).of_type('Droom::Folder').pluck(:favouritable_id)
