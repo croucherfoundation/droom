@@ -1,7 +1,6 @@
 module Droom::Api
   class EmailsController < Droom::Api::ApiController
     load_resource class: "Droom::Email", only: [:show, :index, :update, :destroy]
-    # skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
 
     def index
       if params[:email]
