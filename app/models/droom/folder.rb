@@ -217,7 +217,8 @@ module Droom
         folder_path: folder_path(true),
         created_by_id: created_by_id,
         modified_at: updated_at,
-        confidential: confidential?
+        confidential: confidential?,
+        public: self.public?
       }
     end
 

@@ -3,6 +3,8 @@ module Droom
     respond_to :html, :json, :js
     layout :no_layout_if_pjax, only: [:index, :show]
 
+    LIBRARY_VIEWS = %w[my_library shared data_room favourites].freeze
+
     before_action :get_root_folders, :only => [:index]
     before_action :get_home_documents, :only => [:index]
     before_action :get_parent_folder, :only => [:new, :create]
@@ -11,10 +13,14 @@ module Droom
     load_and_authorize_resource
 
     def index
+      set_library_view
       @sortable = params[:sortable] == 'true'
       @q = params[:q].to_s.strip
       @filtering = filter_params_present?
       @searching = @q.present? || @filtering
+
+      @folders = apply_library_view_scope(@folders)
+      @home_documents = apply_library_view_scope(@home_documents)
 
       if @searching
         search_library
@@ -161,6 +167,44 @@ module Droom
       @home_documents = @home_folder.documents
     end
 
+    def set_library_view
+      @library_view = params[:view].presence
+      @library_view = 'my_library' unless LIBRARY_VIEWS.include?(@library_view)
+    end
+
+    def apply_library_view_scope(relation)
+      case @library_view
+      when 'my_library'
+        relation.owned_by(current_user)
+      when 'shared'
+        relation.shared_with(current_user)
+      when 'data_room'
+        relation.data_room
+      when 'favourites'
+        relation.favourited_by(current_user)
+      else
+        relation
+      end
+    end
+
+    def apply_library_view_to_criteria(criteria)
+      case @library_view
+      when 'my_library'
+        criteria[:created_by_id] = current_user.id
+      when 'shared'
+        shared_doc_ids = Droom::Share.for_user(current_user).of_type('Droom::Document').pluck(:shareable_id)
+        shared_folder_ids = Droom::Share.for_user(current_user).of_type('Droom::Folder').pluck(:shareable_id)
+        criteria[:id] = shared_doc_ids + shared_folder_ids
+        criteria[:created_by_id] = {not: current_user.id}
+      when 'data_room'
+        criteria[:public] = true
+      when 'favourites'
+        fav_doc_ids = Droom::Favourite.for_user(current_user).of_type('Droom::Document').pluck(:favouritable_id)
+        fav_folder_ids = Droom::Favourite.for_user(current_user).of_type('Droom::Folder').pluck(:favouritable_id)
+        criteria[:id] = fav_doc_ids + fav_folder_ids
+      end
+    end
+
     def get_parent_folder
       if @parent = Droom::Folder.find_by(id: params[:folder_id])
         @folder = @parent.children.build
@@ -189,6 +233,7 @@ module Droom
         criteria[:folder_id] = descendant_ids
         criteria[:id] = {not: folder.id}
       end
+      apply_library_view_to_criteria(criteria)
       criteria[:file_content_type] = Droom::Document::CONTENT_TYPE_GROUPS[params[:type]] if params[:type].present? && params[:type] != 'folders'
       criteria[:modified_at] = {gte: modified_since_time} if params[:modified].present? && modified_since_time
       criteria[:created_by_id] = params[:user_id].to_i if params[:user_id].present?

@@ -226,7 +226,8 @@ module Droom
         folder_id: folder_id,
         folder_path: folder&.folder_path(true) || "",
         created_by_id: created_by_id,
-        modified_at: updated_at
+        modified_at: updated_at,
+        public: self.public?
       }
     end
 
