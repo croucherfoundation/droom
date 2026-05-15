@@ -75,6 +75,18 @@ module Droom::Api
         end
       end
 
+      # Handle backup_email update (update 2nd email in list or add if not present)
+      if account_params[:backup_email].present?
+        backup_email = account_params[:backup_email]
+        emails = @user.emails.to_a
+        if emails.size >= 2
+          emails[1].email = backup_email
+          emails[1].save if emails[1].changed?
+        else
+          @user.emails.build(email: backup_email)
+        end
+      end
+
       @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
       @user.assign_attributes(given_name: account_params[:first_name]) if account_params[:first_name].present?
       @user.assign_attributes(family_name: account_params[:last_name]) if account_params[:last_name].present?
@@ -85,17 +97,6 @@ module Droom::Api
       end
 
       render json: @user, serializer: Droom::UserMinimalSerializer
-    end
-
-    def verify_email
-      result = EmailVerificationService.verify_by_token(params[:token])
-
-      if result[:success]
-        user = result[:user]
-        render json: user.reload, serializer: Droom::UserMinimalSerializer
-      else
-        render json: { errors: result[:errors] }, status: :unprocessable_entity
-      end
     end
 
     def send_otp
