@@ -117,7 +117,11 @@ module Droom::Api
       attach_base64_image(@user, :image, profile_image) if profile_image.present?
       @user.show_initial_image = true if params[:user][:remove_image] == true || params[:user][:remove_image] == "true"
 
-      if @user.update(user_params.except(:image))
+      # Handle primary vs backup email updates
+      modified_params = handle_email_updates(user_params.except(:image))
+      return if performed? # Return if verification email was sent
+
+      if @user.update(modified_params)
         @user.class.sync_in_progress = false
         render json: @user.reload
       else
@@ -201,6 +205,54 @@ module Droom::Api
     end
 
   protected
+
+    # Handle primary and backup email updates differently
+    # Primary email (index 0 or address_type_id 1) → requires verification
+    # Backup email (index 1 or address_type_id 4) → direct update
+    def handle_email_updates(params_hash)
+      emails_attrs = params_hash[:emails_attributes]
+      return params_hash unless emails_attrs.present?
+
+      emails_attrs = emails_attrs.to_h if emails_attrs.respond_to?(:to_h)
+      modified_emails_attrs = {}
+
+      emails_attrs.each do |index, email_data|
+        email_data = email_data.to_h.with_indifferent_access
+        is_primary = index.to_s == "0" || email_data[:address_type_id].to_s == "1"
+
+        if is_primary && email_data[:email].present?
+          # Check if primary email actually changed
+          current_primary = @user.emails.find_by(address_type_id: 1) || @user.emails.first
+          new_email = email_data[:email]
+
+          if current_primary.nil? || current_primary.email != new_email
+            # Primary email changed - trigger verification
+            verification_service = EmailVerificationService.new(@user)
+            if verification_service.request_verification(new_email)
+              # Don't include primary email in the update - it will be updated after verification
+              # But we still need to process other updates
+              render json: {
+                message: "Verification email sent to #{new_email}. Please check your inbox.",
+                verification_required: true
+              }, status: :ok
+              return params_hash.except(:emails_attributes) # Remove all emails, continue with other updates
+            else
+              render json: { errors: verification_service.errors }, status: :unprocessable_entity
+              return params_hash
+            end
+          else
+            # Primary email not changed, include it
+            modified_emails_attrs[index] = email_data
+          end
+        else
+          # Backup email - include for direct update
+          modified_emails_attrs[index] = email_data
+        end
+      end
+
+      params_hash[:emails_attributes] = modified_emails_attrs.presence
+      params_hash
+    end
 
     def find_or_create_user
       if params[:user]
