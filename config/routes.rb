@@ -26,7 +26,6 @@ Droom::Engine.routes.draw do
       get 'sync_profile_image', on: :member, as: :sync_profile_image
       get 'validate_email', on: :member, as: :validate_email
       get :accounts, on: :collection
-      get 'verify_email', on: :collection, as: :verify_email
       delete 'remove_reviewer_group', on: :member, as: :remove_reviewer_group
     end
     put "update_timezone" => 'users#update_timezone', as: 'update_timezone'
@@ -205,6 +204,7 @@ Droom::Engine.routes.draw do
     get :admin, on: :collection
     get :search, on: :collection
     put :setup, on: :collection
+    get :verify_email, on: :collection
     put :reinvite, on: :member
     put :merge, on: :member
     # put "/subsume/:other_id" => "users#subsume", as: 'subsume'
