@@ -35,6 +35,7 @@ module Droom
         render json: 'File with this name already exists!', status: 409
       else
         @document.created_by = current_user
+        @document.data_room = @folder.data_room?
         if @document.save
           if %w{listing simple}.include?(params[:view])
             render :partial => params[:view]

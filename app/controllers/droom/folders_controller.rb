@@ -67,7 +67,7 @@ module Droom
       if @data.exists?
         render json: 'Folder with this name already exists!', status: 409
       else
-        @folder.update(folder_params.merge(created_by: current_user))
+        @folder.update(folder_params.merge(created_by: current_user, data_room: @parent&.data_room?))
         respond_with @folder do |format|
           format.html { render :partial => 'droom/folders/folder' }
           format.js { render :partial => "droom/folders/folder" }
@@ -168,8 +168,9 @@ module Droom
     end
 
     def set_library_view
-      @library_view = params[:view].presence
+      @library_view = params[:view].presence || session[:library_view]
       @library_view = 'data_room' unless LIBRARY_VIEWS.include?(@library_view)
+      session[:library_view] = @library_view
     end
 
     # Applies the active library view scope to an AR relation (browsing path).
