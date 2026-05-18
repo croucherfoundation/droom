@@ -198,11 +198,12 @@ module Droom
     end
 
     def suggest
-      limit = params[:limit].presence || 10
-      if params[:email].present?
-        @users = Droom::User.joins(:emails).where("droom_emails.email LIKE ?", "%#{params[:email]}%").limit(limit)
-      elsif params[:name].present?
-        @users = Droom::User.where("given_name LIKE ? OR family_name LIKE ?", "%#{params[:name]}%", "%#{params[:name]}%").limit(limit)
+      limit = (params[:limit].presence || 10).to_i
+      query = params[:name].presence || params[:email].presence || params[:q].presence
+      if query.present?
+        @users = Droom::User.search(query, page: 1, per_page: limit, order: { _score: :desc })
+      else
+        @users = []
       end
 
       render json: format_users(@users)

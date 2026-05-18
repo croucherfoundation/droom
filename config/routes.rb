@@ -180,6 +180,11 @@ Droom::Engine.routes.draw do
     resources :folders
   end
 
+  resources :shares, only: [:create, :destroy] do
+    get :recipients, on: :collection
+  end
+  resources :favourites, only: [:create, :destroy]
+
   resources :links
 
   get "child_folders" => "folders#child_folders"

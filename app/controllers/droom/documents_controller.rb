@@ -141,7 +141,7 @@ module Droom
 
     def document_params
       if params[:document]
-        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link, :notion_page_link, :memo_page_link)
+        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link, :notion_page_link, :memo_page_link, :data_room)
       else
         {}
       end

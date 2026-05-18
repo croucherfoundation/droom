@@ -1,6 +1,11 @@
 module Droom
   module DroomHelper
 
+    def favourite_for(item)
+      return nil unless current_user
+      current_user.favourites.find_by(favouritable: item)
+    end
+
     def droom_template_exists?(path)
       lookup_context.find_all("droom/#{path}").any?
     end

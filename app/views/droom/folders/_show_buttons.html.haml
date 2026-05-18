@@ -20,6 +20,17 @@
         %svg
           %use{"xlink:href" => "#edit_symbol"}
         = t :edit_page
+      
+      - fav = favourite_for(folder)
+      %a.btn{data: {action: "toggle-favourite", favouritable_type: "Droom::Folder", favouritable_id: folder.id, favourited: fav.present?, favourite_id: fav&.id}, title: "Add to favourites", style: ("color: #EAB308" if fav.present?)}
+        %svg
+          %use{"xlink:href" => fav ? "#star_filled_symbol" : "#star_outline_symbol"}
+        = t(:add_favourite, default: "Favourite")
+
+      %a.btn{data: {action: "share-item", shareable_type: "Droom::Folder", shareable_id: folder.id, shareable_name: folder.name}}
+        %svg
+          %use{"xlink:href" => "#share_symbol"}
+        = t(:share, default: "Share")
 
       .more-actions
         %a{class: 'toggle-commands-dropdown', data: {action: 'toggle-actions-dropdown', affected: '.action-commands-dropdown'}}

@@ -34,13 +34,17 @@ module Droom
       where(created_by_id: user.id)
     }
     # Merges new sharing (droom_shares) with legacy sharing (personal_folders).
+    # Includes folders shared directly OR via an ancestor folder being shared.
     # Excludes own items and data_room items.
     scope :shared_with, -> user {
-      joins('LEFT JOIN droom_shares AS ds ON droom_folders.id = ds.shareable_id AND ds.shareable_type = "Droom::Folder" LEFT JOIN droom_personal_folders AS dpf ON droom_folders.id = dpf.folder_id')
-        .where(["ds.shared_with_id = ? OR dpf.user_id = ?", user.id, user.id])
+      directly_shared_ids = Droom::Share.for_user(user).of_type('Droom::Folder').pluck(:shareable_id)
+      personal_folder_ids = user.personal_folders.pluck(:folder_id)
+      # Expand shared folders to include all their descendants
+      ancestor_folder_ids = Droom::Folder.where(id: directly_shared_ids).flat_map { |f| f.subtree_ids }
+      all_ids = (ancestor_folder_ids + personal_folder_ids).uniq
+      where(id: all_ids)
         .where.not(created_by_id: user.id)
         .where("#{table_name}.data_room != 1 OR #{table_name}.data_room IS NULL")
-        .group('droom_folders.id')
     }
     scope :data_room, -> { where("#{table_name}.data_room = 1") }
     scope :favourited_by, -> user {

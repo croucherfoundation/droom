@@ -22,6 +22,15 @@ module Droom
       @folders = apply_library_view_scope(@folders)
       @home_documents = apply_library_view_scope(@home_documents)
 
+      # For favourites view, load all favourited documents (not just home folder)
+      # Exclude docs already inside a favourited folder to avoid duplicates
+      if @library_view == 'favourites'
+        fav_folder_ids = @folders.pluck(:id)
+        docs = Droom::Document.favourited_by(current_user)
+        docs = docs.where.not(folder_id: fav_folder_ids) if fav_folder_ids.any?
+        @favourited_documents = docs
+      end
+
       if @searching
         search_library
       else
@@ -155,7 +164,7 @@ module Droom
     end
 
     def folder_params
-      params.require(:folder).permit(:name, :slug, :parent_id)
+      params.require(:folder).permit(:name, :slug, :parent_id, :data_room)
     end
 
     def get_root_folders
@@ -197,11 +206,14 @@ module Droom
         criteria[:created_by_id] = current_user.id
       when 'shared'
         # Merge new shares (droom_shares) with legacy shares (personal_folders)
+        # Expand shared folders to include subtrees
         shared_doc_ids = Droom::Share.for_user(current_user).of_type('Droom::Document').pluck(:shareable_id)
         shared_folder_ids = Droom::Share.for_user(current_user).of_type('Droom::Folder').pluck(:shareable_id)
+        expanded_folder_ids = Droom::Folder.where(id: shared_folder_ids).flat_map { |f| f.subtree_ids }
         personal_folder_ids = current_user.personal_folders.pluck(:folder_id)
-        personal_doc_ids = Droom::Document.where(folder_id: personal_folder_ids).pluck(:id)
-        criteria[:id] = (shared_doc_ids + shared_folder_ids + personal_folder_ids + personal_doc_ids).uniq
+        all_folder_ids = (expanded_folder_ids + personal_folder_ids).uniq
+        docs_in_folders = Droom::Document.where(folder_id: all_folder_ids).pluck(:id)
+        criteria[:id] = (shared_doc_ids + all_folder_ids + docs_in_folders).uniq
         criteria[:created_by_id] = {not: current_user.id}
         criteria[:data_room] = false
       when 'data_room'

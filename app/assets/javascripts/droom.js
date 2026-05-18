@@ -30,6 +30,7 @@
 //= require droom/file_selector
 //= require droom/folder_sorting
 //= require droom/user_filter
+//= require droom/sharing
 //= require_self 
 
 
