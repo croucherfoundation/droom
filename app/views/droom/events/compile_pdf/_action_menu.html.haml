@@ -2,7 +2,7 @@
 - compiled_file ||= event.compiled_file
 
 - if can? :edit, event
-  .action-commands-dropdown.menu{:data =>{:for => "compiled_file_#{event.id}"}, class: "compiled_file_#{event.id}_actions"}
+  .action-commands-dropdown.menu{:data =>{:for => "compiled_file_#{event.id}"}, class: "event_#{event.id}_actions"}
     = link_to droom.compile_pdf_event_url(event), class: "edit btn", target: '_blank' do
       %svg
         %use{href: "#edit_symbol"}

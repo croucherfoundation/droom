@@ -213,6 +213,11 @@
                 allowedExtensions.test(file.name);
         };
 
+        // Maximum file size: 200MB
+        const MAX_FILE_SIZE = 200 * 1024 * 1024;
+        // Large file threshold for async scanning: 25MB
+        const LARGE_FILE_THRESHOLD = 25 * 1024 * 1024;
+
         const results = [];
 
         for (let i = 0; i < files.length; i++) {
@@ -224,18 +229,27 @@
             continue;
           }
 
-          results.push(this.uploadFile(file));
+          if (file.size > MAX_FILE_SIZE) {
+            alert('File too large: "' + file.name + '" (' + (file.size / (1024 * 1024)).toFixed(1) + 'MB). Maximum file size is 200MB.');
+            console.warn('File too large:', file.name, file.size);
+            continue;
+          }
+
+          // Flag large files so the Upload object can show scanning status
+          var isLargeFile = file.size > LARGE_FILE_THRESHOLD;
+          results.push(this.uploadFile(file, isLargeFile));
         }
 
         return results;
       };
 
-      Droploader.prototype.uploadFile = function(file) {
+      Droploader.prototype.uploadFile = function(file, isLargeFile) {
         return new Upload({
           file: file,
           queue: this._queue,
           url: this._url,
-          callback: this.finishUpload
+          callback: this.finishUpload,
+          isLargeFile: isLargeFile || false
         });
       };
 
@@ -267,8 +281,24 @@
 
       Droploader.prototype.finishUpload = function(upload, el) {
         var target_selector;
+
+        // Hide "no documents" message when a file is uploaded
+        this._catcher.find('.nomatch').hide();
+
+        // If there's a refresh target, refresh that element
         if (target_selector = this._catcher.data('refreshes')) {
           return $(target_selector).refresh();
+        }
+
+        // For pages where the upload was the first file in an empty folder,
+        // reload the page to rebuild proper UI structure (folder/files list)
+        var wasEmpty = this._catcher.find('ul#folders').length === 0 &&
+                       this._catcher.find('ul.filing li').length === 0 &&
+                       this._catcher.find('li.document').length <= 1; // only the just-uploaded one
+        if (wasEmpty) {
+          setTimeout(function() {
+            window.location.reload();
+          }, 1500);
         }
       };
 
@@ -294,6 +324,7 @@
       this._queue = opts.queue;
       this._url = opts.url;
       this._callback = opts.callback;
+      this._isLargeFile = opts.isLargeFile || false;
       console.log("Upload", opts);
       if (this._file && this._url) {
         this.readFile();
@@ -339,7 +370,12 @@
       this._bar = $('<span class="bar"></span>').appendTo(this._progress_holder);
       this._canceller = $('<a class="cancel minimal"></a>').appendTo(this._li);
       this._waiter = $('<span class="waiting"></a>').appendTo(this._li);
-      this._w = this._progress_holder.width();
+      // Defer width measurement until element is rendered
+      var self = this;
+      setTimeout(function() {
+        self._w = self._progress_holder.width() || 300;
+      }, 0);
+      this._w = 300; // fallback default
       return this._canceller.click(this.cancel);
     };
 
@@ -359,9 +395,12 @@
       var prog;
       if (e.lengthComputable) {
         prog = e.loaded / e.total;
-        this._bar.width(Math.round(this._w * prog));
+        this._bar.css('width', Math.round(prog * 100) + '%');
         if (prog > 0.99) {
-          return this._li.addClass('waiting');
+          this._li.addClass('waiting');
+          if (this._isLargeFile) {
+            this._label.text(this._filename + ' — saving...');
+          }
         }
       }
     };
@@ -369,7 +408,7 @@
     Upload.prototype.stateChange = function() {
       if (this._xhr.readyState === 4) {
         if (this._xhr.status === 200) {
-          this._bar.width(this._w);
+          this._bar.css('width', '100%');
           return this.success(this._xhr.responseText);
         } else {
           return this.error();
@@ -386,6 +425,21 @@
       confirmation.activate();
       this._li.after(confirmation);
       this._li.remove();
+
+      // Check if the document is pending virus scan (large file async scan)
+      var scanStatus = confirmation.data('scan-status') || confirmation.attr('data-scan-status');
+      if (scanStatus === 'pending') {
+        var scanBadge = confirmation.find('.scan-status.scanning');
+        if (scanBadge.length === 0) {
+          confirmation.append('<span class="scan-status scanning" title="File is being scanned for viruses">Scanning...</span>');
+        }
+        // Subscribe to ActionCable for real-time scan status updates
+        var docId = confirmation.data('doc-id') || confirmation.attr('id').replace('document_', '');
+        if (docId && window.DocumentScanSubscriber) {
+          window.DocumentScanSubscriber.subscribeToDocument(docId);
+        }
+      }
+
       confirmation.signal_confirmation();
       return typeof this._callback === "function" ? this._callback(this, confirmation) : void 0;
     };

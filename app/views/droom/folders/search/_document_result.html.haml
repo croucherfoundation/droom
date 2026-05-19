@@ -1,0 +1,29 @@
+- document ||= document_result
+%li.document.text-body{id: "document_#{document.id}", data: {doc_id: document.id}}
+  - if (link_info = document_external_link_info(document))
+    - detail_url = link_info[:url]
+    - extension = link_info[:extension]
+  - else
+    - extension = document.file_extension.downcase
+    - detail_url = droom.folder_document_url(document.folder, document)
+  - cssclasses = "document #{extension} no-bg-image"
+  = link_to detail_url, class: cssclasses, target: "_blank" do
+    - if %w[doc docx pdf txt gdoc notion memo].include?(extension)
+      %svg.icon.standard{style: "margin-top: -4px;"}
+        %use{"xlink:href" => "#pdf_symbol"}
+    - elsif %w[jpg jpeg png psd tiff tif webp].include?(extension)
+      %svg.icon.standard{style: "margin-top: -4px;"}
+        %use{"xlink:href" => "#image_symbol"}
+    - elsif %w[xls xlsx csv].include?(extension)
+      %svg.icon.standard{style: "margin-top: -4px;"}
+        %use{"xlink:href" => "#spreadsheet_symbol"}
+    - elsif %w[zip rar gz tar 7z].include?(extension)
+      %svg.icon.standard{style: "margin-top: -3px;"}
+        %use{"xlink:href" => "#folder_closed_symbol"}
+    - else
+      %svg.icon.standard{style: "margin-top: -4px;"}
+        %use{"xlink:href" => "#document_noline_symbol"}
+    %span{style: "white-space: nowrap;"}
+      = shorten(document.name, 100, '')
+  -# %span.search-result-path
+  -#   = document.folder.folder_path(true) if document.folder

@@ -1,10 +1,19 @@
+- fav = favourite_for(document)
 - if can? :edit, document
   .action-commands-dropdown.menu{:data =>{:for => "document_#{document.id}"}, class: "document_#{document.id}_actions"}
-    - if document.google_doc_link.present?
-      - view = 'google_doc'
-    - elsif document.notion_page_link.present?
-      - view = 'notion_page'
-    
+    - if (link_info = document_external_link_info(document))
+      - view = link_info[:view]
+
+    %a.btn{data: {action: "toggle-favourite", favouritable_type: "Droom::Document", favouritable_id: document.id, favourited: fav.present?, favourite_id: fav&.id}, title: "Add to favourites", style: ("color: #EAB308" if fav.present?)}
+      %svg
+        %use{href: fav ? "#star_filled_symbol" : "#star_outline_symbol"}
+      = t(:add_favourite, default: "Favourite")
+
+    %a.btn{data: {action: "share-item", shareable_type: "Droom::Document", shareable_id: document.id, shareable_name: document.name}}
+      %svg
+        %use{href: "#share_symbol"}
+      = t(:share, default: "Share")
+
     = link_to droom.edit_folder_document_url(document.folder, document, view: view), :class => 'edit btn', :data => {:action => "popup", :replaced => "#document_#{document.id}"} do
       %svg
         %use{href: "#edit_symbol"}

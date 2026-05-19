@@ -1,0 +1,30 @@
+- if can?(:manage, Droom::Folder)
+  .action.standard-btn-group.pt.pr
+    - if @sortable
+      = link_to croucher_droom_url("/library?view=data_room"), class: "btn" do
+        %svg 
+          %use{"xlink:href" => "#view_public_symbol"}
+        = t :view_page
+
+    - else 
+      = link_to croucher_droom_url("/library?sortable=true&view=data_room"), class: "btn" do
+        %svg 
+          %use{"xlink:href" => "#edit_symbol"}
+        = t :edit_page
+    
+      .more-actions
+        %a{class: 'toggle-commands-dropdown', data: {action: 'toggle-actions-dropdown', affected: '.action-commands-dropdown'}}
+
+        .action-commands-dropdown
+          = link_to droom.new_folder_url, class: "btn", data: {action: 'popup', affected: "#folders"}  do
+            %svg
+              %use{href: "#folder_closed_symbol"}
+            = t :add_root_folder
+          
+          = link_to droom.new_link_url, class: "btn add-link", data: {action: 'popup', affected: "#droom_links"}  do
+            = t :add_new_link
+
+          = link_to '#', class: "btn", id: "upload_to_folder_#{@home_folder.id}", data: {role: "upload-file"} do
+            %svg
+              %use{href: "#document_noline_symbol"}
+            = t :add_document

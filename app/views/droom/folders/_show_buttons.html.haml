@@ -1,0 +1,81 @@
+- folder = @folder
+
+- back_path = folder.parent ? droom.folder_path(folder.parent) : droom.folders_path
+
+.action.standard-btn-group.pt.pr.oy-visible
+  - unless @sortable
+    = link_to back_path, class: "btn back-btn" do
+      %svg
+        %use{"xlink:href" => "#back_btn_symbol"}
+      = t(:back, default: "Back")
+
+  - if can?(:manage, Droom::Folder)
+    - if @sortable
+      = link_to droom.folder_path(folder, view: 'data_room'), class: "btn" do
+        %svg
+          %use{"xlink:href" => "#view_public_symbol"}
+        = t :view_page
+    - else
+      = link_to droom.folder_path(folder, sortable: true, view: 'data_room'), class: "btn" do
+        %svg
+          %use{"xlink:href" => "#edit_symbol"}
+        = t :edit_page
+      
+      - fav = favourite_for(folder)
+      %a.btn{data: {action: "toggle-favourite", favouritable_type: "Droom::Folder", favouritable_id: folder.id, favourited: fav.present?, favourite_id: fav&.id}, title: "Add to favourites", style: ("color: #EAB308" if fav.present?)}
+        %svg
+          %use{"xlink:href" => fav ? "#star_filled_symbol" : "#star_outline_symbol"}
+        = t(:add_favourite, default: "Favourite")
+
+      %a.btn{data: {action: "share-item", shareable_type: "Droom::Folder", shareable_id: folder.id, shareable_name: folder.name}}
+        %svg
+          %use{"xlink:href" => "#share_symbol"}
+        = t(:share, default: "Share")
+
+      .more-actions
+        %a{class: 'toggle-commands-dropdown', data: {action: 'toggle-actions-dropdown', affected: '.action-commands-dropdown'}}
+        .action-commands-dropdown
+          = link_to 'javascript:void(0)', class: "copy btn", id: "copy_folder_#{folder.id}", data: {action: 'copy', clipboard_text: droom.folder_url(folder, shareable: true)} do
+            %svg
+              %use{href: "#copy_symbol"}
+            = t(:copy_link)
+
+          = link_to droom.edit_folder_url(folder), class: "btn", data: {action: "popup", type: "html", affected: "#folder_#{folder.id}"} do
+            %svg
+              %use{href: "#edit_symbol"}
+            = t(:edit_folder)
+
+          = link_to '#', class: "btn", id: "upload_to_folder_#{folder.id}", data: {role: "upload-file"} do
+            %svg
+              %use{href: "#document_noline_symbol"}
+            = t(:add_document)
+
+          = link_to droom.new_folder_document_url(folder, view: 'memo_page'), class: "btn", data: {action: "popup", type: "html", affected: "#folder_#{folder.id}"} do
+            %svg
+              %use{href: "#document_noline_symbol"}
+            = t(:add_memo_page)
+
+          = link_to droom.new_folder_document_url(folder, view: 'google_doc'), class: "btn", data: {action: "popup", type: "html", affected: "#folder_#{folder.id}"} do
+            %svg
+              %use{href: "#google_doc_symbol"}
+            = t(:add_google_doc)
+
+          = link_to droom.new_folder_document_url(folder, view: 'notion_page'), class: "btn", data: {action: "popup", type: "html", affected: "#folder_#{folder.id}"} do
+            %svg
+              %use{href: "#notion_symbol"}
+            = t(:add_notion_page)
+
+          = link_to droom.new_folder_folder_url(folder), class: "btn", data: {action: "popup", type: "html", affected: "#folder_#{folder.id}"} do
+            %svg
+              %use{href: "#folder_closed_symbol"}
+            = t(:add_subfolder)
+
+          = link_to droom.move_folder_folder_url(folder), class: "btn", id: "move_folder_#{folder.id}", data: {action: "popup", type: "html", affected: "#folders"} do
+            %svg
+              %use{href: "#edit_symbol"}
+            = t(:move_folder)
+
+          = link_to droom.folder_url(folder), method: 'delete', class: 'btn', data: {action: "remove", removed: "#folder_#{folder.id}", confirm: t(:confirm_delete_folder, path: folder.path)} do
+            %svg
+              %use{href: "#trash_symbol"}
+            = t(:delete_folder)

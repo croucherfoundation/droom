@@ -13,9 +13,14 @@ module Droom
 
     has_many :thumbnails, dependent: :destroy
     has_many :single_documents, dependent: :destroy
+    has_many :favourites, :as => :favouritable, :dependent => :destroy
+    has_many :shares, :as => :shareable, :dependent => :destroy
 
     has_one_attached :file
     scan_attachment :file
+
+    # Maximum file size allowed for uploads (200MB)
+    MAX_FILE_SIZE = 200.megabytes
 
     acts_as_list scope: :folder_id
 
@@ -25,6 +30,7 @@ module Droom
     before_save :track_file_change
     after_commit :file_changed_callback, if: -> { @file_changed }
     validate :file_must_be_allowed
+    validate :file_size_within_limit
 
     # validates :file, :presence => true
     # do_not_validate_attachment_file_type :file
@@ -59,6 +65,90 @@ module Droom
     scope :by_date, -> { order("droom_documents.updated_at DESC, droom_documents.created_at DESC") }
 
     scope :latest, -> limit { order("droom_documents.updated_at DESC, droom_documents.created_at DESC").limit(limit) }
+
+    CONTENT_TYPE_GROUPS = {
+      'documents' => %w[
+        application/pdf
+        application/msword
+        application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        application/vnd.oasis.opendocument.text
+        application/vnd.ms-powerpoint
+        application/vnd.openxmlformats-officedocument.presentationml.presentation
+        application/vnd.apple.pages
+        application/vnd.apple.keynote
+        text/plain
+        text/rtf
+        text/html
+      ],
+      'spreadsheets' => %w[
+        application/vnd.ms-excel
+        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        application/vnd.apple.numbers
+        text/csv
+      ],
+      'images' => %w[
+        image/jpeg
+        image/jpg
+        image/png
+        image/gif
+        image/svg+xml
+        image/webp
+        image/bmp
+        image/tiff
+        image/heic
+        image/heif
+        image/avif
+      ]
+    }.freeze
+
+    scope :by_type, -> type {
+      if type == 'folders'
+        none
+      elsif CONTENT_TYPE_GROUPS.key?(type)
+        where(file_content_type: CONTENT_TYPE_GROUPS[type])
+      else
+        all
+      end
+    }
+
+    scope :modified_since, -> period {
+      duration = case period
+                 when '7d'   then 7.days.ago
+                 when '30d'  then 30.days.ago
+                 when '365d' then 365.days.ago
+                 end
+      duration ? where('droom_documents.updated_at >= ?', duration) : all
+    }
+
+    scope :created_by, -> user_id {
+      where(created_by_id: user_id)
+    }
+
+    # Library view scopes
+    scope :owned_by, -> user {
+      where(created_by_id: user.id)
+    }
+    # Merges new sharing (droom_shares) with legacy sharing (personal_folders).
+    # Includes documents shared directly, OR inside a shared folder (including descendants).
+    # Excludes own items and data_room items.
+    scope :shared_with, -> user {
+      directly_shared_ids = Droom::Share.for_user(user).of_type('Droom::Document').pluck(:shareable_id)
+      shared_folder_ids = Droom::Share.for_user(user).of_type('Droom::Folder').pluck(:shareable_id)
+      personal_folder_ids = user.personal_folders.pluck(:folder_id)
+      # Expand shared folders to subtrees
+      all_folder_ids = Droom::Folder.where(id: shared_folder_ids).flat_map { |f| f.subtree_ids }
+      all_folder_ids = (all_folder_ids + personal_folder_ids).uniq
+      docs_in_folders_ids = Droom::Document.where(folder_id: all_folder_ids).pluck(:id)
+      all_doc_ids = (directly_shared_ids + docs_in_folders_ids).uniq
+      where(id: all_doc_ids)
+        .where.not(created_by_id: user.id)
+        .where("droom_documents.data_room != 1 OR droom_documents.data_room IS NULL")
+    }
+    scope :data_room, -> { where("droom_documents.data_room = 1") }
+    scope :favourited_by, -> user {
+      joins('INNER JOIN droom_favourites AS df ON droom_documents.id = df.favouritable_id AND df.favouritable_type = "Droom::Document"')
+        .where(["df.user_id = ?", user.id])
+    }
 
     scope :unindexed, -> { where(indexed_at: nil) }
 
@@ -139,10 +229,17 @@ module Droom
         name: name || "",
         filename: file_file_name || "",
         content_type: get_content_type,
+        file_content_type: file_content_type.presence || 'text/plain',
         content: @file_content || "",
         event_type: get_event_type || "",
         year: get_year || "",
-        confidential: confidential?
+        confidential: confidential?,
+        item_type: "document",
+        folder_id: folder_id,
+        folder_path: folder&.folder_path(true) || "",
+        created_by_id: created_by_id,
+        modified_at: updated_at,
+        data_room: self.data_room?
       }
     end
 
@@ -292,6 +389,13 @@ module Droom
       unless FileSecurityService.allowed_file?(file_name, content_type)
         error_message = FileSecurityService.security_error_message(file_name, content_type)
         errors.add(:file, error_message)
+      end
+    end
+
+    def file_size_within_limit
+      return unless file.attached?
+      if file.blob.byte_size > MAX_FILE_SIZE
+        errors.add(:file, "is too large (#{(file.blob.byte_size / 1.megabyte.to_f).round(1)}MB). Maximum file size is #{MAX_FILE_SIZE / 1.megabyte}MB.")
       end
     end
 

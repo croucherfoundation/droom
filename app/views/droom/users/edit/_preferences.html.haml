@@ -5,7 +5,7 @@
 #edit_user
   .standard-modal-overlay.active
     .standard-modal-container.active
-      = form_for @user, :html => {:class => 'edit user password', :autocomplete => false} do |f|
+      = form_for @user, :html => {:class => 'edit user password custom-validate', :autocomplete => false} do |f|
         .standard-modal-header
           .standard-modal-close-btn.cursor-pointer
             %svg.standard_close_icon
@@ -55,7 +55,11 @@
                   = t :account_password
                 - else
                   = t :admin_account_password
-              = render "droom/users/edit/admin_password_fields", f: f, user: user
+              
+              .input-group
+                = f.password_field :password, placeholder: t("placeholders.user.password"), minlength: 8, data: { validation_message: "Password must be at least 8 characters" }
+                %button.eye-icon{type: "button"}
+                  %img{alt: "open", src: "https://croucher.org.hk/assets/images/icons/eye-02.svg"}/
 
               %p.admin
                 - if admin?

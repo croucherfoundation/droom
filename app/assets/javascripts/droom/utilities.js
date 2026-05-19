@@ -179,6 +179,56 @@
         return $(this).removeClass('disabled').find('input, select, textarea').attr('disabled', false);
       });
     };
+    $.fn.custom_validation = function(rules) {
+      return this.each(function() {
+        var $form = $(this);
+        if (rules) {
+          $.each(rules, function(selector, message) {
+            $form.find(selector).each(function() {
+              var input = this;
+              input.addEventListener('invalid', function() {
+                if (input.validity.valueMissing || input.validity.tooShort) {
+                  input.setCustomValidity(message);
+                }
+              });
+              input.addEventListener('input', function() {
+                input.setCustomValidity('');
+              });
+            });
+          });
+        } else {
+          $form.find('[data-validation-message]').each(function() {
+            var input = this;
+            var message = $(input).data('validation-message');
+            input.addEventListener('invalid', function() {
+              if (input.validity.valueMissing || input.validity.tooShort) {
+                input.setCustomValidity(message);
+              }
+            });
+            input.addEventListener('input', function() {
+              input.setCustomValidity('');
+            });
+          });
+        }
+      });
+    };
+    $.fn.password_toggle = function() {
+      return this.each(function() {
+        var $btn = $(this);
+        var $input = $btn.siblings('input[type="password"], input[type="text"]');
+        if (!$input.length) return;
+        $btn.on('click', function() {
+          var isPassword = $input.attr('type') === 'password';
+          $input.attr('type', isPassword ? 'text' : 'password');
+          var $img = $btn.find('img');
+          if ($img.length) {
+            var src = $img.attr('src');
+            $img.attr('src', isPassword ? src.replace('eye-02.svg', 'eye-01.svg') : src.replace('eye-01.svg', 'eye-02.svg'));
+            $img.attr('alt', isPassword ? 'hide' : 'show');
+          }
+        });
+      });
+    };
     $.activations = [];
     $.activate_with = function(fn) {
       return $.activations.push(fn);

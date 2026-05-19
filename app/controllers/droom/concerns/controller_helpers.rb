@@ -130,6 +130,22 @@ module Droom::Concerns::ControllerHelpers
     return false
   end
 
+  def screener?
+    if user_signed_in? && !admin? && !committee? && !trustee? && !developer? && !staff?
+      groups = current_user.groups
+      return groups.any? && groups.exists?(slug: 'screeners')
+    end
+    return false
+  end
+
+  def interviewer?
+    if user_signed_in? && !admin? && !committee? && !trustee? && !developer? && !staff?
+      groups = current_user.groups
+      return groups.any? && groups.exists?(slug: 'interviewers')
+    end
+    return false
+  end
+
   def committee?
     if user_signed_in?
       committees = ['audit-committee', 'investment-committee']
@@ -277,7 +293,8 @@ module Droom::Concerns::ControllerHelpers
 
   def prompt_for_setup
     Rails.logger.warn "⚠️ prompt_for_setup"
-    render template: "/droom/users/setup", locals: {user: current_user}
+    @hide_footer = true
+    render template: "/droom/users/setup", layout: 'centered', locals: {user: current_user}
   end
 
   def check_user_has_organisation

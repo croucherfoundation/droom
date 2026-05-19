@@ -1,2 +1,43 @@
-%ul#folders.sortable_folders{:data => {:refreshing => true, :url => "#{folders_path}.js"}}
-  = render :partial => 'droom/folders/folder', :collection => @folders, :locals => {:open => true}
+%ul#folders{class: ("sortable_folders" unless @searching), data: {refreshing: true, url: "#{folders_path}.js"}}
+  - unless @sortable
+    %form.faceter{action: droom.folders_url, id: "library_search", style: "width: auto", data: {target: '#folders'}}
+      = hidden_field_tag :page, params[:page]
+      = hidden_field_tag :show, params[:show]
+      = hidden_field_tag :sort, params[:sort]
+      = hidden_field_tag :user_id, params[:user_id], class: 'facet'
+      
+      = render "shared/page_search", title: t(:search_in_library)
+
+      .croucher_search_detail.showing
+        = render 'droom/folders/library_filters'
+  
+  - if @searching
+    = render :partial => 'droom/folders/search_results'
+  - else
+    - if @folders.any?
+      = render :partial => 'droom/folders/folder', :collection => @folders
+    - else
+      - unless @favourited_documents&.any?
+        .nomatch
+          %h2
+            = t :sorry_no_matches
+
+    - if @favourited_documents&.any?
+      %ul.folders
+        %li.files
+          %ul
+            - @favourited_documents.each do |doc|
+              = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
+
+    - if @home_folder && @library_view != 'favourites'
+      #home_folder{data: {droppable: droom.folder_documents_path(@home_folder), picker: "#upload_to_folder_#{@home_folder.id}", queue: "#upload_queue", refreshes: "#home_folder"}}
+        %ul.folders
+          %li.files
+            %ul#upload_queue{class: 'sortable_files', data: {folder_id: @home_folder.id}}
+              - @home_documents.each do |doc|
+                = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
+
+        %ul#upload_queue
+
+    - if @links.present? && @library_view == 'data_room'
+      = render partial: 'links'

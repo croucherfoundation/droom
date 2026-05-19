@@ -1,11 +1,11 @@
 module Droom::Api
   class UsersController < Droom::Api::ApiController
-    before_action :authenticate_user, unless: :local_request?, only: [:update, :remove_profile]
+    before_action :authenticate_user, unless: :local_request?, only: [:update, :upload_profile_image, :remove_profile]
 
     before_action :get_users, only: [:index]
     before_action :search_users, only: [:accounts]
     before_action :find_or_create_user, only: [:create]
-    skip_before_action :assert_local_request!, only: [:update_timezone, :update, :remove_profile]
+    skip_before_action :assert_local_request!, only: [:update_timezone, :update, :upload_profile_image, :remove_profile]
     load_resource find_by: :uid, class: "Droom::User"
 
 
@@ -60,6 +60,46 @@ module Droom::Api
       render json: @user, serializer: Droom::UserMinimalSerializer
     end
 
+    def account_setting_update
+      service = EmailVerificationService.new(@user)
+
+      # Handle primary email change (requires verification)
+      new_email = account_params[:email]
+      destination = account_params[:destination]
+      if new_email.present? && new_email != @user.email
+        unless service.request_verification(new_email, destination)
+          return render json: { errors: service.errors }, status: :unprocessable_entity
+        end
+
+        unless has_other_setting_updates?
+          return render json: { message: "Verification email sent to #{new_email}" }, status: :ok
+        end
+      end
+
+      # Handle backup_email update (update 2nd email in list or add if not present)
+      if account_params[:backup_email].present?
+        backup_email = account_params[:backup_email]
+        emails = @user.emails.to_a
+        if emails.size >= 2
+          emails[1].email = backup_email
+          emails[1].save if emails[1].changed?
+        else
+          @user.emails.build(email: backup_email)
+        end
+      end
+
+      @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
+      @user.assign_attributes(given_name: account_params[:first_name]) if account_params[:first_name].present?
+      @user.assign_attributes(family_name: account_params[:last_name]) if account_params[:last_name].present?
+      @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
+
+      if @user.save
+        @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
+      end
+
+      render json: @user, serializer: Droom::UserMinimalSerializer
+    end
+
     def send_otp
       VerificationService.new(@user).send_otp
       head :ok
@@ -84,6 +124,30 @@ module Droom::Api
         render json: @user.reload
       else
         render json: @user, serializer: Droom::UserSerializer, meta: {error: @user.errors.full_messages}
+      end
+    end
+
+    def upload_profile_image
+      return render_image_validation_error unless user_params[:image].present?
+
+      profile_image = user_params[:image]
+
+      # Validate format and size before attaching
+      validation_error = validate_image_data(profile_image)
+      return render_image_validation_error(validation_error) if validation_error.present?
+
+      attach_base64_image(@user, :image, profile_image)
+
+      if @user.save
+        render json: {
+          success: true,
+          photo_url: profile_image_url(@user.reload)
+        }
+      else
+        render json: {
+          success: false,
+          error: @user.errors.full_messages
+        }, status: :unprocessable_entity
       end
     end
 
@@ -216,9 +280,55 @@ module Droom::Api
     def account_params
       params.require(:user).permit(
        :password, :password_confirmation, :timezone,
+       :first_name, :last_name, :email, :backup_email, :destination,
         emails: [:id, :email, :email_type],
         addresses: [:id, :address, :address_type]
       )
+    end
+
+    def has_other_setting_updates?
+      account_params[:timezone].present? || account_params[:password].present?
+    end
+
+    def profile_image_url(user)
+      user.image.attached? ? user.image.url : ""
+    end
+
+    def validate_image_data(base64_data)
+      return "No image data provided" unless base64_data.present?
+
+      begin
+        content_type, encoded_image = base64_data.split(',')
+        return "Invalid base64 image format" unless encoded_image.present?
+
+        decoded_image = Base64.decode64(encoded_image)
+        mime_type = content_type.split(':')[1].split(';')[0]
+
+        # Validate format
+        allowed_formats = ['image/jpeg', 'image/png']
+        unless allowed_formats.include?(mime_type)
+          return "Invalid image format. Accepted formats: JPG, PNG"
+        end
+
+        # Validate size (5MB = 5242880 bytes)
+        max_size_bytes = 5 * 1024 * 1024
+        if decoded_image.bytesize > max_size_bytes
+          size_mb = (decoded_image.bytesize.to_f / 1024 / 1024).round(2)
+          return "Image too large (#{size_mb}MB). Maximum size: 5MB"
+        end
+
+        nil  # No error
+      rescue => e
+        "Error validating image: #{e.message}"
+      end
+    end
+
+    def render_image_validation_error(error_msg = nil)
+      render json: {
+        success: false,
+        photo_url: "",
+        error: [error_msg || "Image is required and must be JPG or PNG, maximum 5MB"]
+      }, status: :unprocessable_entity
     end
 
   end

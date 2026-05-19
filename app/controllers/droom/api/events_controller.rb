@@ -4,8 +4,7 @@ module Droom::Api
     prepend_before_action :authenticate_from_param, only: [:calendar]
     before_action :get_events, only: [:index]
     before_action :find_or_create_event, only: [:create]
-    load_and_authorize_resource find_by: :uuid, class: "Droom::Event", except: [:calendar]
-    skip_load_and_authorize_resource only: [:calendar]
+    load_resource find_by: :uuid, class: "Droom::Event", except: [:calendar]
     
     def index
       render json: @events
@@ -27,7 +26,7 @@ module Droom::Api
         when "year"  then date.beginning_of_year..date.end_of_year.end_of_day
         end
 
-      @events = Droom::Event.where(
+      @events = Droom::Event.accessible_by(current_ability).where(
         "start <= ? AND (
           (end_date IS NOT NULL AND end_date >= ?) OR
           (end_date IS NULL AND finish IS NOT NULL AND finish >= ?) OR
@@ -63,11 +62,17 @@ module Droom::Api
 
     def find_or_create_event
       if params[:event]
+        # Resolve event_type_slug to event_type_id so callers can pass a slug
+        if params[:event][:event_type_slug].present?
+          event_type = Droom::EventType.find_by(slug: params[:event].delete(:event_type_slug))
+          params[:event][:event_type_id] = event_type.id if event_type
+        end
+
         if params[:event][:uid].present?
           @event = Droom::Event.where(uid: params[:event][:uid]).first
         end
       end
-      @event ||= Droom::Event.create(event_params)
+      @event ||= Droom::Event.create!(event_params)
     end
 
     def get_events
@@ -80,7 +85,7 @@ module Droom::Api
     end
 
     def event_params
-      params.require(:event).permit(:name, :description, :event_set_id, :calendar_id, :all_day, :url, :start, :finish, :timezone, :venue_id, :venue_name)
+      params.require(:event).permit(:name, :description, :event_set_id, :calendar_id, :event_type_id, :event_type_slug, :all_day, :url, :video_conference_link, :start, :finish, :end_date, :timezone, :venue_id, :venue_name)
     end
 
     def authenticate_from_param

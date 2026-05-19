@@ -11,13 +11,15 @@ Droom::Engine.routes.draw do
     #post '/reindex_user' => 'users#reindex_user', as: 'reindex'
     #post '/users/:uid/reindex' => 'users#reindex', as: 'reindex'
     resources :addresses
-    resources :emails, only: [:show, :index]
+    resources :emails, only: [:show, :index, :create, :update, :destroy]
     resources :users do
       post 'reindex', on: :member, as: :reindex
+      put 'upload_profile_image', on: :member, as: :upload_profile_image
       put 'update_contact',  on: :member, as: :update_contact
       get "whoami" , on: :collection, as: :whoami
       get "authenticable", on: :member, as: :authenticable
       put 'account_update', on: :member, as: :account_update
+      put 'account_setting_update', on: :member, as: :account_setting_update
       get 'send_otp', on: :member, as: :send_otp
       post 'verify_otp', on: :member, as: :verify_otp
       get  'remove_profile', on: :member, as: :remove_profile
@@ -27,10 +29,11 @@ Droom::Engine.routes.draw do
       delete 'remove_reviewer_group', on: :member, as: :remove_reviewer_group
     end
     put "update_timezone" => 'users#update_timezone', as: 'update_timezone'
-    resources :events do 
+    resources :events do
       collection do
         get :calendar
       end
+      resources :invitations, only: [:index, :create, :destroy]
     end
     resources :venues
     resources :images
@@ -165,6 +168,7 @@ Droom::Engine.routes.draw do
   resources :documents do
     get "suggest", on: :collection
     put "reposition", on: :member
+    get "scan_status", on: :member
   end
 
   resources :folders do
@@ -175,6 +179,11 @@ Droom::Engine.routes.draw do
     resources :documents
     resources :folders
   end
+
+  resources :shares, only: [:create, :destroy] do
+    get :recipients, on: :collection
+  end
+  resources :favourites, only: [:create, :destroy]
 
   resources :links
 
@@ -198,6 +207,7 @@ Droom::Engine.routes.draw do
     put :preference, on: :member, as: :set_preference
     get :download, on: :collection
     get :admin, on: :collection
+    get :search, on: :collection
     put :setup, on: :collection
     put :reinvite, on: :member
     put :merge, on: :member
@@ -230,5 +240,6 @@ Droom::Engine.routes.draw do
   get "/noticeboard" => "scraps#index", as: :noticeboard
   get "/profile" => "users#edit", as: :profile, defaults: {view: "profile"}
   get "/page/:slug" => "pages#published", as: :published_page, defaults: {format: "html"}
+  get "/verify_email" => "email_verifications#show", as: :verify_email
 
 end

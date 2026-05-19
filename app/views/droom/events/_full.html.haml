@@ -4,6 +4,7 @@
 - show_folder = (event.folder && can?(:read, event.folder)) || current_user.permitted?('droom.library.read_event_documents')
 - skip_gdoc = true
 - is_outside_event = @event&.calendar_id == 2
+- has_date_range = event.end_date.present?
 
 - event_master_id = event.master_id || event.id
 - if @seen_events[event_master_id]
@@ -18,14 +19,13 @@
 - if show_folder
   - div_data[:droppable] = droom.folder_documents_path(event.folder)
   - div_data[:queue] = "#queue_to_#{event.folder.id}"
-  - div_data[:refreshes] = "#event_#{event.id}"
 
 %div{:class => cssclasses.join(' '), id: "event_#{event.id}", data: div_data}
   .event_detail.summary
     .heading 
       .detail-practicalities.full.text-body
         %p.practicalities
-          - if is_outside_event
+          - if has_date_range
             %span.time.date_range
               = render 'droom/shared/date', event: event
           - else 
@@ -80,12 +80,11 @@
                   %use{href: "#arrow_icon"}
       
   - if show_folder 
-    - if (event.folder.documents.count > 0 || event.folder.children.count > 0) || event.compiled_file.attached?
-      .addenda.text-body.full
-        = render :partial => 'droom/events/attachments', :locals => {:event => event, skip_gdoc: skip_gdoc}
+    .addenda.text-body.full
+      = render :partial => 'droom/events/attachments', :locals => {:event => event, skip_gdoc: skip_gdoc}
           
-      - if event_invitation
-        %h3.standard-h3-title
-          = t :invitations
-        = render :partial => 'droom/events/event_invitation', :locals => {:event => event}
-        = render :partial => 'droom/events/invitations', :locals => {:event => event}
+    - if event_invitation
+      %h3.standard-h3-title
+        = t :invitations
+      = render :partial => 'droom/events/event_invitation', :locals => {:event => event}
+      = render :partial => 'droom/events/invitations', :locals => {:event => event}

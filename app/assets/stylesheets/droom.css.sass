@@ -693,6 +693,107 @@ ul.dropdown
         margin-right: 5px
         margin-top: -2px
 
+.library-filters
+  overflow: visible !important
+  .croucher_dropdown_container
+    overflow: visible
+    .parent_custom_dropdown
+      overflow: visible
+
+.user-filter-dropdown
+  position: relative
+  .user-filter-btn
+    display: block
+    width: 100%
+    min-height: 42px
+    padding: 0 36px 0 22px
+    font-size: 1em
+    text-align: left
+    border: 1px solid $dark
+    border-radius: 5px
+    background: white url('svg/icon_dropdown.svg') no-repeat 94% center
+    background-size: 16px
+    cursor: pointer
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+    .user-filter-clear
+      position: absolute
+      right: 36px
+      top: 50%
+      transform: translateY(-50%)
+      font-size: 16px
+      color: $mid
+      cursor: pointer
+      padding: 0 4px
+      &:hover
+        color: $dark
+  .user-filter-panel
+    position: absolute
+    top: 100%
+    left: 0
+    right: 0
+    z-index: 1000
+    background: white
+    border: 1px solid #ccc
+    border-top: none
+    border-radius: 0 0 5px 5px
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)
+    .user-filter-search
+      display: block
+      width: calc(100% - 16px)
+      margin: 8px
+      padding: 8px 10px
+      font-size: 16px
+      border: 1px solid $pale
+      border-radius: 3px
+      outline: none
+      &:focus
+        border-color: $mid
+    .user-filter-list
+      display: inline-block
+      list-style: none
+      margin: 0
+      padding: 4px 0
+      width: 100%
+      max-height: 180px
+      overflow-y: auto
+      li
+        padding: 8px 16px
+        cursor: pointer
+        font-size: 16px
+        display: flex
+        align-items: flex-start
+        gap: 10px
+        .user-filter-avatar
+          width: 28px
+          height: 28px
+          border-radius: 50%
+          object-fit: cover
+          flex-shrink: 0
+        .user-filter-info
+          display: flex
+          flex-direction: column
+          overflow: hidden
+          min-width: 0
+          .user-filter-name
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+          .user-filter-email
+            font-size: 13px
+            color: $mid
+            overflow: hidden
+            text-overflow: ellipsis
+            white-space: nowrap
+        &:hover
+          background-color: rgb(243, 243, 240)
+        &.no-results
+          color: $mid
+          cursor: default
+          &:hover
+            background: none
+
 div.nested_set
   position: relative
   p:last-child
@@ -737,47 +838,49 @@ a.no-bg-image
   &.notion
     svg 
       width: 19px
-      margin-left: 4px
-  &.gdoc
+      margin-left: 2px
+  &.pdf, &.png, &.memo, &.gdoc, &.notion
     svg 
-      margin-left: 1px
-  &.pdf, &.png
-    svg 
-      margin-top: -2px
+      margin-top: -3px
       fill: $pearl_black
+  
+  svg.icon + span
+    margin-left: 7px
 
 
 a.document
+  width: 100%
   display: inline-block
   padding: 6px 0 0 34px
   min-height: 20px
   line-height: 30px
   color: $pearl_black
+  cursor: pointer
+  text-decoration: none
+  transition: background-color 0.1s ease
+  border-radius: 5px
   background:
     repeat: no-repeat
-    position: 0 0
+    position: -2px 4px
     image: image-url('droom/icons.png')
+  &:active
+    background-color: $grey50
   &.pdf
     background-position: 0 -48px
-    +hover
     .icon
       color: #ff0000
   &.gdoc, &.notion
-    +hover
     .icon
       color: #2e62ce
   &.doc, &.docx
     padding: 6px 0 0 30px
-    background-position: 0px -92px
-    +hover
+    background-position: -2px -92px
   &.xls, &.xlsx
-    padding: 6px 0 0 32px
-    background-position: 0 -140px
-    +hover
+    padding: 6px 0 0 34px
+    background-position: -2px -140px
   &.mp4, &.mov, &.ogg
     padding: 6px 0 0 32px
-    background-position: 0px -188px
-    +hover
+    background-position: -2px -188px
   &.waiting
     color: $pale
     background-position: 8px 8px

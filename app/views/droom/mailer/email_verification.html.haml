@@ -1,0 +1,24 @@
+- support_email = Settings.email.it_support
+- url = Settings.url + '/verify_email' + '?' + {token: @token, destination: @destination}.to_param
+
+%p
+  Dear
+  = @user.given_name + ','
+
+%p
+  We have received a request to update the primary email address on your Croucher account to
+  = @new_email + "."
+  To complete this change and keep your account secure, we need to confirm that this address belongs to you.
+
+%p
+  Please verify your new email address by clicking
+  = link_to('here', url, target: '_blank', style: 'text-decoration: none; color: #EE3A43; cursor: pointer;') + '.'
+  Once verified, your new email will be used for all future sign-ins and account communications.
+
+%p
+  Thank you for helping us keep your account secure.
+
+%p
+  Best regards,
+  %br
+  The Croucher Team

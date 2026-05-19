@@ -6,40 +6,52 @@
 - narrow ||= false
 - character_count = narrow ? 28 : 64
 
-%li.document.text-preview-title.f-20{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id}}
-  - if document.google_doc_link.present?
-    - detail_url = document.google_doc_link
-    - extension = 'gdoc'
-  - elsif document.notion_page_link.present?
-    - detail_url = document.notion_page_link
-    - extension = 'notion'
+%li.document{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id, scan_status: document.respond_to?(:scan_status) ? document.scan_status : 'clean'}}
+  - if (link_info = document_external_link_info(document))
+    - detail_url = link_info[:url]
+    - extension = link_info[:extension]
   - else
     - extension = document.file_extension.downcase
     - detail_url = droom.folder_document_url(document.folder, document)
-  
-  - cssclasses = "document #{extension}"
-  - cssclasses << ' no-bg-image' if %w[pdf gdoc notion png jpg jpeg webp].include?(extension)
-  
-  - unless skip_gdoc && (document.google_doc_link.present? || document.notion_page_link.present?)
+
+  - cssclasses = "document #{extension} no-bg-image"
+
+  - unless skip_gdoc && document_has_external_link?(document)
     - if sortable
       %span.drag-handle{title: "Drag to reorder"}
         %svg.icon
           %use{"xlink:href": "#grid_symbol"}
 
     = link_to detail_url, class: cssclasses, target: "_blank" do
-      - if %w[pdf png jpg jpeg webp].include?(extension)
-        %svg.icon.standard
+      - if %w[doc docx pdf txt gdoc notion memo].include?(extension)
+        %svg.icon.standard{style: "margin-top: -4px;"}
           %use{"xlink:href" => "#pdf_symbol"}
-      - elsif extension == 'gdoc'
-        %svg.icon.standard
-          %use{"xlink:href" => "#google_doc_symbol"}
-      - elsif extension == 'notion'
-        %svg.icon.standard
-          %use{"xlink:href" => "#notion_symbol"}
+      - elsif %w[jpg jpeg png psd tiff tif webp].include?(extension)
+        %svg.icon.standard{style: "margin-top: -4px;"}
+          %use{"xlink:href" => "#image_symbol"}
+      - elsif %w[xls xlsx csv].include?(extension)
+        %svg.icon.standard{style: "margin-top: -4px;"}
+          %use{"xlink:href" => "#spreadsheet_symbol"}
+      - elsif %w[zip rar gz tar 7z].include?(extension)
+        %svg.icon.standard{style: "margin-top: -3px;"}
+          %use{"xlink:href" => "#folder_closed_symbol"}
+      - else
+        %svg.icon.standard{style: "margin-top: -4px;"}
+          %use{"xlink:href" => "#document_noline_symbol"}
       %span
         = shorten(document.name, 100, '')
     - unless omit_menu
-      .standard-btn-group.inline.folder-action-pos
+      .standard-btn-group.inline.action-menu-pos.t-8
         .more-actions
           = action_menulink(document, class: 'toggle-commands-dropdown')
           = action_menu(document)
+
+  - if document.respond_to?(:scan_status) && document.scan_status == "pending"
+    %span.scan-status.scanning{title: "File is being scanned for viruses"}
+      Scanning...
+  - elsif document.respond_to?(:scan_status) && document.scan_status == "infected"
+    %span.scan-status.infected{title: "This file was found to contain malware and has been removed"}
+      Malware detected
+  - elsif document.respond_to?(:scan_status) && document.scan_status == "scan_error"
+    %span.scan-status.scan-error{title: "Virus scan could not be completed"}
+      Scan error

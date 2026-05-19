@@ -3,6 +3,10 @@ require 'tempfile'
 module Droom::Concerns::ScanAttachment
   extend ActiveSupport::Concern
 
+  # Files larger than this threshold (in bytes) will be scanned asynchronously
+  # via a background job instead of blocking the HTTP request.
+  LARGE_FILE_THRESHOLD = 25.megabytes
+
   class_methods do
     def scan_attachment(name)
       validate do
@@ -15,7 +19,23 @@ module Droom::Concerns::ScanAttachment
 
         attachable = attachment_change.attachable
         next unless attachable
-        file_to_scan = nil
+
+        # For large files, skip synchronous scan and defer to background job.
+        # The document model will set scan_status = "pending" and enqueue the job after save.
+        file_size = case attachable
+                    when ActionDispatch::Http::UploadedFile
+                      attachable.size
+                    when Hash
+                      attachable[:io]&.size
+                    else
+                      0
+                    end
+
+        if file_size && file_size > LARGE_FILE_THRESHOLD && self.respond_to?(:scan_status=)
+          self.scan_status = "pending"
+          Rails.logger.info "[ScanAttachment] Large file detected (#{(file_size / 1.megabyte.to_f).round(1)}MB), deferring virus scan to background job"
+          next
+        end
 
         case attachable
         when ActionDispatch::Http::UploadedFile
@@ -31,7 +51,21 @@ module Droom::Concerns::ScanAttachment
           end
         end
       end
+
+      # After committing a record with pending scan, enqueue background scan job
+      # Only register once even if scan_attachment is called multiple times
+      unless @_scan_job_callback_registered
+        after_commit :enqueue_scan_job_if_pending, if: -> { respond_to?(:scan_status) && saved_change_to_attribute?("scan_status") && scan_status == "pending" }
+        @_scan_job_callback_registered = true
+      end
     end
+  end
+
+  def enqueue_scan_job_if_pending
+    Droom::ScanDocumentFileJob.perform_later(self.id)
+    Rails.logger.info "[ScanAttachment] Enqueued background virus scan for document ##{self.id}"
+  rescue => e
+    Rails.logger.error "[ScanAttachment] Failed to enqueue scan job for document ##{self.id}: #{e.message}"
   end
 
   # Below methods are used for scanning attachments outside of the model validation context and can be used in controllers or services.

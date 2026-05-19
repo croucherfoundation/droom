@@ -11,6 +11,8 @@ module Droom
     belongs_to :holder, :polymorphic => true
     has_many :documents, -> {order(position: :asc, file_file_name: :asc)}, :dependent => :destroy
     has_many :personal_folders, :dependent => :destroy
+    has_many :favourites, :as => :favouritable, :dependent => :destroy
+    has_many :shares, :as => :shareable, :dependent => :destroy
 
     before_validation :set_properties
     after_save :set_file_path
@@ -19,6 +21,36 @@ module Droom
     default_scope -> { includes(:documents).order(:position) }
 
     scope :non_roots, -> { where.not(ancestry: nil) }
+    scope :not_hidden, -> { where(hidden: false) }
+
+    scope :by_type, -> type {
+      type == 'folders' ? all : none
+    }
+    scope :created_by, -> user_id {
+      where(created_by_id: user_id)
+    }
+    # Library view scopes
+    scope :owned_by, -> user {
+      where(created_by_id: user.id)
+    }
+    # Merges new sharing (droom_shares) with legacy sharing (personal_folders).
+    # Includes folders shared directly OR via an ancestor folder being shared.
+    # Excludes own items and data_room items.
+    scope :shared_with, -> user {
+      directly_shared_ids = Droom::Share.for_user(user).of_type('Droom::Folder').pluck(:shareable_id)
+      personal_folder_ids = user.personal_folders.pluck(:folder_id)
+      # Expand shared folders to include all their descendants
+      ancestor_folder_ids = Droom::Folder.where(id: directly_shared_ids).flat_map { |f| f.subtree_ids }
+      all_ids = (ancestor_folder_ids + personal_folder_ids).uniq
+      where(id: all_ids)
+        .where.not(created_by_id: user.id)
+        .where("#{table_name}.data_room != 1 OR #{table_name}.data_room IS NULL")
+    }
+    scope :data_room, -> { where("#{table_name}.data_room = 1") }
+    scope :favourited_by, -> user {
+      joins('INNER JOIN droom_favourites AS df ON droom_folders.id = df.favouritable_id AND df.favouritable_type = "Droom::Folder"')
+        .where(["df.user_id = ?", user.id])
+    }
     scope :all_private, -> { where("#{table_name}.private = 1") }
     scope :not_private, -> { where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL") }
     scope :all_public, -> { where("#{table_name}.public = 1 AND #{table_name}.private <> 1 OR #{table_name}.private IS NULL") }
@@ -41,6 +73,13 @@ module Droom
 
     def automatic?
       holder || !parent && (name == "Events" || name == "Groups")
+    end
+
+    def self.home_documents_folder
+      find_or_create_by!(name: "Home Documents", ancestry: nil, hidden: true) do |f|
+        f.slug = "home-documents"
+        f.public = true
+      end
     end
 
     def visible_to?(user)
@@ -85,10 +124,14 @@ module Droom
       !populated?
     end
 
-    def folder_path
+    def folder_path(fullpath=false)
       folders = is_event? ? [] : [self.name]
       if self.ancestors.present?
-        folders << ancestors.reject{|x| x.parent_id.nil? || x.holder_type.present?}.map{|x| x.name }.flatten
+        if fullpath 
+          folders << ancestors.reject{|x| x.holder_type.present? }.map{|x| x.name }.flatten
+        else
+          folders << ancestors.reject{|x| x.parent_id.nil? || x.holder_type.present?}.map{|x| x.name }.flatten
+        end
       end
       "/" + folders.flatten.reverse.join('/')
     end
@@ -168,6 +211,24 @@ module Droom
     def distribute_confidentiality
       documents.each {|document| document.set_confidentiality!(confidential?) }
       children.each {|folder| folder.set_confidentiality!(confidential?) }
+    end
+
+    ## Search
+    #
+    searchkick callbacks: :async, default_fields: [:name], highlight: [:name]
+    after_save :reindex
+
+    def search_data
+      {
+        name: name || "",
+        item_type: "folder",
+        folder_id: ancestor_ids + [id],
+        folder_path: folder_path(true),
+        created_by_id: created_by_id,
+        modified_at: updated_at,
+        confidential: confidential?,
+        data_room: self.data_room?
+      }
     end
 
     def set_file_path

@@ -3,6 +3,7 @@
 - here ||= event == @event
 - skip_gdoc = true
 - is_outside_event = event&.calendar_id == 2
+- has_date_range = event.end_date.present?
 - omit_document ||= false
 
 - event_master_id = event.master_id || event.id
@@ -43,7 +44,7 @@
                 = event.venue.definite_name
               %span.separator ·
 
-            - if is_outside_event
+            - if has_date_range
               %time.date_range
                 = render 'droom/shared/date', event: event
             - else 

@@ -4,7 +4,11 @@
 - content_for :standfirst do
   = t :password_reset_welcome
 
+- reset_destination = params[:destination].presence || params[:backto].presence
+
 = form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put, :class => "user reset" }) do |f|
   = f.hidden_field :reset_password_token
+  = hidden_field_tag :destination, reset_destination
+  = hidden_field_tag "#{resource_name}[destination]", reset_destination
   
   = render "droom/users/edit/password_fields", f: f, user: resource, with_submit: true

@@ -1,0 +1,12 @@
+- events = current_user.upcoming_invited_events.limit(5)
+
+%section.event_list
+  #events
+    %h3.standard-h3-title
+      = link_to t(:your_upcoming_events), main_app.calendar_url
+      
+    - if events.any?
+      = render :partial => "droom/events/event", :collection => events, :locals => {:brief => true}
+    - else
+      %p.nothing
+        = t :no_events

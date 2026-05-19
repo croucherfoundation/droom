@@ -259,7 +259,7 @@
         this.toggle = bind(this.toggle, this);
         this.place = bind(this.place, this);
         this._link = $(element);
-        this._selector = "[data-for=\"" + (this._link.attr('data-menu')) + "\"]";
+        this._selector = "[data-for=\"" + (this._link.attr('data-action-menu')) + "\"]";
         this._link.click(this.toggle);
         ActionMenu.remember(this);
       }

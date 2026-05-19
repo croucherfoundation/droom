@@ -80,7 +80,8 @@ module Droom
     # defer_confirmation is also set by remote services that send out their own invitations,
     # eg. when a new user is invited to screen an application round.
     #
-    attr_accessor :defer_confirmation, :send_confirmation, :confirming, :other_id
+    attr_accessor :defer_confirmation, :send_confirmation, :confirming, :other_id,
+            :reset_password_destination
 
     def ability
       @ability ||= Ability.new(self)
@@ -95,7 +96,25 @@ module Droom
     end
 
     def skip_session_limitable?
-      needs_setup?
+      email_confirmation? || needs_setup?
+    end
+
+    def email_confirmation?
+      email_record = changed_email_record
+      return false unless email_record
+
+      email_record.pending_email? || recently_changed_email?(email_record)
+    end
+
+    def changed_email_record
+      changed_email = Thread.current[:changed_email]
+      return nil if changed_email.blank?
+
+      emails.find_by(email: changed_email)
+    end
+
+    def recently_changed_email?(email_record)
+      email_record.updated_at.present? && email_record.updated_at >= 5.minutes.ago
     end
 
     def really_send_confirmation?
@@ -313,6 +332,14 @@ module Droom
       groups.any? { |group| group.slug.match(/applicants/i) }
     end
 
+    def screener?
+      groups.any? { |group| group.slug.match(/screeners/i) }
+    end
+
+    def interviewer?
+      groups.any? { |group| group.slug.match(/interviewers/i) }
+    end
+
     ## Group memberships
     #
     has_many :memberships, :dependent => :destroy
@@ -388,6 +415,10 @@ module Droom
       email?
     end
 
+    def upcoming_invited_events
+      events.merge(Droom::Event.future_and_current).order('start ASC')
+    end
+
     scope :personally_invited_to_event, -> event {
       joins('LEFT OUTER JOIN droom_invitations on droom_users.id = droom_invitations.user_id').where('droom_invitations.group_invitation_id is null AND droom_invitations.event_id = ?', event.id)
     }
@@ -409,6 +440,9 @@ module Droom
     #
     has_many :personal_folders
     has_many :folders, :through => :personal_folders
+    has_many :favourites, :dependent => :destroy
+    has_many :shares_received, :class_name => "Droom::Share", :foreign_key => :shared_with_id, :dependent => :destroy
+    has_many :shares_given, :class_name => "Droom::Share", :foreign_key => :shared_by_id, :dependent => :destroy
 
     def add_personal_folders(folders=[])
       self.folders << folders if folders
@@ -463,6 +497,7 @@ module Droom
     #
     def self.send_reset_password_instructions(attributes = {})
       email = attributes[:email]
+      destination = attributes[:destination].presence || attributes[:backto].presence
       user  = from_email(email).first
 
       if user
@@ -472,6 +507,7 @@ module Droom
         end
 
         if valid_for_delivery?(email)
+          user.reset_password_destination = destination
           user.instance_variable_set(:@reset_password_target_email, email)
           user.send_reset_password_instructions
         else
@@ -483,6 +519,12 @@ module Droom
       end
 
       user
+    end
+
+    def reset_password_link_params(token)
+      { reset_password_token: token }.tap do |params|
+        params[:destination] = reset_password_destination if reset_password_destination.present?
+      end
     end
 
     def self.send_unlock_instructions(attributes = {})

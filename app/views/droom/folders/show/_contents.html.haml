@@ -1,0 +1,34 @@
+
+- folder_ul_class = @sortable ? "sortable_folders" : ""
+- files_ul_class = @sortable ? "sortable_files" : ""
+
+.folders{data: {panel: false, refreshing: droom.folder_path(@folder, source: 'library', format: :js), droppable: droom.folder_documents_path(@folder), picker: "#upload_to_folder_#{@folder.id}", queue: "#upload_queue"}, id: "folder_#{@folder.id}"}
+
+  - unless @sortable
+    %form.faceter{action: droom.folder_path(@folder), method: :get, id: "folder_search", style: "width: auto", data: {target: "#folder_#{@folder.id}"}}
+      = hidden_field_tag :page, params[:page]
+      = hidden_field_tag :show, params[:show]
+      = hidden_field_tag :view, @library_view
+      = hidden_field_tag :user_id, params[:user_id], class: 'facet'
+
+      = render "shared/page_search", title: t(:search_in_folder, name: @folder.name)
+
+      .croucher_search_detail.showing
+        = render 'droom/folders/library_filters'
+
+  - if @searching
+    = render partial: 'droom/folders/search_results'
+  - else
+    - if @folder.children.any? || @folder.documents.any?
+      %ul#folders{class: folder_ul_class}
+        - @folder.children.each do |child|
+          = render partial: 'droom/folders/folder', locals: {folder: child, sortable: @sortable || false}
+        %li.files
+          %ul#upload_queue{class: files_ul_class, data: {folder_id: @folder.id}}
+            - @folder.documents.each do |doc|
+              = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
+    - else
+      %ul#upload_queue{data: {folder_id: @folder.id}}
+      .nomatch
+        %h2
+          Sorry: no documents

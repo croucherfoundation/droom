@@ -26,6 +26,7 @@ en:
   add_group: "Add group"
   add_member: "Add group member"
   add_member_to: "Add a member to the %{name} group"
+  add_memo_page: "Add Memo page"
   add_new_link: "Add link"
   add_new_user: "Invite a new network user"
   add_notice: "Add a notice"
@@ -35,7 +36,7 @@ en:
   add_permission: "Add permission"
   add_permission_to: "Add permission to %{name}"
   add_phone: "Add phone number"
-  add_root_folder: "Add root folder"
+  add_root_folder: "Add folder"
   add_service: "Add service"
   add_subfolder: Add sub-folder
   move_folder: "Move folder"
@@ -154,7 +155,7 @@ en:
   edit: "Edit"
   edit_account: "Edit account settings"
   edit_account_info: "Edit account information"
-  edit_account_of: "Edit account settings for %{name}"
+  edit_account_of: "Edit account settings of %{name}"
   edit_biography: "Edit biography"
   edit_contact: "Edit contact"
   edit_event: "Edit event"
@@ -172,7 +173,7 @@ en:
   edit_person: "Edit person"
   edit_personal_info: "Edit personal information"
   edit_profile: "Edit profile"
-  edit_profile_of: "Edit profile for %{name}"
+  edit_profile_of: "Edit personal information of %{name}"
   edit_scrap: "Edit"
   edit_service: "Edit service"
   edit_symbol: "❡"
@@ -183,7 +184,7 @@ en:
   edit_your_organisation_note: "This information will be visible to other users."
   edit_your_preferences: "Edit your account settings"
   edit_your_preferences_note: "These are administrative settings like your password and preferred email address. "
-  edit_your_profile: "Edit your address book card"
+  edit_your_profile: "Edit your personal information"
   edit_your_profile_note: 'This is the contact information that <a href="%{url}" data-action="popup">other people see</a> when you are listed.'
   email_note: "This can be any address that we have on file for you."
   errors:
@@ -266,8 +267,10 @@ en:
         attached_to: "Attached to"
         name: "Document name"
         description: "Document description"
-        gogole_doc_name: 'Google Doc name'
-        gogole_doc_link: 'Google Doc link'
+        google_doc_name: 'Google Doc name'
+        google_doc_link: 'Google Doc link'
+        memo_page_name: 'Memo page name'
+        memo_page_link: 'Memo page link'
         notion_page_name: 'Notion page name'
         notion_page_link: 'Notion page link'
       event:
@@ -641,6 +644,8 @@ en:
   signed_in_as: "Signed in as <strong>%{name}</strong>."
   slug_note: "Spaces and odd characters will be replaced with dashes"
   sorry_no_matches: "Sorry: we have found nothing matching <strong>%{q}</strong>."
+  search_in_library: "Search in Library"
+  search_in_folder: "Search in %{name}"
   stream: "Stream"
   stream_events: "Stream events"
   subfolder_count:
@@ -686,6 +691,8 @@ en:
   uninvite: "uninvite"
   unlock_account_insturctions_not_delivered: "We cannot currently deliver emails to the email address you have given us. This may be due to a full mailbox or an incorrect email address. Please check and resolve this issue before requesting another account unlock."
   upcoming_events: "Upcoming events"
+  your_upcoming_events: "Your upcoming events"
+  no_upcoming_events: "No upcoming events."
   update_person_email: "also update your public email address"
   user_account_number: "Account number"
   user_admin: "User admin"

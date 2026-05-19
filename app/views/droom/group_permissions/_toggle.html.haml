@@ -16,7 +16,7 @@
 
 -if read_permission.present? || read_event_documents_permission.present?
   - classname = permission.define_permission_color(group_permission, group, read_permission, read_event_documents_permission)
-  = link_to t(:disallow), "#", :class => "#{classname}", :data => { :menu => "#{linkid}" }
+  = link_to t(:disallow), "#", :class => "#{classname}", :data => { 'action-menu' => "#{linkid}" }
   = render :partial => "droom/group_permissions/action_menu", :locals => { :group_permission => group_permission, :group => group, :permission => permission, :read_permission => read_permission, :read_event_documents_permission => read_event_documents_permission, :linkid => linkid, classname: classname }
 
 -else

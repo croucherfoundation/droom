@@ -1,6 +1,11 @@
 module Droom
   module DroomHelper
 
+    def favourite_for(item)
+      return nil unless current_user
+      current_user.favourites.find_by(favouritable: item)
+    end
+
     def droom_template_exists?(path)
       lookup_context.find_all("droom/#{path}").any?
     end
@@ -187,6 +192,22 @@ module Droom
       if user_signed_in? && !admin? && !committee? && !trustee? && !developer? && !staff?
         groups = current_user.groups
         return groups.any? && groups.exists?(slug: 'scholars')
+      end
+      return false
+    end
+
+    def screener?
+      if user_signed_in? && !admin? && !committee? && !trustee? && !developer? && !staff?
+        groups = current_user.groups
+        return groups.any? && groups.exists?(slug: 'screeners')
+      end
+      return false
+    end
+
+    def interviewer?
+      if user_signed_in? && !admin? && !committee? && !trustee? && !developer? && !staff?
+        groups = current_user.groups
+        return groups.any? && groups.exists?(slug: 'interviewers')
       end
       return false
     end

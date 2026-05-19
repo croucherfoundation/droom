@@ -1,2 +1,10 @@
-%div{id: ("single_folder" if params[:shareable] == 'true')}
-  = render :partial => "folder"
+- content_for :pagetitle do
+  = @folder.name
+
+- content_for :subnavbar do
+  = render partial: 'shared/library_subnavbar'
+
+- content_for :buttons do
+  = render partial: 'droom/folders/show_buttons'
+
+= render partial: 'droom/folders/show/contents'

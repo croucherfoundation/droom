@@ -29,6 +29,8 @@
 //= require droom/pdf_upload
 //= require droom/file_selector
 //= require droom/folder_sorting
+//= require droom/user_filter
+//= require droom/sharing
 //= require_self 
 
 
@@ -167,7 +169,7 @@
       this.find_including_self('form[data-action="quick_search"]').quick_search_form();
       this.find_including_self('form[data-action="table_filter"]').table_filter_form();
       this.find_including_self('div[data-panel]').panel();
-      // this.find_including_self('[data-menu]').action_menu();
+      this.find_including_self('[data-action-menu]').action_menu();
       this.find_including_self('table[data-hoverable]').hover_table();
       this.find_including_self('[data-action="append_fields"]').appends_fields();
       this.find_including_self('[data-action="remove_fields"]').removes_fields();
@@ -180,6 +182,7 @@
       this.find_including_self('.person_selector').person_selector();
       this.find_including_self('.person_picker').person_picker();
       this.find_including_self('.group_picker').group_picker();
+      this.find_including_self('.user-filter-target').userFilter();
       this.find_including_self('fieldset[data-role="password"]').password_fieldset();
       this.find_including_self('[data-role="single_password"]').single_password_field();
       this.find_including_self('input[type="submit"]').submitter();
@@ -200,6 +203,8 @@
         this.find_including_self('.sortable_files').sortable_files();
         this.find_including_self('.sortable_folders').sortable_folders();
       }
+      this.find_including_self('form.user.custom-validate').custom_validation();
+      this.find_including_self('form.user button.eye-icon').password_toggle();
       this.find_including_self('[data-draggable]').draggable();
       this.find_including_self('.gridbox:not(.notice)').gridBox();
       this.find_including_self('.tagger').tagger();

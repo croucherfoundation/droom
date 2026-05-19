@@ -62,7 +62,7 @@ table.toggles
     min-height: 36px
     line-height: 1
     text-align: left
-    a
+    a:not(.more-actions a)
       color: $dark
       +hover
   td.spacer
@@ -70,6 +70,7 @@ table.toggles
   td.toggle
     min-height: 32px
     text-align: center
+    position: relative
     span.no, span.yes, a.yes, a.no, a.read, a.read-documents
       +icon("droom/minisymbols.png")
       margin: 5px 0 0 3px

@@ -231,7 +231,7 @@
               }
               className = $(response).attr("class");
               id = $(response).attr("id");
-              _this._selector = $("[data-menu=\"" + id + "\"]");
+              _this._selector = $("[data-action-menu=\"" + id + "\"]");
               $(_this._selector).removeClass().addClass(className);
               return $(".menu").hide();
             };

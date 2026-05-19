@@ -114,6 +114,15 @@ module Droom
               end
             end
 
+            # Panel members (screeners/interviewers) can see their assigned events
+            # even without full data room or calendar permissions.
+            if user.screener? || user.interviewer?
+              can :read, Droom::Event, id: user.event_ids
+              can :read, Droom::Invitation, user_id: user.id
+              can :past, Droom::Event, id: user.event_ids
+              can :calendar, Droom::Event, id: user.event_ids
+            end
+
           else
             # What can an external user do? Nothing, by default, but the main app can add permissions.
 

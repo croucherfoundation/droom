@@ -16,7 +16,7 @@
         = t :edit_event
 
       = link_to '#', class: "btn standard-upload-btn", data: {role: 'upload-file'}  do
-        = image_tag 'svg/add.svg', width: 20, height: 20 
+        = image_tag 'svg/add.svg', width: 18, height: 18 
         = t :add_document
       
       .more-actions
@@ -25,9 +25,10 @@
 - content_for :after_content do
   - other_events = Droom::Event.of_type(@event.event_type).other_than(@event).by_date_descending.limit(3)
 
-  %h3.text-subtitle.mb_subtitle
-    Other events of this type
-  .card_container 
-    = render :partial => 'droom/events/card', collection: other_events
+  - if other_events.any?
+    %h3.text-subtitle.mb_subtitle
+      Other events of this type
+    .card_container 
+      = render :partial => 'droom/events/card', collection: other_events
   
 = render :partial => 'droom/events/full', :object => @event, :locals => {:full_attachments => true}

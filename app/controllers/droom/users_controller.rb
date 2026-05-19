@@ -1,7 +1,7 @@
 module Droom
   class UsersController < Droom::DroomController
     helper Droom::DroomHelper
-    respond_to :html, :js
+    respond_to :html, :js, :json
     skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation]
     before_action :set_view, only: [:show, :new, :edit, :update]
     # before_action :search_users, only: [:admin]
@@ -25,6 +25,20 @@ module Droom
       @users = @users.internal.in_name_order.includes(:emails, :phones, :addresses)
       @users = @users.matching(params[:q]) unless params[:q].blank?
       render :vcf => @users.map(&:to_vcf)
+    end
+
+    def search
+      q = params[:q].to_s.strip
+      query = q.present? ? q : "*"
+      results = Droom::User.search(query, where: { deleted: false }, order: { name: :asc }, limit: 10)
+      render json: results.map { |u|
+        {
+          id: u.id,
+          name: u.formal_name,
+          email: u.email,
+          avatar_url: u.image.url
+        }
+      }
     end
 
     def show
@@ -184,11 +198,12 @@ module Droom
     end
 
     def suggest
-      limit = params[:limit].presence || 10
-      if params[:email].present?
-        @users = Droom::User.joins(:emails).where("droom_emails.email LIKE ?", "%#{params[:email]}%").limit(limit)
-      elsif params[:name].present?
-        @users = Droom::User.where("given_name LIKE ? OR family_name LIKE ?", "%#{params[:name]}%", "%#{params[:name]}%").limit(limit)
+      limit = (params[:limit].presence || 10).to_i
+      query = params[:name].presence || params[:email].presence || params[:q].presence
+      if query.present?
+        @users = Droom::User.search(query, page: 1, per_page: limit, order: { _score: :desc })
+      else
+        @users = []
       end
 
       render json: format_users(@users)

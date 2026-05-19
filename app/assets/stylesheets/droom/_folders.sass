@@ -61,7 +61,51 @@ ul#folders, #single_folder, div.attachments
     &.more
       margin-top: -1px
 
+  // Documents shown alongside folders (e.g. folder show page)
+  > li.files
+    padding: 0
+    > ul
+      padding: 0
+      margin: 0
+  li.document
+    position: relative
+    white-space: nowrap
+    display: flex
+    align-items: center
+    > .drag-handle
+      position: absolute
+      left: -35px
+      top: 50%
+      transform: translateY(-50%)
+      display: inline-block
+      padding: 0
+      border-radius: 5px
+      cursor: grab
+      opacity: 0
+      svg.icon
+        width: 23px
+        height: 26px
+      &:hover
+        opacity: 1 !important
+      &:active
+        cursor: grabbing
+    &:hover > .drag-handle
+      opacity: 0.6
+    a.document, a.document.no-bg-image
+      font-size: 20px !important
+      line-height: 24px !important
+      min-height: 24px
+      padding: 4px 0 !important
+      display: flex
+      align-items: center
+      svg.icon + span
+        margin-left: 7px
+
   li.folder
+    &.empty
+      a.folder
+        svg
+          opacity: 0.45
     ul:not(.actions)
       padding-left: 16px
       margin: 0
@@ -69,26 +113,38 @@ ul#folders, #single_folder, div.attachments
         padding-left: 32px
     a.folder
       +big_icon_link("droom/folder.png")
+      width: 100%
       text-indent: 32px
       color: $text
       white-space: nowrap
-      font-weight: bold
-      // +hover
+      padding: 4px 0
+      cursor: pointer
+      text-decoration: none
+      transition: background-color 0.1s ease
+      border-radius: 5px
       +waitable
+      &.no-bg-image
+        text-indent: 0
+        padding-left: 0
+        background-image: none
+        display: flex
+        align-items: center
+        svg.icon + span
+          margin-left: 6px
       &:hover
         background-position: 0 0
-      padding: 4px 0
+      &:active
+        background-color: $grey50
     &.root
       > a.folder
-        text-indent: 32px
+        text-indent: 15px
+        &.no-bg-image
+          text-indent: 0
     &.open
       > a.folder
         background-position: 0 -192px
-        // &:hover
-        //   background-position: 0px -192px
     &.empty
       > a.folder
-        color: $pale
         background-position: 0 -144px
       &.open
         > a.folder
@@ -107,16 +163,15 @@ ul#folders, #single_folder, div.attachments
     > .drag-handle
       position: absolute
       left: -35px
-      top: -2px
+      top: 50%
+      transform: translateY(-50%)
       display: inline-block
-      vertical-align: middle
       padding: 0
       border-radius: 5px
       cursor: grab
       opacity: 0
       .grip-icon
         display: block
-        vertical-align: middle
       
       svg.icon
         width: 23px
@@ -142,6 +197,31 @@ ul#folders, #single_folder, div.attachments
     background-color: $iconbg
   
   .folder-drag
+    opacity: 0.5
+
+  // Scan status indicators for documents with async virus scanning
+  .scan-status
+    display: inline-block
+    font-size: 12px
+    padding: 2px 8px
+    border-radius: 5px
+    margin-left: 8px
+    white-space: nowrap
+    &.scanning
+      color: $color-black
+      background-color: $transgreen
+      animation: pulse-scan 2s infinite
+    &.infected
+      color: $red
+      background-color: $palered
+    &.scan-error
+      color: $warmred
+      background-color: $palered
+
+@keyframes pulse-scan
+  0%, 100%
+    opacity: 1
+  50%
     opacity: 0.5
 
 // Hide drag handles on mobile/touch devices

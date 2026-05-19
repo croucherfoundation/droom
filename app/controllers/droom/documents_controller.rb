@@ -2,9 +2,9 @@ module Droom
   class DocumentsController < Droom::DroomController
     respond_to :html, :js, :json
 
-    before_action :get_folder, except: [:index, :suggest, :reposition]
+    before_action :get_folder, except: [:index, :suggest, :reposition, :scan_status]
     before_action :select_documents, only: [:index, :suggest]
-    load_and_authorize_resource :document, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest]
+    load_and_authorize_resource :document, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest, :scan_status]
     before_action :find_by_name, only: [:create]
 
 
@@ -34,6 +34,8 @@ module Droom
       if @data.exists?
         render json: 'File with this name already exists!', status: 409
       else
+        @document.created_by = current_user
+        @document.data_room = @folder.data_room?
         if @document.save
           if %w{listing simple}.include?(params[:view])
             render :partial => params[:view]
@@ -51,7 +53,7 @@ module Droom
     end
 
     def update
-      if @document.google_doc_link.present? || @document.notion_page_link.present?
+      if @document.google_doc_link.present? || @document.notion_page_link.present? || @document.memo_page_link.present?
         @data = Document.where(name: document_params[:name], folder_id: params[:folder_id])
         @document.assign_attributes(document_params)
         if @data.blank?
@@ -86,6 +88,14 @@ module Droom
       @document.destroy
       # @document.enqueue_for_croucher_deindexing # calling search_client method
       head :ok
+    end
+
+    def scan_status
+      @document = Droom::Document.find(params[:id])
+      render json: {
+        id: @document.id,
+        scan_status: @document.respond_to?(:scan_status) ? @document.scan_status : "clean"
+      }
     end
 
   protected
@@ -131,7 +141,7 @@ module Droom
 
     def document_params
       if params[:document]
-        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link, :notion_page_link)
+        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link, :notion_page_link, :memo_page_link, :data_room)
       else
         {}
       end

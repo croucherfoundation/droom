@@ -1,12 +1,11 @@
+- content_for :subnavbar do
+  = render :partial => 'shared/library_subnavbar'
+
 - content_for :pagetitle do
   = t :library
 
-- content_for :title do
-  = t :library
-
-- content_for :standfirst do
-  %p
-    = t :library_introduction
-
-#main.folders{:data => {:panel => false}}
-  = render :partial => 'folders'
+- content_for :buttons do
+  = render 'more_actions'
+    
+#main.folders{data: {panel: false}}
+  = render partial: 'folders'
