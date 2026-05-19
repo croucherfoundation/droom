@@ -11,7 +11,7 @@ module Droom
       @recipient = share.shared_with
       @sharer = share.shared_by
       @shareable = share.shareable
-      @subject = "#{@sharer.name} shared a document with you: #{@shareable.name}"
+      @subject = "#{@sharer.name} shared a #{@shareable.class.name.demodulize.downcase} with you: #{@shareable.name}"
 
       if Rails.env.production?
         @email = @recipient.email
