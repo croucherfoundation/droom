@@ -96,7 +96,25 @@ module Droom
     end
 
     def skip_session_limitable?
-      needs_setup?
+      email_confirmation? || needs_setup?
+    end
+
+    def email_confirmation?
+      email_record = changed_email_record
+      return false unless email_record
+
+      email_record.pending_email? || recently_changed_email?(email_record)
+    end
+
+    def changed_email_record
+      changed_email = Thread.current[:changed_email]
+      return nil if changed_email.blank?
+
+      emails.find_by(email: changed_email)
+    end
+
+    def recently_changed_email?(email_record)
+      email_record.updated_at.present? && email_record.updated_at >= 5.minutes.ago
     end
 
     def really_send_confirmation?
@@ -321,7 +339,7 @@ module Droom
     def interviewer?
       groups.any? { |group| group.slug.match(/interviewers/i) }
     end
-    
+
     ## Group memberships
     #
     has_many :memberships, :dependent => :destroy

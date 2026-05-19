@@ -58,10 +58,11 @@ module Droom
       mail(to: @email, subject: @subject)
     end
 
-    def email_verification(user, new_email, token)
+    def email_verification(user, new_email, token, destination)
       @user = user
       @new_email = new_email
       @token = token
+      @destination = destination
       @subject = I18n.t("subjects.user.email_verification", default: "Verify your email address")
       verification_email = Rails.env.production? ? new_email : Settings.email.sandbox
 

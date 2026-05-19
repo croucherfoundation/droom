@@ -10,7 +10,7 @@ class EmailVerificationService
 
   # Request verification for a new primary email.
   # Creates a pending email record and stores token.
-  def request_verification(new_email)
+  def request_verification(new_email, destination)
     return false unless validate_email(new_email)
     return false unless check_uniqueness(new_email)
 
@@ -25,7 +25,7 @@ class EmailVerificationService
       email_verification_sent_at: Time.zone.now
     )
 
-    Droom.mailer.send(:email_verification, user, new_email, token).deliver_later
+    Droom.mailer.send(:email_verification, user, new_email, token, destination).deliver_later
     true
   end
 
@@ -47,7 +47,7 @@ class EmailVerificationService
 
     service = new(user)
     if service.verify(token, email_record)
-      { success: true, user: user }
+      { success: true, user_id: email_record.user_id }
     else
       { success: false, errors: service.errors }
     end
@@ -68,12 +68,6 @@ class EmailVerificationService
 
     unless ActiveSupport::SecurityUtils.secure_compare(email_record.email_verification_token, token)
       @errors = { token: ["is invalid"] }
-      return false
-    end
-
-    if token_expired?(email_record)
-      clear_pending_email!(email_record)
-      @errors = { token: ["has expired"] }
       return false
     end
 
@@ -116,15 +110,11 @@ class EmailVerificationService
     user.emails.find_by(pending_email: true)
   end
 
-  def token_expired?(email_record)
-    email_record.email_verification_sent_at < VERIFICATION_TOKEN_EXPIRY.ago
-  end
-
   def promote_pending_email!(email_record)
     new_email = email_record.email
 
     # Update the first email in the user's email list
-    primary_email = user.emails.where(default: true).first || user.emails.first
+    primary_email = user.emails.first
     primary_email.update(email: new_email) if primary_email
 
     # Delete the pending email record

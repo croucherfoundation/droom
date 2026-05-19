@@ -65,8 +65,9 @@ module Droom::Api
 
       # Handle primary email change (requires verification)
       new_email = account_params[:email]
+      destination = account_params[:destination]
       if new_email.present? && new_email != @user.email
-        unless service.request_verification(new_email)
+        unless service.request_verification(new_email, destination)
           return render json: { errors: service.errors }, status: :unprocessable_entity
         end
 
@@ -279,7 +280,7 @@ module Droom::Api
     def account_params
       params.require(:user).permit(
        :password, :password_confirmation, :timezone,
-       :first_name, :last_name, :email, :backup_email,
+       :first_name, :last_name, :email, :backup_email, :destination,
         emails: [:id, :email, :email_type],
         addresses: [:id, :address, :address_type]
       )

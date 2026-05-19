@@ -2,11 +2,11 @@ module Droom
   class UsersController < Droom::DroomController
     helper Droom::DroomHelper
     respond_to :html, :js, :json
-    skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation, :verify_email]
+    skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation]
     before_action :set_view, only: [:show, :new, :edit, :update]
     # before_action :search_users, only: [:admin]
     # before_action :self_unless_admin, only: [:edit, :update]
-    load_and_authorize_resource except: [:setup, :set_organisation, :verify_email]
+    load_and_authorize_resource except: [:setup, :set_organisation]
 
     # :index is the old user-list view, preserved for historical compatibility but now v. clunky.
     # :admin is the new elasticsearch index. The actual search work is done in `search_users`.
@@ -207,18 +207,6 @@ module Droom
       end
 
       render json: format_users(@users)
-    end
-
-    def verify_email
-      result = EmailVerificationService.verify_by_token(params[:token])
-
-      if result[:success]
-        flash[:notice] = "Email verified successfully."
-        redirect_to root_path
-      else
-        flash[:alert] = "Email verification failed:"
-        redirect_to root_path
-      end
     end
 
   protected

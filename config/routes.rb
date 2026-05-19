@@ -209,7 +209,6 @@ Droom::Engine.routes.draw do
     get :admin, on: :collection
     get :search, on: :collection
     put :setup, on: :collection
-    get :verify_email, on: :collection
     put :reinvite, on: :member
     put :merge, on: :member
     # put "/subsume/:other_id" => "users#subsume", as: 'subsume'
@@ -241,5 +240,6 @@ Droom::Engine.routes.draw do
   get "/noticeboard" => "scraps#index", as: :noticeboard
   get "/profile" => "users#edit", as: :profile, defaults: {view: "profile"}
   get "/page/:slug" => "pages#published", as: :published_page, defaults: {format: "html"}
+  get "/verify_email" => "email_verifications#show", as: :verify_email
 
 end
