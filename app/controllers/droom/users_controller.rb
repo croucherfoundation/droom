@@ -237,7 +237,8 @@ module Droom
           mobile: user.mobile,
           address: user.address,
           correspondence_address: user.correspondence_address,
-          prompt: user.email
+          prompt: user.email,
+          avatar_url: user.thumbnail
         }
       end
     end

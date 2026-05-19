@@ -180,7 +180,7 @@ Droom::Engine.routes.draw do
     resources :folders
   end
 
-  resources :shares, only: [:create, :destroy] do
+  resources :shares, only: [:create, :destroy, :show] do
     get :recipients, on: :collection
   end
   resources :favourites, only: [:create, :destroy]
