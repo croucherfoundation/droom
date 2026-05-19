@@ -19,8 +19,19 @@
     - else
       - unless @favourited_documents&.any?
         .nomatch
-          %h2
-            = t :sorry_no_matches
+          - case @library_view
+          - when 'favourites'
+            %h2 No favourites yet.
+            %p Bookmark files to find them here.
+          - when 'shared'
+            %h2 Nothing shared with you yet.
+          - when 'my_library'
+            %h2 No files yet.
+            %p Upload a file to get started.
+          - when 'data_room'
+            %h2 No files in the Data Room.
+          - else
+            %h2 No items found
 
     - if @favourited_documents&.any?
       %ul.folders

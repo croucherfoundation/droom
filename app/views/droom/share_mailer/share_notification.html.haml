@@ -1,0 +1,23 @@
+%p
+  Dear
+  = @recipient.email_name + ','
+
+%p
+  You've been invited to view
+  %strong
+    = @shareable.name
+  in the Croucher Foundation data room.
+
+- if @shareable.is_a?(Droom::Folder)
+  %p
+    %a{href: "#{Settings.url}/shares/#{@share.token}", style: "color:#EE3A43;text-decoration:none;"}
+      View folder
+- else
+  %p
+    %a{href: "#{Settings.url}/shares/#{@share.token}", style: "color:#EE3A43;text-decoration:none;"}
+      View document
+
+%p
+  Best regards,
+  %br
+  The Croucher Team
