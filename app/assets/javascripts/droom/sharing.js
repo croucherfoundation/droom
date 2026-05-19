@@ -62,12 +62,14 @@
     html += '</ul>';
 
     // Share with data room section
-    html += '<p style="margin-top:24px;"><strong>Share with data room</strong></p>';
-    html += '<p>Data room access</p>';
-    html += '<p><select class="share-data-room-access">';
+    html += '<div style="margin-top:24px;"><strong>Share with data room</strong></div>';
+    html += '<div style="margin-top:8px;"><select class="share-data-room-access" style="width:100%;padding:8px;font-size:14px;">';
     html += '<option value="none"' + (!dataRoom ? ' selected' : '') + '>Not shared with data room</option>';
-    html += '<option value="shared"' + (dataRoom ? ' selected' : '') + '>Share with data room</option>';
-    html += '</select></p>';
+    html += '<option value="shared"' + (dataRoom ? ' selected' : '') + '>Shared</option>';
+    html += '</select></div>';
+    html += '<div class="share-data-room-hint" style="margin-top:4px;font-size:13px;color:#666;">';
+    html += dataRoom ? 'Everyone in the data room can open and read this.' : 'Only you and invited people can access this.';
+    html += '</div>';
     html += '</div></div></div>';
 
     // Footer — matches Croucher standard modal
@@ -81,11 +83,16 @@
   }
 
   function shareRecipientRow(share) {
-    var initials = (share.name || '').split(' ').map(function(n){ return n.charAt(0).toUpperCase(); }).join('').substring(0,2);
+    var avatarHtml;
+    if (share.avatar_url) {
+      avatarHtml = '<img src="' + escapeHtml(share.avatar_url) + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;">';
+    } else {
+      var initials = (share.name || '').split(' ').map(function(n){ return n.charAt(0).toUpperCase(); }).join('').substring(0,2);
+      avatarHtml = '<span style="width:32px;height:32px;border-radius:50%;background:#8ecae6;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0;">' + initials + '</span>';
+    }
     var html = '<li data-share-id="' + share.id + '" data-user-id="' + share.user_id + '" style="display:flex;align-items:center;padding:8px 0;gap:12px;">';
-    html += '<span style="width:32px;height:32px;border-radius:50%;background:#8ecae6;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0;">' + initials + '</span>';
+    html += avatarHtml;
     html += '<span style="flex:1;"><strong>' + escapeHtml(share.name) + '</strong><br><small>' + escapeHtml(share.email || '') + '</small></span>';
-    html += '<select class="share-permission-select" data-share-id="' + share.id + '"><option value="view" selected>Can view</option></select>';
     html += '<a class="share-remove-btn" data-share-id="' + share.id + '" style="cursor:pointer;font-size:18px;color:#999;text-decoration:none;" title="Remove">&times;</a>';
     html += '</li>';
     return html;
@@ -95,6 +102,14 @@
   $(document).on('click', '.share-modal-close', function(e) {
     e.preventDefault();
     $('.share-modal-overlay').remove();
+  });
+
+  // Update hint when data room dropdown changes
+  $(document).on('change input', 'select.share-data-room-access', function() {
+    var hint = $(this).val() === 'shared'
+      ? 'Everyone in the data room can open and read this.'
+      : 'Only you and invited people can access this.';
+    $(this).closest('.inputs').find('.share-data-room-hint').text(hint);
   });
 
   // Focus input when clicking the input box
@@ -300,6 +315,7 @@
       headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
       success: function() {
         $modal.remove();
+        showFavouriteAlert('Sharing updated.');
       },
       error: function() {
         $modal.remove();

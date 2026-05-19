@@ -1,6 +1,22 @@
 module Droom
   class SharesController < Droom::DroomController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, except: [:show]
+
+    # Token-based auto-login link from share notification email
+    def show
+      share = Droom::Share.find_by(token: params[:id])
+      if share.nil?
+        redirect_to root_path, alert: "This share link is invalid or has expired." and return
+      end
+
+      sign_in(share.shared_with)
+
+      if share.shareable_type == 'Droom::Folder'
+        redirect_to folder_path(share.shareable)
+      else
+        redirect_to folder_document_path(share.shareable.folder, share.shareable)
+      end
+    end
 
     def create
       shareable = find_shareable
@@ -13,7 +29,10 @@ module Droom
         if share.new_record?
           share.shared_by = current_user
           share.save
-          created << share if share.persisted?
+          if share.persisted?
+            created << share
+            Droom::ShareMailer.share_notification(share).deliver_later
+          end
         end
       end
 
@@ -54,7 +73,8 @@ module Droom
         id: share.id,
         user_id: share.shared_with_id,
         name: share.shared_with.name,
-        email: share.shared_with.email
+        email: share.shared_with.email,
+        avatar_url: share.shared_with.thumbnail
       }
     end
   end
