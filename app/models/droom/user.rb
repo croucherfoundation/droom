@@ -584,6 +584,14 @@ module Droom
       end
     end
 
+    def primary_email
+      emails.not_pending&.first&.email
+    end
+
+    def backup_email
+      emails.not_pending&.second&.email
+    end
+
     def can_receive_email?(email_address=nil)
       email_record = emails.where(email: email_address).first
       email_record ||= get_email

@@ -67,7 +67,7 @@ class Droom::UserSerializer < ActiveModel::Serializer
   end
 
   def email_list
-    object.emails.pluck(:email).join('; ')
+    object.emails.not_pending.pluck(:email).join('; ')
   end
 
   def phone_list
@@ -112,7 +112,7 @@ class Droom::UserSerializer < ActiveModel::Serializer
   def profile_image
     object.image.attached? ? object.image.url : ""
   end
-  
+
   def needs_setup
     object.needs_setup?
   end

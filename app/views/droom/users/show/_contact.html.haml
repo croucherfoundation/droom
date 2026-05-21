@@ -5,7 +5,7 @@
   - if @user
     %ul.address_book.text-body-secondary
       - if @user.emails.any?
-        = render partial: "droom/emails/email", collection: @user.emails.by_preference
+        = render partial: "droom/emails/email", collection: @user.emails.not_pending.by_preference
       - else
         %p.problem
           = link_to droom.edit_user_url(@user, view: 'contact'), data: {action: 'popup', affected: "section.contacts, section.user"} do

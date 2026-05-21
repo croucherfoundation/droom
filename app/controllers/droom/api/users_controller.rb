@@ -76,11 +76,14 @@ module Droom::Api
         end
       end
 
-      # Handle backup_email update (update 2nd email in list or add if not present)
-      if account_params[:backup_email].present?
+      # Handle backup_email update (update 2nd email in list, add, or remove if blank)
+      if account_params.key?(:backup_email)
         backup_email = account_params[:backup_email]
-        emails = @user.emails.to_a
-        if emails.size >= 2
+        emails = @user.emails.not_pending.to_a
+
+        if backup_email.blank?
+          emails[1].destroy if emails.size >= 2
+        elsif emails.size >= 2
           emails[1].email = backup_email
           emails[1].save if emails[1].changed?
         else

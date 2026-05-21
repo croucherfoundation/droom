@@ -9,21 +9,23 @@ class EmailVerificationService
   end
 
   # Request verification for a new primary email.
-  # Creates a pending email record and stores token.
+  # Creates or refreshes a pending email record and stores token.
   def request_verification(new_email, destination)
     return false unless validate_email(new_email)
     return false unless check_uniqueness(new_email)
 
     token = SecureRandom.hex(12)
+    email_record = user.emails.find_or_initialize_by(email: new_email, pending_email: true)
 
-    # Create a new pending email record
-    Droom::Email.create(
-      user_id: user.id,
-      email: new_email,
-      pending_email: true,
+    email_record.assign_attributes(
       email_verification_token: token,
       email_verification_sent_at: Time.zone.now
     )
+
+    unless email_record.save
+      @errors = email_record.errors.to_hash.presence || { email: ["could not be saved"] }
+      return false
+    end
 
     Droom.mailer.send(:email_verification, user, new_email, token, destination).deliver_later
     true

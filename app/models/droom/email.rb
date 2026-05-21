@@ -8,6 +8,11 @@ module Droom
     scope :populated, -> {
       where('email <> "" and email IS NOT NULL')
     }
+
+    scope :not_pending, -> {
+      where(pending_email: [false, nil])
+    }
+
     def check_user_exist
       value= []
       if self.user.present?

@@ -17,7 +17,7 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
              :show_initial_image
 
   def email_list
-    object.emails.map do |email|
+    object.emails.not_pending.map do |email|
       {
         id: email.id,
         email: email.email,
@@ -65,7 +65,7 @@ class Droom::UserMinimalSerializer < ActiveModel::Serializer
         standard: ""
       }
     end
-    
+
     def profile_image
       object.image.attached? ? object.image.url : ""
     end

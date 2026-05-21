@@ -13,7 +13,7 @@ module Droom
       unless user
         err_msg = "Invalid or expired verification link."
         write_verification_cache(error_message: err_msg)
-        return redirect_to params[:destination].presence || root_path
+        return redirect_to redirect_destination(err_msg: err_msg)
       end
       result = EmailVerificationService.verify_by_token(params[:token])
       if result[:success] && user
@@ -21,17 +21,31 @@ module Droom
           sign_in(user)
           Droom::AuthCookie.new(cookies).set(user)
         end
-        write_verification_cache(success_message: "Email verified successfully.")
+        msg = "Email verified successfully."
+        write_verification_cache(success_message: msg)
+        redirect_to redirect_destination(msg: msg)
       else
-        write_verification_cache(error_message: "Invalid or expired verification link.")
+        err_msg = "Invalid or expired verification link."
+        write_verification_cache(error_message: err_msg)
+        redirect_to redirect_destination(err_msg: err_msg)
       end
-      redirect_to params[:destination].presence || root_path
     end
 
     private
 
     def skip_session_limitable_for_verification
       RequestStore.store[:skip_session_limitable] = true
+    end
+
+    def redirect_destination(msg: nil, err_msg: nil)
+      return root_path unless params[:destination].present?
+      base = params[:destination].presence
+      uri = URI.parse(base)
+      query_params = URI.decode_www_form(uri.query || "")
+      query_params << ["msg", msg] if msg
+      query_params << ["err_msg", err_msg] if err_msg
+      uri.query = URI.encode_www_form(query_params)
+      uri.to_s
     end
 
     def write_verification_cache(error_message: nil, success_message: nil)
