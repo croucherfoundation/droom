@@ -23,7 +23,9 @@ class Droom::UserAuthSerializer < ActiveModel::Serializer
              :profile_image,
              :show_initial_image,
              :needs_setup,
-             :confirmation_token
+             :confirmation_token,
+             :primary_email,
+             :backup_email
 
   def name
     object.colloquial_name
