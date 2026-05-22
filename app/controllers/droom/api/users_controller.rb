@@ -94,13 +94,21 @@ module Droom::Api
       @user.assign_attributes(timezone: account_params[:timezone]) if account_params[:timezone].present?
       @user.assign_attributes(given_name: account_params[:first_name]) if account_params[:first_name].present?
       @user.assign_attributes(family_name: account_params[:last_name]) if account_params[:last_name].present?
-      @user.assign_attributes(password: account_params[:password], password_confirmation: account_params[:password_confirmation]) if account_params[:password].present?
+      @user.assign_attributes(password: account_params[:new_password]) if account_params[:new_password].present?
 
       if @user.save
-        @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
+        @user.update_password_attendee(password: account_params[:new_password]) if account_params[:new_password].present?
       end
 
       render json: @user, serializer: Droom::UserMinimalSerializer
+    end
+
+    def check_valid_password
+      if @user.valid_password?(params[:user][:current_password])
+        head :ok
+      else
+        render json: { error: "current_password is incorrect" }, status: :unprocessable_entity
+      end
     end
 
     def send_otp
@@ -282,7 +290,7 @@ module Droom::Api
 
     def account_params
       params.require(:user).permit(
-       :password, :password_confirmation, :timezone,
+       :password, :password_confirmation, :current_password, :new_password, :timezone,
        :first_name, :last_name, :email, :backup_email, :destination,
         emails: [:id, :email, :email_type],
         addresses: [:id, :address, :address_type]
