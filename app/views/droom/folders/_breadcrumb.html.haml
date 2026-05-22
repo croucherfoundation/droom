@@ -8,4 +8,4 @@
     - @folder.ancestors.each do |ancestor|
       = link_to ancestor.name, droom.folder_path(ancestor)
     
-    %span= @folder.name
+    %a.active= @folder.name
