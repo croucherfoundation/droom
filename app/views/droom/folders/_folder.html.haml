@@ -37,4 +37,6 @@
       %svg.icon.standard{style: "margin-top: -3px;"}
         %use{"xlink:href" => "#folder_closed_symbol"}
       %span= shorten(title, length)
+    %span.date-meta
+      = folder.last_modified_at.strftime("%-d %b %Y")
 

@@ -9,7 +9,7 @@ ul.filing
   li.document
     position: relative
     white-space: nowrap
-    height: 37.54px
+    height: 44px
   li.files
     display: inline-block
     width: 100%
@@ -47,7 +47,7 @@ div.attachments
     li.folder
       // margin-left: 5px
       a.folder
-        font-weight: bold
+        font-weight: normal
         color: $text
   &.col
     ul
@@ -70,8 +70,15 @@ ul#folders, #single_folder, div.attachments
   li.document
     position: relative
     white-space: nowrap
+    height: 44px
     display: flex
     align-items: center
+    border-radius: 4px
+    cursor: pointer
+    &:hover
+      background: none
+    &:active
+      background-color: $grey50
     > .drag-handle
       position: absolute
       left: -35px
@@ -98,13 +105,38 @@ ul#folders, #single_folder, div.attachments
       padding: 4px 0 !important
       display: flex
       align-items: center
+      flex: 1
+      text-decoration: none
+      color: inherit
+      font-weight: normal
+      cursor: pointer
+      &:hover
+        text-decoration: none
+        color: inherit
+        background: none
       svg.icon.standard
         width: 20px
         height: 20px
       svg.icon + span
-        margin-left: 7px
+        margin-left: 14px
+    span.date-meta
+      margin-left: auto
+      font-size: 13px
+      color: $mid
+      white-space: nowrap
+      padding-right: 40px
+      margin-top: -3px
 
   li.folder
+    height: 44px
+    display: flex
+    align-items: center
+    border-radius: 5px
+    cursor: pointer
+    &:hover
+      background: none
+    &:active
+      background-color: $grey50
     &.empty
       a.folder
         svg
@@ -116,13 +148,14 @@ ul#folders, #single_folder, div.attachments
         padding-left: 32px
     a.folder
       +big_icon_link("droom/folder.png")
-      width: 100%
+      flex: 1
       text-indent: 32px
       color: $text
       white-space: nowrap
       padding: 4px 0
       cursor: pointer
       text-decoration: none
+      font-weight: normal
       transition: background-color 0.1s ease
       border-radius: 5px
       +waitable
@@ -139,11 +172,18 @@ ul#folders, #single_folder, div.attachments
           width: 20px
           height: 20px
         svg.icon + span
-          margin-left: 6px
+          margin-left: 16px
       &:hover
-        background-position: 0 0
-      &:active
-        background-color: $grey50
+        background: none
+        text-decoration: none
+        color: $text
+    span.date-meta
+      margin-left: auto
+      font-size: 13px
+      color: $mid
+      white-space: nowrap
+      padding-right: 40px
+      margin-top: -3px
     &.root
       > a.folder
         text-indent: 15px
