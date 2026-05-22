@@ -1,0 +1,11 @@
+- if @folder 
+  - view_labels = {'my_library' => 'myLibrary', 'shared' => 'Shared with me', 'data_room' => 'Data Room', 'favourites' => 'Favourites'}
+  - root_label = view_labels[@library_view] || 'myLibrary'
+  
+  %section.breadcrumb-container.pt
+    = link_to root_label, droom.folders_path(view: @library_view)
+    
+    - @folder.ancestors.each do |ancestor|
+      = link_to ancestor.name, droom.folder_path(ancestor)
+    
+    %span= @folder.name

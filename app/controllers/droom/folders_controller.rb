@@ -46,6 +46,7 @@ module Droom
     end
 
     def show
+      set_library_view
       @sortable = params[:sortable] == 'true'
       @skip_gdoc = params[:skip_gdoc] == 'true'
       @q = params[:q].to_s.strip

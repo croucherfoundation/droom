@@ -1,6 +1,9 @@
 - content_for :pagetitle do
   = @folder.name
 
+- content_for :breadcrumb do
+  = render partial: 'droom/folders/breadcrumb'
+
 - content_for :subnavbar do
   = render partial: 'shared/library_subnavbar'
 
