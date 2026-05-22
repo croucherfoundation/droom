@@ -14,6 +14,7 @@ Droom::Engine.routes.draw do
     resources :emails, only: [:show, :index, :create, :update, :destroy]
     resources :users do
       post 'reindex', on: :member, as: :reindex
+      post 'check_valid_password', on: :member, as: :check_valid_password
       put 'upload_profile_image', on: :member, as: :upload_profile_image
       put 'update_contact',  on: :member, as: :update_contact
       get "whoami" , on: :collection, as: :whoami
