@@ -3,7 +3,7 @@ module Droom
     helper Droom::DroomHelper
     respond_to :html, :js, :json
     skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation]
-    before_action :set_view, only: [:show, :new, :edit, :update]
+    before_action :set_view, only: [:show, :new, :edit, :update, :account_setting_update]
     # before_action :search_users, only: [:admin]
     # before_action :self_unless_admin, only: [:edit, :update]
     load_and_authorize_resource except: [:setup, :set_organisation]
@@ -91,6 +91,52 @@ module Droom
       end
     end
 
+    def account_setting_update
+      return if password_change_invalid?(user_params)
+      permitted = user_params
+      permitted.delete(:current_password)
+      permitted.delete(:password_confirmation)
+      new_password = permitted.delete(:password)
+
+      @user.show_initial_image = false if permitted[:image].present?
+      @user.show_initial_image = true if params[:remove_image] == "true"
+
+      modified_params, verification_email = handle_email_updates(permitted)
+      modified_params[:password] = new_password if new_password.present?
+
+      if @user.update(modified_params)
+        if verification_email
+          message = "Verification email sent to #{verification_email}. Please check your inbox."
+          if request.xhr?
+            render json: { message: message, verification_required: true }, status: :ok
+          else
+            flash[:notice] = message
+            redirect_to request.referrer || user_url(@user)
+          end
+        else
+          respond_with @user, location: user_url(view: @view) do |format|
+            format.js { head :no_content }
+          end
+        end
+      else
+        email_error = @user.errors.full_messages.find do |msg|
+          msg.end_with?("Email address provided is invalid")
+        end
+        if email_error
+          if request.xhr?
+            render json: { errors: ["Email address provided is invalid"] }, status: :unprocessable_entity
+          else
+            flash[:alert] = "Email address provided is invalid"
+            redirect_to request.referer
+          end
+        end
+      end
+    rescue ActiveModel::UnknownAttributeError => e
+      render json: { error_message: e.message }, status: :unprocessable_entity
+    rescue StandardError => e
+      render json: { error_message: "An unexpected error occurred: #{e.message}" }, status: :internal_server_error
+    end
+
     # This has to handle small preference updates over js and large account-management forms over html.
     #
     def update
@@ -110,7 +156,6 @@ module Droom
           Person.update_personal_info(@user.person.id, {
             emergency_contact: params[:emergency_contact]
           })
-
         end
         if params[:reload] == "true"
           redirect_to request.referrer
@@ -216,6 +261,42 @@ module Droom
 
   protected
 
+    def password_change_invalid?(user_params)
+      current_password = user_params[:current_password]
+      new_password = user_params[:password]
+
+      return false if current_password.blank? && new_password.blank?
+
+      if current_password.blank?
+        return render_update_error("Current password is required to set a new password.")
+      end
+
+      unless @user.valid_password?(current_password)
+        return render_update_error("Current password is incorrect.")
+      end
+
+      if new_password.blank?
+        return render_update_error("New password cannot be blank.")
+      end
+
+      if new_password == current_password
+        return render_update_error("New password must be different from current password.")
+      end
+
+      false
+    end
+
+    def render_update_error(message, status = :unprocessable_entity)
+      if request.xhr?
+        render json: { error_message: message }, status: status
+      else
+        flash[:alert] = message
+        redirect_to request.referer
+      end
+
+      true
+    end
+
     def format_users(users)
       users.map do |user|
         {
@@ -259,61 +340,47 @@ module Droom
       @users = Droom::User.search query, **arguments
     end
 
-    # Handle primary and backup email updates differently
-    # Primary email (index 0 or address_type_id 1) → requires verification
-    # Backup email (index 1 or address_type_id 4) → direct update
+    # Handle primary and backup email updates differently.
+    # Returns [modified_params, verification_email_or_nil]
+    #
+    # Primary email (index 0) → requires verification; excluded from update params.
+    # Backup email (index 1) → direct update, no verification needed.
     def handle_email_updates(params_hash)
       emails_attrs = params_hash[:emails_attributes]
-      return params_hash unless emails_attrs.present?
+      return [params_hash, nil] unless emails_attrs.present?
 
       emails_attrs = emails_attrs.to_h if emails_attrs.respond_to?(:to_h)
       modified_emails_attrs = {}
+      verification_email = nil
 
       emails_attrs.each do |index, email_data|
         email_data = email_data.to_h.with_indifferent_access
         is_primary = index.to_s == "0"
 
         if is_primary && email_data[:email].present?
-          # Check if primary email actually changed
           current_primary = @user.emails.first
           new_email = email_data[:email]
 
           if current_primary.nil? || current_primary.email != new_email
-            # Primary email changed - trigger verification
+            # Primary email changed — send verification, exclude from update
             verification_service = EmailVerificationService.new(@user)
-            if verification_service.request_verification(new_email, nil)
-              # Don't include primary email in the update - it will be updated after verification
-              if request.xhr?
-                render json: {
-                  message: "Verification email sent to #{new_email}. Please check your inbox.",
-                  verification_required: true
-                }, status: :ok
-              else
-                flash[:notice] = "Verification email sent to #{new_email}. Please check your inbox."
-                redirect_to request.referrer || user_url(@user)
-              end
-              return params_hash.except(:emails_attributes)
-            else
-              if request.xhr?
-                render json: { errors: verification_service.errors }, status: :unprocessable_entity
-              else
-                flash[:alert] = verification_service.errors.join(", ")
-                redirect_to request.referrer || user_url(@user)
-              end
-              return params_hash
+            unless verification_service.request_verification(new_email, nil)
+              render_update_error(verification_service.errors.join(", "))
+              return [params_hash, nil]
             end
+            verification_email = new_email
           else
-            # Primary email not changed, include it
+            # Primary email unchanged — keep it in params
             modified_emails_attrs[index] = email_data
           end
         else
-          # Backup email - include for direct update
+          # Backup email — always include for direct update
           modified_emails_attrs[index] = email_data
         end
       end
 
       params_hash[:emails_attributes] = modified_emails_attrs.presence
-      params_hash
+      [params_hash, verification_email]
     end
 
     def user_params
@@ -326,6 +393,7 @@ module Droom
         :organisation_id,
         :affiliation,
         :email,
+        :current_password,
         :password,
         :password_confirmation,
         :phone,
