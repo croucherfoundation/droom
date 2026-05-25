@@ -1,0 +1,34 @@
+- shareable_type = local_assigns[:shareable_type]
+- shareable_id = local_assigns[:shareable_id]
+- shareable_name = local_assigns[:shareable_name]
+
+.standard-modal-overlay.share-modal-overlay{data: {shareable_type: shareable_type, shareable_id: shareable_id}}
+  .standard-modal-container.active{style: "max-width: 480px;"}
+    .standard-modal-header
+      .standard-modal-close-btn.cursor-pointer.share-modal-close
+        %svg.standard_close_icon
+          %use{"xlink:href" => "#standard_close_symbol"}
+      .container
+        %h2= t(:share_item, default: "Share")
+        %p.text-muted= shareable_name
+
+    .standard-modal-body
+      .container
+        .share-user-search
+          %input.share-user-input{type: "text", placeholder: t(:search_users, default: "Search by name..."), autocomplete: "off"}
+          %ul.share-user-suggestions
+
+        .share-selected-users{style: "margin-top: 12px;"}
+          %ul.share-selected-list
+
+        %hr{style: "margin: 16px 0;"}
+
+        .share-existing{style: "max-height: 200px; overflow-y: auto;"}
+          %h4= t(:shared_with, default: "Already shared with")
+          %ul.share-existing-list
+            %li.no-shares= t(:no_shares_yet, default: "Not shared with anyone yet")
+
+    .standard-modal-footer
+      .buttons
+        %a.cancel.submit-button.share-modal-close= t(:cancel, default: "Cancel")
+        %a.croucher-standard-btn.inline.share-submit-btn= t(:share, default: "Share")

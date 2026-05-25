@@ -96,7 +96,7 @@ module Droom
     end
 
     def skip_session_limitable?
-      needs_setup?
+      RequestStore.store[:skip_session_limitable] || needs_setup?
     end
 
     def really_send_confirmation?
@@ -321,7 +321,7 @@ module Droom
     def interviewer?
       groups.any? { |group| group.slug.match(/interviewers/i) }
     end
-    
+
     ## Group memberships
     #
     has_many :memberships, :dependent => :destroy
@@ -582,6 +582,14 @@ module Droom
           emails.build(email: email, address_type: address_type, default: true)
         end
       end
+    end
+
+    def primary_email
+      emails.not_pending&.first&.email
+    end
+
+    def backup_email
+      emails.not_pending&.second&.email
     end
 
     def can_receive_email?(email_address=nil)

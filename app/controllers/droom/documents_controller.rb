@@ -35,6 +35,7 @@ module Droom
         render json: 'File with this name already exists!', status: 409
       else
         @document.created_by = current_user
+        @document.data_room = @folder.data_room?
         if @document.save
           if %w{listing simple}.include?(params[:view])
             render :partial => params[:view]
@@ -140,7 +141,7 @@ module Droom
 
     def document_params
       if params[:document]
-        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link, :notion_page_link, :memo_page_link)
+        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link, :notion_page_link, :memo_page_link, :data_room)
       else
         {}
       end

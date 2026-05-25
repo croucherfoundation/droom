@@ -2,11 +2,11 @@ module Droom
   class UsersController < Droom::DroomController
     helper Droom::DroomHelper
     respond_to :html, :js, :json
-    skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation, :verify_email]
+    skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation]
     before_action :set_view, only: [:show, :new, :edit, :update]
     # before_action :search_users, only: [:admin]
     # before_action :self_unless_admin, only: [:edit, :update]
-    load_and_authorize_resource except: [:setup, :set_organisation, :verify_email]
+    load_and_authorize_resource except: [:setup, :set_organisation]
 
     # :index is the old user-list view, preserved for historical compatibility but now v. clunky.
     # :admin is the new elasticsearch index. The actual search work is done in `search_users`.
@@ -203,26 +203,15 @@ module Droom
     end
 
     def suggest
-      limit = params[:limit].presence || 10
-      if params[:email].present?
-        @users = Droom::User.joins(:emails).where("droom_emails.email LIKE ?", "%#{params[:email]}%").limit(limit)
-      elsif params[:name].present?
-        @users = Droom::User.where("given_name LIKE ? OR family_name LIKE ?", "%#{params[:name]}%", "%#{params[:name]}%").limit(limit)
+      limit = (params[:limit].presence || 10).to_i
+      query = params[:name].presence || params[:email].presence || params[:q].presence
+      if query.present?
+        @users = Droom::User.search(query, page: 1, per_page: limit, order: { _score: :desc })
+      else
+        @users = []
       end
 
       render json: format_users(@users)
-    end
-
-    def verify_email
-      result = EmailVerificationService.verify_by_token(params[:token])
-
-      if result[:success]
-        flash[:notice] = "Email verified successfully."
-        redirect_to root_path
-      else
-        flash[:alert] = "Email verification failed:"
-        redirect_to root_path
-      end
     end
 
   protected
@@ -241,7 +230,8 @@ module Droom
           mobile: user.mobile,
           address: user.address,
           correspondence_address: user.correspondence_address,
-          prompt: user.email
+          prompt: user.email,
+          avatar_url: user.thumbnail
         }
       end
     end

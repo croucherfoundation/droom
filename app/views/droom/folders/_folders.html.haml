@@ -17,11 +17,28 @@
     - if @folders.any?
       = render :partial => 'droom/folders/folder', :collection => @folders
     - else
-      .nomatch
-        %h2
-          = t :sorry_no_matches
+      - unless @favourited_documents&.any?
+        .nomatch
+          - case @library_view
+          - when 'favourites'
+            %p No favourites yet. Bookmark files to find them here.
+          - when 'shared'
+            %p Nothing shared with you yet.
+          - when 'my_library'
+            %p No files yet. Upload a file to get started.
+          - when 'data_room'
+            %p No files in the Data Room.
+          - else
+            %p No items found
 
-    - if @home_folder
+    - if @favourited_documents&.any?
+      %ul.folders
+        %li.files
+          %ul
+            - @favourited_documents.each do |doc|
+              = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
+
+    - if @home_folder && @library_view != 'favourites'
       #home_folder{data: {droppable: droom.folder_documents_path(@home_folder), picker: "#upload_to_folder_#{@home_folder.id}", queue: "#upload_queue", refreshes: "#home_folder"}}
         %ul.folders
           %li.files

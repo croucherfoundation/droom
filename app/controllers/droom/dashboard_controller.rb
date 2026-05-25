@@ -2,7 +2,7 @@ module Droom
   class DashboardController < Droom::DroomController
     respond_to :html, :js
     skip_authorization_check
-
+    prepend_before_action :transfer_flash_to_request_store
     before_action :prepare_summary, only: [:index]
 
     def index
@@ -24,6 +24,16 @@ module Droom
       @total_scholars = scholars.total_count
 
       @total_subscribers = MailchimpSubscribersCacheService.total_count
+    end
+
+    def transfer_flash_to_request_store
+      cached_data = Rails.cache.read("email_verification_cache")
+      return unless cached_data.present?
+
+      RequestStore.store[:skip_session_limitable] = true
+      flash.now[:notice] = cached_data[:success_message] if cached_data[:success_message].present?
+      flash.now[:alert] = cached_data[:error_message] if cached_data[:error_message].present?
+      Rails.cache.delete("email_verification_cache")
     end
   end
 end
