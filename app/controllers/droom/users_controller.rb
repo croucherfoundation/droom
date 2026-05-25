@@ -146,12 +146,7 @@ module Droom
       if user_params[:timezone] == "null"
         params[:user][:timezone] = nil
       end
-
-      # Handle primary email verification
-      modified_params = handle_email_updates(user_params)
-      return if performed? # Return early if verification email was sent
-
-      if @user.update(modified_params)
+      if @user.update(user_params)
         if params[:emergency_contact].present?
           Person.update_personal_info(@user.person.id, {
             emergency_contact: params[:emergency_contact]
