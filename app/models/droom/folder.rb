@@ -163,6 +163,14 @@ module Droom
       !parent
     end
 
+    # Most recent activity date considering immediate children.
+    def last_modified_at
+      dates = [updated_at]
+      dates << documents.maximum(:updated_at)
+      dates << children.maximum(:updated_at)
+      dates.compact.max
+    end
+
     def ancestor_of?(folder)
       folder && folder.ancestors.include?(self)
     end

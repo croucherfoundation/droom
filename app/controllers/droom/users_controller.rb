@@ -100,7 +100,12 @@ module Droom
       if user_params[:timezone] == "null"
         params[:user][:timezone] = nil
       end
-      if @user.update(user_params)
+
+      # Handle primary email verification
+      modified_params = handle_email_updates(user_params)
+      return if performed? # Return early if verification email was sent
+
+      if @user.update(modified_params)
         if params[:emergency_contact].present?
           Person.update_personal_info(@user.person.id, {
             emergency_contact: params[:emergency_contact]
@@ -252,6 +257,63 @@ module Droom
       end
 
       @users = Droom::User.search query, **arguments
+    end
+
+    # Handle primary and backup email updates differently
+    # Primary email (index 0 or address_type_id 1) → requires verification
+    # Backup email (index 1 or address_type_id 4) → direct update
+    def handle_email_updates(params_hash)
+      emails_attrs = params_hash[:emails_attributes]
+      return params_hash unless emails_attrs.present?
+
+      emails_attrs = emails_attrs.to_h if emails_attrs.respond_to?(:to_h)
+      modified_emails_attrs = {}
+
+      emails_attrs.each do |index, email_data|
+        email_data = email_data.to_h.with_indifferent_access
+        is_primary = index.to_s == "0"
+
+        if is_primary && email_data[:email].present?
+          # Check if primary email actually changed
+          current_primary = @user.emails.first
+          new_email = email_data[:email]
+
+          if current_primary.nil? || current_primary.email != new_email
+            # Primary email changed - trigger verification
+            verification_service = EmailVerificationService.new(@user)
+            if verification_service.request_verification(new_email, nil)
+              # Don't include primary email in the update - it will be updated after verification
+              if request.xhr?
+                render json: {
+                  message: "Verification email sent to #{new_email}. Please check your inbox.",
+                  verification_required: true
+                }, status: :ok
+              else
+                flash[:notice] = "Verification email sent to #{new_email}. Please check your inbox."
+                redirect_to request.referrer || user_url(@user)
+              end
+              return params_hash.except(:emails_attributes)
+            else
+              if request.xhr?
+                render json: { errors: verification_service.errors }, status: :unprocessable_entity
+              else
+                flash[:alert] = verification_service.errors.join(", ")
+                redirect_to request.referrer || user_url(@user)
+              end
+              return params_hash
+            end
+          else
+            # Primary email not changed, include it
+            modified_emails_attrs[index] = email_data
+          end
+        else
+          # Backup email - include for direct update
+          modified_emails_attrs[index] = email_data
+        end
+      end
+
+      params_hash[:emails_attributes] = modified_emails_attrs.presence
+      params_hash
     end
 
     def user_params

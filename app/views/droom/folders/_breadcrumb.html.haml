@@ -1,0 +1,10 @@
+-# Breadcrumb only shown when 2+ clickable items exist. Current folder is never displayed.
+- if @folder && @folder.ancestors.count >= 1
+  - view_labels = {'my_library' => 'myLibrary', 'shared' => 'Shared with me', 'data_room' => 'Data Room', 'favourites' => 'Favourites'}
+  - root_label = view_labels[@library_view] || 'myLibrary'
+  
+  %section.breadcrumb-container.pt
+    = link_to root_label, droom.folders_path(view: @library_view)
+    
+    - @folder.ancestors.each do |ancestor|
+      = link_to ancestor.name, droom.folder_path(ancestor)

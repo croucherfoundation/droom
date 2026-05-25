@@ -2,7 +2,7 @@
 
 - back_path = folder.parent ? droom.folder_path(folder.parent) : droom.folders_path
 
-.action.standard-btn-group.pt.pr.oy-visible
+.action.standard-btn-group.pt.pr.oy-visible.mobile-flex-start
   - unless @sortable
     = link_to back_path, class: "btn back-btn" do
       %svg
