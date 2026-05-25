@@ -271,17 +271,17 @@ module Droom
 
       emails_attrs.each do |index, email_data|
         email_data = email_data.to_h.with_indifferent_access
-        is_primary = index.to_s == "0" || email_data[:address_type_id].to_s == "1"
+        is_primary = index.to_s == "0"
 
         if is_primary && email_data[:email].present?
           # Check if primary email actually changed
-          current_primary = @user.emails.find_by(address_type_id: 1) || @user.emails.first
+          current_primary = @user.emails.first
           new_email = email_data[:email]
 
           if current_primary.nil? || current_primary.email != new_email
             # Primary email changed - trigger verification
             verification_service = EmailVerificationService.new(@user)
-            if verification_service.request_verification(new_email)
+            if verification_service.request_verification(new_email, nil)
               # Don't include primary email in the update - it will be updated after verification
               if request.xhr?
                 render json: {
