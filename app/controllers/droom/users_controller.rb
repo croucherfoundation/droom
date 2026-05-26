@@ -93,48 +93,23 @@ module Droom
 
     def account_setting_update
       return if password_change_invalid?(user_params)
-      permitted = user_params
-      permitted.delete(:current_password)
-      permitted.delete(:password_confirmation)
-      new_password = permitted.delete(:password)
 
-      @user.show_initial_image = false if permitted[:image].present?
-      @user.show_initial_image = true if params[:remove_image] == "true"
+      permitted = sanitized_password_params(user_params)
+      apply_image_preferences(permitted)
 
       modified_params, verification_email = handle_email_updates(permitted)
-      modified_params[:password] = new_password if new_password.present?
+      return if performed?
 
       if @user.update(modified_params)
-        if verification_email
-          message = "Verification email sent to #{verification_email}. Please check your inbox."
-          if request.xhr?
-            render json: { message: message, verification_required: true }, status: :ok
-          else
-            flash[:notice] = message
-            redirect_to request.referrer || user_url(@user)
-          end
-        else
-          respond_with @user, location: user_url(view: @view) do |format|
-            format.js { head :no_content }
-          end
-        end
+        respond_to_successful_update(verification_email)
       else
-        email_error = @user.errors.full_messages.find do |msg|
-          msg.end_with?("Email address provided is invalid")
-        end
-        if email_error
-          if request.xhr?
-            render json: { errors: ["Email address provided is invalid"] }, status: :unprocessable_entity
-          else
-            flash[:alert] = "Email address provided is invalid"
-            redirect_to request.referer
-          end
-        end
+        render_update_error(@user.errors.full_messages.first || "Unable to save changes.")
       end
     rescue ActiveModel::UnknownAttributeError => e
-      render json: { error_message: e.message }, status: :unprocessable_entity
+      render_update_error(e.message)
     rescue StandardError => e
-      render json: { error_message: "An unexpected error occurred: #{e.message}" }, status: :internal_server_error
+      render_update_error("An unexpected error occurred.", :internal_server_error)
+      Rails.logger.error("[AccountSettingUpdate] #{e.class}: #{e.message}\n#{e.backtrace.first(5).join("\n")}")
     end
 
     # This has to handle small preference updates over js and large account-management forms over html.
@@ -290,6 +265,40 @@ module Droom
       end
 
       true
+    end
+
+    def sanitized_password_params(attrs)
+      permitted = attrs.dup
+      permitted.delete(:current_password)
+      permitted.delete(:password_confirmation)
+      new_password = permitted.delete(:password)
+      permitted[:password] = new_password if new_password.present?
+      permitted
+    end
+
+    def apply_image_preferences(permitted)
+      @user.show_initial_image = false if permitted[:image].present?
+      @user.show_initial_image = true if params[:remove_image] == "true"
+    end
+
+    def respond_to_successful_update(verification_email = nil)
+      if verification_email
+        message = "Verification email sent to #{verification_email}. Please check your inbox."
+        if request.xhr?
+          render json: { message: message, verification_required: true }, status: :ok
+        else
+          flash[:notice] = message
+          redirect_to request.referrer || user_url(@user)
+        end
+      else
+        if request.xhr?
+          render json: { message: "Account settings saved successfully." }, status: :ok
+        else
+          respond_with @user, location: user_url(view: @view) do |format|
+            format.js { head :no_content }
+          end
+        end
+      end
     end
 
     def format_users(users)
