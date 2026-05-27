@@ -130,11 +130,7 @@ module Droom::Api
       attach_base64_image(@user, :image, profile_image) if profile_image.present?
       @user.show_initial_image = true if params[:user][:remove_image] == true || params[:user][:remove_image] == "true"
 
-      # Handle primary vs backup email updates
-      modified_params = handle_email_updates(user_params.except(:image))
-      return if performed? # Return if verification email was sent
-
-      if @user.update(modified_params)
+      if @user.update(user_params.except(:image))
         @user.class.sync_in_progress = false
         render json: @user.reload
       else

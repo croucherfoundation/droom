@@ -204,6 +204,7 @@ Droom::Engine.routes.draw do
 
   resources :users do
     get "activity" => "users#activity", as: :activity
+    match :account_setting_update, via: [:put, :patch], on: :member
     get :preferences, on: :member, as: :preferences
     put :preference, on: :member, as: :set_preference
     get :download, on: :collection
