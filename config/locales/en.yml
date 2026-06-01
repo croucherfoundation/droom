@@ -229,7 +229,7 @@ en:
   find_documents: "Find documents"
   find_people: "Find people"
   find_people_notes: "The quickest way to find a particular person is to start typing their name or email address here."
-  finish_time: "Finish?"
+  finish_time: "Finish? (optional)"
   folder: "folder"
   follow_stream: "Follow the stream in an RSS reader"
   forgot_password: "Forgotten your password?"
@@ -516,6 +516,9 @@ en:
   phone_unknown: "phone unknown"
   pic: "Person in charge"
   placeholders:
+    group:
+      name: "Name"
+      description: "Description (optional)"
     address:
       address: "Postal address"
     email:
@@ -536,11 +539,15 @@ en:
     event:
       cover_text: "Add meeting PDF cover details"
       datemark: "Click to change date"
-      description: "Please give a brief description"
-      venue_name: "Venue name"
-      url: "Website URL"
+      description: "Please give a brief description (optional)"
+      start_time: "Time"
+      finish_time: "Finish? (optional)"
+      venue_name: "Venue name (optional)"
+      video_conference_link: "Add video conference link (optional)"
+      url: "Website URL (optional)"
       start: "Event start date"
-      end_date: "Event end date"
+      end_date: "Event end date (optional)"
+      meeting_number: "Meeting number (optional)"
     organisation:
       chinese_name: "中国姓名"
       description: "Brief description. Please keep within about 100 words."
@@ -652,7 +659,7 @@ en:
     zero: ""
     one: "one subfolder"
     other: "%{count} subfolders"
-  subjects: 
+  subjects:
     user:
       otp_verification: "OTP Verification Code for Bank Account Update"
   subscribe_to_calendar: "Subscribe"
