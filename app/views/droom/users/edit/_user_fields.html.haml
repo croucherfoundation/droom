@@ -61,7 +61,7 @@
     = f.file_field :image, accept: 'image/*'
 
   .description
-    = f.text_area :description, class: "rte", data: {placeholder: t("placeholders.user.description")}
+    = f.text_area :description, class: "rte std-input-mt", data: {placeholder: t("placeholders.user.description")}
 
   - if user.id && FeatureFlag.enabled?('time-zone-feature', current_user)
     .note

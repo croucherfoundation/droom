@@ -3,7 +3,7 @@
 #note
   .standard-modal-overlay.active
     .standard-modal-container.active
-      = form_for user, :html => { class: 'poppedup'}, data: {remote: true, type: :html} do |f|
+      = form_for user, :html => { class: 'poppedup personal'}, data: {remote: true, type: :html} do |f|
         .standard-modal-header
           .standard-modal-close-btn.cursor-pointer
             %svg.standard_close_icon
@@ -16,7 +16,6 @@
         .standard-modal-body
           = hidden_field_tag :view, @view
           .container
-            %table
             %tr
               %td{valign: 'top', class: 'pt-14'}
                 %table
@@ -44,7 +43,7 @@
                       %td
                         %span.name>
                           = f.text_field :given_name, :required => true, placeholder: t("placeholders.user.given_name")
-                          
+
                     %tr
                       %td Last name
                       %td Chinese name
@@ -95,8 +94,8 @@
                           = f.text_field :nationality, placeholder: t("placeholders.user.nationality")
 
                     %tr
-                      %td 
-                        Pronoun 
+                      %td
+                        Pronoun
                       - if FeatureFlag.enabled?('time-zone-feature', current_user)
                         %td
                           Timezone
@@ -104,7 +103,7 @@
                       %td
                         %span.pronoun>
                           = f.select :preferred_pronoun, [['He', 'He'], ['She', 'She'], ['They', 'They']]
-                      
+
                       - if FeatureFlag.enabled?('time-zone-feature', current_user)
                         %td
                           = f.select :timezone, Timezones.for_selection.map{ |key, value| [value, key] }, {}

@@ -1,7 +1,7 @@
 - service ||= @service
 
 - if can?(:edit, service)
-  .action-commands-dropdown.menu{:data => {:for => "service_#{service.id}"}, class: "service_#{service.id}_actions"}
+  .action-commands-dropdown.service.menu{:data => {:for => "service_#{service.id}"}, class: "service_#{service.id}_actions"}
     = link_to droom.edit_service_url(service), :class => 'edit btn', :data => {:action => "popup", :affected => "#services"} do
       %svg
         %use{href: "#edit_symbol"}
@@ -13,4 +13,3 @@
     = link_to droom.new_service_permission_url(service), :class => 'add btn', :data => {:action => "popup", :affected => "#services"} do
       = image_tag 'svg/add.svg', width: 18, height: 18
       = t(:add_permission)
-

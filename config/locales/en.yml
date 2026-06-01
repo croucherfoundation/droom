@@ -526,16 +526,16 @@ en:
     standard_modal:
       email:
         zero: "Email address"
-        one: "Alternative email address"
-        other: "Alternative email address"
+        one: "Backup email address (optional)"
+        other: "Alternative email address (optional)"
       phone:
-        zero: "Phone number"
-        one: "Alternative phone number"
-        other: "Alternative phone number"
+        zero: "Phone number (optional)"
+        one: "Alternative phone number (optional)"
+        other: "Alternative phone number (optional)"
       address:
-        zero: "Postal address"
-        one: "Alternative postal address"
-        other: "Alternative postal address"
+        zero: "Postal address (optional)"
+        one: "Alternative postal address (optional)"
+        other: "Alternative postal address (optional)"
     event:
       cover_text: "Add meeting PDF cover details"
       datemark: "Click to change date"
@@ -569,7 +569,7 @@ en:
     user:
       address: "Postal address"
       chinese_name: "中国姓名"
-      description: "Brief biography or notes on role."
+      description: "Brief biography or notes on role (optional)"
       dob: "Date of birth"
       email: "Email"
       family_name: "eg Wong"
@@ -584,6 +584,11 @@ en:
       pob: "Place of birth"
       preferred_name: 'HKID name'
       title: "Title"
+      bio_description: "Description for biography (optional)"
+    service:
+      name: "Name"
+      slug: "Key (optional)"
+      description: "Notes (optional)"
   please_sign_in: "Please sign in"
   posted: "Posted"
   posted_by: "posted by"
