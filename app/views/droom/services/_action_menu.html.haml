@@ -1,7 +1,7 @@
 - service ||= @service
 
 - if can?(:edit, service)
-  .action-commands-dropdown.service.menu{:data => {:for => "service_#{service.id}"}, class: "service_#{service.id}_actions"}
+  .action-commands-dropdown.services.menu{:data => {:for => "service_#{service.id}"}, class: "service_#{service.id}_actions"}
     = link_to droom.edit_service_url(service), :class => 'edit btn', :data => {:action => "popup", :affected => "#services"} do
       %svg
         %use{href: "#edit_symbol"}

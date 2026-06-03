@@ -205,7 +205,7 @@ en:
   event_no_description: "No description available"
   event_time: "Start"
   event_type_admin: "Event types"
-  event_type_description: "Visible only to administrators"
+  event_type_description: "Visible only to administrators (optional)"
   event_type_name: "Short names work best"
   event_types_introduction: "The event types are invisible filing categories used to link events together and file their documents. It is also possible to mark an event type 'confidential', making its events visible only to privileged users, or 'public', making them visible in any public calendar."
   event_url: "Web link?"
