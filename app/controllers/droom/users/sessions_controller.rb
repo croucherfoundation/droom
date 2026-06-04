@@ -50,7 +50,8 @@ module Droom::Users
           return
         end
         sign_in(resource_name, resource)
-        
+        # flag_backup_email_sign_in(resource)
+
         # Redirect to the originally requested page, or use fallback
         redirect_path = determine_redirect_path
         redirect_to redirect_path
@@ -81,13 +82,13 @@ module Droom::Users
         cookies.delete(:return_to)  # Clean up the cookie
         return path if path != '/'
       end
-      
+
       # 2. Check cookies[:return_to] (stored before sign-in redirect)
       if cookies[:return_to].present?
         path = cookies.delete(:return_to)
         return path if path != '/'
       end
-      
+
       # 3. Fall back to default sign-in path
       after_sign_in_path_for(resource)
     end
@@ -96,5 +97,16 @@ module Droom::Users
       !user_signed_in?
     end
 
+    private
+
+    def flag_backup_email_sign_in(user)
+      submitted = params.dig(resource_name, :email).to_s.strip.downcase
+      primary = user.try(:primary_email).to_s.strip.downcase
+      if submitted.present? && primary.present? && submitted != primary
+        session[:show_backup_email_banner] = true
+      else
+        session.delete(:show_backup_email_banner)
+      end
+    end
   end
 end
