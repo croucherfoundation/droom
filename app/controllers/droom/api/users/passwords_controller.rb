@@ -8,7 +8,7 @@ module Droom::Api
     before_action :set_email, only: [:create]
 
     def create
-      unless @email_record&.can_receive_email?
+      unless @primary_email&.can_receive_email?
         return render json: { success: false, errors: [I18n.t(:password_reset_instructions_not_delivered)] }
       end
 
@@ -55,6 +55,7 @@ module Droom::Api
     def reset_password_request_params
       {
         email: resource_params[:email],
+        primary_email: @primary_email.email,
         destination: reset_password_destination
       }
     end
@@ -73,6 +74,9 @@ module Droom::Api
     def set_email
       email_address = resource_params[:email]
       @email_record = Droom::Email.where(email: email_address).first
+      if @email_record&.user.present?
+        @primary_email = @email_record.user.emails.first
+      end
     end
 
   end
