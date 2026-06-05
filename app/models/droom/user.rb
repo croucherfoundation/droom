@@ -478,7 +478,7 @@ module Droom
     # NB. for useful-failure purposes we have to return a new user object with errors set.
     #
     def self.send_reset_password_instructions(attributes = {})
-      email = attributes[:email]
+      email = attributes[:primary_email].presence
       destination = attributes[:destination].presence || attributes[:backto].presence
       user  = from_email(email).first
 
@@ -512,6 +512,7 @@ module Droom
     def self.send_unlock_instructions(attributes = {})
       email = attributes[:email]
       user = from_email(email).first
+      primary_email = user.emails.first.email
 
       if user
         unless user.confirmed?
@@ -519,8 +520,8 @@ module Droom
           return user
         end
 
-        if valid_for_delivery?(email)
-          user.instance_variable_set(:@unlock_target_email, email)
+        if valid_for_delivery?(primary_email)
+          user.instance_variable_set(:@unlock_target_email, primary_email)
           user.send_unlock_instructions
         else
           user.errors.add(:email, :invalid_delivery, message: "is not valid for delivery.")

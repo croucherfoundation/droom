@@ -20,7 +20,7 @@ module Droom::Users
     end
 
     def create
-      return head :bad_request unless @email_record&.can_receive_email?
+      return head :bad_request unless @primary_email&.can_receive_email?
 
       self.resource = resource_class.send_reset_password_instructions(reset_password_request_params)
       yield resource if block_given?
@@ -81,6 +81,7 @@ module Droom::Users
     def reset_password_request_params
       {
         email: resource_params[:email],
+        primary_email: @primary_email.email,
         destination: reset_password_destination
       }
     end
@@ -95,7 +96,9 @@ module Droom::Users
     def set_email
       email_address = resource_params[:email]
       @email_record = Droom::Email.where(email: email_address).first
+      if @email_record&.user.present?
+        @primary_email = @email_record.user.emails.first
+      end
     end
-
   end
 end
