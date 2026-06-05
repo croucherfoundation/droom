@@ -50,7 +50,7 @@ module Droom::Users
           return
         end
         sign_in(resource_name, resource)
-        # flag_backup_email_sign_in(resource)
+        flag_backup_email_sign_in(resource)
 
         # Redirect to the originally requested page, or use fallback
         redirect_path = determine_redirect_path
