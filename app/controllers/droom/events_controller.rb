@@ -234,7 +234,7 @@ module Droom
 
       if @direction == 'past'
         @events = @events.past.order('start DESC')
-        
+
         if params[:year].present?
           @year = params[:year].to_i
           @events = @events.in_year(@year)

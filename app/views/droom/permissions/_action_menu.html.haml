@@ -1,7 +1,7 @@
 - permission ||= @permission
 
 - if can?(:edit, permission)
-  .action-commands-dropdown.menu{:data => {:for => "permission_#{permission.id}"}, class: "permission_#{permission.id}_actions"}
+  .action-commands-dropdown.permissions.menu{:data => {:for => "permission_#{permission.id}"}, class: "permission_#{permission.id}_actions"}
     = link_to droom.edit_service_permission_url(permission.service, permission), :class => 'edit btn', :data => {:action => "popup", :affected => "#services"} do
       %svg
         %use{href: "#edit_symbol"}
@@ -10,4 +10,3 @@
       %svg
         %use{href: "#trash_symbol"}
       = t(:delete_permission)
-

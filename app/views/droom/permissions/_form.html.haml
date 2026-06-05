@@ -15,10 +15,10 @@
         .container
           .inputs
             %p.name
-              = f.text_field :name, :class => 'name', :placeholder => t("helpers.label.service.name"), :autofocus => true
+              = f.text_field :name, :class => 'name', :placeholder => t("placeholders.service.name"), :autofocus => true
 
             %p.description
-              = f.text_area :description, :class => 'description', :placeholder => t("helpers.label.service.description")
+              = f.text_area :description, :class => 'description medium', :placeholder => t("placeholders.service.description")
 
             %p.service
               = f.label :service_id

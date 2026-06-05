@@ -4,14 +4,14 @@
 
   - if @user
     %ul.address_book.text-body-secondary
-      - if @user.emails.any?
-        = render partial: "droom/emails/email", collection: @user.emails.not_pending.by_preference
+      - if @user.emails.populated.any?
+        = render partial: "droom/emails/email", collection: @user.emails.populated.not_pending.by_preference
       - else
         %p.problem
           = link_to droom.edit_user_url(@user, view: 'contact'), data: {action: 'popup', affected: "section.contacts, section.user"} do
             %strong
               = t('problems.user.unreachable')
 
-      = render partial: "droom/phones/phone", collection: @user.phones.by_preference
-      = render partial: "droom/addresses/address", collection: @user.addresses.by_preference
+      = render partial: "droom/phones/phone", collection: @user.phones.populated.by_preference
+      = render partial: "droom/addresses/address", collection: @user.addresses.populated.by_preference
   .section-divider

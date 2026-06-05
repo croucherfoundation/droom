@@ -205,7 +205,7 @@ en:
   event_no_description: "No description available"
   event_time: "Start"
   event_type_admin: "Event types"
-  event_type_description: "Visible only to administrators"
+  event_type_description: "Visible only to administrators (optional)"
   event_type_name: "Short names work best"
   event_types_introduction: "The event types are invisible filing categories used to link events together and file their documents. It is also possible to mark an event type 'confidential', making its events visible only to privileged users, or 'public', making them visible in any public calendar."
   event_url: "Web link?"
@@ -229,7 +229,7 @@ en:
   find_documents: "Find documents"
   find_people: "Find people"
   find_people_notes: "The quickest way to find a particular person is to start typing their name or email address here."
-  finish_time: "Finish?"
+  finish_time: "Finish? (optional)"
   folder: "folder"
   follow_stream: "Follow the stream in an RSS reader"
   forgot_password: "Forgotten your password?"
@@ -516,6 +516,9 @@ en:
   phone_unknown: "phone unknown"
   pic: "Person in charge"
   placeholders:
+    group:
+      name: "Name"
+      description: "Description (optional)"
     address:
       address: "Postal address"
     email:
@@ -523,24 +526,28 @@ en:
     standard_modal:
       email:
         zero: "Email address"
-        one: "Alternative email address"
-        other: "Alternative email address"
+        one: "Backup email address (optional)"
+        other: "Alternative email address (optional)"
       phone:
-        zero: "Phone number"
-        one: "Alternative phone number"
-        other: "Alternative phone number"
+        zero: "Phone number (optional)"
+        one: "Alternative phone number (optional)"
+        other: "Alternative phone number (optional)"
       address:
-        zero: "Postal address"
-        one: "Alternative postal address"
-        other: "Alternative postal address"
+        zero: "Postal address (optional)"
+        one: "Alternative postal address (optional)"
+        other: "Alternative postal address (optional)"
     event:
       cover_text: "Add meeting PDF cover details"
       datemark: "Click to change date"
-      description: "Please give a brief description"
-      venue_name: "Venue name"
-      url: "Website URL"
+      description: "Please give a brief description (optional)"
+      start_time: "Time"
+      finish_time: "Finish? (optional)"
+      venue_name: "Venue name (optional)"
+      video_conference_link: "Add video conference link (optional)"
+      url: "Website URL (optional)"
       start: "Event start date"
-      end_date: "Event end date"
+      end_date: "Event end date (optional)"
+      meeting_number: "Meeting number (optional)"
     organisation:
       chinese_name: "中国姓名"
       description: "Brief description. Please keep within about 100 words."
@@ -562,7 +569,7 @@ en:
     user:
       address: "Postal address"
       chinese_name: "中国姓名"
-      description: "Brief biography or notes on role."
+      description: "Brief biography or notes on role (optional)"
       dob: "Date of birth"
       email: "Email"
       family_name: "eg Wong"
@@ -577,6 +584,11 @@ en:
       pob: "Place of birth"
       preferred_name: 'HKID name'
       title: "Title"
+      bio_description: "Description for biography (optional)"
+    service:
+      name: "Name"
+      slug: "Key (optional)"
+      description: "Notes (optional)"
   please_sign_in: "Please sign in"
   posted: "Posted"
   posted_by: "posted by"
@@ -652,7 +664,7 @@ en:
     zero: ""
     one: "one subfolder"
     other: "%{count} subfolders"
-  subjects: 
+  subjects:
     user:
       otp_verification: "OTP Verification Code for Bank Account Update"
   subscribe_to_calendar: "Subscribe"
