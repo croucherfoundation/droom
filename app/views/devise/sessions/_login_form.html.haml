@@ -9,17 +9,18 @@
 
     .croucher_container
       %h2.text-subtitle Sign in
-    
+
       = form_for(resource, as: resource_name, url: session_path(resource_name), method: 'post', html: { class: 'sign_in_form' }) do |f|
         = hidden_field_tag :destination, params[:destination]
         = hidden_field_tag :backto, params[:backto] || cookies[:return_to]
-        
+
+        - has_error = params[:failed].present?
         .input_group
           %label{for: "email"} Email
-          = f.email_field :email, class: "#{'has-error' if params[:failed].present?}", placeholder: t("placeholders.session.email")       
+          = f.email_field :email, class: ("has-error" if has_error), placeholder: t("placeholders.session.email")
         .input_group
           %label{for: "password"} Password
-          = f.password_field :password, class: "sign_in_password #{'has-error' if params[:failed].present?}", placeholder: t("placeholders.session.password")
+          = f.password_field :password, class: "sign_in_password #{'has-error' if has_error}", placeholder: t("placeholders.session.password")
           %button.eye{type: "button"}
             %img{alt: "open", src: "https://croucher.org.hk/assets/images/icons/eye-02.svg"}/
 
@@ -27,18 +28,18 @@
           = f.submit t(:sign_in), class: "croucher-standard-btn"
 
       -if params[:failed].present?
-        %p.error_message 
+        %p.error_message
           Incorrect email or password.
 
       -if @not_confirmed_message
-        %p.error_message 
+        %p.error_message
           = @not_confirmed_message
-      
+
       -if @unlock_message
-        %p.error_message 
+        %p.error_message
           = @unlock_message
-          
+
       .forgot_password
         %p.mb-2
-          %button.underline{data: {'toggle': 'modal', 'target': 'passwordModal', turbo: false}} 
+          %button.underline{data: {'toggle': 'modal', 'target': 'passwordModal', turbo: false}}
             Forgot password?

@@ -6,6 +6,10 @@ module Droom::Users
     skip_before_action :verify_authenticity_token, raise: false
     layout 'droom/sign_in'
 
+    # From this date, signing in with a backup email is no longer allowed.
+    # Until then we only show a reminder banner (see #flag_backup_email_sign_in).
+    BACKUP_EMAIL_ENFORCEMENT_DATE = Date.new(2026, 9, 9)
+
     def new
       # Devise stores the location in session via store_location_for during authenticate_user!
       # Capture it and store in cookie to preserve across session resets
@@ -49,6 +53,15 @@ module Droom::Users
           redirect_to new_user_session_url(not_confirmed: true)
           return
         end
+
+        if backup_email_login_blocked?(resource)
+          current_user.clear_session_ids! if current_user
+          Droom::AuthCookie.new(warden.cookies).unset
+          flash[:alert] = "Please log in with your primary email address. If you need to update your primary email, use the password reset flow."
+          redirect_to new_user_session_url
+          return
+        end
+
         sign_in(resource_name, resource)
         flag_backup_email_sign_in(resource)
 
@@ -107,6 +120,15 @@ module Droom::Users
       else
         session.delete(:show_backup_email_banner)
       end
+    end
+
+    # On or after the enforcement date, a user may no longer sign in using a
+    # backup email; they must use their primary email instead.
+    def backup_email_login_blocked?(user)
+      return false if Date.current < BACKUP_EMAIL_ENFORCEMENT_DATE
+      submitted = params.dig(resource_name, :email).to_s.strip.downcase
+      primary = user.try(:primary_email).to_s.strip.downcase
+      submitted.present? && primary.present? && submitted != primary
     end
   end
 end
