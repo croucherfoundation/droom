@@ -94,7 +94,7 @@
           }
           $('input[type="submit"]').css("background-color", "#9b9b8e");
         }
-        if (xhr.status === 422) {
+        if (xhr.status !== 409 && xhr.status !== 401) {
           let responseData = null;
           if (xhr?.responseText && typeof xhr?.responseText === 'string') {
             const responseText = xhr.responseText.trim();
