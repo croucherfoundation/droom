@@ -60,6 +60,32 @@
         return this._control.trigger("remote:progress", prog);
       };
 
+      Remote.prototype.flash = function(message, type) {
+        const flashes = document.getElementById("flashes");
+        if (!flashes) {
+          return;
+        }
+
+        // Clear existing flash messages
+        flashes.innerHTML = '';
+
+        const flashElement = document.createElement("p");
+        flashElement.className = `${type} ready unexpandable`;
+        flashElement.style.display = "block";
+        flashElement.style.gridRowEnd = "span 2";
+        flashElement.innerHTML = `
+          <a href="#" class="closer timezone-flash-close" onclick="this.parentElement.remove(); return false;">close</a>
+          ${message}
+        `;
+
+        flashes.appendChild(flashElement);
+
+        // Automatically remove flash after 5 seconds
+        setTimeout(() => {
+          flashElement.remove();
+        }, 5000);
+      };
+
       Remote.prototype.fail = function(event, xhr, status) {
         var ref;
         if (xhr.status === 409) {
@@ -72,42 +98,20 @@
           let responseData = null;
           if (xhr?.responseText && typeof xhr?.responseText === 'string') {
             const responseText = xhr.responseText.trim();
-            if (responseText.startsWith("{")) {
-              try {
-                responseData = JSON.parse(responseText);
-              } catch (e) {
-                responseData = null;
-              }
+            try {
+              responseData = JSON.parse(responseText);
+            } catch (e) {
+              responseData = null;
             }
           }
         
-          const errorMessage = responseData?.errors?.join(', ') || 'An error occurred.';
-        
-          const flashes = document.getElementById("flashes");
-          if (flashes) {
-            // Clear existing flash messages
-            flashes.innerHTML = '';
-        
-            const flashElement = document.createElement("p");
-            flashElement.className = "alert ready unexpandable";
-            flashElement.style.display = "block";
-            flashElement.style.gridRowEnd = "span 2";
-            flashElement.innerHTML = `
-              <a href="#" class="closer timezone-flash-close" onclick="this.parentElement.remove(); return false;">close</a>
-              ${errorMessage}
-            `;
-        
-            flashes.appendChild(flashElement);
-        
-            // Automatically remove flash after 5 seconds
-            setTimeout(() => {
-              flashElement.remove();
-            }, 5000);
-          }
+          const errorMessage = responseData?.errors?.join(', ') || 'Something went wrong. Please try again.';
+
+          this.flash(errorMessage, 'alert');
         
           event.stopPropagation();
           this._control.removeClass('waiting');
-          this._control.trigger('remote:success', null);
+          this._control.trigger('remote:cancel', null);
           return this._control.trigger('remote:complete', status);
         }                     
         
@@ -125,31 +129,29 @@
         responseData = null;
         if (xhr?.responseText && typeof xhr?.responseText === 'string') {
           const responseText = xhr.responseText.trim();
-          if (responseText.startsWith("{")) {
-            try {
-              responseData = JSON.parse(responseText);
-            } catch (e) {
-              responseData = null;
-            }
+          try {
+            responseData = JSON.parse(responseText);
+          } catch (e) {
+            responseData = null;
           }
-        }        
+        }
+        const rawMethod = (
+          this._control.find('input[name=_method]').val() ||
+          this._control.attr('data-method') ||
+          this._control.attr('method') ||
+          'get'
+        ).toLowerCase();
+        const writeMethods = ['post', 'patch', 'put', 'delete'];
+
+        const message = responseData?.message || 'Operation completed successfully.';
+        if (writeMethods.includes(rawMethod)) {
+          this.flash(message, 'notice');
+        }
 
         if (responseData?.return === true) {
           const return_url = responseData?.return_url;
-          const message = responseData?.message;
-        
+          
           if (return_url) {
-            const flashes = document.getElementById("flashes");
-            if (flashes) {
-              flashes.innerHTML = `
-                <p class="notice ready unexpandable" style="display: block; grid-row-end: span 2;">
-                  <a href="#" class="closer timezone-flash-close" onclick="this.parentElement.style.display='none'; return false;">close</a>
-                  ${message}
-                </p>
-                <p class="alert"></p>
-              `;
-            }
-
             const masks = document.getElementsByClassName("mask");
             const popups = document.getElementsByClassName("popup");
 
@@ -163,7 +165,7 @@
 
             setTimeout(() => {
               window.location.href = return_url;
-            }, 1000);
+            }, 2000);
           }
         } else {        
           event.stopPropagation();
