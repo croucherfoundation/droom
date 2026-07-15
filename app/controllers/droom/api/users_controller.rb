@@ -213,6 +213,11 @@ module Droom::Api
       @user.memberships.find_by(group_id: @group_id)&.destroy if @group_id.present?
     end
 
+    def eligible_event_admins
+      @users = Droom::User.admins
+      render json: @users, only: [:id, :uid, :name]
+    end
+
   protected
 
     # Handle primary and backup email updates differently
