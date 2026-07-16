@@ -126,6 +126,57 @@
         });
       });
     };
+    $.fn.toast = function() {
+      return this.each(function() {
+        var container, hideToast, toast;
+        container = $(this);
+        toast = container.find('.croucher-toast');
+        if (!toast.length) {
+          return;
+        }
+        hideToast = function() {
+          toast.removeClass('croucher-toast--show').addClass('croucher-toast--hide');
+        };
+        container.find('.croucher-toast__close').off('click.toast').on('click.toast', function(e) {
+          e.preventDefault();
+          return hideToast();
+        });
+        if (toast.hasClass('croucher-toast--show')) {
+          clearTimeout(this._toastTimer);
+          this._toastTimer = setTimeout(hideToast, 5000);
+        }
+      });
+    };
+    $.show_dataroom_toast = function(message, type) {
+      var closeButton, container, content, hideToast, icon, iconUse, isSuccess, toast;
+      container = $('.croucher-toast-container[data-remote-toast="true"]').first();
+      if (!container.length) {
+        return false;
+      }
+      toast = container.find('.croucher-toast').first();
+      content = container.find('.croucher-toast__content').first();
+      icon = container.find('.croucher-toast__icon').first();
+      iconUse = icon.find('use').first();
+      closeButton = container.find('.croucher-toast__close').first();
+      if (!toast.length || !content.length || !icon.length || !iconUse.length) {
+        return false;
+      }
+      isSuccess = type === 'notice';
+      toast.removeClass('croucher-toast--hide').addClass('croucher-toast--show');
+      icon.removeClass('croucher-toast__icon--success croucher-toast__icon--error').addClass(isSuccess ? 'croucher-toast__icon--success' : 'croucher-toast__icon--error');
+      iconUse.attr('href', isSuccess ? '#confirmed_symbol' : '#warning_symbol');
+      content.text(message);
+      hideToast = function() {
+        toast.removeClass('croucher-toast--show').addClass('croucher-toast--hide');
+      };
+      closeButton.off('click.toast').on('click.toast', function(e) {
+        e.preventDefault();
+        return hideToast();
+      });
+      clearTimeout(container[0]._toastTimer);
+      container[0]._toastTimer = setTimeout(hideToast, 500000);
+      return true;
+    };
     $.fn.disappearAfter = function(interval) {
       return $(this).fadeOut("slow", function() {
         return $(this).remove();

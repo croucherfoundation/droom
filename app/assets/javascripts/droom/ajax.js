@@ -86,6 +86,20 @@
         }, 5000);
       };
 
+      Remote.prototype.showDataroomToast = function(message, type) {
+        if (typeof $.show_dataroom_toast === 'function') {
+          return $.show_dataroom_toast(message, type);
+        }
+        return false;
+      };
+
+      Remote.prototype.notify = function(message, type) {
+        if (this.showDataroomToast(message, type)) {
+          return;
+        }
+        this.flash(message, type);
+      };
+
       Remote.prototype.fail = function(event, xhr, status) {
         var ref;
         if (xhr.status === 409) {
@@ -107,7 +121,7 @@
         
           const errorMessage = responseData?.errors?.join(', ') || 'Something went wrong. Please try again.';
 
-          this.flash(errorMessage, 'alert');
+          this.notify(errorMessage, 'alert');
         
           event.stopPropagation();
           this._control.removeClass('waiting');
@@ -145,7 +159,7 @@
 
         const message = responseData?.message || 'Operation completed successfully.';
         if (writeMethods.includes(rawMethod)) {
-          this.flash(message, 'notice');
+          this.notify(message, 'notice');
         }
 
         if (responseData?.return === true) {
