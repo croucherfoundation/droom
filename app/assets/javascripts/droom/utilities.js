@@ -177,6 +177,125 @@
       container[0]._toastTimer = setTimeout(hideToast, 500000);
       return true;
     };
+    $.fn.confirm_dialog = function(message) {
+      var $scope;
+      $scope = this;
+      return new Promise(function(resolve) {
+        var $cancel, $message, $ok, $overlay, hideDialog, onCancel, onKeydown, onOk, previousResolver;
+        $overlay = $scope.find('#confirm-overlay').first();
+        if (!$overlay.length) {
+          $overlay = $('#confirm-overlay').first();
+        }
+        if (!$overlay.length) {
+          $overlay = $scope.find('.croucher-toast--confirmation').first();
+        }
+        if (!$overlay.length) {
+          $overlay = $('.croucher-toast--confirmation').first();
+        }
+        $message = $overlay.find('#confirm-message').first();
+        if (!$message.length) {
+          $message = $overlay.find('.croucher-toast__content > span').first();
+        }
+        $ok = $overlay.find('#confirm-ok, .croucher-toast__btn-ok').first();
+        $cancel = $overlay.find('#confirm-cancel, .croucher-toast__btn-cancel').first();
+        if (!$overlay.length || !$message.length || !$ok.length || !$cancel.length) {
+          resolve(window.confirm(message));
+          return;
+        }
+        previousResolver = $overlay.data('confirmDialogResolver');
+        if (typeof previousResolver === 'function') {
+          previousResolver(false);
+        }
+        $message.text(message);
+        $overlay.removeClass('hidden croucher-toast--hide').addClass('croucher-toast--show');
+        hideDialog = function(result) {
+          $overlay.addClass('hidden croucher-toast--hide').removeClass('croucher-toast--show');
+          $ok.off('click.confirm_dialog');
+          $cancel.off('click.confirm_dialog');
+          $(document).off('keydown.confirm_dialog');
+          $overlay.removeData('confirmDialogResolver');
+          resolve(!!result);
+        };
+        onOk = function(e) {
+          if (e != null) {
+            e.preventDefault();
+          }
+          return hideDialog(true);
+        };
+        onCancel = function(e) {
+          if (e != null) {
+            e.preventDefault();
+          }
+          return hideDialog(false);
+        };
+        onKeydown = function(e) {
+          if (e.key === 'Escape') {
+            return onCancel(e);
+          }
+          if (e.key === 'Enter') {
+            return onOk(e);
+          }
+        };
+        $overlay.data('confirmDialogResolver', hideDialog);
+        $ok.off('click.confirm_dialog').on('click.confirm_dialog', onOk);
+        $cancel.off('click.confirm_dialog').on('click.confirm_dialog', onCancel);
+        $(document).off('keydown.confirm_dialog').on('keydown.confirm_dialog', onKeydown);
+      });
+    };
+    $.install_confirm_dialog = function() {
+      if (typeof $.rails === 'undefined') {
+        console.warn("Rails UJS is not loaded. Confirm dialog will not be installed.");
+        return false;
+      }
+      if (typeof $.rails.allowAction !== 'function') {
+        console.warn("Rails UJS does not have allowAction function. Confirm dialog will not be installed.");
+        return false;
+      }
+      if (typeof $.rails.fire !== 'function') {
+        console.warn("Rails UJS does not have fire function. Confirm dialog will not be installed.");
+        return false;
+      }
+      if (typeof $.rails._confirmDialogInstalled !== 'undefined') {
+        console.warn("Confirm dialog is already installed.");
+        return false;
+      }
+      console.log("Installing confirm dialog...");
+      var rails;
+      rails = $.rails;
+      if (!rails || rails._confirmDialogInstalled) {
+        return false;
+      }
+      rails._confirmDialogInstalled = true;
+      rails.allowAction = function(element) {
+        var callback, message;
+        message = element.data('confirm');
+        if (!message) {
+          return true;
+        }
+        if (element.data('ujs:confirmed')) {
+          element.removeData('ujs:confirmed');
+          return true;
+        }
+        if (!rails.fire(element, 'confirm')) {
+          return false;
+        }
+        callback = true;
+        $('body').confirm_dialog(message).then(function(answer) {
+          callback = rails.fire(element, 'confirm:complete', [answer]);
+          if (!answer || callback === false) {
+            return;
+          }
+          element.data('ujs:confirmed', true);
+          if (element.is('form')) {
+            return element.trigger('submit.rails');
+          }
+          return element.trigger('click.rails');
+        });
+        return false;
+      };
+      return true;
+    };
+    $.install_confirm_dialog();
     $.fn.disappearAfter = function(interval) {
       return $(this).fadeOut("slow", function() {
         return $(this).remove();
