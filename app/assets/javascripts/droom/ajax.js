@@ -1,12 +1,3 @@
-//// Ajax transport
-//
-// This is a wrapper around the standard jquer ujs ajax machinery. it gives us a more fine-grained set of callbacks
-// and a central place to do some universal work like setting pjax headers and telling elements to wait.
-//
-// The value of the remote: calls becomes more clear when we need to add more callbacks, eg from a widget like the 
-// filepicker, but perhaps they can disappear now that we've hacked up the ujs a bit.
-//
-
 (function() {
   var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -69,7 +60,78 @@
         return this._control.trigger("remote:progress", prog);
       };
 
+      Remote.prototype.flash = function(message, type) {
+        const flashes = document.getElementById("flashes");
+        if (!flashes) {
+          return;
+        }
+
+        // Clear existing flash messages
+        flashes.innerHTML = '';
+
+        const flashElement = document.createElement("p");
+        flashElement.className = `${type} ready unexpandable`;
+        flashElement.style.display = "block";
+        flashElement.style.gridRowEnd = "span 2";
+        flashElement.innerHTML = `
+          <a href="#" class="closer timezone-flash-close" onclick="this.parentElement.remove(); return false;">close</a>
+          ${message}
+        `;
+
+        flashes.appendChild(flashElement);
+
+        // Automatically remove flash after 5 seconds
+        setTimeout(() => {
+          flashElement.remove();
+        }, 5000);
+      };
+
+      Remote.prototype.showDataroomToast = function(message, type) {
+        if (typeof $.show_dataroom_toast === 'function') {
+          return $.show_dataroom_toast(message, type);
+        }
+        return false;
+      };
+
+      Remote.prototype.notify = function(message, type) {
+        if (this.showDataroomToast(message, type)) {
+          return;
+        }
+        this.flash(message, type);
+      };
+
       Remote.prototype.fail = function(event, xhr, status) {
+        var ref;
+        if (xhr.status === 409) {
+          if ((ref = $(event.currentTarget).find('p.error')) != null) {
+            ref.text(xhr.responseText);
+          }
+          $('input[type="submit"]').css("background-color", "#9b9b8e");
+        }
+        if (xhr.status !== 409 && xhr.status !== 401) {
+          let responseData = null;
+          if (xhr?.responseText && typeof xhr?.responseText === 'string') {
+            const responseText = xhr.responseText.trim();
+            try {
+              responseData = JSON.parse(responseText);
+            } catch (e) {
+              responseData = null;
+            }
+          }
+        
+          const errorMessage = responseData?.errors?.join(', ') || 'Something went wrong. Please try again.';
+
+          this.notify(errorMessage, 'alert');
+        
+          event.stopPropagation();
+          this._control.removeClass('waiting');
+          this._control.trigger('remote:cancel', null);
+          return this._control.trigger('remote:complete', status);
+        }                     
+        
+        if (xhr.status === 401) {
+          window.location.reload();
+        }
         event.stopPropagation();
         this._control.removeClass('waiting').addClass('erratic');
         this._control.find('input[type=submit]').removeClass('waiting');
@@ -78,10 +140,53 @@
       };
 
       Remote.prototype.receive = function(event, data, status, xhr) {
-        event.stopPropagation();
-        this._control.removeClass('waiting');
-        this._control.trigger('remote:success', data);
-        return this._control.trigger('remote:complete', status);
+        responseData = null;
+        if (xhr?.responseText && typeof xhr?.responseText === 'string') {
+          const responseText = xhr.responseText.trim();
+          try {
+            responseData = JSON.parse(responseText);
+          } catch (e) {
+            responseData = null;
+          }
+        }
+        const rawMethod = (
+          this._control.find('input[name=_method]').val() ||
+          this._control.attr('data-method') ||
+          this._control.attr('method') ||
+          'get'
+        ).toLowerCase();
+        const writeMethods = ['post', 'patch', 'put', 'delete'];
+
+        const message = responseData?.message || 'Operation completed successfully.';
+        if (writeMethods.includes(rawMethod)) {
+          this.notify(message, 'notice');
+        }
+
+        if (responseData?.return === true) {
+          const return_url = responseData?.return_url;
+          
+          if (return_url) {
+            const masks = document.getElementsByClassName("mask");
+            const popups = document.getElementsByClassName("popup");
+
+            Array.from(masks).forEach(mask => {
+              mask.style.display = "none";
+            });
+
+            Array.from(popups).forEach(popup => {
+              popup.style.display = "none";
+            });
+
+            setTimeout(() => {
+              window.location.href = return_url;
+            }, 2000);
+          }
+        } else {        
+          event.stopPropagation();
+          this._control.removeClass('waiting');
+          this._control.trigger('remote:success', data);
+          return this._control.trigger('remote:complete', status);
+        }
       };
 
       Remote.prototype.cancel = function(e) {

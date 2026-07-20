@@ -50,6 +50,7 @@
     return $.activate_with(function() {
       this.find_including_self('form.droom_faceter').faceting_search();
       this.find_including_self('#flashes p:parent').flash();
+      this.find_including_self('.croucher-toast-container[data-remote-toast="true"]').toast();
       this.find_including_self('[data-refreshing]').refresher();
       this.find_including_self('.hidden').find('input, select, textarea').attr('disabled', true);
       this.find_including_self('.temporary').disappearAfter(1000);
