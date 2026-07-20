@@ -174,7 +174,7 @@
         return hideToast();
       });
       clearTimeout(container[0]._toastTimer);
-      container[0]._toastTimer = setTimeout(hideToast, 500000);
+      container[0]._toastTimer = setTimeout(hideToast, 5000);
       return true;
     };
     $.fn.confirm_dialog = function(message) {
