@@ -37,12 +37,9 @@
     
     = yield
 
-    #flashes
-      %p.notice= notice
-      - if alert.present?
-        - unless alert.include?('Please sign in to continue')
-          %p.alert= alert
-
+    = render 'layouts/toast_message'
+    = render 'layouts/confirm_dialog'
+    
     - if @show_footer
       = render :partial => "fragments/footer"
 

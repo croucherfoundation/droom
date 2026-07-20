@@ -29,8 +29,7 @@
       #content
         = yield
 
-    #flashes
-      %p.notice= notice
-      %p.alert= alert
+    = render 'layouts/toast_message'
+    = render 'layouts/confirm_dialog'
 
     #mask

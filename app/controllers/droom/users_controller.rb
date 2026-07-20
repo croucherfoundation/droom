@@ -194,7 +194,7 @@ module Droom
     def destroy
       Csw::Attendee.find_by_email(@user.email).try(:destroy)
       @user.destroy
-      redirect_to droom.admin_users_url
+      redirect_to droom.admin_users_url, notice: "User \"#{@user.name}\" has been deleted."
     end
 
     def reinvite
