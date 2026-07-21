@@ -4,6 +4,8 @@ module Droom
     include Droom::Concerns::PaperTrailWhodunnit
     helper Droom::DroomHelper
     helper ApplicationHelper
+    include LocaleDetection
+    include FlashMessageHelper
 
 
     rescue_from Droom::NoChineseContent, :with => :render_holding_chinese
@@ -34,14 +36,6 @@ module Droom
 
     def api_controller?
       false
-    end
-
-    def set_locale
-      I18n.locale = params[:locale] || I18n.default_locale
-    end
-
-    def check_locale
-      raise Droom::NoChineseContent if params[:locale] == 'hk'
     end
 
     def render_holding_chinese
