@@ -88,9 +88,12 @@ module Droom
     end
 
     def destroy
-      @document.destroy
-      set_success_flash_headers(@document, :destroy)
-      head :ok
+      if @document.destroy
+        set_success_flash_headers(@document, :destroy)
+        head :ok
+      else
+        render_ajax_error(@document)
+      end
     end
 
     def scan_status

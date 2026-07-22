@@ -309,6 +309,8 @@
 
   Upload = (function() {
     function Upload(opts) {
+      this.notify = bind(this.notify, this);
+      this.showDataroomToast = bind(this.showDataroomToast, this);
       this.cancel = bind(this.cancel, this);
       this.error = bind(this.error, this);
       this.success = bind(this.success, this);
@@ -391,6 +393,21 @@
       return this._xhr.send(form_data);
     };
 
+    Upload.prototype.showDataroomToast = function(message, type, options) {
+      if (typeof $.show_dataroom_toast === 'function') {
+        $.show_dataroom_toast(message, type, options);
+        return true;
+      }
+      return false;
+    };
+
+    Upload.prototype.notify = function(message, type, options) {
+      if (this.showDataroomToast(message, type, options)) {
+        return;
+      }
+      return console.log(message);
+    };
+
     Upload.prototype.showProgress = function(e) {
       var prog;
       if (e.lengthComputable) {
@@ -407,7 +424,7 @@
 
     Upload.prototype.stateChange = function() {
       if (this._xhr.readyState === 4) {
-        if (this._xhr.status === 200) {
+        if (this._xhr.status === 200 || this._xhr.status === 201) {
           this._bar.css('width', '100%');
           return this.success(this._xhr.responseText);
         } else {
@@ -426,40 +443,42 @@
       this._li.after(confirmation);
       this._li.remove();
 
-      // Check if the document is pending virus scan (large file async scan)
+      // Decide which alert state to show based on the document's scan status.
       var scanStatus = confirmation.data('scan-status') || confirmation.attr('data-scan-status');
+      var docId = confirmation.data('doc-id') || (confirmation.attr('id') || '').replace('document_', '');
+
       if (scanStatus === 'pending') {
-        var scanBadge = confirmation.find('.scan-status.scanning');
-        if (scanBadge.length === 0) {
-          confirmation.append('<span class="scan-status scanning" title="File is being scanned for viruses">Scanning...</span>');
-        }
-        // Subscribe to ActionCable for real-time scan status updates
-        var docId = confirmation.data('doc-id') || confirmation.attr('id').replace('document_', '');
+        // Large file: virus scan runs in the background. Show the standard alert
+        // and keep it visible until the scan resolves (see DocumentScanSubscriber).
+        this.notify('Checking file security...', 'alert', { persistent: true });
         if (docId && window.DocumentScanSubscriber) {
           window.DocumentScanSubscriber.subscribeToDocument(docId);
         }
+      } else if (scanStatus === 'infected') {
+        this.notify('This file was found to contain malware and has been removed.', 'alert');
+      } else {
+        // Already scanned clean (or no async scan required): confirm success now.
+        confirmation.signal_confirmation();
+        this.notify('File uploaded successfully.', 'notice');
       }
 
-      confirmation.signal_confirmation();
       return typeof this._callback === "function" ? this._callback(this, confirmation) : void 0;
     };
 
     Upload.prototype.error = function() {
-      var base, errorWrap, msg;
-      console.log("error", this._xhr);
-      msg = this._xhr.response ? this._xhr.response : this._.statusText;
+      var base, msg;
+      msg = this._xhr.responseText || this._xhr.statusText || 'Upload failed. Please try again.';
       if (typeof (base = this._options).on_error === "function") {
         base.on_error();
       }
+      this.notify(msg, 'alert');
       this._li.addClass('erratic');
-      errorWrap = $('<div class="upload-error-wrap" />');
-      errorWrap.append($('<span class="error" />').text(msg));
-      errorWrap.append($('<span class="delete" style="background-color: inherit;" />').text('x'));
-      this._li.append(errorWrap);
-      $('.delete').on('click', function() {
-        return $('.uploading').css('display', 'none');
-      });
-      return this._li.signal_error();
+      this._li.signal_error();
+      setTimeout((function(_this) {
+        return function() {
+          return _this._li.css('display', 'none');
+        };
+      })(this), 2000);
     };
 
     Upload.prototype.cancel = function() {

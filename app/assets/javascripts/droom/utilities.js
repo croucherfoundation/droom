@@ -147,8 +147,9 @@
         }
       });
     };
-    $.show_dataroom_toast = function(message, type) {
+    $.show_dataroom_toast = function(message, type, options) {
       var closeButton, container, content, hideToast, icon, iconUse, isSuccess, toast;
+      options = options || {};
       container = $('.croucher-toast-container[data-remote-toast="true"]').first();
       if (!container.length) {
         return false;
@@ -174,7 +175,11 @@
         return hideToast();
       });
       clearTimeout(container[0]._toastTimer);
-      container[0]._toastTimer = setTimeout(hideToast, 5000);
+      if (options.persistent) {
+        container[0]._toastTimer = null;
+      } else {
+        container[0]._toastTimer = setTimeout(hideToast, 5000);
+      }
       return true;
     };
     $.fn.confirm_dialog = function(message) {
