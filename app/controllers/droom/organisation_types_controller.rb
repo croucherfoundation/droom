@@ -24,21 +24,27 @@ module Droom
     end
 
     def update
-      @organisation_type.update(organisation_type_params)
-      render :partial => 'organisation_type'
+      if @organisation_type.update(organisation_type_params)
+        set_success_flash_headers(@organisation_type, :update)
+        render :partial => 'organisation_type', status: :ok
+      else
+        render_ajax_error(@organisation_type)
+      end
     end
 
     def create
       if @organisation_type.update(organisation_type_params)
-        render :partial => "created"
+        set_success_flash_headers(@organisation_type, :create)
+        render :partial => "created", status: :created
       else
-        respond_with @organisation_type
+        render_ajax_error(@organisation_type)
       end
     end
     
     def destroy
       @organisation_type.destroy
-      head :ok
+      set_delete_notice(@organisation_type)
+      redirect_to droom.organisation_types_path
     end
 
   protected

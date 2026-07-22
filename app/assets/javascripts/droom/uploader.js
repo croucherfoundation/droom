@@ -445,15 +445,17 @@
     };
 
     Upload.prototype.error = function() {
-      var base, msg;
+      var base, errorWrap, msg;
       console.log("error", this._xhr);
       msg = this._xhr.response ? this._xhr.response : this._.statusText;
       if (typeof (base = this._options).on_error === "function") {
         base.on_error();
       }
       this._li.addClass('erratic');
-      this._li.append($('<span class="error" />').text(msg));
-      this._li.append($('<span class="delete" style="background-color: inherit;" />').text('x'));
+      errorWrap = $('<div class="upload-error-wrap" />');
+      errorWrap.append($('<span class="error" />').text(msg));
+      errorWrap.append($('<span class="delete" style="background-color: inherit;" />').text('x'));
+      this._li.append(errorWrap);
       $('.delete').on('click', function() {
         return $('.uploading').css('display', 'none');
       });

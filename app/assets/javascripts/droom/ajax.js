@@ -118,10 +118,11 @@
               responseData = null;
             }
           }
-        
-          const errorMessage = responseData?.errors?.join(', ') || 'Something went wrong. Please try again.';
 
-          this.notify(errorMessage, 'alert');
+          let message = xhr.getResponseHeader('X-Flash-Message') || 'Something went wrong. Please try again.';
+          let type = xhr.getResponseHeader('X-Flash-Type') || 'alert';
+
+          this.notify(message, type);
         
           event.stopPropagation();
           this._control.removeClass('waiting');
@@ -140,6 +141,9 @@
       };
 
       Remote.prototype.receive = function(event, data, status, xhr) {
+        let message = xhr.getResponseHeader('X-Flash-Message') || 'Operation completed successfully.';
+        let type = xhr.getResponseHeader('X-Flash-Type') || 'notice';
+        
         responseData = null;
         if (xhr?.responseText && typeof xhr?.responseText === 'string') {
           const responseText = xhr.responseText.trim();
@@ -157,9 +161,8 @@
         ).toLowerCase();
         const writeMethods = ['post', 'patch', 'put', 'delete'];
 
-        const message = responseData?.message || 'Operation completed successfully.';
         if (writeMethods.includes(rawMethod)) {
-          this.notify(message, 'notice');
+          this.notify(message, type);
         }
 
         if (responseData?.return === true) {

@@ -194,7 +194,7 @@ module Droom
     def destroy
       Csw::Attendee.find_by_email(@user.email).try(:destroy)
       @user.destroy
-      set_notice(t("notifications.generic.deleted", resource: 'User'))
+      set_delete_notice(@user)
       redirect_to droom.admin_users_url
     end
 

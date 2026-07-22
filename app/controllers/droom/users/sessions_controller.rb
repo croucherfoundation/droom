@@ -2,7 +2,7 @@ require 'droom/auth_cookie'
 
 module Droom::Users
   class SessionsController < Devise::SessionsController
-    include Droom::FlashMessageHelper
+    include Droom::Concerns::FlashMessageHelper
     
     before_action :set_access_control_headers
     skip_before_action :verify_authenticity_token, raise: false
@@ -56,7 +56,7 @@ module Droom::Users
           return
         end
 
-        if true || backup_email_login_blocked?(resource)
+        if backup_email_login_blocked?(resource)
           current_user.clear_session_ids! if current_user
           Droom::AuthCookie.new(warden.cookies).unset
           set_alert(t("validations.email.primary_required_for_login"))
@@ -69,9 +69,11 @@ module Droom::Users
 
         # Redirect to the originally requested page, or use fallback
         redirect_path = determine_redirect_path
+        set_notice(t("notifications.authentication.login_success", name: resource.name))
         redirect_to redirect_path
       else
-        redirect_to new_user_session_url(failed: true)
+        set_alert(t("notifications.authentication.login_failure"))
+        redirect_to new_user_session_url
       end
     end
 

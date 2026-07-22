@@ -1,4 +1,13 @@
 en:
+  # This file contains the default error messages used by ActiveModel/ActiveRecord validations.
+  errors:
+    messages:
+      blank: "is required."
+      invalid: "is invalid."
+      taken: "has already been taken."
+      too_short: "is too short (minimum is %{count} characters)."
+      too_long: "is too long (maximum is %{count} characters)."
+
   validations:
     email:
       blank: "Email address is required."
@@ -8,6 +17,7 @@ en:
 
     file:
       blank: "File is required."
+      duplicate: "File with this name already exists."
       invalid_type: "File type is not allowed."
       malware_detected: "The uploaded file contains malware and cannot be accepted."
       too_large: "File is too large (maximum is %{size})."

@@ -37,13 +37,14 @@ module Droom
         @document.created_by = current_user
         @document.data_room = @folder.data_room?
         if @document.save
+          set_success_flash_headers(@document, :create)
           if %w{listing simple}.include?(params[:view])
-            render :partial => params[:view]
+            render :partial => params[:view], status: :created
           else
-            render :partial => 'listing'
+            render :partial => 'listing', status: :created
           end
         else
-          render json: @document.errors.full_messages.join(', '), status: 422
+          render_ajax_error(@document)
         end
       end
     end
@@ -58,7 +59,8 @@ module Droom
         @document.assign_attributes(document_params)
         if @data.blank?
           @document.save
-          render :partial => 'listing', :object => @document
+          set_success_flash_headers(@document, :update)
+          render :partial => 'listing', :object => @document, status: :ok
         else
           render json: 'File with this name already exists!', status: 409
         end
@@ -72,7 +74,8 @@ module Droom
           @document.as_synchronize_with_s3 if @document.name_changed?
           @document.save
           @document.file.update(filename: @document.name)
-          render :partial => 'listing', :object => @document
+          set_success_flash_headers(@document, :update)
+          render :partial => 'listing', :object => @document, status: :ok
         else
           render json: 'File with this name already exists!', status: 409
         end
@@ -86,7 +89,7 @@ module Droom
 
     def destroy
       @document.destroy
-      # @document.enqueue_for_croucher_deindexing # calling search_client method
+      set_success_flash_headers(@document, :destroy)
       head :ok
     end
 

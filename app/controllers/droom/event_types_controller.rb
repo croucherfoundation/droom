@@ -25,21 +25,26 @@ module Droom
     end
 
     def update
-      @event_type.update(event_type_params)
-      render :partial => 'event_type'
+      if @event_type.update(event_type_params)
+        set_success_flash_headers(@event_type, :update)
+        render :partial => 'event_type', status: :ok
+      else
+        render_ajax_error(@event_type)
+      end
     end
 
     def create
-      if @event_type.update(event_type_params)
-        render :partial => "created"
+      if @event_type.save
+        set_success_flash_headers(@event_type, :create)
+        render :partial => "created", status: :created
       else
-        respond_with @event_type
+        render_ajax_error(@event_type)
       end
     end
 
     def destroy
       @event_type.destroy
-      set_notice(t("notifications.generic.deleted", resource: 'Event type'))
+      set_delete_notice(@event_type)
       redirect_to droom.event_types_path
     end
 

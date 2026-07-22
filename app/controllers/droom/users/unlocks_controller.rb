@@ -1,6 +1,6 @@
 module Droom::Users
   class UnlocksController < Devise::UnlocksController
-    include Droom::FlashMessageHelper
+    include Droom::Concerns::FlashMessageHelper
 
     layout 'droom/sign_in'
 

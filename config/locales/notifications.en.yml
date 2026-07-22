@@ -15,9 +15,11 @@ en:
     generic:
       created: "%{resource} was successfully created."
       deleted: "%{resource} was successfully deleted."
+      invited: "%{resource} was successfully invited."
       not_found: "%{resource} not found."
       permission_denied: "You do not have permission to access this resource."
       save_failed: "Could not save %{resource}."
+      delete_failed: "Could not delete %{resource}."
       share_link_invalid_or_expired: "This share link is invalid or has expired."
       unable_to_save_changes: "We couldn't save your changes. Please try again."
       unexpected_error: "Something went wrong on our end. Please refresh the page or try again later."
