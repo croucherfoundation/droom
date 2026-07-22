@@ -1,23 +1,27 @@
 en:
   validations:
     email:
-      invalid: "Email address provided is invalid."
       blank: "Email address is required."
+      invalid: "Email address provided is invalid."
+      primary_required_for_login: "Please log in with your primary email address. If you need to update your primary email, use the password reset flow."
       taken: "Email has already been taken."
-
-    password:
-      too_short: "Password is too short (minimum is %{count} characters)."
-      blank: "Password is required."
 
     file:
       blank: "File is required."
       invalid_type: "File type is not allowed."
-      too_large: "File is too large (maximum is %{size})."
       malware_detected: "The uploaded file contains malware and cannot be accepted."
+      too_large: "File is too large (maximum is %{size})."
+      upload_fail: "Upload failed. Please check your connection."
 
     generic:
       blank: "%{field} is required."
       invalid: "%{field} is invalid."
       taken: "%{field} has already been taken."
-      too_short: "%{field} is too short (minimum is %{count} characters)."
       too_long: "%{field} is too long (maximum is %{count} characters)."
+      too_short: "%{field} is too short (minimum is %{count} characters)."
+
+    password:
+      blank: "Password is required."
+      incorrect: "The password is incorrect."
+      new_must_differ: "Your new password must be different from your current one."
+      too_short: "Password is too short (minimum is %{count} characters)."

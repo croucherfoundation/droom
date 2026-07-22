@@ -1,20 +1,25 @@
 en:
   notifications:
     authentication:
-      login_success: "Hello %{name}!"
-      login_failure: "Email or password not recognised."
-      logout: "Goodbye %{name}."
-      session_timeout: "Your session has timed out. Please sign in again."
       access_denied: "This part of the site is private. Please sign in to continue."
+      account_unlocked: "Your account is unlocked. Please sign in."
       already_signed_in: "You are already signed in."
+      login_failure: "Email or password not recognised."
+      login_success: "Hello %{name}!"
+      logout: "Goodbye %{name}."
+      not_confirmed: "We haven't received your confirmation. Please check your email."
+      password_set: "Thank you. Your password has been set and your account is fully active."
+      session_timeout: "Your session has timed out. Please sign in again."
       token_not_recognised: "Token not recognised."
 
     generic:
       created: "%{resource} was successfully created."
-      updated: "%{resource} was successfully updated."
       deleted: "%{resource} was successfully deleted."
-      save_failed: "Could not save %{resource}."
       not_found: "%{resource} not found."
       permission_denied: "You do not have permission to access this resource."
-      invalid_parameters: "Invalid parameters."
-      invalid_action_type: "Invalid action type."
+      save_failed: "Could not save %{resource}."
+      share_link_invalid_or_expired: "This share link is invalid or has expired."
+      unable_to_save_changes: "We couldn't save your changes. Please try again."
+      unexpected_error: "Something went wrong on our end. Please refresh the page or try again later."
+      updated: "%{resource} was successfully updated."
+      verification_email_sent: "Verification email sent to %{email}. Please check your inbox."

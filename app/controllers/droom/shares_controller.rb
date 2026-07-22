@@ -6,7 +6,8 @@ module Droom
     def show
       share = Droom::Share.find_by(token: params[:id])
       if share.nil?
-        redirect_to root_path, alert: "This share link is invalid or has expired." and return
+        set_alert(t("notifications.generic.share_link_invalid_or_expired"))
+        redirect_to root_path and return
       end
 
       sign_in(share.shared_with)

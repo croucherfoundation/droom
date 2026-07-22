@@ -39,7 +39,8 @@ module Droom
 
     def destroy
       @event_type.destroy
-      redirect_to droom.event_types_path, notice: 'Event type deleted.'
+      set_notice(t("notifications.generic.deleted", resource: 'Event type'))
+      redirect_to droom.event_types_path
     end
 
   protected

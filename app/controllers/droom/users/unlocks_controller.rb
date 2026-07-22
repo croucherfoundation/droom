@@ -1,5 +1,7 @@
 module Droom::Users
   class UnlocksController < Devise::UnlocksController
+    include Droom::FlashMessageHelper
+
     layout 'droom/sign_in'
 
     respond_to :html, :json
@@ -22,9 +24,10 @@ module Droom::Users
       self.resource = resource_class.send_unlock_instructions(resource_params)
       if resource.errors.empty?
         yield resource if block_given?
-        redirect_to new_user_session_url, notice: I18n.t(:unlock_sent)
+        set_notice(I18n.t(:unlock_sent))
+        redirect_to new_user_session_url
       else
-        flash[:alert] = I18n.t(:unlock_account_insturctions_not_delivered)
+        set_alert(I18n.t(:unlock_account_insturctions_not_delivered))
         redirect_to new_user_unlock_url
       end
     end

@@ -2,7 +2,7 @@ module Droom::Api
   class ApiController < Droom::DroomController
     include Droom::Concerns::LocalApi
     include Droom::Concerns::PaperTrailWhodunnit
-    include ApiResponseHelper
+    include Droom::Concerns::ApiResponseHelper
 
     respond_to :json
     skip_before_action :verify_authenticity_token, raise: false

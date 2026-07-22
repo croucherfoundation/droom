@@ -2,11 +2,11 @@ module Droom
   class DroomController < ActionController::Base
     include Droom::Concerns::ControllerHelpers
     include Droom::Concerns::PaperTrailWhodunnit
+    include Droom::Concerns::LocaleDetection
+    include Droom::Concerns::FlashMessageHelper
+
     helper Droom::DroomHelper
     helper ApplicationHelper
-    include LocaleDetection
-    include FlashMessageHelper
-
 
     rescue_from Droom::NoChineseContent, :with => :render_holding_chinese
 

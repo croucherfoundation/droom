@@ -104,7 +104,7 @@ module Droom
 
     def destroy
       @event.destroy
-      flash[:notice] = 'Event deleted successfully.'
+      set_notice(t("notifications.generic.deleted", resource: 'Event'))
       redirect_to droom.events_path
     end
 
@@ -121,7 +121,7 @@ module Droom
         end
 
       else
-        render json: { error: "Invalid file type" }, status: :unprocessable_entity
+        render json: { error: t("validations.file.invalid_type") }, status: :unprocessable_entity
       end
     end
 

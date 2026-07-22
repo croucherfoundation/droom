@@ -28,11 +28,13 @@ module Droom::Concerns::ScanAttachedFile
 
           case result[:status]
           when :infected
-            flash[:alert] = "The uploaded file contains malware: #{result[:message]}"
+            Rails.logger.error("[:infected] File scanning failed: #{result[:message]}")
+            flash[:alert] = I18n.t("validations.file.malware_detected")
             scan_failed = true
             break
           when :error
-            flash[:alert] = "An error occurred while scanning the uploaded file: #{result[:message]}"
+            Rails.logger.error("[:error] File scanning error: #{result[:message]}")
+            flash[:alert] = I18n.t("validations.file.upload_fail")
             scan_failed = true
             break
           end
@@ -59,9 +61,11 @@ module Droom::Concerns::ScanAttachedFile
     result = ClamavServices.scan_file(file_path)
     case result[:status]
     when :infected
-      return "#{name} contains malware: #{result[:message]}"
+      Rails.logger.error("[:infected] File scanning failed: #{result[:message]}")
+      return I18n.t("validations.file.malware_detected")
     when :error
-      return "#{name} could not be scanned: #{result[:message]}"
+      Rails.logger.error("[:error] File scanning error: #{result[:message]}")
+      return I18n.t("validations.file.upload_fail")
     end
   end
 end

@@ -76,9 +76,9 @@ module Droom
         end
         if email_error
           if request.xhr?
-            render json: { errors: ["Email address provided is invalid"] }, status: :unprocessable_entity
+            render json: { errors: [t("validations.email.invalid")] }, status: :unprocessable_entity
           else
-            flash[:alert] = "Email address provided is invalid"
+            set_alert(t("validations.email.invalid"))
             redirect_to request.referer
           end
         end
@@ -103,12 +103,12 @@ module Droom
       if @user.update(modified_params)
         respond_to_successful_update(verification_email)
       else
-        render_update_error(@user.errors.full_messages.first || "Unable to save changes.")
+        render_update_error(@user.errors.full_messages.first || t("notifications.generic.unable_to_save_changes"))
       end
     rescue ActiveModel::UnknownAttributeError => e
       render_update_error(e.message)
     rescue StandardError => e
-      render_update_error("An unexpected error occurred.", :internal_server_error)
+      render_update_error(t("notifications.generic.unexpected_error"), :internal_server_error)
       Rails.logger.error("[AccountSettingUpdate] #{e.class}: #{e.message}\n#{e.backtrace.first(5).join("\n")}")
     end
 
@@ -140,9 +140,9 @@ module Droom
         end
         if email_error
           if request.xhr?
-            render json: { errors: ["Email address provided is invalid"] }, status: :unprocessable_entity
+            render json: { errors: [t("validations.email.invalid")] }, status: :unprocessable_entity
           else
-            flash[:alert] = "Email address provided is invalid"
+            set_alert(t("validations.email.invalid"))
             redirect_to request.referer
           end
         end
@@ -167,7 +167,7 @@ module Droom
       if current_user.save
         sign_in current_user
         if current_user.data_room_user? || params[:send_invitation_memo].present?
-          flash[:notice] = t(:password_set)
+          set_notice(t('notifications.authentication.password_set'))
           redirect_to params[:destination].presence || droom.dashboard_url
         else
           raise Droom::AccessDenied
@@ -194,7 +194,8 @@ module Droom
     def destroy
       Csw::Attendee.find_by_email(@user.email).try(:destroy)
       @user.destroy
-      redirect_to droom.admin_users_url, notice: "User \"#{@user.name}\" has been deleted."
+      set_notice(t("notifications.generic.deleted", resource: 'User'))
+      redirect_to droom.admin_users_url
     end
 
     def reinvite
@@ -237,20 +238,16 @@ module Droom
 
       return false if current_password.blank? && new_password.blank?
 
-      if current_password.blank?
-        return render_update_error("Current password is required to set a new password.")
+      if current_password.blank? || new_password.blank?
+        return render_update_error(t("validations.password.blank"))
       end
 
       unless @user.valid_password?(current_password)
-        return render_update_error("Current password is incorrect.")
-      end
-
-      if new_password.blank?
-        return render_update_error("New password cannot be blank.")
+        return render_update_error(t("validations.password.incorrect"))
       end
 
       if new_password == current_password
-        return render_update_error("New password must be different from current password.")
+        return render_update_error(t("validations.password.new_must_differ"))
       end
 
       false
@@ -260,7 +257,7 @@ module Droom
       if request.xhr?
         render json: { error_message: message }, status: status
       else
-        flash[:alert] = message
+        set_alert(message)
         redirect_to request.referer
       end
 
@@ -283,16 +280,16 @@ module Droom
 
     def respond_to_successful_update(verification_email = nil)
       if verification_email
-        message = "Verification email sent to #{verification_email}. Please check your inbox."
+        message = t("notifications.generic.verification_email_sent", email: verification_email)
         if request.xhr?
           render json: { message: message, verification_required: true }, status: :ok
         else
-          flash[:notice] = message
+          set_notice(message)
           redirect_to request.referrer || user_url(@user)
         end
       else
         if request.xhr?
-          render json: { message: "Account settings saved successfully." }, status: :ok
+          render json: { message: t("notifications.generic.updated", resource: 'Account settings') }, status: :ok
         else
           respond_with @user, location: user_url(view: @view) do |format|
             format.js { head :no_content }
