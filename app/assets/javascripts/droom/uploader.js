@@ -455,7 +455,7 @@
           window.DocumentScanSubscriber.subscribeToDocument(docId);
         }
       } else if (scanStatus === 'infected') {
-        this.notify('This file was found to contain malware and has been removed.', 'alert');
+        this.notify('The uploaded file contains malware and cannot be accepted.', 'alert');
       } else {
         // Already scanned clean (or no async scan required): confirm success now.
         confirmation.signal_confirmation();
