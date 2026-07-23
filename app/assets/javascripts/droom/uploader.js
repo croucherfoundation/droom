@@ -446,7 +446,7 @@
       // Decide which alert state to show based on the document's scan status.
       var scanStatus = confirmation.data('scan-status') || confirmation.attr('data-scan-status');
       var docId = confirmation.data('doc-id') || (confirmation.attr('id') || '').replace('document_', '');
-
+      
       if (scanStatus === 'pending') {
         // Large file: virus scan runs in the background. Show the standard alert
         // and keep it visible until the scan resolves (see DocumentScanSubscriber).
@@ -459,7 +459,7 @@
       } else {
         // Already scanned clean (or no async scan required): confirm success now.
         confirmation.signal_confirmation();
-        this.notify('File uploaded successfully.', 'notice');
+        this.notify('File was uploaded successfully.', 'notice');
       }
 
       return typeof this._callback === "function" ? this._callback(this, confirmation) : void 0;
