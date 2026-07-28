@@ -214,8 +214,8 @@ module Droom::Api
     end
 
     def eligible_event_admins
-      @users = Droom::User.admins
-      render json: @users, only: [:id, :uid, :name]
+      users = Droom::User.admins
+      render json: users
     end
 
   protected
