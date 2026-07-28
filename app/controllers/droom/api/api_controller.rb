@@ -10,27 +10,9 @@ module Droom::Api
 
     rescue_from ActiveRecord::RecordNotFound, with: :not_found
     rescue_from Droom::DroomError, with: :blew_up
-    rescue_from Droom::AccessDenied, with: :not_authorized
+    rescue_from Droom::AccessDenied, with: :not_allowed
 
     protected
-
-    def not_found(exception)    
-      name = exception.model.demodulize.underscore.humanize rescue name_from_controller.singularize.humanize
-      message = t('notifications.generic.not_found', resource: name)
-      render_api_error(errors: message, status: :not_found)
-    end
-
-    def not_authorized(exception)
-      render_api_error(errors: t('notifications.authentication.access_denied'), status: :forbidden)
-    end
-
-    def not_allowed(exception)
-      render_api_error(errors: t('notifications.authentication.permission_denied'), status: :forbidden)
-    end
-
-    def blew_up(exception)
-      render_api_error(errors: t('notifications.generic.unexpected_error'), status: :internal_server_error)
-    end
 
     def name_from_controller
       params[:controller].sub("Controller", "").underscore.split('/').last

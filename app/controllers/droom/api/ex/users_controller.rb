@@ -16,12 +16,17 @@ module Droom::Api::Ex
     private
 
     def search_users
-      return unless params[:q]
+      query = params[:q].to_s.strip
+      @users = Droom::User.none and return if query.blank?
 
-      @users = Droom::User.search params[:q],
+      @users = Droom::User.search query,
                                   page: 1,
                                   per_page: 10,
                                   order: {_score: :desc}
+    rescue StandardError => e
+      # Keep suggest endpoint responsive when Searchkick/ES is unavailable.
+      Rails.logger.warn("[api/ex/users#suggest] search fallback: #{e.class}: #{e.message}")
+      @users = Droom::User.matching(query).limit(10)
     end
 
   end
