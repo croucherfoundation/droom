@@ -16,8 +16,6 @@ module Droom::Concerns
           'destroy' => t('notifications.generic.deleted', resource: resource_name)
         }[action_name]
 
-        response[:message] = message if message.present?
-
         # 1. Separate AMS-specific options from general custom payload options
         ams_options = options.extract!(:serializer, :each_serializer, :include, :meta, :meta_key)
         
@@ -36,6 +34,9 @@ module Droom::Concerns
         # Safely retain AMS metadata if you use pagination or custom meta keys
         response[:meta] = serialized_payload[:meta] if serialized_payload.key?(:meta)
       end
+
+      # Return explicit message even when no resource is provided
+      response[:message] = message if message.present?
 
       # Merge any remaining custom options (like extra root-level keys) and render
       render json: response.merge(options), status: status
