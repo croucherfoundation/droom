@@ -1,5 +1,7 @@
 module Droom::Api
   class Users::ConfirmationsController < Devise::ConfirmationsController
+    include Droom::Concerns::ApiResponseHelper
+
     skip_before_action :verify_authenticity_token, raise: false
     respond_to :json
     def show
@@ -9,24 +11,24 @@ module Droom::Api
         Droom::SubscribeToMailchimpJob.perform_later(@resource.email, @resource.given_name, @resource.family_name) if Rails.env.production?
         user = sign_in(@resource)
         user_data = get_auth_cookie_for(user)
-        render json: {user: @resource, user_data: user_data.as_json, message: "Email confirmed."}, status: :ok
+        render_api_success(user: @resource, user_data: user_data.as_json, message: t('notifications.authentication.email_confirmed'), status: :ok)
       else
-        render json: { user: @resource, message: @resource.errors.full_messages, user_data: nil }, status: :unprocessable_entity
+        render_api_error(errors: @resource.errors, status: :unprocessable_entity, user: @resource, message: @resource.errors.full_messages, user_data: nil)
       end
     end
 
     def create
       @resource = Droom::Email.find_by(email: params[:email]).try(:user)
-      return render json: { message: ["User not found."] }, status: :not_found unless @resource
+      return render_api_error(errors: [t('notifications.authentication.user_not_found')], message: [t('notifications.authentication.user_not_found')], status: :not_found) unless @resource
 
       if @resource
         if @resource.confirmed?
-          return render json: { message: ["User already confirmed."] }, status: :unprocessable_entity
+          return render_api_error(errors: [t('notifications.authentication.user_already_confirmed')], message: [t('notifications.authentication.user_already_confirmed')], status: :unprocessable_entity)
         end
         send_confirmation_instructions(@resource)
-        render json: { message: "Confirmation email sent." }, status: :ok
+        render_api_success(message: t('notifications.authentication.confirmation_email_sent'), status: :ok)
       else
-        render json: { message: @resource.errors.full_messages }, status: :unprocessable_entity
+        render_api_error(errors: @resource.errors, message: @resource.errors.full_messages, status: :unprocessable_entity)
       end
     end
 

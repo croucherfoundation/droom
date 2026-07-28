@@ -14,20 +14,22 @@ module Droom::Api
 
     protected
 
-    def not_found(exception)
-      render json: { errors: exception.message }.to_json, status: :not_found
+    def not_found(exception)    
+      name = exception.model.demodulize.underscore.humanize rescue name_from_controller.singularize.humanize
+      message = t('notifications.generic.not_found', resource: name)
+      render_api_error(errors: message, status: :not_found)
     end
 
     def not_authorized(exception)
-      render json: { errors: "You do not have permission to access this service" }.to_json, status: :forbidden
+      render_api_error(errors: t('notifications.authentication.access_denied'), status: :forbidden)
     end
 
     def not_allowed(exception)
-      render json: { errors: "You do not have permission to access that resource" }.to_json, status: :forbidden
+      render_api_error(errors: t('notifications.authentication.permission_denied'), status: :forbidden)
     end
 
     def blew_up(exception)
-      render json: { errors: exception.message }.to_json, status: :internal_server_error
+      render_api_error(errors: t('notifications.generic.unexpected_error'), status: :internal_server_error)
     end
 
     def name_from_controller
@@ -51,7 +53,7 @@ module Droom::Api
           # here we borrow the devise timeout strategy but cannot refer to the session,
           # so we use a last_request_at column.
           if user.timedout?(user.last_request_at)
-            render json: { errors: "Session timed out" }, status: :unauthorized
+            render_api_error(errors: t('notifications.authentication.session_timeout'), status: :unauthorized)
           else
             bypass_sign_in user
             user.set_last_request_at!
@@ -64,7 +66,7 @@ module Droom::Api
           Droom::AuthCookie.new(cookies).set(user)
         end
       else
-        render json: { errors: "Token not recognised" }, status: :unauthorized
+        render_api_error(errors: t('notifications.authentication.token_not_recognised'), status: :unauthorized)
       end
     end
 
@@ -109,7 +111,7 @@ module Droom::Api
     end
 
     def render_unauthorized(message)
-      render json: { errors: message }, status: :unauthorized
+      render_api_error(errors: message, status: :unauthorized)
     end
 
 

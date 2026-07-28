@@ -4,10 +4,11 @@ module Droom::Api
     load_resource class: "Droom::Document"
 
     def show
-      render json: @document, serializer: Droom::DocumentSerializer
+      render_api_success(resource: @document, serializer: Droom::DocumentSerializer)
     end
 
     private
+    
     def set_document
       @document = Droom::Document.find(params[:id])
     end

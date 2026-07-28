@@ -28,20 +28,23 @@ module Droom::Api
     end
 
     def destroy
-      @organisation.destroy
-      head :ok
+      if @organisation.destroy
+        render_api_success
+      else 
+        render_api_error(errors: @organisation.errors, status: :unprocessable_entity)
+      end
     end
 
     def return_organisations
-      render json: @organisations, each_serializer: Droom::OrganisationSerializer
+      render_api_success(resource: @organisations, each_serializer: Droom::OrganisationSerializer)
     end
 
     def return_organisation
-      render json: @organisation, serializer: Droom::OrganisationSerializer
+      render_api_success(resource: @organisation, serializer: Droom::OrganisationSerializer)
     end
 
     def return_errors
-      render json: { errors: @organisation.errors.to_a }
+      render_api_error(errors: @organisation.errors, status: :unprocessable_entity)
     end
 
     protected

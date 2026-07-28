@@ -6,11 +6,11 @@ module Droom::Api::Ex
     before_action :search_users, only: [:suggest]
 
     def suggest
-      render json: @users, each_serializer: Droom::Api::Ex::UserSerializer
+      render_api_success(resource: @users, each_serializer: Droom::Api::Ex::UserSerializer)
     end
 
     def profile
-      render json: current_user, serializer: Droom::Api::Ex::UserSerializer
+      render_api_success(resource: current_user, serializer: Droom::Api::Ex::UserSerializer)
     end
 
     private

@@ -8,11 +8,12 @@ module Droom::Api
       else
         @addresses = Droom::Address.all
       end
-      render json: @addresses, each_serializer: Droom::AddressSerializer
+
+      render_api_success(resource: @addresses, each_serializer: Droom::AddressSerializer)
     end
 
     def show
-      render json: @address, serializer: Droom::AddressSerializer
+      render_api_success(resource: @address, serializer: Droom::AddressSerializer)
     end
 
   end

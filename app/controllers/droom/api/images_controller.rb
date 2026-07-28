@@ -6,7 +6,7 @@ module Droom::Api
     load_and_authorize_resource class: "Droom::Image", except: [:index, :new, :create]
 
     def index
-      render json: ActiveModel::Serializer::CollectionSerializer.new(@images, serializer: Droom::ImageSerializer)
+      render_api_success(resource: @images, each_serializer: Droom::ImageSerializer)
     end
 
     def show
@@ -31,18 +31,19 @@ module Droom::Api
     end
 
     def destroy
-      @image.destroy
-      head :ok
+      if @image.destroy
+        render_api_success
+      else
+        return_errors
+      end
     end
 
     def return_image
-      render json: @image, serializer: Droom::ImageSerializer
+      render_api_success(resource: @image, serializer: Droom::ImageSerializer)
     end
 
     def return_errors
-      render json: {
-        errors: @image.errors.to_a
-      }
+      render_api_error(errors: @image.errors, status: :unprocessable_entity)
     end
 
     protected

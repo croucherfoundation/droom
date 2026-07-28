@@ -7,11 +7,11 @@ module Droom::Api
     load_resource find_by: :uuid, class: "Droom::Event", except: [:calendar]
     
     def index
-      render json: @events
+      render_api_success(resource: @events)
     end
 
     def show
-      render json: @event
+      render_api_success(resource: @event)
     end
 
     def calendar
@@ -35,27 +35,29 @@ module Droom::Api
         range.end, range.begin.to_date, range.begin, range.begin
       ).order(:start)
 
-      render json: @events, each_serializer: Droom::CalendarSerializer
+      render_api_success(resource: @events, each_serializer: Droom::CalendarSerializer)
     end
 
     def update
       @event.update(event_params)
-      render json: @event
+      render_api_success(resource: @event)
     end
 
     def create
       if @event && @event.persisted?
-        render json: @event
+        render_api_success(resource: @event)
       else
-        render json: {
-          errors: @event.errors.to_a
-        }
+        render_api_error(errors: @event.errors, status: :unprocessable_entity)
       end
     end
 
     def destroy
-      @event.destroy
-      head :ok
+      if @event.destroy
+        render_api_success
+      else
+        render_api_error(errors: @event.errors, status: :unprocessable_entity)
+      end
+      
     end
 
   protected
