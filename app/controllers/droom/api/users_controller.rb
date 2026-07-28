@@ -150,7 +150,7 @@ module Droom::Api
       attach_base64_image(@user, :image, profile_image)
 
       if @user.save
-        render_api_success(photo_url: profile_image_url(@user.reload))
+        render_api_success(resource: @user.reload)
       else
         render_api_error(errors: @user.errors, error: @user.errors.full_messages, status: :unprocessable_entity)
       end
@@ -350,10 +350,6 @@ module Droom::Api
 
     def has_other_setting_updates?
       account_params[:timezone].present? || account_params[:password].present?
-    end
-
-    def profile_image_url(user)
-      user.image.attached? ? user.image.url : ""
     end
 
     def validate_image_data(base64_data)

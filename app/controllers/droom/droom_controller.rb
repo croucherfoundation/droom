@@ -10,7 +10,6 @@ module Droom
 
     rescue_from Droom::NoChineseContent, :with => :render_holding_chinese
 
-    before_action :set_locale
     before_action :check_locale
     before_action :set_timezone
     before_action :footer_visibility
