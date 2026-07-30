@@ -14,10 +14,6 @@ module Droom::Api
       params[:controller].sub("Controller", "").underscore.split('/').last
     end
 
-    def api_controller?
-      true
-    end
-
     def current_user
       super.presence || RequestStore.store[:current_user]
     end

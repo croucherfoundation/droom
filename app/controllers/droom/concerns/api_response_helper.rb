@@ -7,6 +7,12 @@ module Droom::Concerns
       rescue_from StandardError, with: :blew_up
       rescue_from Droom::DroomError, with: :blew_up
       rescue_from Droom::AccessDenied, with: :not_allowed
+      rescue_from Cdr::NoChineseContent, with: :no_chinese_content
+      rescue_from Droom::NoChineseContent, with: :no_chinese_content
+    end
+
+    def api_controller?
+      true
     end
 
     private
@@ -82,6 +88,10 @@ module Droom::Concerns
 
     def not_allowed(exception)
       render_api_error(errors: t('notifications.authentication.permission_denied'), status: :forbidden)
+    end
+
+    def no_chinese_content(exception)
+      render_api_error(errors: t('notifications.generic.no_chinese_content'), status: :ok)
     end
 
     def blew_up(exception)

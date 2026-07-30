@@ -16,7 +16,7 @@ module Droom::Concerns
     # request that resolves to a Chinese locale is diverted to a holding page.
     # The API skips this check and serves Chinese normally.
     def check_locale
-      raise Droom::NoChineseContent if chinese_locale?
+      raise Droom::NoChineseContent if chinese_locale? && !api_controller?
     end
 
     def current_locale

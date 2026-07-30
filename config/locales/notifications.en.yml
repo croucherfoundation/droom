@@ -28,6 +28,7 @@ en:
       image_uploaded: "Image was successfully uploaded."
       image_upload_requirements: "Image is required and must be JPG or PNG, maximum 5MB."
       not_found: "%{resource} not found."
+      no_chinese_content: "This resource does not contain any Chinese content."
       save_failed: "Could not save %{resource}."
       delete_failed: "Could not delete %{resource}."
       share_link_invalid_or_expired: "This share link is invalid or has expired."
