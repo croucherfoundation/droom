@@ -85,6 +85,8 @@ module Droom::Concerns
     end
 
     def blew_up(exception)
+      Honeybadger.notify(exception)
+      Rails.logger.error "API Error #500: #{exception.message}\n#{exception.backtrace.join("\n")}"
       render_api_error(errors: t('notifications.generic.unexpected_error'), status: :internal_server_error)
     end
 
