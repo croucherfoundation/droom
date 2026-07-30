@@ -12,9 +12,9 @@ module Droom::Api
         Droom::SubscribeToMailchimpJob.perform_later(@resource.email, @resource.given_name, @resource.family_name) if Rails.env.production?
         user = sign_in(@resource)
         user_data = get_auth_cookie_for(user)
-        render_api_success(user: @resource, user_data: user_data.as_json, message: t('notifications.authentication.email_confirmed'), status: :ok)
+        render_api_success(resource: @resource, user_data: user_data.as_json, message: t('notifications.authentication.email_confirmed'), status: :ok)
       else
-        render_api_error(errors: @resource.errors, status: :unprocessable_entity, user: @resource, message: @resource.errors.full_messages, user_data: nil)
+        render_api_error(errors: @resource.errors)
       end
     end
 
@@ -29,7 +29,7 @@ module Droom::Api
         send_confirmation_instructions(@resource)
         render_api_success(message: t('notifications.authentication.confirmation_email_sent'), status: :ok)
       else
-        render_api_error(errors: @resource.errors, message: @resource.errors.full_messages, status: :unprocessable_entity)
+        render_api_error(errors: @resource.errors)
       end
     end
 

@@ -31,7 +31,7 @@ module Droom::Api
       else
         clean_up_passwords resource
         set_minimum_password_length
-        render_api_error(errors: resource.errors, status: :unprocessable_entity, meta: { error_message: resource.errors.full_messages })
+        render_api_error(errors: resource.errors)
       end
     end
 
