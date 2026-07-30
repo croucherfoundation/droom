@@ -12,7 +12,7 @@ module Droom::Api
         Droom::SubscribeToMailchimpJob.perform_later(@resource.email, @resource.given_name, @resource.family_name) if Rails.env.production?
         user = sign_in(@resource)
         user_data = get_auth_cookie_for(user)
-        render_api_success(resource: @resource, user_data: user_data.as_json, message: t('notifications.authentication.email_confirmed'), status: :ok)
+        render_api_success(resource: @resource, serializer: Droom::Api::Ex::UserSerializer, user_data: user_data.as_json, message: t('notifications.authentication.email_confirmed'), status: :ok)
       else
         render_api_error(errors: @resource.errors)
       end

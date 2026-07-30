@@ -9,7 +9,8 @@ module Droom::Api::Ex
                 :emails,
                 :image,
                 :show_initial_image,
-                :groups
+                :groups,
+                :after_confirmed_url
 
     def emails
       object.emails.map(&:email).join(', ')
