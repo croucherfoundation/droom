@@ -150,7 +150,7 @@ module Droom::Api
       attach_base64_image(@user, :image, profile_image)
 
       if @user.save
-        render_api_success(resource: @user.reload)
+        render_api_success(resource: @user.reload, serializer: Droom::Api::Ex::UserSerializer)
       else
         render_api_error(errors: @user.errors, error: @user.errors.full_messages, status: :unprocessable_entity)
       end
