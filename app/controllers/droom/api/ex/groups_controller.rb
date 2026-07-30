@@ -5,7 +5,7 @@ module Droom::Api::Ex
     before_action :get_groups, only: [:index]
 
     def index
-      render json: @groups, each_serializer: Droom::Api::Ex::GroupSerializer
+      render_api_success(resource: @groups, each_serializer: Droom::Api::Ex::GroupSerializer)
     end
 
     private

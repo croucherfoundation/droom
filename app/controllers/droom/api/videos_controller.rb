@@ -6,7 +6,7 @@ module Droom::Api
     load_and_authorize_resource class: "Droom::Video", except: [:index, :new, :create]
 
     def index
-      render json: ActiveModel::Serializer::CollectionSerializer.new(@videos, serializer: Droom::VideoSerializer)
+      render_api_success(resource: @videos, each_serializer: Droom::VideoSerializer)
     end
 
     def show
@@ -30,18 +30,19 @@ module Droom::Api
     end
 
     def destroy
-      @video.destroy
-      head :ok
+      if @video.destroy
+        render_api_success
+      else
+        render_api_error(errors: @video.errors, status: :unprocessable_entity)
+      end
     end
 
     def return_video
-      render json: @video
+      render_api_success(resource: @video)
     end
 
     def return_errors
-      render json: {
-        errors: @video.errors.to_a
-      }
+      render_api_error(errors: @video.errors, status: :unprocessable_entity)
     end
 
   protected

@@ -1,5 +1,8 @@
 module Droom::Api
   class Users::RegistrationsController < Devise::RegistrationsController
+    include Droom::Concerns::ApiResponseHelper
+    include Droom::Concerns::LocaleDetection
+
     respond_to :json
 
     skip_before_action :verify_authenticity_token, raise: false
@@ -9,7 +12,7 @@ module Droom::Api
         return head :ok
       end
 
-      return render json: { errors: ["Email has already been taken."] }, status: :unprocessable_entity if Droom::User.find_by_any_email(@hashed_params[:email])
+      return render_api_error(errors: [I18n.t('validations.email.taken')], status: :unprocessable_entity) if Droom::User.find_by_any_email(@hashed_params[:email])
 
       build_resource(@hashed_params.merge(show_initial_image: true))
       resource.save
@@ -24,11 +27,11 @@ module Droom::Api
         send_confirmation_instructions(resource)
 
         resource.sync_attendee
-        render json: { message: "Signed up successfully. Please confirm your email." }, status: :created
+        render_api_success(message: t('notifications.authentication.signup_success_confirm_email'), status: :created)
       else
         clean_up_passwords resource
         set_minimum_password_length
-        render json: { errors: resource.errors.full_messages, meta: { error_message: resource.errors.full_messages } }, status: :unprocessable_entity
+        render_api_error(errors: resource.errors)
       end
     end
 

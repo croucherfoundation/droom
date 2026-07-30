@@ -5,7 +5,7 @@ module Droom::Api
 
     def index
       @pages = Droom::Page.published
-      render json: @pages, each_serializer: Droom::PageSerializer
+      render_api_success(resource: @pages, each_serializer: Droom::PageSerializer)
     end
 
     def show
@@ -18,13 +18,11 @@ module Droom::Api
     end
 
     def return_page
-      render json: @page, serializer: Droom::PageSerializer
+      render_api_success(resource: @page, serializer: Droom::PageSerializer)
     end
 
     def return_errors
-      render json: {
-        errors: @page.errors.to_a
-      }
+      render_api_error(errors: @page.errors, status: :unprocessable_entity)
     end
 
   end

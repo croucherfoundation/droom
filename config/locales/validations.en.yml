@@ -18,6 +18,7 @@ en:
     file:
       blank: "File is required."
       duplicate: "File with this name already exists."
+      invalid: "File is invalid."
       invalid_type: "File type is not allowed."
       malware_detected: "The uploaded file contains malware and cannot be accepted."
       too_large: "File is too large (maximum is %{size})."

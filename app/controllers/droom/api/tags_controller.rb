@@ -6,7 +6,7 @@ module Droom::Api
     load_resource class: "Droom::Tag"
 
     def index
-      render json: @tags
+      render_api_success(resource: @tags)
     end
 
     protected

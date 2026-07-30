@@ -10,25 +10,25 @@ module Droom::Api
 
 
     def index
-      render json: @users
+      render_api_success(resource: @users)
     end
 
     def accounts
-      render json: @users, each_serializer: Droom::UserMinimalSerializer
+      render_api_success(resource: @users, each_serializer: Droom::UserMinimalSerializer)
     end
 
     def show
       if params[:type].present? && params[:type] == 'minimal'
-        render json: @user, serializer: Droom::UserMinimalSerializer
+        render_api_success(resource: @user, serializer: Droom::UserMinimalSerializer)
       else
-        render json: @user
+        render_api_success(resource: @user)
       end
     end
 
     # This would usually be a session-init call from a front end SPA
     #
     def whoami
-      render json: current_user
+      render_api_success(resource: current_user)
     end
 
     # This is a background call to request the user information necessary for session creation.
@@ -37,14 +37,14 @@ module Droom::Api
     #
     def authenticable
       @user.ensure_unique_session_id!
-      render json: @user, serializer: Droom::UserAuthSerializer
+      render_api_success(resource: @user, serializer: Droom::UserAuthSerializer)
     end
 
     def update_contact
       @user.assign_nested_emails(contact_params[:emails]) if contact_params[:emails].present?
       @user.assign_nested_phones(contact_params[:phones]) if contact_params[:phones].present?
       @user.assign_nested_addresses(contact_params[:addresses]) if contact_params[:addresses].present?
-      render json: @user, serializer: Droom::UserMinimalSerializer
+      render_api_success(resource: @user, serializer: Droom::UserMinimalSerializer)
     end
 
     def account_update
@@ -57,7 +57,7 @@ module Droom::Api
         @user.update_password_attendee(password: account_params[:password]) if account_params[:password].present?
       end
 
-      render json: @user, serializer: Droom::UserMinimalSerializer
+      render_api_success(resource: @user, serializer: Droom::UserMinimalSerializer)
     end
 
     def account_setting_update
@@ -68,11 +68,11 @@ module Droom::Api
       destination = account_params[:destination]
       if new_email.present? && new_email != @user.email
         unless service.request_verification(new_email, destination)
-          return render json: { errors: service.errors }, status: :unprocessable_entity
+          return render_api_error(errors: service.errors, status: :unprocessable_entity)
         end
 
         unless has_other_setting_updates?
-          return render json: { message: "Verification email sent to #{new_email}" }, status: :ok
+          return render_api_success(message: t('notifications.generic.verification_email_sent', email: new_email), status: :ok)
         end
       end
 
@@ -100,14 +100,14 @@ module Droom::Api
         @user.update_password_attendee(password: account_params[:new_password]) if account_params[:new_password].present?
       end
 
-      render json: @user, serializer: Droom::UserMinimalSerializer
+      render_api_success(resource: @user, serializer: Droom::UserMinimalSerializer)
     end
 
     def check_valid_password
       if @user.valid_password?(params[:user][:current_password])
         head :ok
       else
-        render json: { error: "current_password is incorrect" }, status: :unprocessable_entity
+        render_api_error(errors: t('validations.password.incorrect'), status: :unprocessable_entity)
       end
     end
 
@@ -119,7 +119,7 @@ module Droom::Api
     def verify_otp
       otp = params[:user][:otp].to_i
       if VerificationService.new(@user,otp).verify_otp
-        render json: @user, serializer: Droom::UserMinimalSerializer
+        render_api_success(resource: @user, serializer: Droom::UserMinimalSerializer)
       end
     end
 
@@ -132,9 +132,9 @@ module Droom::Api
 
       if @user.update(user_params.except(:image))
         @user.class.sync_in_progress = false
-        render json: @user.reload
+        render_api_success(resource: @user.reload)
       else
-        render json: @user, serializer: Droom::UserSerializer, meta: {error: @user.errors.full_messages}
+        render_api_error(errors: @user.errors, status: :unprocessable_entity, meta: { error: @user.errors.full_messages })
       end
     end
 
@@ -150,39 +150,36 @@ module Droom::Api
       attach_base64_image(@user, :image, profile_image)
 
       if @user.save
-        render json: {
-          success: true,
-          photo_url: profile_image_url(@user.reload)
-        }
+        render_api_success(resource: @user.reload, serializer: Droom::Api::Ex::UserSerializer)
       else
-        render json: {
-          success: false,
-          error: @user.errors.full_messages
-        }, status: :unprocessable_entity
+        render_api_error(errors: @user.errors, error: @user.errors.full_messages, status: :unprocessable_entity)
       end
     end
 
     def create
       if @user && @user.persisted?
-        render json: @user
+        render_api_success(resource: @user)
       else
-        render json: { errors: @user.errors.to_a }
+        render_api_error(errors: @user.errors, status: :unprocessable_entity)
       end
     end
 
     def destroy
-      @user.destroy
-      head :ok
+      if @user.destroy
+        render_api_success
+      else
+        render_api_error(errors: @user.errors, status: :unprocessable_entity)
+      end
     end
 
     def remove_profile
       @user.update(show_initial_image: true)
-      render json: @user.reload
+      render_api_success(resource: @user.reload, serializer: Droom::Api::Ex::UserSerializer)
     end
 
     def sync_profile_image
       @user.sync_profile_from_external(params[:image_url]) if params[:image_url].present?
-      render json: @user
+      render_api_success(resource: @user, serializer: Droom::Api::Ex::UserSerializer)
     end
 
     def reindex
@@ -196,16 +193,16 @@ module Droom::Api
         current_user.update(timezone: timezone)
         # return current_user.timezone
         respond_to do |format|
-          format.json { render json: { notice: "The timezone of your profile has been updated to #{params[:timezone]}." }, status: :ok }
+          format.json { render_api_success(notice: t('notifications.generic.timezone_updated', timezone: params[:timezone]), status: :ok) }
         end
       end
     end
 
     def validate_email
       @email = Droom::Email.find_by(email: @user.email)
-      return render json: { valid: false } unless @email.present?
+      return render_api_success(valid: false) unless @email.present?
 
-      render json:  @user, serializer: Droom::UserMinimalSerializer, meta: { valid: ZerobounceService.new(record: @email).call }
+      render_api_success(resource: @user, serializer: Droom::UserMinimalSerializer, meta: { valid: ZerobounceService.new(record: @email).call })
     end
 
     def remove_reviewer_group
@@ -215,7 +212,7 @@ module Droom::Api
 
     def eligible_event_admins
       @users = Droom::User.admins
-      render json: @users, only: [:id, :uid, :name]
+      render_api_success(users: @users.as_json(only: [:id, :uid, :name]))
     end
 
   protected
@@ -245,13 +242,14 @@ module Droom::Api
             if verification_service.request_verification(new_email)
               # Don't include primary email in the update - it will be updated after verification
               # But we still need to process other updates
-              render json: {
-                message: "Verification email sent to #{new_email}. Please check your inbox.",
-                verification_required: true
-              }, status: :ok
+              render_api_success(
+                message: t('notifications.generic.verification_email_sent', email: new_email),
+                verification_required: true,
+                status: :ok
+              )
               return params_hash.except(:emails_attributes) # Remove all emails, continue with other updates
             else
-              render json: { errors: verification_service.errors }, status: :unprocessable_entity
+              render_api_error(errors: verification_service.errors, status: :unprocessable_entity)
               return params_hash
             end
           else
@@ -354,16 +352,12 @@ module Droom::Api
       account_params[:timezone].present? || account_params[:password].present?
     end
 
-    def profile_image_url(user)
-      user.image.attached? ? user.image.url : ""
-    end
-
     def validate_image_data(base64_data)
-      return "No image data provided" unless base64_data.present?
+      return t('validations.file.blank') unless base64_data.present?
 
       begin
         content_type, encoded_image = base64_data.split(',')
-        return "Invalid base64 image format" unless encoded_image.present?
+        return t('validations.file.invalid') unless encoded_image.present?
 
         decoded_image = Base64.decode64(encoded_image)
         mime_type = content_type.split(':')[1].split(';')[0]
@@ -371,28 +365,26 @@ module Droom::Api
         # Validate format
         allowed_formats = ['image/jpeg', 'image/png']
         unless allowed_formats.include?(mime_type)
-          return "Invalid image format. Accepted formats: JPG, PNG"
+          return t('validations.file.invalid_type')
         end
 
         # Validate size (5MB = 5242880 bytes)
         max_size_bytes = 5 * 1024 * 1024
         if decoded_image.bytesize > max_size_bytes
-          size_mb = (decoded_image.bytesize.to_f / 1024 / 1024).round(2)
-          return "Image too large (#{size_mb}MB). Maximum size: 5MB"
+          return t('validations.file.too_large', size: '5MB')
         end
 
         nil  # No error
       rescue => e
-        "Error validating image: #{e.message}"
+        t('notifications.generic.unexpected_error')
       end
     end
 
     def render_image_validation_error(error_msg = nil)
-      render json: {
-        success: false,
-        photo_url: "",
-        error: [error_msg || "Image is required and must be JPG or PNG, maximum 5MB"]
-      }, status: :unprocessable_entity
+      render_api_error(
+        errors: [error_msg || t('notifications.generic.image_upload_requirements')],
+        status: :unprocessable_entity
+      )
     end
 
   end

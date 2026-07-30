@@ -1,5 +1,8 @@
 module Droom::Api
   class Users::PasswordsController < Devise::PasswordsController
+    include Droom::Concerns::ApiResponseHelper
+    include Droom::Concerns::LocaleDetection
+
     respond_to :json
 
     prepend_before_action :normalize_reset_password_token_param, only: [:confirm, :update_password]
@@ -9,20 +12,20 @@ module Droom::Api
 
     def create
       unless @primary_email&.can_receive_email?
-        return render json: { success: false, errors: [I18n.t(:password_reset_instructions_not_delivered)] }
+        return render_api_error(errors: [t('notifications.authentication.password_reset_instructions_not_delivered')], status: :unprocessable_entity)
       end
 
       self.resource = resource_class.send_reset_password_instructions(reset_password_request_params)
       yield resource if block_given?
-      render json: { success: true, message: "If the email exists, a password reset email has been sent." }
+      render_api_success(message: t('notifications.authentication.password_reset_email_sent'))
     end
 
     def confirm
       self.resource = resource_class.find_by_reset_password_token(params[:reset_password_token])
       if resource.nil?
-        render json: { success: false, errors: ["Invalid reset password token"] }
+        render_api_error(errors: [t('notifications.authentication.invalid_reset_password_token')], status: :unprocessable_entity)
       else
-        render json: { user: resource, success: true }
+        render_api_success(user: resource)
       end
     end
 
@@ -30,12 +33,12 @@ module Droom::Api
       self.resource = resource_class.find_by_reset_password_token(password_params[:reset_password_token])
       yield resource if block_given?
 
-      return render json: { success: false, errors: ["Invalid reset password token"] } if resource.nil?
+      return render_api_error(errors: [t('notifications.authentication.invalid_reset_password_token')], status: :unprocessable_entity) if resource.nil?
       if resource.update(password_params)
         sign_in(resource_name, resource)
-        render json: { user: resource, success: true }
+        render_api_success(user: resource)
       else
-        render json: { success: false, errors: resource.errors.full_messages }
+        render_api_error(errors: resource.errors, status: :unprocessable_entity)
       end
     end
 

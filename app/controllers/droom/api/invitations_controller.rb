@@ -4,7 +4,7 @@ module Droom::Api
 
     def index
       @invitations = @event.invitations
-      render json: @invitations
+      render_api_success(resource: @invitations)
     end
 
     def create
@@ -13,16 +13,19 @@ module Droom::Api
       @invitation = @event.invitations.find_or_initialize_by(user_id: user.id)
       if @invitation.new_record?
         @invitation.save!
-        render json: @invitation, status: :created
+        render_api_success(resource: @invitation, status: :created)
       else
-        render json: @invitation, status: :ok
+        render_api_success(resource: @invitation, status: :ok)
       end
     end
 
     def destroy
       @invitation = @event.invitations.find(params[:id])
-      @invitation.destroy
-      head :ok
+      if @invitation.destroy
+        render_api_success
+      else
+        render_api_error(errors: @invitation.errors, status: :unprocessable_entity)
+      end
     end
   end
 end

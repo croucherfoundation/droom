@@ -10,33 +10,36 @@ module Droom::Api
       else
         @emails = Droom::Email.all
       end
-      render json: @emails, each_serializer: Droom::EmailSerializer
+      render_api_success(resource: @emails, each_serializer: Droom::EmailSerializer)
     end
 
     def show
-      render json: @email, serializer: Droom::EmailSerializer
+        render_api_success(resource: @email, serializer: Droom::EmailSerializer)
     end
 
     def create
       @email = Droom::Email.new(email_params)
       if @email.save
-        render json: @email, serializer: Droom::EmailSerializer, status: :created
+        render_api_success(resource: @email, serializer: Droom::EmailSerializer, status: :created)
       else
-        render json: { errors: @email.errors.full_messages }, status: :unprocessable_entity
+        render_api_error(errors: @email.errors, status: :unprocessable_entity)
       end
     end
 
     def update
       if @email.update(email_params)
-        render json: @email, serializer: Droom::EmailSerializer
+        render_api_success(resource: @email, serializer: Droom::EmailSerializer)
       else
-        render json: { errors: @email.errors.full_messages }, status: :unprocessable_entity
+        render_api_error(errors: @email.errors, status: :unprocessable_entity)
       end
     end
 
     def destroy
-      @email.destroy
-      head :no_content
+      if @email.destroy
+        render_api_success
+      else
+        render_api_error(errors: @email.errors, status: :unprocessable_entity)
+      end
     end
 
     private
