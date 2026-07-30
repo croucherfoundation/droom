@@ -8,10 +8,6 @@ module Droom::Api
     skip_before_action :verify_authenticity_token, raise: false
     before_action :set_access_control_headers
 
-    rescue_from ActiveRecord::RecordNotFound, with: :not_found
-    rescue_from Droom::DroomError, with: :blew_up
-    rescue_from Droom::AccessDenied, with: :not_allowed
-
     protected
 
     def name_from_controller

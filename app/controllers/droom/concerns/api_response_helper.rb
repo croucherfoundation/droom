@@ -2,6 +2,13 @@ module Droom::Concerns
   module ApiResponseHelper
     extend ActiveSupport::Concern
 
+    included do
+      rescue_from ActiveRecord::RecordNotFound, with: :not_found
+      rescue_from StandardError, with: :blew_up
+      rescue_from Droom::DroomError, with: :blew_up
+      rescue_from Droom::AccessDenied, with: :not_allowed
+    end
+
     private
 
     def render_api_success(message: nil, status: :ok, resource: nil, **options)
@@ -21,6 +28,7 @@ module Droom::Concerns
         
         # 2. Force JSON:API to retain 'id', 'type', and 'attributes'
         ams_options[:adapter] = :json_api
+        ams_options[:serialization_context] ||= ActiveModelSerializers::SerializationContext.new(request)
 
         # 3. Serialize the resource
         serialized_payload = ActiveModelSerializers::SerializableResource.new(
