@@ -1,6 +1,7 @@
 module Droom::Api
   class Users::RegistrationsController < Devise::RegistrationsController
     include Droom::Concerns::ApiResponseHelper
+    include Droom::Concerns::LocaleDetection
 
     respond_to :json
 

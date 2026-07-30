@@ -2,6 +2,7 @@ module Droom::Api
   class SessionsController < Devise::SessionsController
     include Droom::Concerns::LocalApi
     include Droom::Concerns::ApiResponseHelper
+    include Droom::Concerns::LocaleDetection
 
     respond_to :json
     # skip_before_action :authenticate_user!, raise: false

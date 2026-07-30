@@ -1,6 +1,7 @@
 module Droom::Api
   class Users::ConfirmationsController < Devise::ConfirmationsController
     include Droom::Concerns::ApiResponseHelper
+    include Droom::Concerns::LocaleDetection
 
     skip_before_action :verify_authenticity_token, raise: false
     respond_to :json
