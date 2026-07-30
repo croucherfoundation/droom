@@ -174,12 +174,12 @@ module Droom::Api
 
     def remove_profile
       @user.update(show_initial_image: true)
-      render_api_success(resource: @user.reload)
+      render_api_success(resource: @user.reload, serializer: Droom::Api::Ex::UserSerializer)
     end
 
     def sync_profile_image
       @user.sync_profile_from_external(params[:image_url]) if params[:image_url].present?
-      render_api_success(resource: @user)
+      render_api_success(resource: @user, serializer: Droom::Api::Ex::UserSerializer)
     end
 
     def reindex

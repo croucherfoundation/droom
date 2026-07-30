@@ -8,6 +8,7 @@ module Droom::Api::Ex
                 :name,
                 :emails,
                 :image,
+                :show_initial_image,
                 :groups
 
     def emails
