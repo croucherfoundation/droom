@@ -212,7 +212,7 @@ module Droom::Api
 
     def eligible_event_admins
       @users = Droom::User.admins
-      render_api_success(users: @users.as_json(only: [:id, :uid, :name]))
+      render_api_success(users: @users)
     end
 
   protected
