@@ -5,10 +5,11 @@ module Droom::Concerns
     private
 
     # AJAX call
-    def render_ajax_error(resource)
-      if resource.respond_to?(:errors) && resource.errors.any?
+    def render_ajax_error(resource, message: nil)
+      if message.present?
+        error_message = message
+      elsif resource.respond_to?(:errors) && resource.errors.any?
         error_message = resource.errors.full_messages.to_sentence
-        
       elsif resource.respond_to?(:metadata) && resource.metadata[:errors].present?
         error_message = resource.metadata[:errors].to_sentence
       end
@@ -22,16 +23,16 @@ module Droom::Concerns
       head :unprocessable_entity
     end
 
-    def set_success_flash_headers(resource, action)
+    def set_success_flash_headers(resource, action=:update, message: nil)
       name = resource.respond_to?(:model_name) ? resource.model_name.human : "Record"
-      message = case action
-                when :create
-                  t("notifications.generic.created", resource: name)
-                when :update
-                  t("notifications.generic.updated", resource: name)
-                when :destroy
-                  t("notifications.generic.deleted", resource: name)
-                end
+      message ||= case action
+                  when :create
+                    t("notifications.generic.created", resource: name)
+                  when :update
+                    t("notifications.generic.updated", resource: name)
+                  when :destroy
+                    t("notifications.generic.deleted", resource: name)
+                  end
       set_flash_headers(message, 'notice')
     end
 
