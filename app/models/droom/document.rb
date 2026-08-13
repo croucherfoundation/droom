@@ -220,12 +220,61 @@ module Droom
 
     def file_must_be_valid
       return unless file.attached?
+
       content_type = file.content_type
       file_name = file.filename.to_s
+
+      if project_folder_upload?
+        validate_project_pdf_upload(file_name, content_type)
+        return
+      end
+
       unless FileSecurityService.allowed_file?(file_name, content_type)
         error_message = FileSecurityService.security_error_message(file_name, content_type)
         errors.add(:file, error_message)
       end
+    end
+
+    def project_folder_upload?
+      folder&.holder_type == "Project"
+    end
+
+    def validate_project_pdf_upload(file_name, declared_content_type)
+      extension = File.extname(file_name.to_s).downcase
+
+      valid_extension = extension == ".pdf"
+      valid_declared_type = FileSecurityService.allowed_pdf?(declared_content_type)
+      valid_file_content = uploaded_pdf?
+
+      return if valid_extension && valid_declared_type && valid_file_content
+
+      errors.add(:file, "must be a PDF document")
+    end
+
+    def uploaded_pdf?
+      attachment_change = attachment_changes["file"]
+      return false unless attachment_change&.attachable
+
+      attachable = attachment_change.attachable
+      case attachable
+      when ActionDispatch::Http::UploadedFile
+        pdf_file_signature?(attachable.tempfile)
+      when Hash
+        pdf_file_signature?(attachable[:io])
+      else
+        false
+      end
+    rescue StandardError
+      false
+    end
+
+    def pdf_file_signature?(io_object)
+      return false unless io_object&.respond_to?(:read)
+
+      io_object.rewind if io_object.respond_to?(:rewind)
+      signature = io_object.read(5)
+      io_object.rewind if io_object.respond_to?(:rewind)
+      signature == "%PDF-"
     end
 
   end
