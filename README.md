@@ -32,6 +32,20 @@ Notes:
 - Explicit allowlist tags and attributes.
 - Unsafe link protocols (for example `javascript:`) are stripped.
 - This is foundation-only; host apps must opt in explicitly per rich-text field.
+
+## Rich Text Opt-In Pattern (D2-AM)
+
+`Droom::RichText::OptIn` defines the reusable model opt-in contract for rich-text attributes without global string sanitization.
+
+```ruby
+class ExampleRecord
+  include Droom::RichText::OptIn
+
+  rich_text_attributes :description, :notes
+end
+```
+
+`Droom::RichText::CleanupRunner` provides the cleanup contract for dry-run, batching, and idempotent reprocessing.
     
 
 ## Copyright
