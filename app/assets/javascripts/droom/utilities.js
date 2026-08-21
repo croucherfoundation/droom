@@ -182,11 +182,12 @@
       }
       return true;
     };
-    $.fn.confirm_dialog = function(message) {
+    $.fn.confirm_dialog = function(message, options) {
       var $scope;
       $scope = this;
+      options = options || {};
       return new Promise(function(resolve) {
-        var $cancel, $message, $ok, $overlay, hideDialog, onCancel, onKeydown, onOk, previousResolver;
+        var $cancel, $message, $ok, $overlay, hideDialog, method, okLabel, onCancel, onKeydown, onOk, previousResolver;
         $overlay = $scope.find('#confirm-overlay').first();
         if (!$overlay.length) {
           $overlay = $('#confirm-overlay').first();
@@ -210,6 +211,13 @@
         previousResolver = $overlay.data('confirmDialogResolver');
         if (typeof previousResolver === 'function') {
           previousResolver(false);
+        }
+        method = (options.method || '').toString().toLowerCase();
+        okLabel = method === 'delete' ? 'Delete' : 'OK';
+        if ($ok.is('input, textarea')) {
+          $ok.val(okLabel);
+        } else {
+          $ok.text(okLabel);
         }
         $message.text(message);
         $overlay.removeClass('hidden croucher-toast--hide').addClass('croucher-toast--show');
@@ -264,7 +272,6 @@
         console.warn("Confirm dialog is already installed.");
         return false;
       }
-      console.log("Installing confirm dialog...");
       var rails;
       rails = $.rails;
       if (!rails || rails._confirmDialogInstalled) {
@@ -272,29 +279,33 @@
       }
       rails._confirmDialogInstalled = true;
       rails.allowAction = function(element) {
-        var callback, message;
-        message = element.data('confirm');
+        var $element, callback, message, method;
+        $element = $(element);
+        message = $element.data('confirm');
         if (!message) {
           return true;
         }
-        if (element.data('ujs:confirmed')) {
-          element.removeData('ujs:confirmed');
+        if ($element.data('ujs:confirmed')) {
+          $element.removeData('ujs:confirmed');
           return true;
         }
-        if (!rails.fire(element, 'confirm')) {
+        if (!rails.fire($element, 'confirm')) {
           return false;
         }
+        method = $element.attr('data-method') || $element.data('method') || $element.attr('formmethod') || ($element.prop('formMethod') || '') || $element.attr('method') || $element.closest('form').find('input[name="_method"]').val() || $element.find('input[name="_method"]').val() || '';
         callback = true;
-        $('body').confirm_dialog(message).then(function(answer) {
-          callback = rails.fire(element, 'confirm:complete', [answer]);
+        $('body').confirm_dialog(message, {
+          method: method.toString().toLowerCase()
+        }).then(function(answer) {
+          callback = rails.fire($element, 'confirm:complete', [answer]);
           if (!answer || callback === false) {
             return;
           }
-          element.data('ujs:confirmed', true);
-          if (element.is('form')) {
-            return element.trigger('submit.rails');
+          $element.data('ujs:confirmed', true);
+          if ($element.is('form')) {
+            return $element.trigger('submit.rails');
           }
-          return element.trigger('click.rails');
+          return $element.trigger('click.rails');
         });
         return false;
       };
