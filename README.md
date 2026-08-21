@@ -16,6 +16,22 @@ To migrate:
 
     rake droom:install:migrations
     rake db:migrate
+
+## Rich Text Sanitizer Foundation
+
+`Droom::SafeHtmlSanitizer` provides a centralized allowlist sanitizer for rich-text fields.
+
+Usage:
+
+```ruby
+sanitized = Droom::SafeHtmlSanitizer.sanitize(input_html)
+```
+
+Notes:
+- Nil-safe input handling (`nil` returns empty string).
+- Explicit allowlist tags and attributes.
+- Unsafe link protocols (for example `javascript:`) are stripped.
+- This is foundation-only; host apps must opt in explicitly per rich-text field.
     
 
 ## Copyright

@@ -7,6 +7,7 @@ require "droom/auth_cookie"
 require "droom/validators"
 require "droom/folders"
 require "droom/scrubbers"
+require "droom/safe_html_sanitizer"
 
 
 module Droom
