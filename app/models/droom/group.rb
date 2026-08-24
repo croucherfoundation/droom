@@ -1,6 +1,7 @@
 module Droom
   class Group < Droom::DroomRecord
     include Droom::Concerns::Slugged
+    include Droom::RichText::OptIn
 
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :leader, :class_name => 'Droom::User'
@@ -16,6 +17,9 @@ module Droom
     has_many :group_permissions, :dependent => :destroy
     has_many :permissions, -> { distinct }, :through => :group_permissions
     
+    rich_text_attributes :description
+    before_validation :sanitize_rich_text_attributes!, if: -> { description.present? }
+
     before_validation :slug_from_name
     before_validation :ensure_mailing_list_name
 

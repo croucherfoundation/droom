@@ -3,6 +3,12 @@ require 'vcard'
 module Droom
   class User < Droom::DroomRecord
     include Droom::Concerns::Imaged
+    include Droom::RichText::OptIn
+
+    # has_paper_trail ignore: [:unique_session_id, :last_request_at, :sign_in_count]
+
+    rich_text_attributes :description, :address
+    before_validation :sanitize_rich_text_attributes!, if: -> { description.present? || address.present? }
 
     # validates :family_name, :presence => true
     # validates :given_name, :presence => true

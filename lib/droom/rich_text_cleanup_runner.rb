@@ -1,3 +1,11 @@
+# report = Droom::RichText::CleanupRunner.run(
+#   model: MessageTemplate,
+#   scope: MessageTemplate.unscoped,
+#   attributes: [:body],
+#   dry_run: false,
+#   batch_size: 50
+# )
+
 require "logger"
 
 module Droom
@@ -51,6 +59,12 @@ module Droom
 
             if original.to_s == sanitized
               report[:skipped] += 1
+              report[:records] << {
+                model: record.class.name,
+                record_id: record.respond_to?(:id) ? record.id : nil,
+                attribute: attribute_name.to_s,
+                status: "unchanged"
+              }
               next
             end
 
@@ -58,9 +72,7 @@ module Droom
               model: record.class.name,
               record_id: record.respond_to?(:id) ? record.id : nil,
               attribute: attribute_name.to_s,
-              changed: true,
-              before: summarize(original),
-              after: summarize(sanitized)
+              status: "changed"
             }
 
             next if dry_run
@@ -101,11 +113,6 @@ module Droom
         end
       end
 
-      def summarize(value)
-        return "" if value.nil?
-
-        value.to_s.truncate(200)
-      end
     end
   end
 end

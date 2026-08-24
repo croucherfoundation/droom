@@ -3,6 +3,7 @@ module Droom
     include Droom::Concerns::Slugged
     include Droom::Concerns::Tagged
     include ActionView::Helpers::SanitizeHelper
+    include Droom::RichText::OptIn
 
     belongs_to :created_by, :class_name => "Droom::User"
 
@@ -29,6 +30,9 @@ module Droom
     has_folder :within => :event_type #... and subfolders via agenda_categories
     after_destroy :destroy_related_folder
     around_update :update_folder_name
+
+    rich_text_attributes :description
+    before_validation :sanitize_rich_text_attributes!, if: -> { description.present? }
 
     validates :start, :presence => true, :date => true
     validates :finish, :date => {:after => :start, :allow_nil => true}
