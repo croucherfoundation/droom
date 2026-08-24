@@ -3,11 +3,15 @@
 module Droom
   class EventType < Droom::DroomRecord
     include Droom::Concerns::Slugged
+    include Droom::RichText::OptIn
 
     has_many :events, :dependent => :nullify
     has_many :folders, through: :events
 
     has_folder within: "Events" # here the within arguments sets the name of our parent folder
+
+    rich_text_attributes :description
+    before_validation :sanitize_rich_text_attributes!, if: -> { description.present? }
 
     before_validation :slug_from_name
     after_save :distribute_confidentiality

@@ -4,6 +4,7 @@ module Droom
     include ActionView::Helpers::SanitizeHelper
     include Droom::Concerns::PdfThumbnailable
     include Droom::Concerns::Key
+    include Droom::RichText::OptIn
 
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :calendar
@@ -34,6 +35,9 @@ module Droom
 
     after_save :set_parent_folder_id
     after_save :generate_compiled_pdf_cover
+
+    rich_text_attributes :description, :cover_text
+    before_validation :sanitize_rich_text_attributes!, if: -> { description.present? || cover_text.present? }
 
     validates :start, :presence => true, :date => true
     validates :finish, :date => {:after => :start, :allow_nil => true}

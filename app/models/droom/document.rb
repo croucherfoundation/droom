@@ -5,6 +5,7 @@ module Droom
   class Document < Droom::DroomRecord
     include Droom::Concerns::Key
     include Droom::Concerns::ScanAttachment
+    include Droom::RichText::OptIn
 
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :folder
@@ -18,6 +19,9 @@ module Droom
 
     has_one_attached :file
     scan_attachment :file
+
+    rich_text_attributes :description
+    before_validation :sanitize_rich_text_attributes!, if: -> { description.present? }
 
     # Maximum file size allowed for uploads (200MB)
     MAX_FILE_SIZE = 200.megabytes

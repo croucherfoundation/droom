@@ -12,9 +12,9 @@ describe Droom::RichText::OptIn do
   end
 
   it "tracks only opted-in rich-text attributes" do
-    expect(klass.rich_text_attribute?(: :description )).to be(true)
-    expect(klass.rich_text_attribute?(: :notes )).to be(true)
-    expect(klass.rich_text_attribute?(: :title )).to be(false)
+    expect(klass.rich_text_attribute?(:description)).to be(true)
+    expect(klass.rich_text_attribute?(:notes)).to be(true)
+    expect(klass.rich_text_attribute?(:title)).to be(false)
   end
 
   it "sanitizes all opted-in attributes in place" do
@@ -61,6 +61,30 @@ describe Droom::RichText::CleanupRunner do
     expect(result[:processed]).to eq(1)
     expect(result[:changed]).to eq(1)
     expect(result[:records].first[:attribute]).to eq("description")
+    expect(result[:records].first[:status]).to eq("changed")
+    expect(result[:records].first).not_to have_key(:before)
+    expect(result[:records].first).not_to have_key(:after)
     expect(record.description).to include("<script>")
+  end
+
+  it "reports unchanged attributes without exposing their contents" do
+    record = klass.new
+    record.id = 43
+    record.description = "<p>Already safe</p>"
+
+    result = described_class.run(
+      model: klass,
+      scope: [record],
+      attributes: [:description],
+      dry_run: true
+    )
+
+    expect(result[:changed]).to eq(0)
+    expect(result[:records]).to contain_exactly(
+      model: "ExampleRecord",
+      record_id: 43,
+      attribute: "description",
+      status: "unchanged"
+    )
   end
 end
