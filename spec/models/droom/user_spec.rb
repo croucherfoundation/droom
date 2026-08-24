@@ -24,4 +24,22 @@ describe Droom::User do
     @user.reload
     @user.pref("email.digest").should be_true
   end
+
+  describe "#can_see_sensitive_data_of?" do
+    it "allows a user to see their own sensitive data" do
+      @user.can_see_sensitive_data_of?(@user).should be_true
+    end
+
+    it "allows an administrator to see another user's sensitive data" do
+      administrator = FactoryGirl.create(:user, admin: true)
+
+      administrator.can_see_sensitive_data_of?(@user).should be_true
+    end
+
+    it "denies an unrelated user access to sensitive data" do
+      unrelated_user = FactoryGirl.create(:user)
+
+      unrelated_user.can_see_sensitive_data_of?(@user).should be_false
+    end
+  end
 end

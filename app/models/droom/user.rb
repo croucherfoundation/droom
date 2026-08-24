@@ -445,6 +445,10 @@ module Droom
       folder && personal_folders.of_folder(folder).any?
     end
 
+    def can_see_sensitive_data_of?(other_user)
+      other_user.present? && (admin? || id == other_user.id)
+    end
+
     def documents
       Document.visible_to(self)
     end

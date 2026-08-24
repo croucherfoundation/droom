@@ -149,11 +149,30 @@ module Droom
       joins('INNER JOIN droom_favourites AS df ON droom_documents.id = df.favouritable_id AND df.favouritable_type = "Droom::Document"')
         .where(["df.user_id = ?", user.id])
     }
+    scope :accessible_to, -> user {
+      if user.nil?
+        none
+      elsif user.admin?
+        all
+      else
+        directly_shared_ids = Droom::Share.for_user(user).of_type('Droom::Document').pluck(:shareable_id)
+        accessible_folder_ids = Droom::Folder.accessible_to(user).pluck(:id)
+        non_private_folder_ids = Droom::Folder.not_private.pluck(:id)
+        where("#{table_name}.folder_id IN (?) OR #{table_name}.created_by_id = ? OR #{table_name}.id IN (?)",
+              accessible_folder_ids, user.id, directly_shared_ids)
+          .where("#{table_name}.folder_id IS NULL OR #{table_name}.folder_id IN (?)", non_private_folder_ids)
+          .where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL")
+      end
+    }
 
     scope :unindexed, -> { where(indexed_at: nil) }
 
     def attach_to(holder)
       self.folder = holder.folder
+    end
+
+    def accessible_to?(user)
+      self.class.accessible_to(user).where(id: id).exists?
     end
 
     def detach_from(holder)
