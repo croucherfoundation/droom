@@ -6,25 +6,28 @@ module Droom::Api
     # after_filter :set_pagination_headers, only: [:index]
     
     def index
-      render json: @venues
+      render_api_success(resource: @venues)
     end
 
     def show
-      render json: @venue
+      render_api_success(resource: @venue)
     end
 
     def update
       @venue.update(venue_params)
-      render json: @venue
+      render_api_success(resource: @venue)
     end
 
     def create
-      render json: @venue
+      render_api_success(resource: @venue)
     end
 
     def destroy
-      @venue.destroy
-      head :ok
+      if @venue.destroy
+        render_api_success
+      else
+        render_api_error(errors: @venue.errors, status: :unprocessable_entity)
+      end
     end
 
   protected

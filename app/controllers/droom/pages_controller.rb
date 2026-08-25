@@ -19,27 +19,33 @@ module Droom
 
     def create
       if @page.update(page_params)
+        set_create_notice(@page)
         redirect_to droom.page_url(@page)
       else
+        set_alert(@page)
         render action: :new
       end
     end
 
     def update
       if @page.update(page_params)
+        set_update_notice(@page)
         redirect_to droom.page_url(@page)
       else
+        set_alert(@page)
         render action: :edit
       end
     end
 
     def publish
       @page.publish!
+      set_update_notice(@page)
       redirect_to droom.published_page_url(@page.slug)
     end
 
     def destroy
       @page.destroy
+      set_delete_notice(@page)
       redirect_to droom.pages_url
     end
 

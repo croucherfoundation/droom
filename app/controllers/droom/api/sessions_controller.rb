@@ -1,6 +1,8 @@
 module Droom::Api
   class SessionsController < Devise::SessionsController
     include Droom::Concerns::LocalApi
+    include Droom::Concerns::ApiResponseHelper
+    include Droom::Concerns::LocaleDetection
 
     respond_to :json
     # skip_before_action :authenticate_user!, raise: false
@@ -16,9 +18,9 @@ module Droom::Api
       if resource
         sign_in(resource_name, resource)
         yield resource if block_given?
-        render json: resource, serializer: Droom::UserAuthSerializer
+        render_api_success(resource: resource, serializer: Droom::UserAuthSerializer)
       else
-        head :unauthorized
+        render_api_error(errors: t('notifications.authentication.login_failure'), status: :unauthorized)
       end
     end
 
@@ -36,18 +38,18 @@ module Droom::Api
           # here we borrow the devise timeout strategy but cannot refer to the session,
           # so we use a last_request_at column.
           if @user.timedout?(@user.last_request_at)
-            render json: { errors: "Session timed out" }, status: :unauthorized
+            render_api_error(errors: t('notifications.authentication.session_timeout'), status: :unauthorized)
           else
             bypass_sign_in @user
             @user.set_last_request_at!
-            render json: @user, serializer: Droom::UserAuthSerializer
+            render_api_success(resource: @user, serializer: Droom::UserAuthSerializer)
           end
         else
           bypass_sign_in @user
-          render json: @user, serializer: Droom::UserAuthSerializer
+          render_api_success(resource: @user, serializer: Droom::UserAuthSerializer)
         end
       else
-        render json: { errors: "Token not recognised" }, status: :unauthorized
+        render_api_error(errors: t('notifications.authentication.token_not_recognised'), status: :unauthorized)
       end
     end
 
@@ -58,9 +60,9 @@ module Droom::Api
       token = params[:tok]
       if @user = Droom::User.find_by(unique_session_id: token)
         @user.reset_session_ids!
-        render json: @user
+        render_api_success(resource: @user)
       else
-        head :unauthorized
+        render_api_error(errors: t('notifications.authentication.token_not_recognised'), status: :unauthorized)
       end
     end
 

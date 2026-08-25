@@ -51,6 +51,27 @@ module Droom
       joins('INNER JOIN droom_favourites AS df ON droom_folders.id = df.favouritable_id AND df.favouritable_type = "Droom::Folder"')
         .where(["df.user_id = ?", user.id])
     }
+    scope :accessible_to, -> user {
+      if user.nil?
+        none
+      elsif user.admin?
+        all
+      else
+        directly_shared_ids = Droom::Share.for_user(user).of_type('Droom::Folder').pluck(:shareable_id)
+        legacy_folder_ids = user.personal_folders.pluck(:folder_id)
+        granted_folder_ids = directly_shared_ids + legacy_folder_ids
+        inherited_folder_ids = where(id: granted_folder_ids).flat_map(&:subtree_ids)
+        holder_condition = {
+          holder_type: 'Droom::User',
+          holder_id: user.id
+        }
+
+        where("#{table_name}.id IN (?) OR #{table_name}.created_by_id = ? OR " \
+              "(#{table_name}.holder_type = ? AND #{table_name}.holder_id = ?)",
+              inherited_folder_ids, user.id, holder_condition[:holder_type], holder_condition[:holder_id])
+          .where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL")
+      end
+    }
     scope :all_private, -> { where("#{table_name}.private = 1") }
     scope :not_private, -> { where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL") }
     scope :all_public, -> { where("#{table_name}.public = 1 AND #{table_name}.private <> 1 OR #{table_name}.private IS NULL") }
@@ -91,6 +112,10 @@ module Droom
       return true
     end
 
+    def accessible_to?(user)
+      self.class.accessible_to(user).where(id: id).exists?
+    end
+
     # A root folder is created automatically for each class that has_folders,
     # the first time something in that class asks for its folder.
     # scope :roots, where('droom_folders.holder_type IS NULL AND droom_folders.ancestry IS NULL')
@@ -127,7 +152,7 @@ module Droom
     def folder_path(fullpath=false)
       folders = is_event? ? [] : [self.name]
       if self.ancestors.present?
-        if fullpath 
+        if fullpath
           folders << ancestors.reject{|x| x.holder_type.present? }.map{|x| x.name }.flatten
         else
           folders << ancestors.reject{|x| x.parent_id.nil? || x.holder_type.present?}.map{|x| x.name }.flatten

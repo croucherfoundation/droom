@@ -6,8 +6,12 @@ module Droom
     include Droom::Concerns::Imaged
     include Droom::Concerns::PngConvert
     include Droom::Concerns::ScanAttachment
+    include Droom::RichText::OptIn
 
     # has_paper_trail ignore: [:unique_session_id, :last_request_at, :sign_in_count]
+
+    rich_text_attributes :description, :address
+    before_validation :sanitize_rich_text_attributes!, if: -> { description.present? || address.present? }
 
     # validates :family_name, :presence => true
     # validates :given_name, :presence => true
@@ -443,6 +447,10 @@ module Droom
 
     def has_folder?(folder)
       folder && personal_folders.of_folder(folder).any?
+    end
+
+    def can_see_sensitive_data_of?(other_user)
+      other_user.present? && (admin? || id == other_user.id)
     end
 
     def documents

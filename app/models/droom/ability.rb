@@ -14,6 +14,7 @@ module Droom
           can :manage, :all
 
         else
+          can :read, Droom::User, :id => user.id
           can :update, Droom::User, :id => user.id
           can :new, [Droom::Email, Droom::Phone, Droom::Address], :user_id => user.id
           can :read, :dashboard
@@ -71,7 +72,7 @@ module Droom
               elsif user.permitted?('droom.directory.read')
                 can :read, Droom::Group
                 can :read, Droom::Organisation
-                can :read, Droom::User
+                can [:index, :search], Droom::User
               end
 
               if user.permitted?('droom.library')

@@ -187,18 +187,6 @@ en:
   edit_your_profile: "Edit your personal information"
   edit_your_profile_note: 'This is the contact information that <a href="%{url}" data-action="popup">other people see</a> when you are listed.'
   email_note: "This can be any address that we have on file for you."
-  errors:
-    attributes:
-      name:
-        blank: "Please enter your full name"
-      email:
-        blank: "Please give an email address on which we can contact you"
-        invalid: "This does not appear to be a valid email address"
-        uniqueness: "This email address is already in use here"
-      password:
-        confirmation: "The password and its confirmation do not match"
-        too_short: "Your password must have at least 6 letters"
-
   event_created: "Event '%{name}' created"
   event_introduction: ""
   event_name: "Event name"

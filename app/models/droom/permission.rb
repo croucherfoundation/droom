@@ -1,11 +1,16 @@
 module Droom
   class Permission < Droom::DroomRecord
+    include Droom::RichText::OptIn
+
     belongs_to :service
     has_many :group_permissions, :dependent => :destroy
     has_many :user_permissions, :dependent => :destroy
     acts_as_list :scope => :service_id
     before_save :set_slug
 
+    rich_text_attributes :description
+    before_validation :sanitize_rich_text_attributes!, if: -> { description.present? }
+    
     validates :slug, :uniqueness => true
 
     def get_read_permission

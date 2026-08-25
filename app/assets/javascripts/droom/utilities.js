@@ -126,6 +126,192 @@
         });
       });
     };
+    $.fn.toast = function() {
+      return this.each(function() {
+        var container, hideToast, toast;
+        container = $(this);
+        toast = container.find('.croucher-toast');
+        if (!toast.length) {
+          return;
+        }
+        hideToast = function() {
+          toast.removeClass('croucher-toast--show').addClass('croucher-toast--hide');
+        };
+        container.find('.croucher-toast__close').off('click.toast').on('click.toast', function(e) {
+          e.preventDefault();
+          return hideToast();
+        });
+        if (toast.hasClass('croucher-toast--show')) {
+          clearTimeout(this._toastTimer);
+          this._toastTimer = setTimeout(hideToast, 5000);
+        }
+      });
+    };
+    $.show_dataroom_toast = function(message, type, options) {
+      var closeButton, container, content, hideToast, icon, iconUse, isSuccess, toast;
+      options = options || {};
+      container = $('.croucher-toast-container[data-remote-toast="true"]').first();
+      if (!container.length) {
+        return false;
+      }
+      toast = container.find('.croucher-toast').first();
+      content = container.find('.croucher-toast__content').first();
+      icon = container.find('.croucher-toast__icon').first();
+      iconUse = icon.find('use').first();
+      closeButton = container.find('.croucher-toast__close').first();
+      if (!toast.length || !content.length || !icon.length || !iconUse.length) {
+        return false;
+      }
+      isSuccess = type === 'notice';
+      toast.removeClass('croucher-toast--hide').addClass('croucher-toast--show');
+      icon.removeClass('croucher-toast__icon--success croucher-toast__icon--error').addClass(isSuccess ? 'croucher-toast__icon--success' : 'croucher-toast__icon--error');
+      iconUse.attr('href', isSuccess ? '#confirmed_symbol' : '#warning_symbol');
+      content.text(message);
+      hideToast = function() {
+        toast.removeClass('croucher-toast--show').addClass('croucher-toast--hide');
+      };
+      closeButton.off('click.toast').on('click.toast', function(e) {
+        e.preventDefault();
+        return hideToast();
+      });
+      clearTimeout(container[0]._toastTimer);
+      if (options.persistent) {
+        container[0]._toastTimer = null;
+      } else {
+        container[0]._toastTimer = setTimeout(hideToast, 5000);
+      }
+      return true;
+    };
+    $.fn.confirm_dialog = function(message, options) {
+      var $scope;
+      $scope = this;
+      options = options || {};
+      return new Promise(function(resolve) {
+        var $cancel, $message, $ok, $overlay, hideDialog, method, okLabel, onCancel, onKeydown, onOk, previousResolver;
+        $overlay = $scope.find('#confirm-overlay').first();
+        if (!$overlay.length) {
+          $overlay = $('#confirm-overlay').first();
+        }
+        if (!$overlay.length) {
+          $overlay = $scope.find('.croucher-toast--confirmation').first();
+        }
+        if (!$overlay.length) {
+          $overlay = $('.croucher-toast--confirmation').first();
+        }
+        $message = $overlay.find('#confirm-message').first();
+        if (!$message.length) {
+          $message = $overlay.find('.croucher-toast__content > span').first();
+        }
+        $ok = $overlay.find('#confirm-ok, .croucher-toast__btn-ok').first();
+        $cancel = $overlay.find('#confirm-cancel, .croucher-toast__btn-cancel').first();
+        if (!$overlay.length || !$message.length || !$ok.length || !$cancel.length) {
+          resolve(window.confirm(message));
+          return;
+        }
+        previousResolver = $overlay.data('confirmDialogResolver');
+        if (typeof previousResolver === 'function') {
+          previousResolver(false);
+        }
+        method = (options.method || '').toString().toLowerCase();
+        okLabel = method === 'delete' ? 'Delete' : 'OK';
+        if ($ok.is('input, textarea')) {
+          $ok.val(okLabel);
+        } else {
+          $ok.text(okLabel);
+        }
+        $message.text(message);
+        $overlay.removeClass('hidden croucher-toast--hide').addClass('croucher-toast--show');
+        hideDialog = function(result) {
+          $overlay.addClass('hidden croucher-toast--hide').removeClass('croucher-toast--show');
+          $ok.off('click.confirm_dialog');
+          $cancel.off('click.confirm_dialog');
+          $(document).off('keydown.confirm_dialog');
+          $overlay.removeData('confirmDialogResolver');
+          resolve(!!result);
+        };
+        onOk = function(e) {
+          if (e != null) {
+            e.preventDefault();
+          }
+          return hideDialog(true);
+        };
+        onCancel = function(e) {
+          if (e != null) {
+            e.preventDefault();
+          }
+          return hideDialog(false);
+        };
+        onKeydown = function(e) {
+          if (e.key === 'Escape') {
+            return onCancel(e);
+          }
+          if (e.key === 'Enter') {
+            return onOk(e);
+          }
+        };
+        $overlay.data('confirmDialogResolver', hideDialog);
+        $ok.off('click.confirm_dialog').on('click.confirm_dialog', onOk);
+        $cancel.off('click.confirm_dialog').on('click.confirm_dialog', onCancel);
+        $(document).off('keydown.confirm_dialog').on('keydown.confirm_dialog', onKeydown);
+      });
+    };
+    $.install_confirm_dialog = function() {
+      if (typeof $.rails === 'undefined') {
+        console.warn("Rails UJS is not loaded. Confirm dialog will not be installed.");
+        return false;
+      }
+      if (typeof $.rails.allowAction !== 'function') {
+        console.warn("Rails UJS does not have allowAction function. Confirm dialog will not be installed.");
+        return false;
+      }
+      if (typeof $.rails.fire !== 'function') {
+        console.warn("Rails UJS does not have fire function. Confirm dialog will not be installed.");
+        return false;
+      }
+      if (typeof $.rails._confirmDialogInstalled !== 'undefined') {
+        console.warn("Confirm dialog is already installed.");
+        return false;
+      }
+      var rails;
+      rails = $.rails;
+      if (!rails || rails._confirmDialogInstalled) {
+        return false;
+      }
+      rails._confirmDialogInstalled = true;
+      rails.allowAction = function(element) {
+        var $element, callback, message, method;
+        $element = $(element);
+        message = $element.data('confirm');
+        if (!message) {
+          return true;
+        }
+        if ($element.data('ujs:confirmed')) {
+          $element.removeData('ujs:confirmed');
+          return true;
+        }
+        if (!rails.fire($element, 'confirm')) {
+          return false;
+        }
+        method = $element.attr('data-method') || $element.data('method') || $element.attr('formmethod') || ($element.prop('formMethod') || '') || $element.attr('method') || $element.closest('form').find('input[name="_method"]').val() || $element.find('input[name="_method"]').val() || '';
+        callback = true;
+        $('body').confirm_dialog(message, {
+          method: method.toString().toLowerCase()
+        }).then(function(answer) {
+          callback = rails.fire($element, 'confirm:complete', [answer]);
+          if (!answer || callback === false) {
+            return;
+          }
+          $element.data('ujs:confirmed', true);
+          if ($element.is('form')) {
+            return $element.trigger('submit.rails');
+          }
+          return $element.trigger('click.rails');
+        });
+        return false;
+      };
+      return true;
+    };
+    $.install_confirm_dialog();
     $.fn.disappearAfter = function(interval) {
       return $(this).fadeOut("slow", function() {
         return $(this).remove();

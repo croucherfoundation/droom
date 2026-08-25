@@ -1,0 +1,38 @@
+en:
+  # This file contains the default error messages used by ActiveModel/ActiveRecord validations.
+  errors:
+    messages:
+      blank: "is required."
+      invalid: "is invalid."
+      taken: "has already been taken."
+      too_short: "is too short (minimum is %{count} characters)."
+      too_long: "is too long (maximum is %{count} characters)."
+
+  validations:
+    email:
+      blank: "Email address is required."
+      invalid: "Email address provided is invalid."
+      primary_required_for_login: "Please log in with your primary email address. If you need to update your primary email, use the password reset flow."
+      taken: "Email has already been taken."
+
+    file:
+      blank: "File is required."
+      duplicate: "File with this name already exists."
+      invalid: "File is invalid."
+      invalid_type: "File type is not allowed."
+      malware_detected: "The uploaded file contains malware and cannot be accepted."
+      too_large: "File is too large (maximum is %{size})."
+      upload_fail: "Upload failed. Please check your connection."
+
+    generic:
+      blank: "%{field} is required."
+      invalid: "%{field} is invalid."
+      taken: "%{field} has already been taken."
+      too_long: "%{field} is too long (maximum is %{count} characters)."
+      too_short: "%{field} is too short (minimum is %{count} characters)."
+
+    password:
+      blank: "Password is required."
+      incorrect: "The password is incorrect."
+      new_must_differ: "Your new password must be different from your current one."
+      too_short: "Password is too short (minimum is %{count} characters)."

@@ -75,36 +75,39 @@ module Droom
 
     def create
       if @event.save
+        set_success_flash_headers(@event, :create)
+
         if @event.stream?
-          render :partial => "minimal", locals: { show_color_button: true}
+          render :partial => "minimal", locals: { show_color_button: true }, status: :created
         else
-          render :partial => "event"
+          render :partial => "event", status: :created
         end
       else
-        respond_with @event
+        render_ajax_error(@event)
       end
     end
 
     def update
       if @event.update(event_params)
-
+        set_success_flash_headers(@event, :update)
+        
         if @event.stream?
-          render :partial => "minimal", locals: { show_color_button: true}
+          render :partial => "minimal", locals: { show_color_button: true }, status: :ok
         else
           if request.referrer =~ /\/events\/\d+/
-            render :partial => "full"
+            render :partial => "full", status: :ok
           else
-            render :partial => "event"
+            render :partial => "event", status: :ok
           end
         end
       else
-        respond_with @event
+        render_ajax_error(@event)
       end
     end
 
     def destroy
       @event.destroy
-      flash[:notice] = 'Event deleted successfully.'
+      set_delete_notice(@event)
       redirect_to droom.events_path
     end
 
@@ -121,7 +124,7 @@ module Droom
         end
 
       else
-        render json: { error: "Invalid file type" }, status: :unprocessable_entity
+        render json: { error: t("validations.file.invalid_type") }, status: :unprocessable_entity
       end
     end
 
