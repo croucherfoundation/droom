@@ -8,23 +8,27 @@ module Droom::Api
     end
 
     def children
-      @subfolders = @folder.children
+      @subfolders = @folder.children.merge(Droom::Folder.accessible_to(current_user))
       render_api_success(resource: @subfolders, each_serializer: Droom::FolderSerializer)
     end
 
     def documents
-      render_api_success(resource: @folder.documents, each_serializer: Droom::DocumentSerializer)
+      documents = @folder.documents.merge(Droom::Document.accessible_to(current_user))
+      render_api_success(resource: documents, each_serializer: Droom::DocumentSerializer)
     end
 
     def all_documents
-      @documents = @folder.descendants.map(&:documents).flatten
+      accessible_folder_ids = Droom::Folder.accessible_to(current_user)
+        .where(id: @folder.subtree_ids - [@folder.id])
+        .pluck(:id)
+      @documents = Droom::Document.accessible_to(current_user).where(folder_id: accessible_folder_ids)
       render_api_success(resource: @documents, each_serializer: Droom::DocumentSerializer)
     end
 
     private
 
       def set_folder
-        @folder = Droom::Folder.find(params[:id])
+        @folder = Droom::Folder.accessible_to(current_user).find(params[:id])
       end
 
   end

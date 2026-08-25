@@ -8,9 +8,13 @@ module Droom::Api
     end
 
     private
-    
+
     def set_document
-      @document = Droom::Document.find(params[:id])
+      @document = Droom::Document.accessible_to(current_user).find(params[:id])
+
+      if @document.folder.present? && !@document.folder.accessible_to?(current_user)
+        raise ActiveRecord::RecordNotFound
+      end
     end
 
   end

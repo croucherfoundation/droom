@@ -10,7 +10,9 @@ module Droom
     before_action :get_parent_folder, :only => [:new, :create]
     before_action :find_by_name, only: [:create, :update]
     before_action :get_links, :only => [:index]
+    before_action :load_accessible_folder, only: [:show]
     load_and_authorize_resource
+    skip_load_and_authorize_resource only: [:show, :child_folders]
 
     def index
       set_library_view
@@ -130,8 +132,8 @@ module Droom
       if params.include?('target_parent_id')
         target_parent_id = params[:target_parent_id]
         mapped_children = ''
-        if target_parent_id != '' && folder = Droom::Folder.find(target_parent_id)
-          child_folders = folder.children
+        if target_parent_id != '' && folder = Droom::Folder.accessible_to(current_user).find(target_parent_id)
+          child_folders = folder.children.merge(Droom::Folder.accessible_to(current_user))
           if child_folders.any?
             mapped_children = {}
             child_folders.map{|child|
@@ -232,6 +234,10 @@ module Droom
       else
         @folder = Droom::Folder.new
       end
+    end
+
+    def load_accessible_folder
+      @folder = Droom::Folder.accessible_to(current_user).find(params[:id])
     end
 
     def get_folder_tree
