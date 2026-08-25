@@ -1,12 +1,20 @@
 module Droom::Api
   class UsersController < Droom::Api::ApiController
-    before_action :authenticate_user, unless: :local_request?, only: [:update, :upload_profile_image, :remove_profile]
+    SENSITIVE_MEMBER_ACTIONS = %i[
+      show update_contact account_update account_setting_update check_valid_password
+      send_otp verify_otp update upload_profile_image remove_profile sync_profile_image
+      reindex validate_email remove_reviewer_group destroy
+    ].freeze
+
+    load_resource find_by: :uid, class: "Droom::User"
+    before_action :authenticate_user, unless: :local_request?, only: SENSITIVE_MEMBER_ACTIONS
+    before_action :ensure_sensitive_user_access, only: SENSITIVE_MEMBER_ACTIONS
+    before_action :assert_local_request!, only: [:authenticable]
 
     before_action :get_users, only: [:index]
     before_action :search_users, only: [:accounts]
     before_action :find_or_create_user, only: [:create]
     skip_before_action :assert_local_request!, only: [:update_timezone, :update, :upload_profile_image, :remove_profile]
-    load_resource find_by: :uid, class: "Droom::User"
 
 
     def index
@@ -385,6 +393,11 @@ module Droom::Api
         errors: [error_msg || t('notifications.generic.image_upload_requirements')],
         status: :unprocessable_entity
       )
+    end
+
+    def ensure_sensitive_user_access
+      return if local_request?
+      raise ActiveRecord::RecordNotFound unless current_user && current_user.can_see_sensitive_data_of?(@user)
     end
 
   end

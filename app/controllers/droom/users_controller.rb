@@ -4,9 +4,10 @@ module Droom
     respond_to :html, :js, :json
     skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation]
     before_action :set_view, only: [:show, :new, :edit, :update, :account_setting_update]
+    before_action :load_sensitive_user, only: [:show]
     # before_action :search_users, only: [:admin]
     # before_action :self_unless_admin, only: [:edit, :update]
-    load_and_authorize_resource except: [:setup, :set_organisation]
+    load_and_authorize_resource except: [:setup, :set_organisation, :show]
 
     # :index is the old user-list view, preserved for historical compatibility but now v. clunky.
     # :admin is the new elasticsearch index. The actual search work is done in `search_users`.
@@ -474,6 +475,11 @@ module Droom
 
     def find_user_by_user_id
       @user ||= Droom::User.find_by_id(params[:user_id])
+    end
+
+    def load_sensitive_user
+      @user = Droom::User.find(params[:id])
+      raise ActiveRecord::RecordNotFound unless current_user.can_see_sensitive_data_of?(@user)
     end
   end
 end
