@@ -219,6 +219,8 @@ module Droom::Api
     end
 
     def eligible_event_admins
+      raise Droom::AccessDenied unless current_user&.admin?
+
       @users = Droom::User.admins
       render_api_success(users: @users)
     end

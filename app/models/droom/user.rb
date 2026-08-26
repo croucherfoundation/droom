@@ -74,6 +74,16 @@ module Droom
     scope :deleted, -> { where.not(deleted_at: nil) }
     scope :undeleted, -> { where(deleted_at: nil) }
 
+    scope :sensitive_data_visible_to, -> user {
+      if user.nil?
+        none
+      elsif user.admin?
+        all
+      else
+        where(id: user.id)
+      end
+    }
+
     # People are often invited into the system in batches or after offline contact.
     # set user.defer_confirmation to a true or call user.defer_confirmation! +before saving+
     # if you want to create a user account without sending out any messages yet.
