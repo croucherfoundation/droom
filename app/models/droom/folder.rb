@@ -54,7 +54,7 @@ module Droom
     scope :accessible_to, -> user {
       if user.nil?
         none
-      elsif user.admin?
+      elsif user.admin? || user.permitted?('droom.library') || user.permitted?('droom.library.read')
         all
       else
         directly_shared_ids = Droom::Share.for_user(user).of_type('Droom::Folder').pluck(:shareable_id)
