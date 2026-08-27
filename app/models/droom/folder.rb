@@ -61,15 +61,11 @@ module Droom
         legacy_folder_ids = user.personal_folders.pluck(:folder_id)
         granted_folder_ids = directly_shared_ids + legacy_folder_ids
         inherited_folder_ids = where(id: granted_folder_ids).flat_map(&:subtree_ids)
-        holder_condition = {
-          holder_type: 'Droom::User',
-          holder_id: user.id
-        }
 
-        where("#{table_name}.id IN (?) OR #{table_name}.created_by_id = ? OR " \
-              "(#{table_name}.holder_type = ? AND #{table_name}.holder_id = ?)",
-              inherited_folder_ids, user.id, holder_condition[:holder_type], holder_condition[:holder_id])
-          .where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL")
+        where(id: inherited_folder_ids)
+          .or(where(created_by_id: user.id))
+          .or(where(holder_type: 'Droom::User', holder_id: user.id))
+          .where(private: [false, nil])
       end
     }
     scope :all_private, -> { where("#{table_name}.private = 1") }

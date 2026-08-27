@@ -162,10 +162,12 @@ module Droom
         directly_shared_ids = Droom::Share.for_user(user).of_type('Droom::Document').pluck(:shareable_id)
         accessible_folder_ids = Droom::Folder.accessible_to(user).pluck(:id)
         non_private_folder_ids = Droom::Folder.not_private.pluck(:id)
-        where("#{table_name}.folder_id IN (?) OR #{table_name}.created_by_id = ? OR #{table_name}.id IN (?)",
-              accessible_folder_ids, user.id, directly_shared_ids)
-          .where("#{table_name}.folder_id IS NULL OR #{table_name}.folder_id IN (?)", non_private_folder_ids)
-          .where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL")
+
+        where(folder_id: accessible_folder_ids)
+          .or(where(created_by_id: user.id))
+          .or(where(id: directly_shared_ids))
+          .where(folder_id: non_private_folder_ids + [nil])
+          .where(private: [false, nil])
       end
     }
 
