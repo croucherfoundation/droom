@@ -11,7 +11,7 @@ module Droom
     before_action :find_by_name, only: [:create, :update]
     before_action :get_links, :only => [:index]
     before_action :load_accessible_folder, only: [:show]
-    load_and_authorize_resource
+    load_and_authorize_resource find_by: :uid, class: "Droom::Folder"
     skip_load_and_authorize_resource only: [:show, :child_folders]
 
     def index

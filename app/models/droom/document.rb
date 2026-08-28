@@ -23,6 +23,9 @@ module Droom
     rich_text_attributes :description
     before_validation :sanitize_rich_text_attributes!, if: -> { description.present? }
 
+    before_validation :ensure_uid!
+    validates :uid, :uniqueness => true, :presence => true
+
     # Maximum file size allowed for uploads (200MB)
     MAX_FILE_SIZE = 200.megabytes
 
@@ -173,6 +176,10 @@ module Droom
 
     scope :unindexed, -> { where(indexed_at: nil) }
 
+    def to_param
+      uid
+    end
+    
     def attach_to(holder)
       self.folder = holder.folder
     end
@@ -390,6 +397,10 @@ module Droom
     end
 
     private
+
+    def ensure_uid!
+      self.uid = SecureRandom.uuid unless self.uid?
+    end
 
     def track_file_change
       return unless file.attached? && persisted?

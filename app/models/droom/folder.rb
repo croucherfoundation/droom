@@ -14,6 +14,9 @@ module Droom
     has_many :favourites, :as => :favouritable, :dependent => :destroy
     has_many :shares, :as => :shareable, :dependent => :destroy
 
+    before_validation :ensure_uid!
+    validates :uid, :uniqueness => true, :presence => true
+
     before_validation :set_properties
     after_save :set_file_path
     validates :slug, presence: true, uniqueness: { scope: :ancestry }
@@ -132,6 +135,10 @@ module Droom
         .group('droom_folders.id')
         .having('COUNT(dd.id) > 0 OR COUNT(df.id) > 0')
     }
+
+    def to_param
+      uid
+    end
 
     def path
       "#{parent.path if parent}/#{slug}"
@@ -275,6 +282,10 @@ module Droom
     end
 
     protected
+
+    def ensure_uid!
+      self.uid = SecureRandom.uuid unless self.uid?
+    end
 
     def set_properties
       if holder

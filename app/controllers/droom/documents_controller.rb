@@ -5,8 +5,10 @@ module Droom
     before_action :get_folder, except: [:index, :suggest, :reposition, :scan_status]
     before_action :select_documents, only: [:index, :suggest]
     before_action :load_accessible_document, only: [:show]
-    load_and_authorize_resource :document, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest, :scan_status]
+    
+    load_and_authorize_resource :document, find_by: :uid, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest, :scan_status]
     skip_load_and_authorize_resource only: :show
+    
     before_action :find_by_name, only: [:create]
 
 
@@ -166,14 +168,14 @@ module Droom
     def get_folder
       return unless params[:folder_id].present?
 
-      @folder = Droom::Folder.accessible_to(current_user).find(params[:folder_id])
+      @folder = Droom::Folder.accessible_to(current_user).find_by(uid: params[:folder_id])
     end
 
     def load_accessible_document
-      @document = Droom::Document.accessible_to(current_user).find(params[:id])
+      @document = Droom::Document.accessible_to(current_user).find_by(uid: params[:id])
       @folder = @document.folder
 
-      raise ActiveRecord::RecordNotFound if @folder.present? && !@folder.accessible_to?(current_user)
+      raise CanCan::AccessDenied if @folder.present? && !@folder.accessible_to?(current_user)
     end
 
   end
