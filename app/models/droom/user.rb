@@ -102,6 +102,10 @@ module Droom
     end
     delegate :can?, :cannot?, to: :ability
 
+    def to_param
+      uid
+    end
+
     # send_confirmation_notification? is called by devise's immediate confirmation mechanism.
     # If the defer_confirmation flag has been set as usual, we postpone.
     #
