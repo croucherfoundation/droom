@@ -24,7 +24,7 @@
         - @folder.children.each do |child|
           = render partial: 'droom/folders/folder', locals: {folder: child, sortable: @sortable || false}
         %li.files
-          %ul#upload_queue{class: files_ul_class, data: {folder_id: @folder.id}}
+          %ul#upload_queue{class: files_ul_class, data: {folder_id: @folder.uid}}
             - @folder.documents.each do |doc|
               = render partial: 'droom/documents/listing', locals: {listing: doc, skip_gdoc: @skip_gdoc || false, sortable: @sortable || false}
     - else

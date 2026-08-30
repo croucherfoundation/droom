@@ -6,7 +6,7 @@
 - narrow ||= false
 - character_count = narrow ? 28 : 64
 
-%li.document{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.id, scan_status: document.respond_to?(:scan_status) ? document.scan_status : 'clean'}}
+%li.document{:id => "document_#{document.id}", data: {narrow: narrow, doc_id: document.uid, scan_status: document.respond_to?(:scan_status) ? document.scan_status : 'clean'}}
   - if (link_info = document_external_link_info(document))
     - detail_url = link_info[:url]
     - extension = link_info[:extension]

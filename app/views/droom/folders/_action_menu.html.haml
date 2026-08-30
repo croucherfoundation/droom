@@ -6,7 +6,7 @@
         %use{href: fav ? "#star_filled_symbol" : "#star_outline_symbol"}
       = t(:add_favourite, default: "Favourite")
 
-    %a.btn{data: {action: "share-item", shareable_type: "Droom::Folder", shareable_id: folder.id, shareable_name: folder.name}}
+    %a.btn{data: {action: "share-item", shareable_type: "Droom::Folder", shareable_id: folder.uid, shareable_name: folder.name}}
       %svg
         %use{href: "#share_symbol"}
       = t(:share, default: "Share")

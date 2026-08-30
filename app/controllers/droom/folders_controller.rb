@@ -110,8 +110,7 @@ module Droom
     end
 
     def reposition
-      folder = Droom::Folder.find(params[:id])
-      folder.insert_at(params[:position].to_i)
+      @folder.insert_at(params[:position].to_i)
       head :ok
     end
 
@@ -237,7 +236,7 @@ module Droom
     end
 
     def load_accessible_folder
-      @folder = Droom::Folder.accessible_to(current_user).find(params[:id])
+      @folder = Droom::Folder.accessible_to(current_user).find_by(uid: params[:id])
     end
 
     def get_folder_tree
