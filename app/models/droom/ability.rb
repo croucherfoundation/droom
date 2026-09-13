@@ -25,7 +25,7 @@ module Droom
           end
 
           if user.staff?
-            can :manage, Order
+            can :manage, [Order, BookOrderRound]
             can :manage, Book
             can :manage, Author
           end
