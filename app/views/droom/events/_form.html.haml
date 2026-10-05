@@ -3,7 +3,9 @@
 - is_outside_event = calendar_id.to_i == 2
 - has_date_range = @event.end_date.present?
 - modal_title = is_new ? t(:add_event) : t(:edit_event)
-- start_time_value = is_outside_event ? nil : (I18n.l(@event.start_time, :format => :precise) if @event.start_time)
+- start_at_midnight = @event.start.present? && @event.start.strftime('%H:%M') == '00:00'
+- date_only_time = @event.finish.blank? && start_at_midnight
+- start_time_value = (is_outside_event || date_only_time) ? nil : (I18n.l(@event.start_time, :format => :precise) if @event.start_time)
 - finish_time_value = is_outside_event ? nil : (I18n.l(@event.finish_time, :format => :precise) if @event.finish_time)
 
 .standard-modal-overlay.active

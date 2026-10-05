@@ -273,21 +273,19 @@ module Droom
           timezone = ActiveSupport::TimeZone.new(params[:event][:timezone]) if params[:event][:timezone].present?
           date = date.change(offset: timezone.utc_offset) if timezone
           timezone ||= Time.zone
-          outside_event = outside_event_calendar?(params[:event][:calendar_id] || @event&.calendar_id)
-          date_only_event = outside_event || params[:event][:end_date].present?
+          start_time = params[:event][:start_time].presence
+          finish_time = params[:event][:finish_time].presence
 
-          if params[:event][:start_time].present?
-            start_time = Tod::TimeOfDay.parse(params[:event][:start_time])
-            params[:event][:start] = start_time.on(date, timezone)
-          elsif date_only_event
-            # Date-based events persist the selected date even when no explicit time is given.
+          if start_time
+            params[:event][:start] = Tod::TimeOfDay.parse(start_time).on(date, timezone)
+          else
+            # Clearing the time keeps the selected date while removing any previous time-of-day.
             params[:event][:start] = date
           end
 
-          if params[:event][:finish_time].present?
-            finish_time = Tod::TimeOfDay.parse(params[:event][:finish_time])
-            params[:event][:finish] = finish_time.on(date, timezone)
-          elsif date_only_event
+          if finish_time
+            params[:event][:finish] = Tod::TimeOfDay.parse(finish_time).on(date, timezone)
+          else
             params[:event][:finish] = nil
           end
         end

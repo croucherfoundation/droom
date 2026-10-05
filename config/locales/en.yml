@@ -266,7 +266,7 @@ en:
       event:
         name: "Event name"
         venue_name: "Choose or add a location"
-        start_time: "Time"
+        start_time: "Time (optional)"
         finish_time: "Finish (optional)"
         start_date: "Date"
         calendar_id: "in calendar"
