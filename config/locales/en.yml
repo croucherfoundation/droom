@@ -198,6 +198,8 @@ en:
   event_types_introduction: "The event types are invisible filing categories used to link events together and file their documents. It is also possible to mark an event type 'confidential', making its events visible only to privileged users, or 'public', making them visible in any public calendar."
   event_url: "Web link?"
   events: "Events"
+  events_supported_by_croucher: "Events supported by Croucher"
+  external_events: "Events supported by Croucher"
   events_between: "Events between %{start} and %{finish}"
   events_in: "Events in %{period}"
   events_on: "Events on %{day}"

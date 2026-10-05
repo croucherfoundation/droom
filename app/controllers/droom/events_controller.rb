@@ -69,7 +69,7 @@ module Droom
     end
 
     def new
-      @event.start = Time.zone.now.change(hour: 10)
+      @event.start ||= Time.zone.now.change(hour: 10) unless outside_event_calendar?(@event.calendar_id)
       respond_with @event
     end
 
@@ -273,17 +273,29 @@ module Droom
           timezone = ActiveSupport::TimeZone.new(params[:event][:timezone]) if params[:event][:timezone].present?
           date = date.change(offset: timezone.utc_offset) if timezone
           timezone ||= Time.zone
+          outside_event = outside_event_calendar?(params[:event][:calendar_id] || @event&.calendar_id)
+          date_only_event = outside_event || params[:event][:end_date].present?
 
           if params[:event][:start_time].present?
             start_time = Tod::TimeOfDay.parse(params[:event][:start_time])
             params[:event][:start] = start_time.on(date, timezone)
+          elsif date_only_event
+            # Date-based events persist the selected date even when no explicit time is given.
+            params[:event][:start] = date
           end
+
           if params[:event][:finish_time].present?
             finish_time = Tod::TimeOfDay.parse(params[:event][:finish_time])
             params[:event][:finish] = finish_time.on(date, timezone)
+          elsif date_only_event
+            params[:event][:finish] = nil
           end
         end
       end
+    end
+
+    def outside_event_calendar?(calendar_id)
+      calendar_id.to_i == 2
     end
 
     def event_params
