@@ -6,3 +6,10 @@
 
 - content_for :subnavbar do
   = render :partial => 'droom/shared/directory_subnavbar'
+
+- content_for :buttons do 
+  %p.action.standard-btn-group.pt.pr
+    = link_to croucher_droom_url("/bank-account-access-logs"), class: "btn" do
+      %svg
+        %use{href: "#pdf_symbol"}
+      Bank account access logs 
