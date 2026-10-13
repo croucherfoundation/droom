@@ -288,14 +288,18 @@ module Droom::Api
           end
         end
       end
-      params = user_params.merge(show_initial_image: true)
+      user_attributes = user_params.merge(show_initial_image: true)
       # remotely created users are not usually meant to access the data room, but can set send_confirmation if that's what they want.
-      params[:defer_confirmation] = true
-      if @user.present? && user_params[:user_group].present?
-        @user.user_group = user_params[:user_group]
-        @user.save
+      user_attributes[:defer_confirmation] = true
+      if @user&.persisted?
+        if user_attributes[:user_group].present? && !@user.update(user_group: user_attributes[:user_group])
+          render_api_error(errors: @user.errors, status: :unprocessable_entity)
+          return
+        end
+
+        return
       end
-      @user ||= Droom::User.create(params)
+      @user = Droom::User.create(user_attributes)
     end
 
     def get_users
