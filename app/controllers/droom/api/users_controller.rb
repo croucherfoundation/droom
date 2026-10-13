@@ -6,7 +6,6 @@ module Droom::Api
       reindex validate_email remove_reviewer_group destroy
     ].freeze
 
-    load_resource find_by: :uid, class: "Droom::User"
     before_action :authenticate_user, unless: :local_request?, only: SENSITIVE_MEMBER_ACTIONS
     before_action :ensure_sensitive_user_access, only: SENSITIVE_MEMBER_ACTIONS
     before_action :assert_local_request!, only: [:authenticable]
@@ -15,7 +14,7 @@ module Droom::Api
     before_action :search_users, only: [:accounts]
     before_action :find_or_create_user, only: [:create]
     skip_before_action :assert_local_request!, only: [:update_timezone, :update, :upload_profile_image, :remove_profile]
-
+    load_resource find_by: :uid, class: "Droom::User"
 
     def index
       render_api_success(resource: @users)
@@ -288,18 +287,14 @@ module Droom::Api
           end
         end
       end
-      user_attributes = user_params.merge(show_initial_image: true)
+      params = user_params.merge(show_initial_image: true)
       # remotely created users are not usually meant to access the data room, but can set send_confirmation if that's what they want.
-      user_attributes[:defer_confirmation] = true
-      if @user&.persisted?
-        if user_attributes[:user_group].present? && !@user.update(user_group: user_attributes[:user_group])
-          render_api_error(errors: @user.errors, status: :unprocessable_entity)
-          return
-        end
-
-        return
+      params[:defer_confirmation] = true
+      if @user.present? && user_params[:user_group].present?
+        @user.user_group = user_params[:user_group]
+        @user.save
       end
-      @user = Droom::User.create(user_attributes)
+      @user ||= Droom::User.create(params)
     end
 
     def get_users
