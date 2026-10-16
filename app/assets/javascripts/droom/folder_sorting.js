@@ -1,8 +1,6 @@
 (function() {
   'use strict';
 
-  console.log('Loading folder_sorting.js');
-
   $.fn.sortable_folders = function() {
     return this.each(function() {
       return new SortableFolders(this);

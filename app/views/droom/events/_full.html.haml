@@ -25,7 +25,7 @@
     .heading 
       .detail-practicalities.full.text-body
         %p.practicalities
-          - if has_date_range
+          - if has_date_range || (is_outside_event && event.start.present?)
             %span.time.date_range
               = render 'droom/shared/date', event: event
           - else 

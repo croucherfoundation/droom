@@ -7,6 +7,6 @@
   #minimal#outside_events{:data => {:refreshing => true}}
     - tag = centered ? 'h3' : 'h2'
     = content_tag tag, class: (centered ? 'standard-h3-title' : 'section') do
-      = t(:external_events)
+      = t(:events_supported_by_croucher, default: 'Events supported by Croucher')
     = render "droom/calendars/event_list", calendar: calendar, events: calendar.events.current_and_onwards.limit(10), omit_document: omit_document
 

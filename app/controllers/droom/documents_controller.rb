@@ -2,11 +2,13 @@ module Droom
   class DocumentsController < Droom::DroomController
     respond_to :html, :js, :json
 
-    before_action :get_folder, except: [:index, :suggest, :reposition, :scan_status]
+    before_action :get_folder, except: [:index, :suggest, :scan_status]
     before_action :select_documents, only: [:index, :suggest]
     before_action :load_accessible_document, only: [:show]
-    load_and_authorize_resource :document, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest, :scan_status]
+    
+    load_and_authorize_resource :document, find_by: :uid, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest, :scan_status]
     skip_load_and_authorize_resource only: :show
+    
     before_action :find_by_name, only: [:create]
 
 
@@ -36,6 +38,7 @@ module Droom
       if @data.exists?
         render json: 'File with this name already exists!', status: 409
       else
+        @document.folder = @folder
         @document.created_by = current_user
         @document.data_room = @folder.data_room?
         if @document.save
@@ -57,7 +60,7 @@ module Droom
 
     def update
       if @document.google_doc_link.present? || @document.notion_page_link.present? || @document.memo_page_link.present?
-        @data = Document.where(name: document_params[:name], folder_id: params[:folder_id])
+        @data = @folder.documents.where(name: document_params[:name]) if @folder.present?
         @document.assign_attributes(document_params)
         if @data.blank?
           @document.save
@@ -66,10 +69,12 @@ module Droom
         else
           render json: 'File with this name already exists!', status: 409
         end
+      elsif document_params[:data_room].present?
+        @document.update(data_room: document_params[:data_room])
       else
         attributes = document_params
-        attributes[:name] = params[:filename] + params[:extension]
-        @data = Document.where(name: attributes[:name], folder_id: params[:folder_id])
+        attributes[:name] = params[:filename] + params[:extension] rescue nil
+        @data = @folder.documents.where(name: attributes[:name]) if @folder.present?
 
         @document.assign_attributes(attributes)
         if @document.description_changed? || @data.blank?
@@ -109,7 +114,7 @@ module Droom
   protected
 
     def find_by_name
-      @data = Document.where(name: document_params[:name], folder_id: params[:folder_id])
+      @data = @folder.documents.where(name: document_params[:name])
     end
 
     def select_documents
@@ -149,7 +154,7 @@ module Droom
 
     def document_params
       if params[:document]
-        params.require(:document).permit(:name, :file, :description, :folder_id, :position, :google_doc_link, :notion_page_link, :memo_page_link, :data_room)
+        params.require(:document).permit(:name, :file, :description, :position, :google_doc_link, :notion_page_link, :memo_page_link, :data_room)
       else
         {}
       end
@@ -157,7 +162,7 @@ module Droom
 
     def reposition_params
       if params[:document]
-        params.require(:document).permit(:position, :folder_id)
+        params.require(:document).permit(:position)
       else
         {}
       end
@@ -166,14 +171,14 @@ module Droom
     def get_folder
       return unless params[:folder_id].present?
 
-      @folder = Droom::Folder.accessible_to(current_user).find(params[:folder_id])
+      @folder = Droom::Folder.accessible_to(current_user).find_by(uid: params[:folder_id])
     end
 
     def load_accessible_document
-      @document = Droom::Document.accessible_to(current_user).find(params[:id])
+      @document = Droom::Document.accessible_to(current_user).find_by(uid: params[:id])
       @folder = @document.folder
 
-      raise ActiveRecord::RecordNotFound if @folder.present? && !@folder.accessible_to?(current_user)
+      raise CanCan::AccessDenied if @folder.present? && !@folder.accessible_to?(current_user)
     end
 
   end

@@ -14,6 +14,9 @@ module Droom
     has_many :favourites, :as => :favouritable, :dependent => :destroy
     has_many :shares, :as => :shareable, :dependent => :destroy
 
+    before_validation :ensure_uid!
+    validates :uid, :uniqueness => true, :presence => true
+
     before_validation :set_properties
     after_save :set_file_path
     validates :slug, presence: true, uniqueness: { scope: :ancestry }
@@ -54,22 +57,18 @@ module Droom
     scope :accessible_to, -> user {
       if user.nil?
         none
-      elsif user.admin?
+      elsif user.admin? || user.permitted?('droom.library') || user.permitted?('droom.library.read')
         all
       else
         directly_shared_ids = Droom::Share.for_user(user).of_type('Droom::Folder').pluck(:shareable_id)
         legacy_folder_ids = user.personal_folders.pluck(:folder_id)
         granted_folder_ids = directly_shared_ids + legacy_folder_ids
         inherited_folder_ids = where(id: granted_folder_ids).flat_map(&:subtree_ids)
-        holder_condition = {
-          holder_type: 'Droom::User',
-          holder_id: user.id
-        }
 
-        where("#{table_name}.id IN (?) OR #{table_name}.created_by_id = ? OR " \
-              "(#{table_name}.holder_type = ? AND #{table_name}.holder_id = ?)",
-              inherited_folder_ids, user.id, holder_condition[:holder_type], holder_condition[:holder_id])
-          .where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL")
+        where(id: inherited_folder_ids)
+          .or(where(created_by_id: user.id))
+          .or(where(holder_type: 'Droom::User', holder_id: user.id))
+          .where(private: [false, nil])
       end
     }
     scope :all_private, -> { where("#{table_name}.private = 1") }
@@ -136,6 +135,10 @@ module Droom
         .group('droom_folders.id')
         .having('COUNT(dd.id) > 0 OR COUNT(df.id) > 0')
     }
+
+    def to_param
+      uid
+    end
 
     def path
       "#{parent.path if parent}/#{slug}"
@@ -279,6 +282,10 @@ module Droom
     end
 
     protected
+
+    def ensure_uid!
+      self.uid = SecureRandom.uuid unless self.uid?
+    end
 
     def set_properties
       if holder

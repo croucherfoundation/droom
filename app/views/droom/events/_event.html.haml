@@ -35,7 +35,7 @@
       .detail-practicalities.text-body-secondary
         %p.practicalities
           %span.venue_time
-            - if event.venue.present?
+            - if event.venue&.definite_name.present?
               - if event.venue.url
                 = link_to event.venue.definite_name, event.venue.url
               - elsif Droom.show_venue_map?
@@ -44,7 +44,7 @@
                 = event.venue.definite_name
               %span.separator ·
 
-            - if has_date_range
+            - if has_date_range || (is_outside_event and event.start.present?)
               %time.date_range
                 = render 'droom/shared/date', event: event
             - else 

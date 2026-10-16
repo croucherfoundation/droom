@@ -315,7 +315,7 @@
       headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
       success: function() {
         $modal.remove();
-        showFavouriteAlert('Sharing updated.');
+        $.show_dataroom_toast('Sharing updated.', 'notice');
       },
       error: function() {
         $modal.remove();
@@ -358,7 +358,7 @@
           $btn.find('svg use').attr('href', '#star_outline_symbol').attr('xlink:href', '#star_outline_symbol');
           $btn.css('color', '');
           $btn.attr('title', 'Add to favourites');
-          showFavouriteAlert('Removed from favourites');
+          $.show_dataroom_toast('Removed from favourites', 'notice');
         }
       });
     } else {
@@ -372,21 +372,11 @@
           $btn.find('svg use').attr('href', '#star_filled_symbol').attr('xlink:href', '#star_filled_symbol');
           $btn.css('color', '#f5a623');
           $btn.attr('title', 'Remove from favourites');
-          showFavouriteAlert('Added to favourites');
+          $.show_dataroom_toast('Added to favourites', 'notice');
         }
       });
     }
   });
-
-  function showFavouriteAlert(message) {
-    var $alert = $('<div class="favourite-alert" style="position:fixed;top:20px;right:50px;background:rgba(116,184,122,0.9);color:#fff;padding:16px;border-radius:3px;font-size:14px;z-index:99999;opacity:0;transition:opacity 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.15);border:1px solid #74b87a;">' + message + '</div>');
-    $('body').append($alert);
-    setTimeout(function() { $alert.css('opacity', '1'); }, 10);
-    setTimeout(function() {
-      $alert.css('opacity', '0');
-      setTimeout(function() { $alert.remove(); }, 300);
-    }, 2000);
-  }
 
   function escapeHtml(text) {
     if (!text) return '';

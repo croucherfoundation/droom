@@ -2,12 +2,12 @@ module Droom
   class UsersController < Droom::DroomController
     helper Droom::DroomHelper
     respond_to :html, :js, :json
+
     skip_before_action :check_user_has_organisation, only: [:setup, :set_organisation]
     before_action :set_view, only: [:show, :new, :edit, :update, :account_setting_update]
     before_action :load_sensitive_user, only: [:show]
-    # before_action :search_users, only: [:admin]
-    # before_action :self_unless_admin, only: [:edit, :update]
-    load_and_authorize_resource except: [:setup, :set_organisation, :show]
+
+    load_and_authorize_resource find_by: :uid, class: "Droom::User", except: [:setup, :set_organisation, :show]
 
     # :index is the old user-list view, preserved for historical compatibility but now v. clunky.
     # :admin is the new elasticsearch index. The actual search work is done in `search_users`.
@@ -100,6 +100,7 @@ module Droom
 
       modified_params, verification_email = handle_email_updates(permitted)
       return if performed?
+      return unless update_account_emergency_contact(emergency_contact_params)
 
       if @user.update(modified_params)
         respond_to_successful_update(verification_email)
@@ -277,6 +278,38 @@ module Droom
     def apply_image_preferences(permitted)
       @user.show_initial_image = false if permitted[:image].present?
       @user.show_initial_image = true if params[:remove_image] == "true"
+    end
+
+    def emergency_contact_params
+      return unless params[:user]
+
+      params.require(:user).permit(
+        emergency_contact_attributes: [:name, :address, :phone, :relationship]
+      )[:emergency_contact_attributes]
+    end
+
+    def update_account_emergency_contact(contact_attributes)
+      return true unless @user.scholar? && !@user.admin?
+      return true if contact_attributes.blank?
+
+      contact_values = contact_attributes.to_h.symbolize_keys
+
+      person = @user.person
+      unless person
+        render_update_error(t("notifications.generic.unable_to_save_changes"), :unprocessable_entity)
+        return false
+      end
+
+      response = Person.update_personal_info(
+        person.id,
+        { emergency_contact: contact_values.to_json }
+      )
+
+      true
+    rescue StandardError => error
+      Rails.logger.error("[AccountEmergencyContact] #{error.class}: #{error.message}")
+      render_update_error(t("notifications.generic.unable_to_save_changes"), :unprocessable_entity)
+      false
     end
 
     def respond_to_successful_update(verification_email = nil)
@@ -478,8 +511,8 @@ module Droom
     end
 
     def load_sensitive_user
-      @user = Droom::User.find(params[:id])
-      raise ActiveRecord::RecordNotFound unless current_user.can_see_sensitive_data_of?(@user)
+      @user = Droom::User.find_by!(uid: params[:id])
+      raise CanCan::AccessDenied unless current_user.can_see_sensitive_data_of?(@user)
     end
   end
 end

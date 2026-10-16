@@ -11,7 +11,7 @@ module Droom
     before_action :find_by_name, only: [:create, :update]
     before_action :get_links, :only => [:index]
     before_action :load_accessible_folder, only: [:show]
-    load_and_authorize_resource
+    load_and_authorize_resource find_by: :uid, class: "Droom::Folder"
     skip_load_and_authorize_resource only: [:show, :child_folders]
 
     def index
@@ -110,8 +110,7 @@ module Droom
     end
 
     def reposition
-      folder = Droom::Folder.find(params[:id])
-      folder.insert_at(params[:position].to_i)
+      @folder.insert_at(params[:position].to_i)
       head :ok
     end
 
@@ -229,7 +228,7 @@ module Droom
     end
 
     def get_parent_folder
-      if @parent = Droom::Folder.find_by(id: params[:folder_id])
+      if @parent = Droom::Folder.find_by(uid: params[:folder_id])
         @folder = @parent.children.build
       else
         @folder = Droom::Folder.new
@@ -237,7 +236,7 @@ module Droom
     end
 
     def load_accessible_folder
-      @folder = Droom::Folder.accessible_to(current_user).find(params[:id])
+      @folder = Droom::Folder.accessible_to(current_user).find_by(uid: params[:id])
     end
 
     def get_folder_tree

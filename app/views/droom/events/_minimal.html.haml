@@ -11,6 +11,8 @@
 - event_master_id = event.master_id || event.id
 
 - is_outside_event = event&.calendar_id == 2
+- has_date_range = event.end_date.present?
+- venue_link_options = is_outside_event ? { style: 'color:black' } : {}
 
 - if @seen_events[event_master_id]
   - repeating = true
@@ -44,23 +46,26 @@
         .detail-practicalities
           %p.practicalities
             %span.venue_time
-              - if event.venue.present?
+              - if event.venue&.definite_name.present?
                 - if event.venue.url
-                  = link_to event.venue.definite_name, event.venue.url
+                  = link_to event.venue.definite_name, event.venue.url, venue_link_options
                 - elsif Droom.show_venue_map?
-                  = link_to event.venue.definite_name, venues_url(:id => event.venue.id)
+                  = link_to event.venue.definite_name, venues_url(:id => event.venue.id), venue_link_options
                 - else
                   = event.venue.definite_name
                 
                 %span.separator ·
-              
-              - if start_time
+
+              - if has_date_range || (is_outside_event && event.start.present?)
+                %time.date_range
+                  = render 'droom/shared/date', event: event
+              - elsif start_time
                 %time
                   = start_time.strftime('%H:%M')
                   - if finish_time
                     = " – #{finish_time.strftime('%H:%M')}"
 
-              - if event.timezone == "London"
+              - if !is_outside_event && event.timezone == "London"
                 %i.note{style: "display: block;"}
                   = "#{event.start.strftime('%a · %H:%M')} (#{t(:uk_time)})"
 

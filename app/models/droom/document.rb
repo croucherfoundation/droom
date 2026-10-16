@@ -23,6 +23,9 @@ module Droom
     rich_text_attributes :description
     before_validation :sanitize_rich_text_attributes!, if: -> { description.present? }
 
+    before_validation :ensure_uid!
+    validates :uid, :uniqueness => true, :presence => true
+
     # Maximum file size allowed for uploads (200MB)
     MAX_FILE_SIZE = 200.megabytes
 
@@ -156,21 +159,27 @@ module Droom
     scope :accessible_to, -> user {
       if user.nil?
         none
-      elsif user.admin?
+      elsif user.admin? || user.permitted?('droom.library') || user.permitted?('droom.library.read')
         all
       else
         directly_shared_ids = Droom::Share.for_user(user).of_type('Droom::Document').pluck(:shareable_id)
         accessible_folder_ids = Droom::Folder.accessible_to(user).pluck(:id)
         non_private_folder_ids = Droom::Folder.not_private.pluck(:id)
-        where("#{table_name}.folder_id IN (?) OR #{table_name}.created_by_id = ? OR #{table_name}.id IN (?)",
-              accessible_folder_ids, user.id, directly_shared_ids)
-          .where("#{table_name}.folder_id IS NULL OR #{table_name}.folder_id IN (?)", non_private_folder_ids)
-          .where("#{table_name}.private <> 1 OR #{table_name}.private IS NULL")
+
+        where(folder_id: accessible_folder_ids)
+          .or(where(created_by_id: user.id))
+          .or(where(id: directly_shared_ids))
+          .where(folder_id: non_private_folder_ids + [nil])
+          .where(private: [false, nil])
       end
     }
 
     scope :unindexed, -> { where(indexed_at: nil) }
 
+    def to_param
+      uid
+    end
+    
     def attach_to(holder)
       self.folder = holder.folder
     end
@@ -388,6 +397,10 @@ module Droom
     end
 
     private
+
+    def ensure_uid!
+      self.uid = SecureRandom.uuid unless self.uid?
+    end
 
     def track_file_change
       return unless file.attached? && persisted?

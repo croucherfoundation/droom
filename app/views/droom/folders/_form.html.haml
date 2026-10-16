@@ -24,10 +24,10 @@
 
             %p.slug
               %strong<
-              - if @folder.parent
-                = @folder.parent.path + "/"
-              - else
-                \/
+                - if @folder.parent
+                  = @folder.parent.path + "/"
+                - else
+                  \/
               %br
               = f.text_field :slug, :class => "slug", :placeholder => t("helpers.label.folder.slug"), data: {role: 'slug'}, readonly: true, style: "background: #eee"
 

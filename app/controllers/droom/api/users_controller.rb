@@ -6,7 +6,6 @@ module Droom::Api
       reindex validate_email remove_reviewer_group destroy
     ].freeze
 
-    load_resource find_by: :uid, class: "Droom::User"
     before_action :authenticate_user, unless: :local_request?, only: SENSITIVE_MEMBER_ACTIONS
     before_action :ensure_sensitive_user_access, only: SENSITIVE_MEMBER_ACTIONS
     before_action :assert_local_request!, only: [:authenticable]
@@ -15,7 +14,7 @@ module Droom::Api
     before_action :search_users, only: [:accounts]
     before_action :find_or_create_user, only: [:create]
     skip_before_action :assert_local_request!, only: [:update_timezone, :update, :upload_profile_image, :remove_profile]
-
+    load_resource find_by: :uid, class: "Droom::User"
 
     def index
       render_api_success(resource: @users)
@@ -219,6 +218,8 @@ module Droom::Api
     end
 
     def eligible_event_admins
+      raise Droom::AccessDenied unless current_user&.admin?
+
       @users = Droom::User.admins
       render_api_success(users: @users)
     end

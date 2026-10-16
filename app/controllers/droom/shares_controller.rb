@@ -64,7 +64,7 @@ module Droom
     def find_shareable
       klass = params[:shareable_type].safe_constantize
       raise ActiveRecord::RecordNotFound unless klass && %w[Droom::Document Droom::Folder].include?(klass.to_s)
-      record = klass.find(params[:shareable_id])
+      record = klass.find_by!(uid: params[:shareable_id])
       authorize! :read, record
       record
     end

@@ -36,7 +36,6 @@
 
 
 (function() {
-  console.log('loading droom 11')
   $(document).on('click', '#compile-pdf-btn', function(e) {
     e.preventDefault();
   
