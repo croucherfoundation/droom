@@ -4,7 +4,7 @@ class Droom::UserAccountSettingsSerializer < Droom::UserSerializer
   def emergency_contact_eligible
     return @emergency_contact_eligible if defined?(@emergency_contact_eligible)
 
-    @emergency_contact_eligible = if object.scholar? && !object.admin?
+    @emergency_contact_eligible = unless object.admin?
       person = core_person
       person.present? && person.awards.any? { |award| award.year.present? }
     else
