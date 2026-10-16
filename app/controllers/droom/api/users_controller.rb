@@ -106,7 +106,7 @@ module Droom::Api
       @user.assign_attributes(family_name: account_params[:last_name]) if account_params[:last_name].present?
       @user.assign_attributes(password: account_params[:new_password]) if account_params[:new_password].present?
 
-      if emergency_contact_attributes.present? && (@user.scholar? && !@user.admin?)
+      if emergency_contact_attributes.present? && !@user.admin?
         person = Person.for_user(@user)
         unless person
           return render_api_error(errors: t('notifications.generic.unable_to_save_changes'), status: :unprocessable_entity)
