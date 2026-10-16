@@ -27,6 +27,8 @@ module Droom::Api
     def show
       if params[:type].present? && params[:type] == 'minimal'
         render_api_success(resource: @user, serializer: Droom::UserMinimalSerializer)
+      elsif params[:type] == 'account_settings'
+        render_api_success(resource: @user, serializer: Droom::UserAccountSettingsSerializer)
       else
         render_api_success(resource: @user)
       end
