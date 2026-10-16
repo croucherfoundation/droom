@@ -69,6 +69,7 @@ module Droom::Api
 
     def account_setting_update
       service = EmailVerificationService.new(@user)
+      emergency_contact_attributes = account_params[:emergency_contact_attributes]
 
       # Handle primary email change (requires verification)
       new_email = account_params[:email]
@@ -102,6 +103,21 @@ module Droom::Api
       @user.assign_attributes(given_name: account_params[:first_name]) if account_params[:first_name].present?
       @user.assign_attributes(family_name: account_params[:last_name]) if account_params[:last_name].present?
       @user.assign_attributes(password: account_params[:new_password]) if account_params[:new_password].present?
+
+      if emergency_contact_attributes.present? && (@user.scholar? && !@user.admin?)
+        person = Person.for_user(@user)
+        unless person
+          return render_api_error(errors: t('notifications.generic.unable_to_save_changes'), status: :unprocessable_entity)
+        end
+
+        result = Person.update_personal_info(
+          person.id,
+          emergency_contact: emergency_contact_attributes.to_h.to_json
+        )
+        unless result
+          return render_api_error(errors: t('notifications.generic.unable_to_save_changes'), status: :unprocessable_entity)
+        end
+      end
 
       if @user.save
         @user.update_password_attendee(password: account_params[:new_password]) if account_params[:new_password].present?
@@ -353,12 +369,13 @@ module Droom::Api
        :password, :password_confirmation, :current_password, :new_password, :timezone,
        :first_name, :last_name, :email, :backup_email, :destination,
         emails: [:id, :email, :email_type],
-        addresses: [:id, :address, :address_type]
+        addresses: [:id, :address, :address_type],
+        emergency_contact_attributes: [:name, :relationship, :address, :phone]
       )
     end
 
     def has_other_setting_updates?
-      account_params[:timezone].present? || account_params[:password].present?
+      account_params[:timezone].present? || account_params[:password].present? || account_params[:emergency_contact_attributes].present?
     end
 
     def validate_image_data(base64_data)
