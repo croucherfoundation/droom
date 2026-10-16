@@ -289,7 +289,7 @@ module Droom
     end
 
     def update_account_emergency_contact(contact_attributes)
-      return true unless @user.scholar? && !@user.admin?
+      return true if @user.admin?
       return true if contact_attributes.blank?
 
       contact_values = contact_attributes.to_h.symbolize_keys
