@@ -305,6 +305,11 @@ module Droom
         { emergency_contact: contact_values.to_json }
       )
 
+      unless response
+        render_update_error(t("notifications.generic.unable_to_save_changes"), :unprocessable_entity)
+        return false
+      end
+
       true
     rescue StandardError => error
       Rails.logger.error("[AccountEmergencyContact] #{error.class}: #{error.message}")
