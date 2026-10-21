@@ -247,6 +247,9 @@
           // PDF
           'application/pdf',
           
+          // Adobe Illustrator (.ai)
+          'application/postscript',
+          
           // Word documents
           'application/msword',
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -322,7 +325,7 @@
           'image/vnd.adobe.photoshop'
         ];
         
-        const allowedExtensions = /\.(pdf|doc|docx|odt|ott|docm|dot|dotx|dotm|html|htm|xml|mxfile|drawio|xmind|ppt|pptx|xls|xlsx|csv|txt|rtf|eml|msg|pages|numbers|key|mp4|mov|webm|zip|rar|tar|7z|gz|tar\.gz|tgz|ttf|otf|woff|woff2|jpg|jpeg|png|gif|avif|webp|svg|bmp|tiff|ico|heic|heif|psd)$/i;
+        const allowedExtensions = /\.(pdf|ai|doc|docx|odt|ott|docm|dot|dotx|dotm|html|htm|xml|mxfile|drawio|xmind|ppt|pptx|xls|xlsx|csv|txt|rtf|eml|msg|pages|numbers|key|mp4|mov|webm|zip|rar|tar|7z|gz|tar\.gz|tgz|ttf|otf|woff|woff2|jpg|jpeg|png|gif|avif|webp|svg|bmp|tiff|ico|heic|heif|psd)$/i;
         
         // If MIME type is generic or empty, fall back to extension check
         return allowedMimeTypes.includes(file.type) || allowedExtensions.test(file.name);
