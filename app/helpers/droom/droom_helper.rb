@@ -162,6 +162,10 @@ module Droom
       render 'droom/helps/show/link', slug: slug, category: category, title: title
     end
 
+    def can_add_document_to?(folder)
+      Droom::DocumentUpload.allowed?(current_ability, folder)
+    end
+
     def admin?
       user_signed_in? && current_user.admin?
     end

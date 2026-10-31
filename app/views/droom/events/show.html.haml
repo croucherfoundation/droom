@@ -3,7 +3,7 @@
 
 - content_for :title do
   = @event.name
-  
+
 - content_for :subnavbar do
   = render :partial => 'subnavbar'
 
@@ -15,10 +15,13 @@
           %use{href: "#edit_symbol"}
         = t :edit_event
 
+    - if can_add_document_to?(@event.folder)
       = link_to '#', class: "btn standard-upload-btn", data: {role: 'upload-file'}  do
-        = image_tag 'svg/add.svg', width: 18, height: 18 
+        = image_tag 'svg/add.svg', width: 18, height: 18
         = t :add_document
-      
+
+
+    - if can?(:edit, @event)
       .more-actions
         = render 'droom/events/more_actions'
 
@@ -28,7 +31,7 @@
   - if other_events.any?
     %h3.text-subtitle.mb_subtitle
       Other events of this type
-    .card_container 
+    .card_container
       = render :partial => 'droom/events/card', collection: other_events
-  
+
 = render :partial => 'droom/events/full', :object => @event, :locals => {:full_attachments => true}

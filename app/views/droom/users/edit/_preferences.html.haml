@@ -61,22 +61,33 @@
                 %button.eye-icon{type: "button"}
                   %img{alt: "open", src: "https://croucher.org.hk/assets/images/icons/eye-02.svg"}/
 
-              %p.admin
-                - if admin?
-                  = f.select :organisation_id, Droom::Organisation.for_selection, {}, :class => 'preferences mb-10'
-                  %br
-                  %span.standard-checkbox
-                    = f.check_box :admin
-                    = f.label :admin, class: "standard-checkbox-label mb-10"
-                  %br
-                  %span.subordinate{data: {dependent: "#user_admin"}}
+              - if admin?
+                .account-permissions
+                  - organisation_options = Droom::Organisation.for_selection.map { |name, id| [id.blank? ? 'No organisation assigned' : name, id] }
+                  - if organisation_options.any? { |name, id| id.present? }
+                    = f.label :organisation_id, 'Organisation', class: 'block mb-2'
+                    = f.select :organisation_id, organisation_options, {}, :class => 'preferences mb-10'
+                  .mb-10
+                    %p.mb-2
+                      %strong System administrator
+                    %p#site-admin-guidance Broad administrative access to this site, including users and content. Not required for routine Library editing.
                     %span.standard-checkbox
-                      = f.check_box :gatekeeper
-                      = f.label :gatekeeper, class: "standard-checkbox-label mb-10"
-                  %br
-                  %span.standard-checkbox
-                    = f.check_box :organisation_admin
-                    = f.label :organisation_admin, class: "standard-checkbox-label mb-10"
+                      = f.check_box :admin, aria: {describedby: 'site-admin-guidance'}
+                      = f.label :admin, 'Allow system administration', class: 'standard-checkbox-label'
+                  .subordinate.mb-10{data: {dependent: '#user_admin'}}
+                    %p.mb-2
+                      %strong Organisation registration notifications
+                    %p#admissions-guidance Receives notifications when external organisations register. Applies only to system administrators.
+                    %span.standard-checkbox
+                      = f.check_box :gatekeeper, aria: {describedby: 'admissions-guidance'}
+                      = f.label :gatekeeper, 'Receive registration notifications', class: 'standard-checkbox-label'
+                  .mb-10
+                    %p.mb-2
+                      %strong Organisation administrator
+                    %p#organisation-admin-guidance Allows management of the assigned organisation and its user accounts.
+                    %span.standard-checkbox
+                      = f.check_box :organisation_admin, aria: {describedby: 'organisation-admin-guidance'}
+                      = f.label :organisation_admin, 'Allow organisation administration', class: 'standard-checkbox-label'
 
         .standard-modal-footer
           .buttons
