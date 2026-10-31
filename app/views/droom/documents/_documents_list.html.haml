@@ -8,24 +8,24 @@
     - if documents.any?
       %h2
         = t :attachments
-        - if admin?
-          = link_to t(:add_document), droom.new_event_document_url(event), :class => "add minimal admin", :remote => true, :data => {:action => "popup", :type => "html", :affected => ".documents"}
-      
+        - if can_add_document_to?(event.folder)
+          = link_to t(:add_document), droom.new_event_document_url(event), :class => "add minimal", :remote => true, :data => {:action => "popup", :type => "html", :affected => ".documents"}
+
       = render :partial => "droom/events/attachment_list", :object => event.document_attachments.unfiled, :locals => {:limit => 100}
 
-    - elsif admin?
+    - elsif can_add_document_to?(event.folder)
       .holder
-        = link_to t(:add_document), droom.new_event_document_url(event), :class => "add admin", :remote => true, :data => {:action => "popup", :type => "html", :affected => ".documents"}
-      
+        = link_to t(:add_document), droom.new_event_document_url(event), :class => "add", :remote => true, :data => {:action => "popup", :type => "html", :affected => ".documents"}
+
   - attachments = event.attachments_by_category
   - attachments.each_pair do |cat_name, category_attachments|
-    - if admin? || category_attachments.any?
+    - if can_add_document_to?(event.folder) || category_attachments.any?
       - unless cat_name == "uncategorised"
         %section.holder
           %h3
             = cat_name
-            - if admin?
-              = link_to t(:add_document), droom.new_event_document_url(event, :category_name => cat_name), :class => "add minimal admin", :remote => true, :data => {:action => "popup", :type => "html", :affected => ".documents"}
+            - if can_add_document_to?(event.folder)
+              = link_to t(:add_document), droom.new_event_document_url(event, :category_name => cat_name), :class => "add minimal", :remote => true, :data => {:action => "popup", :type => "html", :affected => ".documents"}
 
           = render :partial => "droom/events/attachment_list", :object => category_attachments, :locals => {:limit => 100}
 

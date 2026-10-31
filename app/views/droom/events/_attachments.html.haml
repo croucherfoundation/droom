@@ -1,15 +1,16 @@
 - skip_gdoc ||= false
 - event ||= @event
 - folder ||= event.folder
-.col.attachments{data: {droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}"}, style: "margin-bottom: 20px"}
+- upload_data = can_add_document_to?(folder) ? {droppable: droom.folder_documents_path(folder), queue: "#queue_to_#{folder.id}"} : {}
+.col.attachments{data: upload_data, style: "margin-bottom: 20px"}
   - if (folder.documents.count > 0 || folder.children.count > 0) || event.compiled_file.attached?
     %h3.standard-h3-title
       = t :attachments
-  
+
   %ul.uploads{id: "queue_to_#{folder.id}"}
 
   - if event.compiled_file.attached?
-    %ul 
-      = render :partial => "droom/events/compile_pdf/compile_document", :locals => {event: event}        
-  
+    %ul
+      = render :partial => "droom/events/compile_pdf/compile_document", :locals => {event: event}
+
   = render :partial => "droom/folders/contents", :locals => {folder: folder, narrow: false, drop_refreshes: "", skip_gdoc: skip_gdoc, sortable: true}

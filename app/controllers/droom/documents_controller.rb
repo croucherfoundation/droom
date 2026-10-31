@@ -3,12 +3,13 @@ module Droom
     respond_to :html, :js, :json
 
     before_action :get_folder, except: [:index, :suggest, :scan_status]
+    before_action :authorize_document_upload, only: [:new, :create]
     before_action :select_documents, only: [:index, :suggest]
     before_action :load_accessible_document, only: [:show]
-    
+
     load_and_authorize_resource :document, find_by: :uid, :class => Droom::Document, :through => :folder, :shallow => true, except: [:index, :suggest, :scan_status]
     skip_load_and_authorize_resource only: :show
-    
+
     before_action :find_by_name, only: [:create]
 
 
@@ -113,6 +114,12 @@ module Droom
 
   protected
 
+    def authorize_document_upload
+      unless Droom::DocumentUpload.allowed?(current_ability, @folder)
+        raise CanCan::AccessDenied.new('Not authorised to add a document to this folder.', :create, Droom::Document)
+      end
+    end
+
     def find_by_name
       @data = @folder.documents.where(name: document_params[:name])
     end
@@ -169,9 +176,13 @@ module Droom
     end
 
     def get_folder
-      return unless params[:folder_id].present?
-
-      @folder = Droom::Folder.accessible_to(current_user).find_by(uid: params[:folder_id])
+      if params[:folder_id].present?
+        @folder = Droom::Folder.accessible_to(current_user).find_by!(uid: params[:folder_id])
+      elsif params[:event_id].present?
+        event = Droom::Event.find(params[:event_id])
+        authorize! :read, event
+        @folder = event.folder
+      end
     end
 
     def load_accessible_document

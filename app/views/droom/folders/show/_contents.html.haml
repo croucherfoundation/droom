@@ -2,7 +2,7 @@
 - folder_ul_class = @sortable ? "sortable_folders" : ""
 - files_ul_class = @sortable ? "sortable_files" : ""
 
-.folders{data: {panel: false, refreshing: droom.folder_path(@folder, source: 'library', format: :js), droppable: droom.folder_documents_path(@folder), picker: "#upload_to_folder_#{@folder.id}", queue: "#upload_queue"}, id: "folder_#{@folder.id}"}
+.folders{data: {panel: false, refreshing: droom.folder_path(@folder, source: 'library', format: :js), droppable: (droom.folder_documents_path(@folder) if can_add_document_to?(@folder)), picker: "#upload_to_folder_#{@folder.id}", queue: "#upload_queue"}, id: "folder_#{@folder.id}"}
 
   - unless @sortable
     %form.faceter{action: droom.folder_path(@folder), method: :get, id: "folder_search", style: "width: auto", data: {target: "#folder_#{@folder.id}"}}
