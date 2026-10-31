@@ -7,6 +7,7 @@
 #
 class Droom::UserSerializer < ActiveModel::Serializer
   attributes :uid,
+             :molecule_account_active,
              :status,
              :title,
              :given_name,
@@ -53,6 +54,12 @@ class Droom::UserSerializer < ActiveModel::Serializer
 
     has_many :emails
     has_many :addresses
+
+  # MCP must distinguish a retained person record from an active sign-in account.
+  # This reports existing status; it does not grant or change any permission.
+  def molecule_account_active
+    !object.deleted? && object.active_for_authentication?
+  end
 
   def name
     object.colloquial_name
