@@ -119,10 +119,9 @@ module Droom
     end
 
     def moved
-      if params.include?('new_parent_id') && params.include?('id')
-        folder = Droom::Folder.find(params[:id])
-        folder.parent_id = params[:new_parent_id]
-        folder.save
+      if parent_folder = Droom::Folder.find_by(uid: params[:new_parent_id])
+        @folder.parent_id = parent_folder.id
+        @folder.save
       end
       head :ok
     end
@@ -131,12 +130,16 @@ module Droom
       if params.include?('target_parent_id')
         target_parent_id = params[:target_parent_id]
         mapped_children = ''
-        if target_parent_id != '' && folder = Droom::Folder.accessible_to(current_user).find(target_parent_id)
-          child_folders = folder.children.merge(Droom::Folder.accessible_to(current_user))
+        if target_parent_id != '' && folder = Droom::Folder.accessible_to(current_user).find_by(uid: target_parent_id)
+          child_folders = folder.children.merge(Droom::Folder.accessible_to(current_user)).not_hidden
+          child_folders = child_folders.other_than(Droom::Folder.home_documents_folder)
+          if params[:exclude_id].present? && excluded = Droom::Folder.find_by(uid: params[:exclude_id])
+            child_folders = child_folders.other_than(excluded)
+          end
           if child_folders.any?
             mapped_children = {}
             child_folders.map{|child|
-              mapped_children[child.id] = child.name
+              mapped_children[child.uid] = child.name
             }
           end
         end

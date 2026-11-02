@@ -1,6 +1,6 @@
 .standard-modal-overlay.active
     .standard-modal-container.active
-        %form.edit.folder{action: "/folders/#{@folder.id}/moved", :method => 'put'}
+        %form.edit.folder{action: "/folders/#{@folder.uid}/moved", :method => 'put'}
             .standard-modal-header
                 .standard-modal-close-btn.cursor-pointer
                     %svg.standard_close_icon
@@ -14,7 +14,8 @@
                 .container
                     .inputs
                         = hidden_field_tag :new_parent_id, ''
-                        = select_tag 'folders', options_from_collection_for_select(Droom::Folder.roots, "id", "name"), id: 'folders_list_1', class: 'folders_list', prompt: "Please select a root folder"
+                        - root_folders = Droom::Folder.roots.not_hidden.other_than([@folder, Droom::Folder.home_documents_folder])
+                        = select_tag 'folders', options_from_collection_for_select(root_folders, "uid", "name"), id: 'folders_list_1', class: 'folders_list', prompt: "Please select a root folder"
                         #child_folders
             .standard-modal-footer
                 .buttons
@@ -50,7 +51,7 @@
             $("#new_parent_id").val(new_parent_id);
  
             selected_parent_id = current_element.children("option:selected").val();
-            $.ajax({url: "/child_folders?target_parent_id="+selected_parent_id, success: function(result){
+            $.ajax({url: "/child_folders?target_parent_id="+selected_parent_id+"&exclude_id=#{@folder.uid}", success: function(result){
                 var $option = $("<option/>", {
                         "value": '',
                         "html": "Please select a sub-folder"
