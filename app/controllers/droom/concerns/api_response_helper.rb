@@ -7,6 +7,7 @@ module Droom::Concerns
       rescue_from StandardError, with: :blew_up
       rescue_from Droom::DroomError, with: :blew_up
       rescue_from Droom::AccessDenied, with: :not_allowed
+      rescue_from CanCan::AccessDenied, with: :not_allowed
       rescue_from Cdr::NoChineseContent, with: :no_chinese_content
       rescue_from Droom::NoChineseContent, with: :no_chinese_content
     end

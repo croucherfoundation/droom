@@ -1,7 +1,8 @@
 module Droom::Api::Ex
   class UsersController < Droom::Api::Ex::ApiController
     skip_before_action :assert_local_request!
-    load_and_authorize_resource class: "Droom::User"
+    # profile returns the authenticated user's own record, so no class-level permission applies
+    load_and_authorize_resource class: "Droom::User", except: [:profile]
 
     before_action :search_users, only: [:suggest]
 
