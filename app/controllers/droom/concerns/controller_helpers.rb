@@ -75,10 +75,17 @@ module Droom::Concerns::ControllerHelpers
       if resource = Droom::User.where(unique_session_id: cookie.token).first
         if resource.valid_for_authentication?
           warden.session_serializer.store(resource, :user)
-          warden.request.env['devise.skip_session_limitable'] = true
+          store_unique_session_id(resource)
         end
       end
     end
+  end
+
+  # Mirrors what devise-security writes on a form login so the single-session fetch check
+  # compares equal ids. Writes to raw_session because warden.session(:user) raises
+  # NotAuthenticated until the user has been fetched.
+  def store_unique_session_id(user)
+    (warden.raw_session["warden.user.user.session"] ||= {})['unique_session_id'] = user.unique_session_id
   end
 
   def authenticate!

@@ -30,12 +30,14 @@ module Droom::Api
             render_api_error(errors: t('notifications.authentication.session_timeout'), status: :unauthorized)
           else
             bypass_sign_in user
+            store_unique_session_id(user)
             user.set_last_request_at!
             RequestStore.store[:current_user] = user
             Droom::AuthCookie.new(cookies).set(user)
           end
         else
           bypass_sign_in user
+          store_unique_session_id(user)
           RequestStore.store[:current_user] = user
           Droom::AuthCookie.new(cookies).set(user)
         end
