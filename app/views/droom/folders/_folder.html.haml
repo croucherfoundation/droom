@@ -14,7 +14,7 @@
   - stem ||= ""
   - narrow ||= false
   - length = narrow ? 28 : 64
-  - opts = {skip_gdoc: skip_gdoc, shareable: true, sortable: sortable}
+  - opts = {skip_gdoc: skip_gdoc, shareable: true, sortable: sortable, view: @library_view}
   - url = droom.folder_path(folder, opts)
 
   - if @folder
@@ -33,7 +33,7 @@
       %span.drag-handle{title: "Drag to reorder"}
         %svg.icon
           %use{"xlink:href": "#grid_symbol"}
-    = link_to droom.folder_path(folder), class: "folder no-bg-image" do
+    = link_to droom.folder_path(folder, view: @library_view), class: "folder no-bg-image" do
       %svg.icon.standard{style: "margin-top: -3px;"}
         %use{"xlink:href" => "#folder_closed_symbol"}
       %span= shorten(title, length)

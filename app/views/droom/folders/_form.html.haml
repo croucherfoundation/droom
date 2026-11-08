@@ -14,6 +14,9 @@
       .standard-modal-body
         .container
           .inputs
+            = hidden_field_tag :view, @library_view
+            - if @folder.new_record?
+              = hidden_field_tag :creation_token, @folder.uid
             = f.hidden_field :parent_id
 
             %p.error{style: 'color: red'}

@@ -1,4 +1,4 @@
-%ul#folders{class: ("sortable_folders" unless @searching), data: {refreshing: true, url: "#{folders_path}.js"}}
+%ul#folders{class: ("sortable_folders" unless @searching), data: {refreshing: droom.folders_path(format: :js, view: @library_view, sortable: @sortable)}}
   - unless @sortable
     %form.faceter{action: droom.folders_url, id: "library_search", style: "width: auto", data: {target: '#folders'}}
       = hidden_field_tag :page, params[:page]

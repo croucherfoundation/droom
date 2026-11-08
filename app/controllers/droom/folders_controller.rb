@@ -5,6 +5,7 @@ module Droom
 
     LIBRARY_VIEWS = %w[my_library shared data_room favourites].freeze
 
+    before_action :set_library_view, only: [:new, :create, :edit, :update]
     before_action :get_root_folders, :only => [:index]
     before_action :get_home_documents, :only => [:index]
     before_action :get_parent_folder, :only => [:new, :create]
@@ -36,7 +37,7 @@ module Droom
       if @searching
         search_library
       else
-        @folders = @folders.populated unless current_user.admin?
+        @folders = @folders.populated unless current_user.admin? || @library_view == 'data_room'
       end
 
       set_filter_ivars
@@ -72,19 +73,39 @@ module Droom
     end
 
     def new
+      @folder.uid ||= SecureRandom.uuid
       respond_with @folder
     end
 
     def create
+      if params[:creation_token].present?
+        unless params[:creation_token].to_s.match?(/\A[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\z/i)
+          render json: 'Invalid folder creation token. Reopen the folder form and try again.', status: :unprocessable_entity
+          return
+        end
+        @folder.uid = params[:creation_token]
+      end
       if @data.exists?
         render json: 'Folder with this name already exists!', status: 409
       else
-        @folder.update(folder_params.merge(created_by: current_user, data_room: @parent&.data_room?))
-        respond_with @folder do |format|
-          format.html { render :partial => 'droom/folders/folder' }
-          format.js { render :partial => "droom/folders/folder" }
+        @folder.assign_attributes(folder_params.except(:data_room, :parent_id).merge(created_by: current_user))
+        if @library_view == 'data_room' && @parent && !@parent.data_room?
+          render json: 'This parent is not shared with the data room. Choose a shared parent or create in myLibrary.', status: :unprocessable_entity
+          return
+        end
+        @folder.data_room = @folder.parent ? @folder.parent.data_room? : @library_view == 'data_room'
+        @folder.inherit_confidentiality if @parent
+        if @folder.save
+          respond_with @folder do |format|
+            format.html { render :partial => 'droom/folders/folder' }
+            format.js { render :partial => "droom/folders/folder" }
+          end
+        else
+          render json: @folder.errors.full_messages.to_sentence, status: :unprocessable_entity
         end
       end
+    rescue ActiveRecord::RecordNotUnique
+      render json: 'This folder may already have been saved. Refresh the destination before trying again.', status: :conflict
     end
 
     def edit
@@ -231,11 +252,22 @@ module Droom
     end
 
     def get_parent_folder
-      if @parent = Droom::Folder.find_by(uid: params[:folder_id])
-        @folder = @parent.children.build
-      else
-        @folder = Droom::Folder.new
+      if params[:folder_id].present?
+        @parent = Droom::Folder.find_by!(uid: params[:folder_id])
+        if params[:folder].present? && folder_params[:parent_id].present? && folder_params[:parent_id].to_s != @parent.id.to_s
+          raise ActionController::BadRequest, 'Folder parent does not match the selected destination'
+        end
+      elsif params[:folder].present? && folder_params[:parent_id].present?
+        @parent = Droom::Folder.find(folder_params[:parent_id])
       end
+      if @parent
+        authorize! :read, @parent
+        authorize! :update, @parent
+      end
+      if @parent && !@parent.data_room? && params[:view].blank? && @library_view == 'data_room'
+        @library_view = 'my_library'
+      end
+      @folder = @parent ? @parent.children.build : Droom::Folder.new
     end
 
     def load_accessible_folder

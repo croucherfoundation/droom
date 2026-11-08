@@ -47,6 +47,9 @@
 
       Remote.prototype.pend = function (event, xhr, settings) {
         var base, ref;
+        if (this._control.is("form.folder") && this._control.hasClass("waiting")) {
+          return false;
+        }
         event.stopPropagation();
         event.preventDefault();
         xhr.setRequestHeader("X-PJAX", "true");
@@ -111,6 +114,21 @@
 
       Remote.prototype.fail = function (event, xhr, status) {
         var ref;
+        if (this._control.is("form.folder") && xhr.status !== 401) {
+          let message = "Folder could not be saved. Please try again.";
+          try {
+            const errors = JSON.parse(xhr.responseText);
+            if (typeof errors === "string") message = errors;
+          } catch (error) {
+            message = xhr.getResponseHeader("X-Flash-Message") || message;
+          }
+          this._control.find("p.error").text(message);
+          event.stopPropagation();
+          this._control.removeClass("waiting").addClass("erratic");
+          this._control.find("input[type=submit]").removeClass("waiting");
+          this._control.trigger("remote:error", xhr, status);
+          return this._control.trigger("remote:complete", status);
+        }
         if (xhr.status === 409) {
           if ((ref = $(event.currentTarget).find("p.error")) != null) {
             ref.text(xhr.responseText);
