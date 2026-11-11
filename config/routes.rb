@@ -28,6 +28,7 @@ Droom::Engine.routes.draw do
       get 'validate_email', on: :member, as: :validate_email
       get :accounts, on: :collection
       get :eligible_event_admins, on: :collection
+      get :eligible_event_staff, on: :collection
       delete 'remove_reviewer_group', on: :member, as: :remove_reviewer_group
     end
     put "update_timezone" => 'users#update_timezone', as: 'update_timezone'

@@ -9,6 +9,7 @@ module Droom::Api
     before_action :authenticate_user, unless: :local_request?, only: SENSITIVE_MEMBER_ACTIONS
     before_action :ensure_sensitive_user_access, only: SENSITIVE_MEMBER_ACTIONS
     before_action :assert_local_request!, only: [:authenticable]
+    before_action :authenticate_user, only: [:eligible_event_staff]
 
     before_action :get_users, only: [:index]
     before_action :search_users, only: [:accounts]
@@ -240,6 +241,17 @@ module Droom::Api
 
       @users = Droom::User.admins
       render_api_success(users: @users)
+    end
+
+    def eligible_event_staff
+      raise Droom::AccessDenied unless current_user&.admin?
+
+      users = Droom::User.undeleted.joins(:groups)
+        .where(droom_groups: { slug: 'croucher-office' })
+        .distinct.in_name_order
+      render_api_success(users: users.map do |user|
+        { uid: user.uid, name: user.name, given_name: user.given_name, family_name: user.family_name }
+      end)
     end
 
   protected
