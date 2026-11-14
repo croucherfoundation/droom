@@ -65,6 +65,14 @@ module Droom::Users
       !user_signed_in?
     end
 
+    protected
+
+    def set_flash_message!(key, kind, options = {})
+      return if key == :notice && [:signed_in, :signed_out, :already_signed_out].include?(kind)
+
+      super
+    end
+
     private
 
     def payload_decode
