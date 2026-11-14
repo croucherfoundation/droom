@@ -17,7 +17,6 @@ module Droom::Users
       if current_user
         self.resource = current_user
         Droom::AuthCookie.new(cookies).set(resource)
-        set_alert(t("notifications.authentication.already_signed_in"))
         redirect_path = determine_redirect_path
         redirect_to redirect_path, allow_other_host: croucher_return_url?(redirect_path)
         return
@@ -73,7 +72,6 @@ module Droom::Users
 
         # Redirect to the originally requested page, or use fallback
         redirect_path = determine_redirect_path
-        set_notice(t("notifications.authentication.login_success", name: resource.name))
         redirect_to redirect_path, allow_other_host: croucher_return_url?(redirect_path)
       else
         set_alert(t("notifications.authentication.login_failure"))
@@ -116,6 +114,14 @@ module Droom::Users
 
     def all_signed_out?
       !user_signed_in?
+    end
+
+    protected
+
+    def set_flash_message!(key, kind, options = {})
+      return if key == :notice && [:signed_out, :already_signed_out].include?(kind)
+
+      super
     end
 
     private
