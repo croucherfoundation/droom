@@ -117,6 +117,9 @@ module Droom
     # This has to handle small preference updates over js and large account-management forms over html.
     #
     def update
+      # Only this authorised, interactive editor may deliberately replace the
+      # current Croucher first name. Never accept this marker from API imports.
+      @user.deliberate_given_name_change = user_params.key?(:given_name)
       @user.delete_user_permissions(user_params[:group_ids]) unless user_params[:group_ids].blank?
       @user.show_initial_image = false if user_params[:image].present?
       @user.show_initial_image = true if params[:remove_image] == "true"

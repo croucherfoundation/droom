@@ -150,7 +150,7 @@ module Droom::Api
     end
 
     def update
-      @user.class.sync_in_progress = params[:user]['skip_person_sync'] == true
+      @user.class.sync_in_progress = local_request? && params[:user]['skip_person_sync'] == true
 
       profile_image = user_params[:image] if user_params[:image].present?
       attach_base64_image(@user, :image, profile_image) if profile_image.present?
@@ -162,6 +162,8 @@ module Droom::Api
       else
         render_api_error(errors: @user.errors, status: :unprocessable_entity, meta: { error: @user.errors.full_messages })
       end
+    ensure
+      @user.class.sync_in_progress = false if @user
     end
 
     def upload_profile_image
