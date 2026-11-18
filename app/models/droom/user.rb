@@ -2,6 +2,7 @@ require 'vcard'
 require 'open-uri'
 module Droom
   class User < Droom::DroomRecord
+    include Droom::Concerns::PersonIdentitySync
     include Droom::Concerns::Key
     include Droom::Concerns::Imaged
     include Droom::Concerns::PngConvert
@@ -55,7 +56,7 @@ module Droom
     before_save :title_blank_to_nil
     before_save :org_admin_if_alone
 
-    class_attribute :sync_in_progress
+    attr_accessor :sync_in_progress
     after_save :sync_with_person
     after_save :send_confirmation_if_directed
 
@@ -923,34 +924,9 @@ module Droom
       !Droom.require_login_permission? || admin? || permitted?('droom.login')
     end
 
-    def sync_with_person
-      return if self.class.sync_in_progress || !saved_changes?
+    attr_accessor :deliberate_given_name_change
+    validates :given_name, presence: true, if: -> { deliberate_given_name_change }
 
-      self.class.sync_in_progress = true
-
-      begin
-        @person = person
-        if @person
-          [:title, :given_name, :family_name, :chinese_name, :gender, :email, :preferred_name, :hkid, :dob, :pob, :nationality].each do |col|
-            if has_attribute?(col)
-              next if @person.send(col) == send(col)
-              if send("saved_change_to_#{col}?")
-                @person.send "#{col}=", send(col)
-              elsif @person.send(col) != send(col)
-                send "#{col}=", @person.send(col)
-              end
-            end
-          end
-          if @person.changed?
-            @person.skip_user_sync = true
-            @person.save
-          end
-          save if changed?
-        end
-      ensure
-        self.class.sync_in_progress = false
-      end
-    end
 
     ## Other ownership
     #
