@@ -44,7 +44,7 @@
                 = event.venue.definite_name
               %span.separator ·
 
-            - if has_date_range || (is_outside_event and event.start.present?)
+            - if event.all_day? || has_date_range || (is_outside_event and event.start.present?)
               %time.date_range
                 = render 'droom/shared/date', event: event
             - else 
@@ -61,9 +61,10 @@
                   = "#{event.start.strftime('%a · %H:%M')} (#{t(:uk_time)})"
 
         .detail
-          - if event.description?
+          - description = event.description_for(current_user)
+          - if description.present?
             .content{style: "width:100%"}
-              = sanitize(event.description)
+              = sanitize(description)
         - if event.url?
           .inline
             = t(:website) + ":"

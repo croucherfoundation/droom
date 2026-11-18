@@ -3,6 +3,7 @@ class Droom::CalendarSerializer < ActiveModel::Serializer
              :title,
              :start,
              :end,
+             :all_day,
              :full_url
 
   def title
@@ -28,6 +29,8 @@ class Droom::CalendarSerializer < ActiveModel::Serializer
   end
 
   def full_url
+    return object.url_with_protocol if object.event_type&.slug == "screening" && object.url?
+
     Droom::Engine.routes.url_helpers.event_url(object, host: ENV['DROOM_URL'])
   end
 

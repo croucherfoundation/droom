@@ -22,19 +22,18 @@ module Droom
       respond_with @events do |format|
         format.html { render :layout => 'centered' }
         format.js { render :partial => 'droom/events/events' }
+        format.ics { render_calendar_ics(@events) }
       end
     end
 
     def calendar
-      respond_with @events, layout: 'application_v2'
+      respond_with @events, layout: 'application_v2' do |format|
+        format.ics { render_calendar_ics(@events) }
+      end
     end
 
     def subscribe
-      cal = Icalendar::Calendar.new
-      @events.each do |event|
-        cal.add_event(event.icalendar_event)
-      end
-      render plain: cal.to_ical, content_type: 'text/calendar'
+      render_calendar_ics(@events)
     end
 
     class Array
@@ -57,6 +56,7 @@ module Droom
       respond_with @events do |format|
         format.html { render template: 'droom/events/index', layout: 'centered' }
         format.js { render partial: 'droom/events/events' }
+        format.ics { render_calendar_ics(@events) }
       end
     end
 
@@ -65,6 +65,7 @@ module Droom
         format.html { render :layout => 'centered' }
         format.js { render :partial => "droom/events/#{params[:view].presence || 'event'}" }
         format.zip { send_file @event.documents_zipped.path, :type => 'application/zip', :disposition => 'attachment', :filename => "#{@event.slug}.zip" }
+        format.ics { render_calendar_ics([@event]) }
       end
     end
 
@@ -212,6 +213,12 @@ module Droom
 
   protected
 
+    def render_calendar_ics(events)
+      cal = Icalendar::Calendar.new
+      events.each { |event| cal.add_event(event.icalendar_event(user: current_user)) }
+      render plain: cal.to_ical, content_type: 'text/calendar'
+    end
+
     def set_timezone_feature
       @timezone_feature = FeatureFlag.enabled?('time-zone-feature', current_user)
     end
@@ -227,7 +234,12 @@ module Droom
       end
       if scholar?
         @event_type = Droom::EventType.find_by_slug('other_events')
-        @events = @events.where(event_type_id: @event_type.id)
+        @events = @events.where(event_type_id: @event_type.id).or(
+          @events.where(
+            event_type_id: Droom::EventType.where(slug: ["screening", "award_interviews"]).select(:id),
+            id: current_user.event_ids
+          )
+        )
       end
       @events
     end

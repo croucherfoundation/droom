@@ -133,6 +133,8 @@ module Droom
       elsif Droom::registerable?
         can :create, Droom::User
       end
+
+      Droom::ScreeningCalendarAccess.apply(self, user)
     end
   end
 end

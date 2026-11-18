@@ -5,6 +5,9 @@ module Droom
     include Droom::Concerns::PdfThumbnailable
     include Droom::Concerns::Key
     include Droom::RichText::OptIn
+    include Droom::CalendarDescription
+    include Droom::CalendarExport
+    self.locking_column = :calendar_sequence
 
     belongs_to :created_by, :class_name => "Droom::User"
     belongs_to :calendar
@@ -46,6 +49,7 @@ module Droom
     validates :event_type_id, :presence => true
 
     before_validation :set_uuid
+    before_validation :resolve_existing_slug_collision
     before_validation :slug_from_name_and_year
     before_validation :set_default_event_type
 
@@ -284,6 +288,7 @@ module Droom
     end
 
     def visible_to?(user)
+      return screening_visible_to?(user) if event_type&.slug == "screening"
       return true if self.public?
       return true if user.privileged?
       return false if self.confidential?# || Droom.events_private_by_default?
@@ -291,12 +296,17 @@ module Droom
     end
 
     def detail_visible_to?(user)
+      return screening_visible_to?(user) if event_type&.slug == "screening"
       return true if self.public?
       return false unless user
       return true if user.admin?
       return true if user.invited_to?(self)
       return false if self.private?
       return true
+    end
+
+    def screening_visible_to?(user)
+      Droom::ScreeningCalendarAccess.visible_to?(self, user)
     end
 
     def has_anyone?
@@ -339,26 +349,9 @@ module Droom
       end
     end
 
-    def plain_description
-      strip_tags(description)
-    end
-
-    def icalendar_event
-      event = Icalendar::Event.new
-      event.uid = uuid
-      event.summary = name
-      event.description = plain_description if description?
-      event.dtstart = (all_day? ? start_date : start) if start?
-      event.dtend = (all_day? ? finish_date : finish) if finish?
-      event.url = url_with_protocol if url?
-      event.attendee = invitations.accepted.map{|inv| "mailto:#{inv.user.email}"} if invitations.accepted.any?
-      event.location = venue.name if venue
-      event
-    end
-
-    def to_ics
+    def to_ics(user: nil)
       cal = Icalendar::Calendar.new
-      cal.add_event(icalendar_event)
+      cal.add_event(icalendar_event(user: user))
       cal.to_ical
     end
 

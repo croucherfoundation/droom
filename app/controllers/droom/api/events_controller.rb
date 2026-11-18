@@ -26,7 +26,7 @@ module Droom::Api
         when "year"  then date.beginning_of_year..date.end_of_year.end_of_day
         end
 
-      @events = Droom::Event.accessible_by(current_ability).where(
+      @events = Droom::Event.accessible_by(current_ability).includes(:event_type).where(
         "start <= ? AND (
           (end_date IS NOT NULL AND end_date >= ?) OR
           (end_date IS NULL AND finish IS NOT NULL AND finish >= ?) OR
@@ -39,8 +39,12 @@ module Droom::Api
     end
 
     def update
-      @event.update(event_params)
-      render_api_success(resource: @event)
+      if @event.update(event_params)
+        @event.touch if @event.event_type&.slug == "screening" && @event.previous_changes.empty?
+        render_api_success(resource: @event)
+      else
+        render_api_error(errors: @event.errors, status: :unprocessable_entity)
+      end
     end
 
     def create
@@ -70,8 +74,15 @@ module Droom::Api
           params[:event][:event_type_id] = event_type.id if event_type
         end
 
-        if params[:event][:uid].present?
-          @event = Droom::Event.where(uid: params[:event][:uid]).first
+        if params[:event][:uuid].present?
+          # Serialize source-key retries even when the remote event exists but its
+          # Applications link was not committed.
+          event_type = Droom::EventType.find(event_params[:event_type_id])
+          event_type.with_lock do
+            @event = Droom::Event.find_or_initialize_by(uuid: params[:event][:uuid])
+            @event.update!(event_params)
+          end
+          return
         end
       end
       @event ||= Droom::Event.create!(event_params)
@@ -87,7 +98,9 @@ module Droom::Api
     end
 
     def event_params
-      params.require(:event).permit(:name, :description, :event_set_id, :calendar_id, :event_type_id, :event_type_slug, :all_day, :url, :video_conference_link, :start, :finish, :end_date, :timezone, :venue_id, :venue_name)
+      permitted = params.require(:event).permit(:name, :description, :event_set_id, :calendar_id, :event_type_id, :all_day, :url, :video_conference_link, :start, :finish, :end_date, :timezone, :venue_id, :venue_name, :private, :public)
+      permitted[:uuid] = params[:event][:uuid] if action_name == "create" && params[:event][:uuid].present?
+      permitted
     end
 
     def authenticate_from_param

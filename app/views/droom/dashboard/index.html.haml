@@ -14,8 +14,8 @@
       - Droom.margin_dashboard_modules.each do |mod|
         = render :partial => "droom/dashboard/#{mod}", :locals => {:centered => true}
     - if screeners.any?
-      - open_screeners = screeners.select { |screener| screener.round&.open? }.sort_by { |screener| screener.round&.screening_end || Time.current }
-      - closed_screeners = screeners.select { |screener| !screener.round&.open? }.sort_by { |screener| screener.round&.screening_end || Time.zone.at(0) }.reverse
+      - open_screeners = screeners.select { |screener| screener.round&.screening_open }.sort_by { |screener| screener.round&.screening_end.to_s }
+      - closed_screeners = screeners.reject { |screener| screener.round&.screening_open }.sort_by { |screener| screener.round&.screening_end.to_s }.reverse
       - sorted_screeners = open_screeners + closed_screeners
       .screeners
         %h3.standard-h3-title
@@ -27,8 +27,8 @@
 
     - screeners = current_user.screeners
     - if screeners.any?
-      - open_screeners = screeners.select { |screener| screener.round&.open? }.sort_by { |screener| screener.round&.screening_end || Time.current }
-      - closed_screeners = screeners.select { |screener| !screener.round&.open? }.sort_by { |screener| screener.round&.screening_end || Time.zone.at(0) }.reverse
+      - open_screeners = screeners.select { |screener| screener.round&.screening_open }.sort_by { |screener| screener.round&.screening_end.to_s }
+      - closed_screeners = screeners.reject { |screener| screener.round&.screening_open }.sort_by { |screener| screener.round&.screening_end.to_s }.reverse
       - sorted_screeners = open_screeners + closed_screeners
       .screeners
         %h3.standard-h3-title

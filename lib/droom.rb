@@ -10,6 +10,9 @@ require "droom/scrubbers"
 require "droom/safe_html_sanitizer"
 require "droom/rich_text"
 require "droom/rich_text_cleanup_runner"
+require "droom/screening_calendar_access"
+require "droom/calendar_description"
+require "droom/calendar_export"
 
 
 module Droom

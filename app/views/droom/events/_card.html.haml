@@ -23,4 +23,5 @@
       
       .card_item
         .card_text 
-          = shorten(event.description, 100) if event.description?
+          - description = event.description_for(current_user)
+          = shorten(description, 100) if description.present?

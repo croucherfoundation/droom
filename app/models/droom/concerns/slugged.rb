@@ -23,6 +23,15 @@ module Droom::Concerns::Slugged
     ensure_presence_of_unique(:slug, "#{year} #{name}".parameterize)
   end
 
+  def resolve_existing_slug_collision
+    return unless persisted? && slug.present? && !will_save_change_to_slug?
+    return unless self.class.where(slug: slug).where.not(id: id).exists?
+
+    base = slug
+    self.slug = nil
+    ensure_presence_of_unique(:slug, base)
+  end
+
   def ensure_presence_of_unique(column, base, skope=self.class.all)
     unless self.send "#{column}?".to_sym
       slug = base.presence || self.class.to_s.underscore

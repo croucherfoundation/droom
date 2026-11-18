@@ -8,4 +8,7 @@ class Droom::EventSerializer < ActiveModel::Serializer
              :calendar_id,
              :event_type_id
 
+  def description
+    object.description_for(scope)
+  end
 end

@@ -25,7 +25,7 @@
     .heading
       .detail-practicalities.full.text-body
         %p.practicalities
-          - if has_date_range || (is_outside_event && event.start.present?)
+          - if event.all_day? || has_date_range || (is_outside_event && event.start.present?)
             %span.time.date_range
               = render 'droom/shared/date', event: event
           - else
@@ -61,9 +61,10 @@
                   = event.venue.definite_name
 
         .detail
-          - if event.description?
+          - description = event.description_for(current_user)
+          - if description.present?
             .content{style: "width:100%"}
-              = sanitize(event.description)
+              = sanitize(description)
 
         .links
           - if event.url?

@@ -2,7 +2,7 @@ module Droom
   class Invitation < Droom::DroomRecord
         
     belongs_to :user
-    belongs_to :event
+    belongs_to :event, touch: true
     belongs_to :group_invitation
     belongs_to :created_by, :class_name => "User"
 

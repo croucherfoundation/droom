@@ -13,7 +13,7 @@
     = link_to event.name, path
   
   .excerpt
-    - if hit and (highlights = hit.highlights.select{|hl| hl.field_name == :description}).any?
+    - if event.event_type&.slug != "screening" && hit && (highlights = hit.highlights.select{|hl| hl.field_name == :description}).any?
       = render :partial => "droom/shared/excerpt", :locals => { :highlights => highlights }
     - else
-      = truncate event.description, :length => 130
+      = truncate event.description_for(current_user), :length => 130

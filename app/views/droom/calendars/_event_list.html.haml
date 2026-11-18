@@ -1,5 +1,5 @@
 - calendar ||= @calendar
-- events ||= @events || calendar.events.future_and_current
+- events ||= @events || calendar.events.accessible_by(current_ability).future_and_current
 - omit_document ||= false
 
 #minimal{:data => {:refreshing => true, :url => droom.calendar_url(calendar)}}

@@ -1,5 +1,5 @@
 - calendar = Droom::Calendar.where(name: 'main').first_or_create
-- past_events = calendar.events.past 
+- past_events = calendar.events.accessible_by(current_ability).past
 - past_events = past_events.for_scholar if scholar?
 - events ||= past_events.limit(5)
 

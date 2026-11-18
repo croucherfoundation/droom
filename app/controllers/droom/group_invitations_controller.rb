@@ -4,6 +4,7 @@ module Droom
 
     load_and_authorize_resource :event, :class => Droom::Event
     load_and_authorize_resource :group_invitation, :through => :event, :class => Droom::GroupInvitation
+    before_action :authorize_screening_audience_change, only: [:new, :create, :destroy]
 
     def destroy
       @group_invitation.destroy
@@ -32,6 +33,10 @@ module Droom
     end
 
   protected
+
+    def authorize_screening_audience_change
+      authorize! :update, @event if @event.event_type&.slug == "screening"
+    end
 
     def group_invitation_params
       params.require(:group_invitation).permit(:event_id, :group_id)

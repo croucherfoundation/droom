@@ -8,7 +8,7 @@
 - if round
   .screening_info
     .round_title.text-preview-title
-      - if round.open?
+      - if round.screening_open
         %svg.icon
           %use{href: "#green_circle"}
       = link_to round.name, url

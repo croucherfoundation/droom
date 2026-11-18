@@ -17,6 +17,20 @@ To migrate:
     rake droom:install:migrations
     rake db:migrate
 
+## Sign-in returns
+
+The sign-in page recognises the Warden-resolved session independently of shared-cookie
+freshness, refreshes the shared cookie, and returns to `backto` without rotating the
+session. Missing/expired sessions use the existing sign-in page; failed attempts retain
+the destination. `backto` is already decoded by Rails and must not be decoded again.
+Cross-host returns are restricted to HTTP(S) Croucher hosts.
+
+Run the controller regressions without booting the legacy dummy application:
+
+```sh
+rspec --options /dev/null test/session_return_spec.rb
+```
+
 ## Rich Text Sanitizer Foundation
 
 `Droom::SafeHtmlSanitizer` provides a centralized allowlist sanitizer for rich-text fields.
