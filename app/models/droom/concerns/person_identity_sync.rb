@@ -1,11 +1,15 @@
 module Droom::Concerns::PersonIdentitySync
-    def sync_with_person
-      return if self.class.sync_in_progress || !saved_changes?
+    def person_for_identity_sync
+      CoreIdentityLookup.for_user(self)
+    end
 
-      self.class.sync_in_progress = true
+    def sync_with_person
+      return if self.sync_in_progress || !saved_changes?
+
+      self.sync_in_progress = true
 
       begin
-        @person = person
+        @person = person_for_identity_sync
         if @person
           [:title, :given_name, :family_name, :chinese_name, :gender, :email, :preferred_name, :hkid, :dob, :pob, :nationality].each do |col|
             if has_attribute?(col)
@@ -27,7 +31,7 @@ module Droom::Concerns::PersonIdentitySync
           save if changed?
         end
       ensure
-        self.class.sync_in_progress = false
+        self.sync_in_progress = false
         self.deliberate_given_name_change = false
       end
     end

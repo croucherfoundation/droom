@@ -56,7 +56,7 @@ module Droom
     before_save :title_blank_to_nil
     before_save :org_admin_if_alone
 
-    class_attribute :sync_in_progress
+    attr_accessor :sync_in_progress
     after_save :sync_with_person
     after_save :send_confirmation_if_directed
 
