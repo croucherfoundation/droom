@@ -13,6 +13,8 @@ require_relative '../../../lib/droom/screening_calendar_access'
 require_relative '../../../app/serializers/droom/calendar_serializer'
 require_relative '../../../app/serializers/droom/event_serializer'
 
+I18n.load_path << File.expand_path('../../../config/locales/en.yml', __dir__)
+
 describe Droom::CalendarExport do
   let(:record) do
     Class.new do
@@ -76,10 +78,42 @@ describe Droom::CalendarExport do
     expect(record.description).to eq("<p>Panel total</p>")
   end
 
-  it "does not silently substitute the panel total when personalization is missing" do
+  it "shows an explicit notice and logs an invitation/assignment mismatch instead of crashing" do
     allow(record).to receive_messages(event_type: double(slug: "screening"), description: "Panel total")
-    judge = double(invited_to?: true, screening_calendar_descriptions: {})
-    expect { record.description_for(judge) }.to raise_error(KeyError)
+    judge = double(id: 42, invited_to?: true, screening_calendar_descriptions: {})
+    logger = double
+    allow(Rails).to receive(:logger).and_return(logger)
+    expect(logger).to receive(:warn).with(
+      "[screening_calendar] Missing personalized description event_uuid=stable-uuid user_id=42"
+    )
+    notice = record.description_for(judge)
+    expect(notice).to eq("Your screening assignment details are currently unavailable. Please check Applications or contact Croucher staff.")
+    expect(notice).not_to include("Panel total")
+  end
+
+  it "does not hide an Applications API failure as a missing assignment" do
+    allow(record).to receive_messages(event_type: double(slug: "screening"), description: "Panel total")
+    judge = double(invited_to?: true)
+    allow(judge).to receive(:screening_calendar_descriptions).and_raise("Applications HTTP 503")
+    expect { record.description_for(judge) }.to raise_error("Applications HTTP 503")
+  end
+
+  it "renders the actual event popup and ICS during a missing-description sync window" do
+    allow(record).to receive_messages(event_type: double(slug: "screening"), description: "Panel total")
+    allow(record).to receive(:plain_description).and_call_original
+    judge = double(id: 42, invited_to?: true, screening_calendar_descriptions: {})
+    logger = double
+    allow(Rails).to receive(:logger).and_return(logger)
+    expect(logger).to receive(:warn).twice
+    view = Class.new { include ActionView::Helpers }.new
+    allow(view).to receive_messages(current_user: judge, event_url: "/events/838", t: "Download calendar")
+    template = Haml::Template.new(File.expand_path('../../../app/views/droom/events/_popup_event.html.haml', __dir__))
+    html = template.render(view, event: record)
+    expect(html).to include("Your screening assignment details are currently unavailable.")
+    expect(html).not_to include("Panel total")
+    expect(record.icalendar_event(user: judge).description.to_s).to include(
+      "Your screening assignment details are currently unavailable."
+    )
   end
 
   it "exports a personalized description even before an empty legacy shared description is refreshed" do

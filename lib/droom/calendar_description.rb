@@ -6,7 +6,10 @@ module Droom
     def description_for(user)
       return description unless user && event_type&.slug == "screening" && user.invited_to?(self)
 
-      user.screening_calendar_descriptions.fetch(uuid)
+      user.screening_calendar_descriptions.fetch(uuid) do
+        Rails.logger.warn("[screening_calendar] Missing personalized description event_uuid=#{uuid} user_id=#{user.id}")
+        I18n.t("screening_calendar.assignment_details_unavailable")
+      end
     end
 
     def plain_description(user: nil)

@@ -2,6 +2,8 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
+  screening_calendar:
+    assignment_details_unavailable: "Your screening assignment details are currently unavailable. Please check Applications or contact Croucher staff."
   Noticeboard: "Latest Notices"
   accept: "Accept"
   access_control: "Access control"
