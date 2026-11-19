@@ -89,6 +89,17 @@ describe Droom::CalendarExport do
     expect(record.icalendar_event(user: judge).description.to_s).to eq("Screen 3 applications.")
   end
 
+  it "keeps the assigned-applications URL in plain ICS when the visible link says here" do
+    allow(record).to receive_messages(event_type: double(slug: "screening"), description: "")
+    allow(record).to receive(:plain_description).and_call_original
+    judge = double(invited_to?: true, screening_calendar_descriptions: {
+      "stable-uuid" => '<p>Click <a href="https://apps.example.test/screening">here</a>.</p>'
+    })
+    expect(record.icalendar_event(user: judge).description.to_s).to eq(
+      "Click here (https://apps.example.test/screening)."
+    )
+  end
+
   it "keeps the stored description for unassigned staff and interview events" do
     allow(record).to receive_messages(event_type: double(slug: "screening"), description: "Panel total")
     staff = double(invited_to?: false)
