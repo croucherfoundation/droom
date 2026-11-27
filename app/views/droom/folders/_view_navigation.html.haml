@@ -1,0 +1,7 @@
+- views = [['myLibrary', 'my_library'], ['Shared with me', 'shared'], ['Data Room', 'data_room'], ['Favourites', 'favourites']]
+%nav.library-view-picker.cds-filters__box{aria: {label: 'Library views'}}
+  %select#library_view{aria: {label: 'Library view'}, onchange: 'window.location.assign(this.value)'}
+    = options_for_select(views.map { |label, key| [label, droom.folders_path(view: key)] }, droom.folders_path(view: @library_view))
+  %noscript
+    - views.each do |label, key|
+      = link_to label, droom.folders_path(view: key)
