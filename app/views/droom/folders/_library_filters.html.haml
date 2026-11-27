@@ -1,11 +1,8 @@
-- unless @folder
-  - views = [['myLibrary', 'my_library'], ['Shared with me', 'shared'], ['Data Room', 'data_room'], ['Favourites', 'favourites']]
-  .croucher_container.library-view-navigation
-    = select_tag :view, options_for_select(views, @library_view), aria: {label: 'Library view'}, onchange: "window.location.href='#{droom.folders_path}?view=' + this.value"
-
 - selected = {}
 - if params[:user_id].present?
   - selected[:user_id] = "#{@filter_user&.formal_name || 'Selected person'} (#{@search_results.total_count})"
 = render layout: 'shared/cds_filters', locals: {fields: @library_filter_fields, extra_active: selected, query_defaults: {view: @library_view}} do
   - if can?(:search, Droom::User)
     %span.user-filter-target
+  - if local_assigns[:show_view_picker]
+    = render 'droom/folders/view_navigation'

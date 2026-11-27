@@ -1288,8 +1288,17 @@ span.delete
 
 @import droom/compile_pdf
 
-.library-view-navigation
-  margin-bottom: 12px
+#library_search .cds-filters__grid
+  display: grid
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+  column-gap: 30px
+  @media (max-width: 900px)
+    grid-template-columns: repeat(2, minmax(0, 1fr))
+  @media (max-width: 700px)
+    grid-template-columns: minmax(0, 1fr)
+
+.library-view-picker.cds-filters__box select
+  color: #111
 
 .user-filter-list li > button
   background: transparent
@@ -1303,7 +1312,6 @@ span.delete
 .user-filter-dropdown .user-filter-btn
   min-height: 44px
 
-.library-view-navigation select,
 .user-filter-dropdown .user-filter-btn
   background-color: white
   border: 1px solid #000000

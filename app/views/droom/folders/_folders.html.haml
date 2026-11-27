@@ -1,12 +1,13 @@
 %ul#folders{class: ("sortable_folders" unless @searching), data: {library_results: true, refreshing: droom.folders_path(format: :js, view: @library_view, sortable: @sortable)}}
   - unless @sortable
-    %form#library_search{action: request.path, method: :get, data: {library_search: true}}
+    %form#library_search.mb_subbox{action: request.path, method: :get, data: {library_search: true}}
       = hidden_field_tag :show, params[:show]
+      = hidden_field_tag :view, @library_view
       = hidden_field_tag :sort, params[:sort]
       = hidden_field_tag :user_id, params[:user_id], class: 'facet'
 
 
-      = render 'droom/folders/library_filters'
+      = render 'droom/folders/library_filters', show_view_picker: true
       %noscript
         %button{type: 'submit'} Apply filters
 
