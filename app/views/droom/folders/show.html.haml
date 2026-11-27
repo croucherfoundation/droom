@@ -10,4 +10,6 @@
 - content_for :buttons do
   = render partial: 'droom/folders/show_buttons'
 
+- unless @sortable
+  = render "shared/page_search", title: t(:search_in_folder, name: @folder.name), form_id: 'folder_search'
 = render partial: 'droom/folders/show/contents'

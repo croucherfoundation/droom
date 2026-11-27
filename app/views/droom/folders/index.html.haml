@@ -8,4 +8,6 @@
   = render 'more_actions'
     
 #main.folders{data: {panel: false}}
+  - unless @sortable
+    = render "shared/page_search", title: t(:search_in_library), form_id: 'library_search'
   = render partial: 'folders'

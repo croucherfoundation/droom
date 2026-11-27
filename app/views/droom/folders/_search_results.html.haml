@@ -1,4 +1,6 @@
 #library-search-results
+  .cds-filters__toolbar.croucher_container
+    %p{role: 'status'}= pluralize(number_with_delimiter(@search_results.total_count), 'search result')
   - if @search_results.any?
     - @search_results.each do |result|
       - if result.is_a?(Droom::Folder)
@@ -6,11 +8,15 @@
       - elsif result.is_a?(Droom::Document)
         = render partial: 'droom/folders/search/document_result', locals: {document: result}
 
-    .pagination.lower
-      = paginate @search_results, params: {format: nil}
+    - if @search_results.total_pages > 1
+      %nav.cds-page-size{aria: {label: 'Results per page'}}
+        Show
+        - Droom::LibrarySearch::PAGE_SIZES.each do |size|
+          = link_to size, url_for(request.query_parameters.except('page', 'format').merge(show: size, view: @library_view, format: nil, only_path: true)), data: {cds_filter_link: true}, aria: {current: ('true' if size == @show)}
+      .pagination.lower
+        = paginate @search_results, params: {format: nil, view: @library_view}
 
   - else
     .nomatch
       %h2
         = t :sorry_no_matches
-    
