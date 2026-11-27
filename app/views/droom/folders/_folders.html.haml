@@ -5,7 +5,6 @@
       = hidden_field_tag :sort, params[:sort]
       = hidden_field_tag :user_id, params[:user_id], class: 'facet'
 
-      = render "shared/page_search", title: t(:search_in_library)
 
       = render 'droom/folders/library_filters'
       %noscript

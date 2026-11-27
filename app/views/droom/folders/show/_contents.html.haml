@@ -12,7 +12,6 @@
       = hidden_field_tag :view, @library_view
       = hidden_field_tag :user_id, params[:user_id], class: 'facet'
 
-      = render "shared/page_search", title: t(:search_in_folder, name: @folder.name)
 
       = render 'droom/folders/library_filters'
       %noscript
