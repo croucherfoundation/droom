@@ -94,12 +94,7 @@
       return block(target, top);
     };
     $.fn.find_including_self = function(selector) {
-      var selection;
-      selection = this.find(selector);
-      if (this.is(selector)) {
-        selection.push(this);
-      }
-      return selection;
+      return this.find(selector).add(this.filter(selector));
     };
     $.fn.self_or_ancestor = function(selector) {
       if (this.is(selector)) {

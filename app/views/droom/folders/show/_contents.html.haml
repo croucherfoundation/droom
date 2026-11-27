@@ -2,19 +2,21 @@
 - folder_ul_class = @sortable ? "sortable_folders" : ""
 - files_ul_class = @sortable ? "sortable_files" : ""
 
-.folders{data: {panel: false, refreshing: droom.folder_path(@folder, source: 'library', format: :js, view: @library_view, sortable: @sortable), droppable: (droom.folder_documents_path(@folder) if can_add_document_to?(@folder)), picker: "#upload_to_folder_#{@folder.id}", queue: "#upload_queue"}, id: "folder_#{@folder.id}"}
+.folders{data: {library_results: true, panel: false, refreshing: droom.folder_path(@folder, source: 'library', format: :js, view: @library_view, sortable: @sortable), droppable: (droom.folder_documents_path(@folder) if can_add_document_to?(@folder)), picker: "#upload_to_folder_#{@folder.id}", queue: "#upload_queue"}, id: "folder_#{@folder.id}"}
 
   - unless @sortable
-    %form.faceter{action: droom.folder_path(@folder), method: :get, id: "folder_search", style: "width: auto", data: {target: "#folder_#{@folder.id}"}}
-      = hidden_field_tag :page, params[:page]
+    %form#folder_search{action: request.path, method: :get, data: {library_search: true}}
+      = hidden_field_tag :skip_gdoc, true if @skip_gdoc
+      = hidden_field_tag :sort, params[:sort] if params[:sort].present?
       = hidden_field_tag :show, params[:show]
       = hidden_field_tag :view, @library_view
       = hidden_field_tag :user_id, params[:user_id], class: 'facet'
 
       = render "shared/page_search", title: t(:search_in_folder, name: @folder.name)
 
-      .croucher_search_detail.showing
-        = render 'droom/folders/library_filters'
+      = render 'droom/folders/library_filters'
+      %noscript
+        %button{type: 'submit'} Apply filters
 
   - if @searching
     = render partial: 'droom/folders/search_results'

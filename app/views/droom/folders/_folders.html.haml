@@ -1,15 +1,15 @@
-%ul#folders{class: ("sortable_folders" unless @searching), data: {refreshing: droom.folders_path(format: :js, view: @library_view, sortable: @sortable)}}
+%ul#folders{class: ("sortable_folders" unless @searching), data: {library_results: true, refreshing: droom.folders_path(format: :js, view: @library_view, sortable: @sortable)}}
   - unless @sortable
-    %form.faceter{action: droom.folders_url, id: "library_search", style: "width: auto", data: {target: '#folders'}}
-      = hidden_field_tag :page, params[:page]
+    %form#library_search{action: request.path, method: :get, data: {library_search: true}}
       = hidden_field_tag :show, params[:show]
       = hidden_field_tag :sort, params[:sort]
       = hidden_field_tag :user_id, params[:user_id], class: 'facet'
 
       = render "shared/page_search", title: t(:search_in_library)
 
-      .croucher_search_detail.showing
-        = render 'droom/folders/library_filters'
+      = render 'droom/folders/library_filters'
+      %noscript
+        %button{type: 'submit'} Apply filters
 
   - if @searching
     = render :partial => 'droom/folders/search_results'

@@ -34,13 +34,14 @@ module Droom
         @favourited_documents = docs
       end
 
-      if @searching
-        search_library
-      else
+      prepare_library_search unless @sortable && !@searching
+      return if performed?
+
+      unless @searching
         @folders = @folders.populated unless current_user.admin? || @library_view == 'data_room'
       end
 
-      set_filter_ivars
+      return if render_library_fragment('droom/folders/folders')
 
       respond_with @folders do |format|
         format.html
@@ -56,9 +57,10 @@ module Droom
       @filtering = filter_params_present?
       @searching = @q.present? || @filtering
 
-      search_library(folder: @folder) if @searching
+      prepare_library_search(folder: @folder) unless @sortable && !@searching
+      return if performed?
 
-      set_filter_ivars
+      return if render_library_fragment('droom/folders/show/contents')
 
       respond_with @folder do |format|
         format.html
@@ -224,33 +226,6 @@ module Droom
       end
     end
 
-    # Applies the active library view as ES/Searchkick criteria (search path).
-    # For shared/favourites, pre-fetches IDs since ES can't do joins.
-    def apply_library_view_to_criteria(criteria)
-      case @library_view
-      when 'my_library'
-        criteria[:created_by_id] = current_user.id
-      when 'shared'
-        # Merge new shares (droom_shares) with legacy shares (personal_folders)
-        # Expand shared folders to include subtrees
-        shared_doc_ids = Droom::Share.for_user(current_user).of_type('Droom::Document').pluck(:shareable_id)
-        shared_folder_ids = Droom::Share.for_user(current_user).of_type('Droom::Folder').pluck(:shareable_id)
-        expanded_folder_ids = Droom::Folder.where(id: shared_folder_ids).flat_map { |f| f.subtree_ids }
-        personal_folder_ids = current_user.personal_folders.pluck(:folder_id)
-        all_folder_ids = (expanded_folder_ids + personal_folder_ids).uniq
-        docs_in_folders = Droom::Document.where(folder_id: all_folder_ids).pluck(:id)
-        criteria[:id] = (shared_doc_ids + all_folder_ids + docs_in_folders).uniq
-        criteria[:created_by_id] = {not: current_user.id}
-        criteria[:data_room] = false
-      when 'data_room'
-        criteria[:data_room] = true
-      when 'favourites'
-        fav_doc_ids = Droom::Favourite.for_user(current_user).of_type('Droom::Document').pluck(:favouritable_id)
-        fav_folder_ids = Droom::Favourite.for_user(current_user).of_type('Droom::Folder').pluck(:favouritable_id)
-        criteria[:id] = fav_doc_ids + fav_folder_ids
-      end
-    end
-
     def get_parent_folder
       if params[:folder_id].present?
         @parent = Droom::Folder.find_by!(uid: params[:folder_id])
@@ -271,7 +246,7 @@ module Droom
     end
 
     def load_accessible_folder
-      @folder = Droom::Folder.accessible_to(current_user).find_by(uid: params[:id])
+      @folder = Droom::Folder.accessible_to(current_user).find_by!(uid: params[:id])
     end
 
     def get_folder_tree
@@ -285,58 +260,54 @@ module Droom
       end
     end
 
-    def search_library(folder: nil)
-      fields = ["name^10", "filename^5"]
-      criteria = {}
-      criteria[:confidential] = false unless current_user.privileged?
-      if folder
-        descendant_ids = folder.subtree_ids
-        criteria[:folder_id] = descendant_ids
-        criteria[:id] = {not: folder.id}
-      end
-      apply_library_view_to_criteria(criteria)
-      criteria[:file_content_type] = Droom::Document::CONTENT_TYPE_GROUPS[params[:type]] if params[:type].present? && params[:type] != 'folders'
-      criteria[:modified_at] = {gte: modified_since_time} if params[:modified].present? && modified_since_time
-      criteria[:created_by_id] = params[:user_id].to_i if params[:user_id].present?
-      @show = (params[:show].presence || 20).to_i
-      @page = (params[:page].presence || 1).to_i
-      query = @q.present? ? @q : "*"
-      @search_results = Searchkick.search query,
-        models: search_models,
-        fields: fields,
-        where: criteria,
-        order: {_score: :desc},
-        per_page: @show,
-        page: @page
+    def render_library_fragment(partial)
+      response.headers['Vary'] = (response.headers['Vary'].to_s.split(/,\s*/) | ['X-Library-Fragment']).join(', ')
+      return false unless request.headers['X-Library-Fragment'] == '1'
+      no_store
+      render partial: partial
+      true
     end
 
-    def set_filter_ivars
-      @filter_type = params[:type].presence
-      @filter_modified = params[:modified].presence
-      @filter_user_id = params[:user_id].presence
-      @filter_user = Droom::User.find_by(id: @filter_user_id) if @filter_user_id.present?
+    def prepare_library_search(folder: nil)
+      visible_folders = Folder.accessible_to(current_user)
+      visible_folders = visible_folders.where(private: [nil, false]) unless current_user.privileged?
+      visible_documents = Document.accessible_to(current_user)
+      documents = visible_documents.where(folder_id: visible_folders.except(:includes, :order).select(:id))
+                                   .or(visible_documents.where(folder_id: nil))
+      documents = documents.where(private: [nil, false]) unless current_user.privileged?
+      folders = apply_library_view_scope(visible_folders)
+      documents = apply_library_view_scope(documents)
+      if folder
+        folders = folders.where(id: folder.descendant_ids)
+        documents = documents.where(folder_id: folder.subtree_ids)
+      end
+      search = LibrarySearch.new(user: current_user, folders: folders, documents: documents, params: params)
+      if request.format.json? && params.key?(:people_query)
+        no_store
+        term = params[:people_query].to_s.strip
+        users = term.size.between?(2, 128) && can?(:search, User) ? search.matching_uploaders(term) : []
+        render json: users.map { |user| {id: user.id, name: user.formal_name} }
+        return
+      end
+
+      @show = search.page_size
+      @search_results = search.results(browsing: !@searching)
+      @library_filter_fields = search.filter_fields(@search_results)
+      if params[:user_id].present? && can?(:search, User) && (@search_results.total_count.positive? || search.uploader_visible?(params[:user_id]))
+        @filter_user = User.undeleted.find_by(id: params[:user_id])
+      end
+    rescue StandardError => error
+      # The pinned transport can wrap a Faraday error while handling it.
+      recoverable = [Faraday::ConnectionFailed, Faraday::TimeoutError, Searchkick::MissingIndexError,
+                     Elasticsearch::Transport::Transport::Errors::ServiceUnavailable]
+      raise if @searching || request.format.json? || recoverable.none? { |type| error.is_a?(type) || error.cause.is_a?(type) }
+      # Browsing and sorting use SQL, so a search outage must not hide those records.
+      Rails.logger.warn("Library browse filter counts unavailable (#{error.class})")
+      @library_filter_fields = LibrarySearch::FILTERS.map { |field, label, choices| [field, label, choices.map { |value, text| [text, value] }] }
     end
 
     def filter_params_present?
       params[:type].present? || params[:modified].present? || params[:user_id].present?
-    end
-
-    def search_models
-      if params[:type] == 'folders'
-        [Droom::Folder]
-      elsif params[:type].present?
-        [Droom::Document]
-      else
-        [Droom::Folder, Droom::Document]
-      end
-    end
-
-    def modified_since_time
-      case params[:modified]
-      when '7d'   then 7.days.ago
-      when '30d'  then 30.days.ago
-      when '365d' then 365.days.ago
-      end
     end
 
     def default_layout

@@ -5,7 +5,7 @@
     - extension = link_info[:extension]
   - else
     - extension = document.file_extension.downcase
-    - detail_url = droom.folder_document_url(document.folder, document)
+    - detail_url = document.folder ? droom.folder_document_url(document.folder, document) : droom.document_url(document)
   - cssclasses = "document #{extension} no-bg-image"
   = link_to detail_url, class: cssclasses, target: "_blank" do
     - if %w[doc docx pdf txt gdoc notion memo].include?(extension)
